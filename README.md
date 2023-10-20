@@ -67,7 +67,7 @@ Uncomment the `world_address` parameter in `dojo/Scarb.toml` then:
 
 ```console
 cd dojo
-torii --world 0x56c991ec4188b7c036066d28a19ed2b245ee1174ed3935f2d7e15c60a496f82
+torii --world 0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a
 ```
 
 #### Terminal 3: Client

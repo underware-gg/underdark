@@ -104,15 +104,12 @@ canvas {
   min-height: 50px;
 }
 
-.RealmPanel,
 .MinterPanel {
   width: 620px;
   height: 350px;
   display: block;
 }
 
-.RealmImage,
-.RealmData,
 .MinterMap,
 .MinterData {
   width: 250px;
@@ -120,7 +117,6 @@ canvas {
   min-height: 350px;
   display: inline-block;
 }
-.RealmImage,
 .MinterMap {
   width: 350px;
   border: 0.5px solid #444;

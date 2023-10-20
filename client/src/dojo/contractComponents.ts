@@ -10,15 +10,13 @@ export function defineContractComponents(world: World) {
         world,
         {
           seed: RecsType.BigInt,
-          minter: RecsType.BigInt,
-          domain_id: RecsType.Number,
-          token_id: RecsType.Number,
+          level_number: RecsType.BigInt,
           yonder: RecsType.Number,
         },
         {
           metadata: {
             name: name,
-            types: ["u256","ContractAddress","u16","u16","u16"],
+            types: ["u256","u128","u16"],
           },
         }
       );

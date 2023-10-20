@@ -16,7 +16,6 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  ContractAddress: { input: any; output: any; }
   Cursor: { input: any; output: any; }
   DateTime: { input: any; output: any; }
   felt252: { input: any; output: any; }
@@ -29,12 +28,10 @@ export type Scalars = {
 
 export type Chamber = {
   __typename?: 'Chamber';
-  domain_id?: Maybe<Scalars['u16']['output']>;
   entity?: Maybe<Entity>;
+  level_number?: Maybe<Scalars['u128']['output']>;
   location_id?: Maybe<Scalars['u128']['output']>;
-  minter?: Maybe<Scalars['ContractAddress']['output']>;
   seed?: Maybe<Scalars['u256']['output']>;
-  token_id?: Maybe<Scalars['u16']['output']>;
   yonder?: Maybe<Scalars['u16']['output']>;
 };
 
@@ -56,22 +53,20 @@ export type ChamberOrder = {
 };
 
 export enum ChamberOrderField {
-  DomainId = 'DOMAIN_ID',
+  LevelNumber = 'LEVEL_NUMBER',
   LocationId = 'LOCATION_ID',
-  Minter = 'MINTER',
   Seed = 'SEED',
-  TokenId = 'TOKEN_ID',
   Yonder = 'YONDER'
 }
 
 export type ChamberWhereInput = {
-  domain_id?: InputMaybe<Scalars['u16']['input']>;
-  domain_idEQ?: InputMaybe<Scalars['u16']['input']>;
-  domain_idGT?: InputMaybe<Scalars['u16']['input']>;
-  domain_idGTE?: InputMaybe<Scalars['u16']['input']>;
-  domain_idLT?: InputMaybe<Scalars['u16']['input']>;
-  domain_idLTE?: InputMaybe<Scalars['u16']['input']>;
-  domain_idNEQ?: InputMaybe<Scalars['u16']['input']>;
+  level_number?: InputMaybe<Scalars['u128']['input']>;
+  level_numberEQ?: InputMaybe<Scalars['u128']['input']>;
+  level_numberGT?: InputMaybe<Scalars['u128']['input']>;
+  level_numberGTE?: InputMaybe<Scalars['u128']['input']>;
+  level_numberLT?: InputMaybe<Scalars['u128']['input']>;
+  level_numberLTE?: InputMaybe<Scalars['u128']['input']>;
+  level_numberNEQ?: InputMaybe<Scalars['u128']['input']>;
   location_id?: InputMaybe<Scalars['u128']['input']>;
   location_idEQ?: InputMaybe<Scalars['u128']['input']>;
   location_idGT?: InputMaybe<Scalars['u128']['input']>;
@@ -79,13 +74,6 @@ export type ChamberWhereInput = {
   location_idLT?: InputMaybe<Scalars['u128']['input']>;
   location_idLTE?: InputMaybe<Scalars['u128']['input']>;
   location_idNEQ?: InputMaybe<Scalars['u128']['input']>;
-  minter?: InputMaybe<Scalars['ContractAddress']['input']>;
-  minterEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
-  minterGT?: InputMaybe<Scalars['ContractAddress']['input']>;
-  minterGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
-  minterLT?: InputMaybe<Scalars['ContractAddress']['input']>;
-  minterLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
-  minterNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
   seed?: InputMaybe<Scalars['u256']['input']>;
   seedEQ?: InputMaybe<Scalars['u256']['input']>;
   seedGT?: InputMaybe<Scalars['u256']['input']>;
@@ -93,13 +81,6 @@ export type ChamberWhereInput = {
   seedLT?: InputMaybe<Scalars['u256']['input']>;
   seedLTE?: InputMaybe<Scalars['u256']['input']>;
   seedNEQ?: InputMaybe<Scalars['u256']['input']>;
-  token_id?: InputMaybe<Scalars['u16']['input']>;
-  token_idEQ?: InputMaybe<Scalars['u16']['input']>;
-  token_idGT?: InputMaybe<Scalars['u16']['input']>;
-  token_idGTE?: InputMaybe<Scalars['u16']['input']>;
-  token_idLT?: InputMaybe<Scalars['u16']['input']>;
-  token_idLTE?: InputMaybe<Scalars['u16']['input']>;
-  token_idNEQ?: InputMaybe<Scalars['u16']['input']>;
   yonder?: InputMaybe<Scalars['u16']['input']>;
   yonderEQ?: InputMaybe<Scalars['u16']['input']>;
   yonderGT?: InputMaybe<Scalars['u16']['input']>;

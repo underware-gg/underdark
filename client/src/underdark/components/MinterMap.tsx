@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useUnderdarkContext } from '../hooks/underdarkContext'
+import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { useChamberMap } from '../hooks/useChamber'
 import { MapChamber, MapView, compassToMapViewPos } from './MapView'
 import { coordToCompass } from '../utils/underdark'

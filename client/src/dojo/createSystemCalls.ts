@@ -15,23 +15,23 @@ export function createSystemCalls(
   // { Chamber, Map }: ClientComponents,
 ) {
 
-  const mint_realms_chamber = async (signer: Account, realmId: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number) => {
+  const start_level = async (signer: Account, levelNumber: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number) => {
     try {
-      const args = [realmId.toString(), from_coord.toString(), from_dir.toString(), strToFelt252(generator_name), generator_value.toString()]
+      const args = [levelNumber.toString(), from_coord.toString(), from_dir.toString(), strToFelt252(generator_name), generator_value.toString()]
       console.log(args)
-      const tx = await execute(signer, 'mint_chamber', 'mint_realms_chamber', args)
-      console.log(`mint_realms_chamber tx:`, tx)
+      const tx = await execute(signer, 'actions', 'start_level', args)
+      console.log(`start_level tx:`, tx)
       const receipt = await provider.provider.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
-      console.log(`mint_realms_chamber receipt:`, receipt)
+      console.log(`start_level receipt:`, receipt)
       processReceipt(receipt, contractComponents);
     } catch (e) {
-      console.log(`mint_realms_chamber exception:`, e)
+      console.log(`start_level exception:`, e)
     } finally {
     }
   }
 
   return {
-    mint_realms_chamber,
+    start_level,
   }
 }
 

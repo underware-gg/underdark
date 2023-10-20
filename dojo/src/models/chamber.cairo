@@ -10,9 +10,7 @@ struct Chamber {
     #[key]
     location_id: u128,
     seed: u256,
-    minter: ContractAddress,
-    domain_id: u16,
-    token_id: u16,
+    level_number: u128,
     yonder: u16,
 }
 

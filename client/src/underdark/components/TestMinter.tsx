@@ -11,7 +11,7 @@ interface TestMapProps {
 function TestMap(props: TestMapProps) {
   const {
     setup: {
-      // systemCalls: { spawn, move, mint_realms_chamber },
+      // systemCalls: { spawn, move, start_level },
       components: { Chamber, Map },
     },
     // account: { create, list, select, account, isDeploying }
@@ -67,7 +67,7 @@ function TestMap(props: TestMapProps) {
 function TestMinter() {
   const {
     setup: {
-      systemCalls: { mint_realms_chamber },
+      systemCalls: { start_level },
       components: { Chamber },
     },
     account: { account }
@@ -83,7 +83,7 @@ function TestMinter() {
 
   return (
     <div className="card">
-      <button onClick={() => mint_realms_chamber(account, 1, BigInt(Date.now() % 999) | (BigInt(Date.now() % 999) << 32n), Dir.Under, 'seed', 0)}>Mint Chamber</button>
+      <button onClick={() => start_level(account, 1, BigInt(Date.now() % 999) | (BigInt(Date.now() % 999) << 32n), Dir.Under, 'seed', 0)}>Mint Chamber</button>
       <div>
         <select onChange={e => setSelectedChamberId(e.target.value as Entity)}>
           {chamberIds.map((entityId) => {

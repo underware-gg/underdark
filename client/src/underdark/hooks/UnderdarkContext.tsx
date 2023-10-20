@@ -1,7 +1,4 @@
 import React, { ReactNode, createContext, useReducer, useContext, useEffect } from 'react'
-import realmsMetadata from '../data/database.json'
-import { makeRealmEntryChamberIdFromCoord } from '../utils/underdark'
-import { City } from '../utils/realms'
 
 //
 // React + Typescript + Context
@@ -12,19 +9,12 @@ import { City } from '../utils/realms'
 // Constants
 //
 export const initialState = {
-  realmId: 1, //6915,
-  cityIndex: null,
-  city: null,
   chamberId: 0n,
   // constants
   logo: '/pubic/logo.png',
-  realmsMetadata,
 }
 
 const UnderdarkActions = {
-  SET_REALM_ID: 'SET_REALM_ID',
-  SET_CITY_INDEX: 'SET_CITY_INDEX',
-  SET_CITY: 'SET_CITY',
   SET_CHAMBER: 'SET_CHAMBER',
 }
 
@@ -32,19 +22,12 @@ const UnderdarkActions = {
 // Types
 //
 type UnderdarkStateType = {
-  realmId: number,
-  cityIndex: number|null,
-  city: City | null,
   chamberId: bigint,
   // constants
   logo: string,
-  realmsMetadata: any,
 }
 
 type ActionType =
-  | { type: 'SET_REALM_ID', payload: number }
-  | { type: 'SET_CITY_INDEX', payload: number }
-  | { type: 'SET_CITY', payload: any }
   | { type: 'SET_CHAMBER', payload: bigint }
 
 
@@ -72,24 +55,6 @@ const UnderdarkProvider = ({
   const [state, dispatch] = useReducer((state: UnderdarkStateType, action: ActionType) => {
     let newState = { ...state }
     switch (action.type) {
-      case UnderdarkActions.SET_REALM_ID: {
-        newState.realmId = action.payload as number
-        newState.cityIndex = null
-        newState.city = null
-        newState.chamberId = 0n
-        break
-      }
-      case UnderdarkActions.SET_CITY_INDEX: {
-        newState.cityIndex = action.payload as number
-        newState.city = null
-        newState.chamberId = 0n
-        break
-      }
-      case UnderdarkActions.SET_CITY: {
-        newState.city = action.payload ? { ...action.payload } : null
-        newState.chamberId = action.payload ? makeRealmEntryChamberIdFromCoord(newState.realmId, action.payload.coord) : 0n
-        break
-      }
       case UnderdarkActions.SET_CHAMBER: {
         newState.chamberId = action.payload
         break
@@ -104,7 +69,7 @@ const UnderdarkProvider = ({
   return (
     <UnderdarkContext.Provider value={{ state, dispatch }}>
       {children}
-    </underdarkContext.Provider>
+    </UnderdarkContext.Provider>
   )
 }
 

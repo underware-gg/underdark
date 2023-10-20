@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDojoSystemCalls, useDojoAccount } from '../../DojoContext'
-import { useChamber, useChamberState, useChamberMap, useChamberOffset, useRealmChamberIds } from '../hooks/useChamber'
-import { useUnderdarkContext } from '../hooks/underdarkContext'
+import { useChamber, useChamberState, useChamberMap, useChamberOffset } from '../hooks/useChamber'
+import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { bigintToHex } from '../utils/utils'
 import { Dir, DirNames, coordToCompass, coordToSlug, offsetCompass } from '../utils/underdark'
+import { makeEntryChamberId } from '../utils/underdark'
 
 interface Generator {
   name: string
@@ -78,15 +79,15 @@ function DirectionButton({
   doorTile,
   generator,
 }: DirectionButtonProps) {
-  const { realmId, dispatch, UnderdarkActions } = useUnderdarkContext()
-  const { mint_realms_chamber } = useDojoSystemCalls()
+  const { dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { start_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
   const { locationId, seed } = useChamberOffset(chamberId, dir)
   const exists = useMemo(() => (seed > 0n), [seed, locationId])
 
   const _mint = () => {
-    mint_realms_chamber(account, realmId, chamberId, dir, generator.name, generator.value)
+    start_level(account, 1, chamberId, dir, generator.name, generator.value)
   }
   const _open = () => {
     dispatch({
@@ -104,37 +105,23 @@ function DirectionButton({
 
 
 function MinterData() {
-  const { mint_realms_chamber } = useDojoSystemCalls()
+  const { start_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
   const [generatorIndex, setGeneratorIndex] = useState(5)
 
   // Current Realm / Chamber
-  const { realmId, city, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
   const { seed, yonder } = useChamber(chamberId)
   const { doors } = useChamberMap(chamberId)
   const state = useChamberState(chamberId)
 
   const chamberExists = useMemo(() => (seed > 0), [seed])
-  const canMintFirst = useMemo(() => (realmId > 0 && city != null && !chamberExists), [realmId, city, chamberExists])
-
-  // Chambers list
-  // TODO: REMOVE THIS
-  const { chamberIds } = useRealmChamberIds(realmId)
-  useEffect(() => {
-    _selectChamber(chamberIds.length > 0 ? chamberIds[chamberIds.length - 1] : 0n)
-  }, [chamberIds])
-
-  const _selectChamber = (coord: bigint) => {
-    dispatch({
-      type: UnderdarkActions.SET_CHAMBER,
-      payload: coord,
-    })
-  }
+  const canMintFirst = useMemo(() => (!chamberExists), [chamberExists])
 
   const _mintFirst = () => {
-    if (canMintFirst && city) {
-      mint_realms_chamber(account, realmId, city.coord, Dir.Under, 'entry', 0)
+    if (canMintFirst) {
+      start_level(account, 1, makeEntryChamberId(), Dir.Under, 'entry', 0)
     }
   }
 
@@ -149,29 +136,14 @@ function MinterData() {
 
   return (
     <div className='MinterData AlignTop'>
-      <p>
-        @ Realm#{realmId} [{city?.name ?? '?'}]
-        <br />
-        {bigintToHex(city?.coord ?? 0n)}
-      </p>
-
       {!chamberExists && <>
         <div>
-          <button disabled={!canMintFirst} onClick={() => _mintFirst()}>Create Underground</button>
+          <button disabled={!canMintFirst} onClick={() => _mintFirst()}>Start</button>
         </div>
         <br />
       </>}
 
       {chamberExists && <>
-        <div>
-          <select value={chamberId?.toString()} onChange={e => _selectChamber(BigInt(e.target.value))}>
-            {chamberIds.map((locationId) => {
-              const _id = locationId.toString()
-              return <option value={_id} key={_id}>{coordToSlug(locationId)}</option>
-            })}
-          </select>
-        </div>
-
         <p>
           <b>{coordToSlug(chamberId, yonder)}</b>
           <br />

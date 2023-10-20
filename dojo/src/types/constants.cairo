@@ -1,9 +1,4 @@
 
-mod DOMAINS {
-    const REALMS: u16 = 1;
-    const CRYPTS: u16 = 2;
-}
-
 // pattern from
 // https://github.com/ponderingdemocritus/beer-baron/blob/main/contracts/src/constants.cairo
 // mod CONFIG {

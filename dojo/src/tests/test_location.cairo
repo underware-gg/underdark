@@ -8,8 +8,8 @@ mod tests {
     #[test]
     #[available_gas(10_000_000)]
     fn test_location_equality() {
-        let ok1 = Location{ domain_id:1, token_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
-        let ok2 = Location{ domain_id:1, token_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
+        let ok1 = Location{ over:3, under:0, north:3, east:3, west:0, south:0 };
+        let ok2 = Location{ over:0, under:3, north:0, east:0, west:3, south:3 };
         assert(ok1 == ok1, 'ok1 == ok1');
         assert(ok2 == ok2, 'ok2 == ok2');
         assert(ok1 != ok2, 'ok1 != ok2');
@@ -18,16 +18,12 @@ mod tests {
     #[test]
     #[available_gas(1_000_000)]
     fn test_location_constants() {
-        assert(CONSTANTS::OFFSET::DOMAIN_ID == (16 * 7), 'CONSTANTS::OFFSET::DOMAIN_ID');
-        assert(CONSTANTS::OFFSET::TOKEN_ID == (16 * 6), 'CONSTANTS::OFFSET::TOKEN_ID');
         assert(CONSTANTS::OFFSET::OVER == (16 * 5), 'CONSTANTS::OFFSET::OVER');
         assert(CONSTANTS::OFFSET::UNDER == (16 * 4), 'CONSTANTS::OFFSET::UNDER');
         assert(CONSTANTS::OFFSET::NORTH == (16 * 3), 'CONSTANTS::OFFSET::NORTH');
         assert(CONSTANTS::OFFSET::EAST == (16 * 2), 'CONSTANTS::OFFSET::EAST');
         assert(CONSTANTS::OFFSET::WEST == (16 * 1), 'CONSTANTS::OFFSET::WEST');
         assert(CONSTANTS::OFFSET::SOUTH == (16 * 0), 'CONSTANTS::OFFSET::SOUTH');
-        assert(CONSTANTS::MASK::DOMAIN_ID == U128Bitwise::shl(0xffff, 16 * 7), 'CONSTANTS::MASK::DOMAIN_ID');
-        assert(CONSTANTS::MASK::TOKEN_ID == U128Bitwise::shl(0xffff, 16 * 6), 'CONSTANTS::MASK::TOKEN_ID');
         assert(CONSTANTS::MASK::OVER == U128Bitwise::shl(0xffff, 16 * 5), 'CONSTANTS::MASK::OVER');
         assert(CONSTANTS::MASK::UNDER == U128Bitwise::shl(0xffff, 16 * 4), 'CONSTANTS::MASK::UNDER');
         assert(CONSTANTS::MASK::NORTH == U128Bitwise::shl(0xffff, 16 * 3), 'CONSTANTS::MASK::NORTH');
@@ -40,17 +36,17 @@ mod tests {
     #[available_gas(10_000_000)]
     fn test_location_validate() {
         // fails
-        assert(Location{ domain_id:0, token_id:0, over:0, under:0, north:0, east:0, west:0, south:0 }.validate() == false, 'zeros');
+        assert(Location{ over:0, under:0, north:0, east:0, west:0, south:0 }.validate() == false, 'zeros');
         // oks
         let mut oks = ArrayTrait::new();
-        oks.append(Location{ domain_id:1, token_id:1, over:0, under:1, north:1, east:1, west:0, south:0 });
-        oks.append(Location{ domain_id:1, token_id:1, over:0, under:1, north:1, east:0, west:1, south:0 });
-        oks.append(Location{ domain_id:1, token_id:1, over:0, under:1, north:0, east:1, west:0, south:1 });
-        oks.append(Location{ domain_id:1, token_id:1, over:0, under:1, north:0, east:0, west:1, south:1 });
-        oks.append(Location{ domain_id:1, token_id:1, over:1, under:0, north:1, east:1, west:0, south:0 });
-        oks.append(Location{ domain_id:1, token_id:1, over:1, under:0, north:1, east:0, west:1, south:0 });
-        oks.append(Location{ domain_id:1, token_id:1, over:1, under:0, north:0, east:1, west:0, south:1 });
-        oks.append(Location{ domain_id:1, token_id:1, over:1, under:0, north:0, east:0, west:1, south:1 });        
+        oks.append(Location{ over:0, under:1, north:1, east:1, west:0, south:0 });
+        oks.append(Location{ over:0, under:1, north:1, east:0, west:1, south:0 });
+        oks.append(Location{ over:0, under:1, north:0, east:1, west:0, south:1 });
+        oks.append(Location{ over:0, under:1, north:0, east:0, west:1, south:1 });
+        oks.append(Location{ over:1, under:0, north:1, east:1, west:0, south:0 });
+        oks.append(Location{ over:1, under:0, north:1, east:0, west:1, south:0 });
+        oks.append(Location{ over:1, under:0, north:0, east:1, west:0, south:1 });
+        oks.append(Location{ over:1, under:0, north:0, east:0, west:1, south:1 });        
         let mut i: usize = 0;
         loop {
             if(i == oks.len()) { break; }
@@ -58,10 +54,6 @@ mod tests {
             let mut loc = ok;
             assert(loc.validate() == true, 'ok');
             assert(loc.validate_entry() == false, '!entry');
-            loc = ok; loc.domain_id = 0;
-            assert(loc.validate() == false, '!domain_id');
-            loc = ok; loc.token_id = 0;
-            assert(loc.validate() == false, '!token_id');
             if(ok.over > 0) {
                 loc = ok; loc.over = 0;
                 assert(loc.validate() == false, '!over');
@@ -100,8 +92,6 @@ mod tests {
     #[available_gas(10_000_000)]
     fn test_location_id() {
         let base = Location {
-            domain_id: 0x8111,
-            token_id: 0x8222,
             over: 0x8333,
             under: 0x8444,
             north: 0x8555,
@@ -111,8 +101,6 @@ mod tests {
         };
         assert(base.validate() == false, 'validate');
         let id: u128 = base.to_id();
-        assert(id & CONSTANTS::MASK::DOMAIN_ID == U128Bitwise::shl(base.domain_id.into(), CONSTANTS::OFFSET::DOMAIN_ID), 'id.domain_id');
-        assert(id & CONSTANTS::MASK::TOKEN_ID == U128Bitwise::shl(base.token_id.into(), CONSTANTS::OFFSET::TOKEN_ID), 'id.token_id');
         assert(id & CONSTANTS::MASK::OVER == U128Bitwise::shl(base.over.into(), CONSTANTS::OFFSET::OVER), 'id.over');
         assert(id & CONSTANTS::MASK::UNDER == U128Bitwise::shl(base.under.into(), CONSTANTS::OFFSET::UNDER), 'id.under');
         assert(id & CONSTANTS::MASK::NORTH == U128Bitwise::shl(base.north.into(), CONSTANTS::OFFSET::NORTH), 'id.north');
@@ -120,8 +108,6 @@ mod tests {
         assert(id & CONSTANTS::MASK::WEST == U128Bitwise::shl(base.west.into(), CONSTANTS::OFFSET::WEST), 'id.west');
         assert(id & CONSTANTS::MASK::SOUTH == U128Bitwise::shl(base.south.into(), CONSTANTS::OFFSET::SOUTH), 'id.south');
         let loc: Location = LocationTrait::from_id(id);
-        assert(loc.domain_id == base.domain_id, 'loc.domain_id');
-        assert(loc.token_id == base.token_id, 'loc.token_id');
         assert(loc.over == base.over, 'loc.over');
         assert(loc.under == base.under, 'loc.under');
         assert(loc.north == base.north, 'loc.north');
@@ -134,8 +120,6 @@ mod tests {
     #[available_gas(10_000_000)]
     fn test_location_coord() {
         let base = Location {
-            domain_id: 0x8111, // whatever, will be erased
-            token_id: 0x8222,  // whatever, will be erased
             over: 0x8333,
             under: 0x8444,
             north: 0x8555,
@@ -144,9 +128,7 @@ mod tests {
             south: 0x8fff,
         };
         let coord: u128 = base.to_id();
-        let loc: Location = LocationTrait::from_coord(0x8080, 0x8888, coord);
-        assert(loc.domain_id == 0x8080, 'loc.domain_id');
-        assert(loc.token_id == 0x8888, 'loc.token_id');
+        let loc: Location = LocationTrait::from_coord(coord);
         assert(loc.over == base.over, 'loc.over');
         assert(loc.under == base.under, 'loc.under');
         assert(loc.north == base.north, 'loc.north');
@@ -159,8 +141,8 @@ mod tests {
     #[test]
     #[available_gas(10_000_000)]
     fn test_location_offset() {
-        let ok1 = Location{ domain_id:1, token_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
-        let ok2 = Location{ domain_id:1, token_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
+        let ok1 = Location{ over:3, under:0, north:3, east:3, west:0, south:0 };
+        let ok2 = Location{ over:0, under:3, north:0, east:0, west:3, south:3 };
         assert(ok1.validate() == true, 'ok1 is ok');
         assert(ok2.validate() == true, 'ok2 is ok');
         // up to ok2

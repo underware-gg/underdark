@@ -7,28 +7,26 @@ mod utils {
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo::test_utils::{spawn_test_world, deploy_contract};
 
-    use underdark::systems::mint_chamber::{mint_chamber, IMintChamberDispatcher, IMintChamberDispatcherTrait};
+    use underdark::systems::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use underdark::models::chamber::{Chamber, chamber, Map, map, State, state};
     use underdark::models::tile::{Tile, tile};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DirTrait};
     use underdark::types::doors::{Doors};
-    use underdark::types::constants::{DOMAINS};
 
-    fn setup_world() -> (IWorldDispatcher, IMintChamberDispatcher) {
+    fn setup_world() -> (IWorldDispatcher, IActionsDispatcher) {
         let mut models = array![chamber::TEST_CLASS_HASH, map::TEST_CLASS_HASH, tile::TEST_CLASS_HASH, state::TEST_CLASS_HASH];
         let world: IWorldDispatcher = spawn_test_world(models);
-        let contract_address = world.deploy_contract('salt', mint_chamber::TEST_CLASS_HASH.try_into().unwrap());
-        let system = IMintChamberDispatcher { contract_address };
-        (world, system)
+        let contract_address = world.deploy_contract('salt', actions::TEST_CLASS_HASH.try_into().unwrap());
+        (world, IActionsDispatcher { contract_address })
     }
 
-    fn execute_mint_realms_chamber(world: IWorldDispatcher, system: IMintChamberDispatcher, token_id: u16, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) {
-        system.mint_realms_chamber(token_id.into(), from_coord.to_id(), from_dir.into(), generator_name, generator_value.into());
+    fn execute_start_level(world: IWorldDispatcher, system: IActionsDispatcher, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) {
+        system.start_level(from_coord.to_id(), from_dir.into(), generator_name, generator_value.into());
     }
 
-    fn mint_get_realms_chamber(world: IWorldDispatcher, system: IMintChamberDispatcher, token_id: u16, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) -> Chamber {
-        execute_mint_realms_chamber(world, system, token_id, from_coord, from_dir, generator_name, generator_value);
+    fn start_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) -> Chamber {
+        execute_start_level(world, system, from_coord, from_dir, generator_name, generator_value);
         let to_location: Location = from_coord.offset(from_dir);
         get_world_Chamber(world, to_location.to_id())
     }
@@ -67,8 +65,8 @@ mod utils {
         }
     }
 
-    fn make_from_location(token_id: u16) -> (Location, Dir, u128) {
-        let location: Location = Location{ domain_id:DOMAINS::REALMS, token_id, over:0, under:0, north:1, east:1, west:0, south:0 };
+    fn make_from_location() -> (Location, Dir, u128) {
+        let location: Location = Location{ over:0, under:0, north:1, east:1, west:0, south:0 };
         let location_id: u128 = location.to_id();
         let dir: Dir = Dir::Under;
         let to_location: Location = location.offset(dir);

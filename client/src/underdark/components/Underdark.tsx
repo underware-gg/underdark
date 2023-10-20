@@ -1,7 +1,5 @@
 import { useSyncWorld } from '../hooks/useGraphQLQueries'
-import { UnderdarkProvider } from '../hooks/underdarkContext'
-import RealmImage from './RealmImage'
-import RealmData from './RealmData'
+import { UnderdarkProvider } from '../hooks/UnderdarkContext'
 import MinterMap from './MinterMap'
 import MinterData from './MinterData'
 
@@ -14,10 +12,6 @@ function Underdark() {
 
   return (
     <UnderdarkProvider>
-      <div className="card RealmPanel">
-        <RealmImage />
-        <RealmData />
-      </div>
       <div className="card MinterPanel">
         <MinterMap />
         <MinterData />

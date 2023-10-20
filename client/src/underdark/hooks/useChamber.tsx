@@ -19,15 +19,6 @@ export const useAllChamberIds = () => {
   }
 }
 
-export const useRealmChamberIds = (realmId: number) => {
-  const { Chamber } = useDojoComponents()
-  const entityIds = useEntityQuery([HasValue(Chamber, { token_id: realmId })])
-  const chamberIds: bigint[] = useMemo(() => (entityIds ?? []).map((entityId) => BigInt(entityId)), [entityIds])
-  return {
-    chamberIds,
-  }
-}
-
 
 //------------------
 // Single Chamber
