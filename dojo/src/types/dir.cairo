@@ -1,5 +1,5 @@
 use debug::PrintTrait;
-use loot_underworld::models::chamber::{Map};
+use underdark::models::chamber::{Map};
 
 #[derive(Copy, Drop, Serde, PartialEq)]
 enum Dir {
@@ -146,9 +146,9 @@ impl PrintDir of PrintTrait<Dir> {
 //------------------------------------------------------------------
 // Unit tests
 //
-use loot_underworld::core::seeder::{make_seed};
-use loot_underworld::core::randomizer::{randomize_door_tile};
-use loot_underworld::utils::bitmap::{Bitmap};
+use underdark::core::seeder::{make_seed};
+use underdark::core::randomizer::{randomize_door_tile};
+use underdark::utils::bitmap::{Bitmap};
 
 #[test]
 #[available_gas(1_000_000_000)]

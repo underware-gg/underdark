@@ -1,8 +1,8 @@
 use debug::PrintTrait;
 use array::ArrayTrait;
 
-use loot_underworld::utils::bitwise::{U128Bitwise};
-use loot_underworld::types::dir::{Dir};
+use underdark::utils::bitwise::{U128Bitwise};
+use underdark::types::dir::{Dir};
 
 #[derive(Copy, Drop, Serde, PartialEq)]
 struct Location {

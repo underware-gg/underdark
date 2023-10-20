@@ -1,4 +1,4 @@
-import { useUnderworldContext } from '../hooks/UnderworldContext';
+import { useUnderdarkContext } from '../hooks/underdarkContext';
 import { useRealmSvgMetadata } from '../hooks/useRealm'
 import Svg from './Svg';
 
@@ -9,7 +9,7 @@ interface ChamberMapProps {
 function RealmImage({
   // realmId,
 }: ChamberMapProps) {
-  const { realmId } = useUnderworldContext()
+  const { realmId } = useUnderdarkContext()
   const { svgData } = useRealmSvgMetadata(realmId)
 
   return (

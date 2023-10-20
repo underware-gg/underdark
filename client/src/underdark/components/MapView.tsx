@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Compass, TileType } from '../utils/underworld'
+import { Compass, TileType } from '../utils/underdark'
 import { MapColors } from '../utils/colors'
 import { Point } from '../utils/realms'
 

@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
-import { useUnderworldContext } from '../hooks/UnderworldContext'
+import { useUnderdarkContext } from './underdarkContext'
 import { convertCityCenterToMeters, convertCityCenterToCompass, City } from '../utils/realms'
-import { compassToCoord } from '../utils/underworld'
+import { compassToCoord } from '../utils/underdark'
 
 import useSWR from 'swr'
 import { RealmsColors } from '../utils/colors'
 const textFetcher = (url: string) => fetch(url).then((res) => res.text())
 
 export const useRealmMetadata = (realmId: number) => {
-  const { realmsMetadata } = useUnderworldContext()
+  const { realmsMetadata } = useUnderdarkContext()
   const metadata = useMemo(() => (realmsMetadata[realmId] ?? {}), [realmId])
   return {
     metadata,
@@ -16,7 +16,7 @@ export const useRealmMetadata = (realmId: number) => {
 }
 
 export const useRealmSvgMetadata = (realmId: number) => {
-  const { cityIndex } = useUnderworldContext()
+  const { cityIndex } = useUnderdarkContext()
   const { metadata } = useRealmMetadata(realmId)
   const { data, error, isLoading } = useSWR(metadata.image, textFetcher)
   // console.log(`DATA:`, data, error, isLoading)

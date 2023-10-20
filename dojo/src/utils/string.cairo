@@ -1,6 +1,6 @@
 // use array::ArrayTrait;
 use debug::PrintTrait;
-use loot_underworld::utils::bitwise::{U256Bitwise};
+use underdark::utils::bitwise::{U256Bitwise};
 
 fn concat(left: felt252, right: felt252) -> felt252 {
     let _left: u256 = left.into();

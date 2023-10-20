@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
-    use loot_underworld::core::protector::{protect};
-    use loot_underworld::utils::bitwise::{U256Bitwise};
-    use loot_underworld::utils::bitmap::{Bitmap};
-    use loot_underworld::types::dir::{Dir};
+    use underdark::core::protector::{protect};
+    use underdark::utils::bitwise::{U256Bitwise};
+    use underdark::utils::bitmap::{Bitmap};
+    use underdark::types::dir::{Dir};
     use debug::PrintTrait;
 
     fn bitsetter(bitmap: u256, x: usize, y: usize) -> u256 {

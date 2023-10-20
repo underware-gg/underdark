@@ -1,5 +1,5 @@
 import { map, clamp } from "./utils"
-import { Compass } from "./underworld"
+import { Compass } from "./underdark"
 
 export interface Point {
   x: number

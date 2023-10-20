@@ -6,13 +6,13 @@ mod tests {
 
     use dojo::world::{IWorldDispatcherTrait, IWorldDispatcher};
 
-    use loot_underworld::models::chamber::{Chamber};
-    use loot_underworld::types::location::{Location, LocationTrait};
-    use loot_underworld::types::dir::{Dir, DirTrait, DIR};
-    use loot_underworld::types::tile_type::{TileType, TILE};
-    use loot_underworld::types::constants::{DOMAINS};
-    use loot_underworld::utils::string::{concat, join};
-    use loot_underworld::tests::utils::utils::{
+    use underdark::models::chamber::{Chamber};
+    use underdark::types::location::{Location, LocationTrait};
+    use underdark::types::dir::{Dir, DirTrait, DIR};
+    use underdark::types::tile_type::{TileType, TILE};
+    use underdark::types::constants::{DOMAINS};
+    use underdark::utils::string::{concat, join};
+    use underdark::tests::utils::utils::{
         setup_world,
         make_from_location,
         execute_mint_realms_chamber,

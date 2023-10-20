@@ -29,7 +29,7 @@ impl Math of MathTrait {
 //-----------------------------------------------
 // Unit Tests
 //
-use loot_underworld::utils::string::{concat, join};
+use underdark::utils::string::{concat, join};
 
 #[test]
 #[available_gas(100_000_000)]

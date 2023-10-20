@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useUnderworldContext } from '../hooks/UnderworldContext'
+import { useUnderdarkContext } from '../hooks/underdarkContext'
 import { useChamberMap } from '../hooks/useChamber'
 import { MapChamber, MapView, compassToMapViewPos } from './MapView'
-import { coordToCompass } from '../utils/underworld'
+import { coordToCompass } from '../utils/underdark'
 
 function MinterMap() {
   const [tileSize, seTtileSize] = useState(5)
-  const { chamberId: currentChamberId } = useUnderworldContext()
+  const { chamberId: currentChamberId } = useUnderdarkContext()
 
   useEffect(() => {
     _addLoader(currentChamberId)

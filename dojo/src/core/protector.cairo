@@ -1,4 +1,4 @@
-use loot_underworld::utils::bitmap::{Bitmap, MASK};
+use underdark::utils::bitmap::{Bitmap, MASK};
 
 // a 3x3 square on the top left corner, bitmap xy: (1, 1)
 const SPOT: u256 = 0xe000e000e0000000000000000000000000000000000000000000000000000000;

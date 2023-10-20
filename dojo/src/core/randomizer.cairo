@@ -1,11 +1,11 @@
 use traits::Into;
 use debug::PrintTrait;
-use loot_underworld::core::seeder::{make_seed};
-use loot_underworld::utils::hash::{hash_u128};
-use loot_underworld::utils::bitwise::{U8Bitwise};
-use loot_underworld::utils::bitmap::{Bitmap};
-use loot_underworld::types::location::{Location, LocationTrait};
-use loot_underworld::types::dir::{Dir, DIR};
+use underdark::core::seeder::{make_seed};
+use underdark::utils::hash::{hash_u128};
+use underdark::utils::bitwise::{U8Bitwise};
+use underdark::utils::bitmap::{Bitmap};
+use underdark::types::location::{Location, LocationTrait};
+use underdark::types::dir::{Dir, DIR};
 
 // tile ranges
 mod RANGE {

@@ -1,6 +1,6 @@
-use loot_underworld::core::seeder::{make_underseed, make_overseed};
-use loot_underworld::utils::bitmap::{Bitmap};
-use loot_underworld::types::dir::{Dir, DirTrait};
+use underdark::core::seeder::{make_underseed, make_overseed};
+use underdark::utils::bitmap::{Bitmap};
+use underdark::types::dir::{Dir, DirTrait};
 
 //-------------------------------
 // Binary Tree maze

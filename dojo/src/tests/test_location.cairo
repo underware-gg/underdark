@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use loot_underworld::types::location::{Location, LocationTrait, CONSTANTS};
-    use loot_underworld::utils::bitwise::{U128Bitwise};
-    use loot_underworld::types::dir::{Dir};
+    use underdark::types::location::{Location, LocationTrait, CONSTANTS};
+    use underdark::utils::bitwise::{U128Bitwise};
+    use underdark::types::dir::{Dir};
     use debug::PrintTrait;
 
     #[test]

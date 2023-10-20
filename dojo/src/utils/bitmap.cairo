@@ -1,5 +1,5 @@
-use loot_underworld::utils::bitwise::{U256Bitwise};
-use loot_underworld::types::dir::{Dir, DirTrait};
+use underdark::utils::bitwise::{U256Bitwise};
+use underdark::types::dir::{Dir, DirTrait};
 
 
 //

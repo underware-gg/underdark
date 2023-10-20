@@ -1,10 +1,10 @@
 use array::ArrayTrait;
 use traits::Into;
 use debug::PrintTrait;
-use loot_underworld::utils::bitwise::{U256Bitwise};
-use loot_underworld::utils::bitmap::{Bitmap};
-use loot_underworld::utils::arrays::{create_array};
-use loot_underworld::core::seeder::{make_seed};
+use underdark::utils::bitwise::{U256Bitwise};
+use underdark::utils::bitmap::{Bitmap};
+use underdark::utils::arrays::{create_array};
+use underdark::core::seeder::{make_seed};
 
 const CELL_VALUE_WALL: u8 = 0x01;
 const CELL_VALUE_PROTECTED: u8 = 0x04;

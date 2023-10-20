@@ -886,11 +886,11 @@
         {
           "type": "impl",
           "name": "MintChamberImpl",
-          "interface_name": "loot_underworld::systems::mint_chamber::IMintChamber"
+          "interface_name": "underdark::systems::mint_chamber::IMintChamber"
         },
         {
           "type": "interface",
-          "name": "loot_underworld::systems::mint_chamber::IMintChamber",
+          "name": "underdark::systems::mint_chamber::IMintChamber",
           "items": [
             {
               "type": "function",
@@ -935,7 +935,7 @@
         },
         {
           "type": "event",
-          "name": "loot_underworld::systems::mint_chamber::mint_chamber::Event",
+          "name": "underdark::systems::mint_chamber::mint_chamber::Event",
           "kind": "enum",
           "variants": []
         }
@@ -1134,7 +1134,7 @@
         },
         {
           "type": "event",
-          "name": "loot_underworld::models::chamber::chamber::Event",
+          "name": "underdark::models::chamber::chamber::Event",
           "kind": "enum",
           "variants": []
         }
@@ -1351,7 +1351,7 @@
         },
         {
           "type": "event",
-          "name": "loot_underworld::models::chamber::map::Event",
+          "name": "underdark::models::chamber::map::Event",
           "kind": "enum",
           "variants": []
         }
@@ -1538,7 +1538,7 @@
         },
         {
           "type": "event",
-          "name": "loot_underworld::models::chamber::state::Event",
+          "name": "underdark::models::chamber::state::Event",
           "kind": "enum",
           "variants": []
         }
@@ -1730,7 +1730,7 @@
         },
         {
           "type": "event",
-          "name": "loot_underworld::models::tile::tile::Event",
+          "name": "underdark::models::tile::tile::Event",
           "kind": "enum",
           "variants": []
         }

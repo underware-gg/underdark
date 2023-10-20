@@ -3,7 +3,7 @@ import { Entity, HasValue, Has, getComponentValue } from '@latticexyz/recs'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react"
 import { useDojoComponents } from '../../DojoContext'
 import { bigintToEntity, bigintToHex } from "../utils/utils"
-import { Dir, TileType, expandTilemap_1p, offsetCoord } from "../utils/underworld"
+import { Dir, TileType, expandTilemap_1p, offsetCoord } from "../utils/underdark"
 
 
 //------------------

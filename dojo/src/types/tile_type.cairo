@@ -8,7 +8,7 @@ enum TileType {
     Exit,       // 2
     LockedExit, // 3
     Gem,        // 4
-    // --- New to Loot Underworld
+    // --- New to Underdark
     // ...
     // --- Endless Crawler Chapter 1
     Empty,      // 254

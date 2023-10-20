@@ -1,8 +1,8 @@
-use loot_underworld::core::carver::{carve};
-use loot_underworld::core::protector::{protect};
-use loot_underworld::core::randomizer::{RANGE};
-use loot_underworld::utils::bitmap::{Bitmap, MASK};
-use loot_underworld::types::dir::{Dir};
+use underdark::core::carver::{carve};
+use underdark::core::protector::{protect};
+use underdark::core::randomizer::{RANGE};
+use underdark::utils::bitmap::{Bitmap, MASK};
+use underdark::types::dir::{Dir};
 // use debug::PrintTrait;
 
 fn connect_doors(protected: u256, entry_dir: Dir, style: u32) -> u256 {

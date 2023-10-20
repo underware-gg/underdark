@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useDojo } from '../../DojoContext';
 import { Entity, Has } from '@latticexyz/recs';
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
-import { Dir } from '../utils/underworld';
+import { Dir } from '../utils/underdark';
 
 interface TestMapProps {
   entity: Entity,

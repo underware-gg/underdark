@@ -1,6 +1,6 @@
 [package]
 cairo-version = "2.2.0"
-name = "loot_underworld"
+name = "underdark"
 version = "0.1.0"
 
 [cairo]

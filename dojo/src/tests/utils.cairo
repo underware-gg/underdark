@@ -7,13 +7,13 @@ mod utils {
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo::test_utils::{spawn_test_world, deploy_contract};
 
-    use loot_underworld::systems::mint_chamber::{mint_chamber, IMintChamberDispatcher, IMintChamberDispatcherTrait};
-    use loot_underworld::models::chamber::{Chamber, chamber, Map, map, State, state};
-    use loot_underworld::models::tile::{Tile, tile};
-    use loot_underworld::types::location::{Location, LocationTrait};
-    use loot_underworld::types::dir::{Dir, DirTrait};
-    use loot_underworld::types::doors::{Doors};
-    use loot_underworld::types::constants::{DOMAINS};
+    use underdark::systems::mint_chamber::{mint_chamber, IMintChamberDispatcher, IMintChamberDispatcherTrait};
+    use underdark::models::chamber::{Chamber, chamber, Map, map, State, state};
+    use underdark::models::tile::{Tile, tile};
+    use underdark::types::location::{Location, LocationTrait};
+    use underdark::types::dir::{Dir, DirTrait};
+    use underdark::types::doors::{Doors};
+    use underdark::types::constants::{DOMAINS};
 
     fn setup_world() -> (IWorldDispatcher, IMintChamberDispatcher) {
         let mut models = array![chamber::TEST_CLASS_HASH, map::TEST_CLASS_HASH, tile::TEST_CLASS_HASH, state::TEST_CLASS_HASH];

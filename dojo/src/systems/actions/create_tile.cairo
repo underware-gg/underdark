@@ -1,7 +1,7 @@
 use traits::Into;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use loot_underworld::models::tile::{Tile};
-use loot_underworld::types::tile_type::{TileType};
+use underdark::models::tile::{Tile};
+use underdark::types::tile_type::{TileType};
 
 // TODO:  make this internal!
 #[inline(always)]

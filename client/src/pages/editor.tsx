@@ -1,7 +1,7 @@
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import EditorPage from '../underworld/components/EditorPage';
+import EditorPage from '../underdark/components/EditorPage';
 
 async function init() {
   const rootElement = document.getElementById('root');

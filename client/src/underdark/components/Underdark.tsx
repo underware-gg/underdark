@@ -1,11 +1,11 @@
 import { useSyncWorld } from '../hooks/useGraphQLQueries'
-import { UnderworldProvider } from '../hooks/UnderworldContext'
+import { UnderdarkProvider } from '../hooks/underdarkContext'
 import RealmImage from './RealmImage'
 import RealmData from './RealmData'
 import MinterMap from './MinterMap'
 import MinterData from './MinterData'
 
-function Underworld() {
+function Underdark() {
   const { loading } = useSyncWorld()
 
   if (loading) {
@@ -13,7 +13,7 @@ function Underworld() {
   }
 
   return (
-    <UnderworldProvider>
+    <UnderdarkProvider>
       <div className="card RealmPanel">
         <RealmImage />
         <RealmData />
@@ -22,8 +22,8 @@ function Underworld() {
         <MinterMap />
         <MinterData />
       </div>
-    </UnderworldProvider>
+    </UnderdarkProvider>
   )
 }
 
-export default Underworld
+export default Underdark

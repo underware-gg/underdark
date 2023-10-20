@@ -1,12 +1,12 @@
 use traits::Into;
 use debug::PrintTrait;
-use loot_underworld::core::carver::{carve};
-use loot_underworld::core::collapsor::{collapse};
-use loot_underworld::core::connector::{connect_doors};
-use loot_underworld::core::protector::{protect};
-use loot_underworld::core::binary_tree::{binary_tree_classic, binary_tree_pro, binary_tree_fuzz};
-use loot_underworld::core::seeder::{make_underseed, make_overseed};
-use loot_underworld::types::dir::{Dir};
+use underdark::core::carver::{carve};
+use underdark::core::collapsor::{collapse};
+use underdark::core::connector::{connect_doors};
+use underdark::core::protector::{protect};
+use underdark::core::binary_tree::{binary_tree_classic, binary_tree_pro, binary_tree_fuzz};
+use underdark::core::seeder::{make_underseed, make_overseed};
+use underdark::types::dir::{Dir};
 
 fn generate(
     seed: u256,

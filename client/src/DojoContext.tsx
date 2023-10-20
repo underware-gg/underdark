@@ -81,7 +81,7 @@ export const useDojo = () => {
 
 
 //
-// Loot Underworld
+// Underdark
 //
 
 export const useDojoAccount = () => {

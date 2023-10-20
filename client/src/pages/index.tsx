@@ -13,31 +13,22 @@ function IndexPage() {
     animationSpeed: 20,
     font: deltaCorpsPriest1,
   }
-  const Text1Ref = useAsciiText({
+  const TextRef = useAsciiText({
     ...textStyle,
-    text: [" ", "LooT"],
-  });
-  const Text2Ref = useAsciiText({
-    ...textStyle,
-    text: [" ", "Underworld"],
+    text: [" ", "Underdark"],
   });
 
   return (
     <div className="card">
       {/* @ts-ignore */}
-      <pre ref={Text1Ref}></pre>
-      {/* @ts-ignore */}
-      <pre ref={Text2Ref}></pre>
+      <pre ref={TextRef}></pre>
       
       <div className='Spacer20' />
-      <h2><button onClick={() => { location.href = '/underworld/' }}>ENTER</button></h2>
+      <h2><button onClick={() => { location.href = '/underdark/' }}>ENTER THE DARKNESS</button></h2>
 
-      <div className='Spacer20' />
-      <h2><button onClick={() => { location.href = '/editor/' }}>BITMAP EDITOR</button></h2>
-
-      <br/>
-      <div className='Spacer20' />
-      <a href='/test/'>test page</a>
+      {/* <div className='Spacer20' /> */}
+      {/* <h2><button onClick={() => { location.href = '/editor/' }}>BITMAP EDITOR</button></h2> */}
+      
     </div>
   );
 }

@@ -1,6 +1,6 @@
 use starknet::{ContractAddress, ClassHash};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use loot_underworld::types::dir::{Dir, DIR, DirTrait};
+use underdark::types::dir::{Dir, DIR, DirTrait};
 
 // define the interface
 #[starknet::interface]
@@ -20,10 +20,10 @@ mod mint_chamber {
     use traits::{Into, TryInto};
     use core::option::OptionTrait;
 
-    use loot_underworld::systems::actions::generate_chamber::{generate_chamber};
-    use loot_underworld::types::constants::{DOMAINS};
-    use loot_underworld::types::location::{Location, LocationTrait};
-    use loot_underworld::types::dir::{Dir, DIR, DirTrait};
+    use underdark::systems::actions::generate_chamber::{generate_chamber};
+    use underdark::types::constants::{DOMAINS};
+    use underdark::types::location::{Location, LocationTrait};
+    use underdark::types::dir::{Dir, DIR, DirTrait};
 
     // impl: implement functions specified in trait
     #[external(v0)]

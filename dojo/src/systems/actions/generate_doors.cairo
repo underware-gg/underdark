@@ -1,14 +1,14 @@
 use traits::Into;
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use loot_underworld::core::randomizer::{randomize_door_tile};
-use loot_underworld::systems::actions::create_tile::{create_tile};
-use loot_underworld::models::chamber::{Map};
-use loot_underworld::types::tile_type::{TileType};
-use loot_underworld::types::location::{Location, LocationTrait};
-use loot_underworld::types::dir::{Dir, DirTrait, DIR};
-use loot_underworld::types::doors::{Doors};
-use loot_underworld::utils::bitwise::{U8Bitwise};
-use loot_underworld::utils::bitmap::{Bitmap};
+use underdark::core::randomizer::{randomize_door_tile};
+use underdark::systems::actions::create_tile::{create_tile};
+use underdark::models::chamber::{Map};
+use underdark::types::tile_type::{TileType};
+use underdark::types::location::{Location, LocationTrait};
+use underdark::types::dir::{Dir, DirTrait, DIR};
+use underdark::types::doors::{Doors};
+use underdark::utils::bitwise::{U8Bitwise};
+use underdark::utils::bitmap::{Bitmap};
 
 fn generate_doors(world: IWorldDispatcher,
     location: Location,

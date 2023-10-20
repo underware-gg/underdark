@@ -1,6 +1,6 @@
 use traits::Into;
 use debug::PrintTrait;
-use loot_underworld::utils::hash::{hash_u128, hash_u128_to_u256};
+use underdark::utils::hash::{hash_u128, hash_u128_to_u256};
 
 // https://github.com/starkware-libs/cairo/blob/main/corelib/src/starknet/info.cairo
 use starknet::get_block_info;
@@ -36,7 +36,7 @@ fn make_overseed(seed: u256) -> u256 {
 //------------------------------------
 // Unit test_make_seed
 //
-use loot_underworld::utils::bitwise::{U256Bitwise};
+use underdark::utils::bitwise::{U256Bitwise};
 
 #[test]
 #[available_gas(100_000)]

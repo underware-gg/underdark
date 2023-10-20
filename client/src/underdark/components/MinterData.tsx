@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDojoSystemCalls, useDojoAccount } from '../../DojoContext'
 import { useChamber, useChamberState, useChamberMap, useChamberOffset, useRealmChamberIds } from '../hooks/useChamber'
-import { useUnderworldContext } from '../hooks/UnderworldContext'
+import { useUnderdarkContext } from '../hooks/underdarkContext'
 import { bigintToHex } from '../utils/utils'
-import { Dir, DirNames, coordToCompass, coordToSlug, offsetCompass } from '../utils/underworld'
+import { Dir, DirNames, coordToCompass, coordToSlug, offsetCompass } from '../utils/underdark'
 
 interface Generator {
   name: string
@@ -78,7 +78,7 @@ function DirectionButton({
   doorTile,
   generator,
 }: DirectionButtonProps) {
-  const { realmId, dispatch, UnderworldActions } = useUnderworldContext()
+  const { realmId, dispatch, UnderdarkActions } = useUnderdarkContext()
   const { mint_realms_chamber } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
@@ -90,7 +90,7 @@ function DirectionButton({
   }
   const _open = () => {
     dispatch({
-      type: UnderworldActions.SET_CHAMBER,
+      type: UnderdarkActions.SET_CHAMBER,
       payload: locationId,
     })
   }
@@ -110,7 +110,7 @@ function MinterData() {
   const [generatorIndex, setGeneratorIndex] = useState(5)
 
   // Current Realm / Chamber
-  const { realmId, city, chamberId, dispatch, UnderworldActions } = useUnderworldContext()
+  const { realmId, city, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
   const { seed, yonder } = useChamber(chamberId)
   const { doors } = useChamberMap(chamberId)
   const state = useChamberState(chamberId)
@@ -127,7 +127,7 @@ function MinterData() {
 
   const _selectChamber = (coord: bigint) => {
     dispatch({
-      type: UnderworldActions.SET_CHAMBER,
+      type: UnderdarkActions.SET_CHAMBER,
       payload: coord,
     })
   }

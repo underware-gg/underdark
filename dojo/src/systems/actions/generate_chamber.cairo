@@ -4,14 +4,14 @@ use traits::{Into, TryInto};
 use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use loot_underworld::systems::actions::generate_doors::{generate_doors};
-use loot_underworld::models::chamber::{Chamber, Map, State};
-use loot_underworld::core::randomizer::{randomize_door_permissions};
-use loot_underworld::types::location::{Location, LocationTrait};
-use loot_underworld::types::dir::{Dir, DirTrait};
-use loot_underworld::types::doors::{Doors};
-use loot_underworld::core::seeder::{make_seed};
-use loot_underworld::core::generator::{generate};
+use underdark::systems::actions::generate_doors::{generate_doors};
+use underdark::models::chamber::{Chamber, Map, State};
+use underdark::core::randomizer::{randomize_door_permissions};
+use underdark::types::location::{Location, LocationTrait};
+use underdark::types::dir::{Dir, DirTrait};
+use underdark::types::doors::{Doors};
+use underdark::core::seeder::{make_seed};
+use underdark::core::generator::{generate};
 
 
 #[inline(always)]

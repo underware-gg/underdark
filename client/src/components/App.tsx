@@ -1,7 +1,7 @@
 import Burner from './Burner';
 // import Example from './Example';
-import TestMinter from '../underworld/components/TestMinter';
-import { useSyncWorld } from '../underworld/hooks/useGraphQLQueries';
+import TestMinter from '../underdark/components/TestMinter';
+import { useSyncWorld } from '../underdark/hooks/useGraphQLQueries';
 
 function App() {
   const { loading } = useSyncWorld();

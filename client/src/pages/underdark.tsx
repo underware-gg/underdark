@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { DojoProvider } from '../DojoContext.tsx';
 import { setup } from '../dojo/setup.ts';
-import Underworld from '../underworld/components/Underworld.tsx';
+import Underdark from '../underdark/components/Underdark.tsx';
 
 async function init() {
   const rootElement = document.getElementById('root');
@@ -13,7 +13,7 @@ async function init() {
   root.render(
     <React.StrictMode>
       <DojoProvider value={setupResult}>
-        <Underworld />
+        <Underdark />
       </DojoProvider>
     </React.StrictMode>
   );
