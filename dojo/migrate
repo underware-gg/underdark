@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+sozo --offline build
+sozo migrate
+
+scripts/default_auth.sh
+
+cp target/dev/manifest.json ../client/src/
+
+cd ../client
+yarn run codegen
+yarn run create-components
+
+echo "--- DONE!"
