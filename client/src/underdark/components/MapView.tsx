@@ -1,7 +1,11 @@
 import { useMemo } from 'react'
 import { Compass, TileType } from '../utils/underdark'
 import { MapColors } from '../utils/colors'
-import { Point } from '../utils/realms'
+
+export interface Point {
+  x: number
+  y: number
+}
 
 export const compassToMapViewPos = (compass: Compass | null): Point => {
   const north = (compass?.north ?? 0)

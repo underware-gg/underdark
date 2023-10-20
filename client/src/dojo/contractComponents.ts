@@ -9,14 +9,15 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
+          game_id: RecsType.Number,
+          level_number: RecsType.Number,
           seed: RecsType.BigInt,
-          level_number: RecsType.BigInt,
           yonder: RecsType.Number,
         },
         {
           metadata: {
             name: name,
-            types: ["u256","u128","u16"],
+            types: ["u32","u32","u256","u16"],
           },
         }
       );

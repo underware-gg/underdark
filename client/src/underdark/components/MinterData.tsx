@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDojoSystemCalls, useDojoAccount } from '../../DojoContext'
-import { useChamber, useChamberState, useChamberMap, useChamberOffset } from '../hooks/useChamber'
+import { useChamber, useChamberState, useChamberMap, useChamberOffset, useGameChamberIds } from '../hooks/useChamber'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { bigintToHex } from '../utils/utils'
-import { Dir, DirNames, coordToCompass, coordToSlug, offsetCompass } from '../utils/underdark'
-import { makeEntryChamberId } from '../utils/underdark'
+import { Dir, DirNames, coordToCompass, coordToSlug, makeEntryChamberId, offsetCompass } from '../utils/underdark'
 
 interface Generator {
   name: string
@@ -79,7 +78,7 @@ function DirectionButton({
   doorTile,
   generator,
 }: DirectionButtonProps) {
-  const { dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { gameId, dispatch, UnderdarkActions } = useUnderdarkContext()
   const { start_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
@@ -87,7 +86,7 @@ function DirectionButton({
   const exists = useMemo(() => (seed > 0n), [seed, locationId])
 
   const _mint = () => {
-    start_level(account, 1, chamberId, dir, generator.name, generator.value)
+    start_level(account, gameId, 1, chamberId, dir, generator.name, generator.value)
   }
   const _open = () => {
     dispatch({
@@ -111,17 +110,39 @@ function MinterData() {
   const [generatorIndex, setGeneratorIndex] = useState(5)
 
   // Current Realm / Chamber
-  const { chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
   const { seed, yonder } = useChamber(chamberId)
   const { doors } = useChamberMap(chamberId)
   const state = useChamberState(chamberId)
 
   const chamberExists = useMemo(() => (seed > 0), [seed])
-  const canMintFirst = useMemo(() => (!chamberExists), [chamberExists])
+  const canMintFirst = useMemo(() => (gameId > 0 && !chamberExists), [gameId, chamberExists])
+
+  const { chamberIds } = useGameChamberIds(gameId)
+  useEffect(() => {
+    _selectChamber(chamberIds.length > 0 ? chamberIds[chamberIds.length - 1] : 0n)
+  }, [chamberIds])
+
+  const _setSelectedGame = (newGameId: number) => {
+    if (newGameId > 0) {
+      dispatch({
+        type: UnderdarkActions.SET_GAME,
+        payload: newGameId,
+      })
+    }
+  }
+
+  const _selectChamber = (coord: bigint) => {
+    dispatch({
+      type: UnderdarkActions.SET_CHAMBER,
+      payload: coord,
+    })
+  }
 
   const _mintFirst = () => {
-    if (canMintFirst) {
-      start_level(account, 1, makeEntryChamberId(), Dir.Under, 'entry', 0)
+    if (canMintFirst && gameId) {
+      const coord = makeEntryChamberId()
+      start_level(account, gameId, 1, coord, Dir.Under, 'entry', 0)
     }
   }
 
@@ -136,14 +157,34 @@ function MinterData() {
 
   return (
     <div className='MinterData AlignTop'>
+      <p>
+        Game #{gameId.toString()}
+        {' '}
+        <span className='Anchor' onClick={() => _setSelectedGame(gameId - 1)}>⏪️</span>
+        <span className='Anchor' onClick={() => _setSelectedGame(gameId + 1)}>⏩️</span>
+        {' '}
+        <span className='Anchor' onClick={() => _setSelectedGame(Math.floor(Math.random() * 10000) + 1)}>🔄</span>
+        <br />
+        {bigintToHex(chamberId)}
+      </p>
+
       {!chamberExists && <>
         <div>
-          <button disabled={!canMintFirst} onClick={() => _mintFirst()}>Start</button>
+          <button disabled={!canMintFirst} onClick={() => _mintFirst()}>Create Underground</button>
         </div>
         <br />
       </>}
 
       {chamberExists && <>
+        <div>
+          <select value={chamberId?.toString()} onChange={e => _selectChamber(BigInt(e.target.value))}>
+            {chamberIds.map((locationId) => {
+              const _id = locationId.toString()
+              return <option value={_id} key={_id}>{coordToSlug(locationId)}</option>
+            })}
+          </select>
+        </div>
+
         <p>
           <b>{coordToSlug(chamberId, yonder)}</b>
           <br />

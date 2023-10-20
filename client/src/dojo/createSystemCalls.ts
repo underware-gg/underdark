@@ -15,9 +15,9 @@ export function createSystemCalls(
   // { Chamber, Map }: ClientComponents,
 ) {
 
-  const start_level = async (signer: Account, levelNumber: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number) => {
+  const start_level = async (signer: Account, gameId: number, levelNumber: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number) => {
     try {
-      const args = [levelNumber.toString(), from_coord.toString(), from_dir.toString(), strToFelt252(generator_name), generator_value.toString()]
+      const args = [gameId, levelNumber, from_coord, from_dir, strToFelt252(generator_name), generator_value]
       console.log(args)
       const tx = await execute(signer, 'actions', 'start_level', args)
       console.log(`start_level tx:`, tx)

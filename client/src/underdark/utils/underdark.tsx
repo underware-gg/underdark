@@ -35,6 +35,7 @@ export enum TileType {
 }
 
 export interface Compass {
+  gameId?: number,
   over?: number
   under?: number
   north?: number
@@ -78,6 +79,10 @@ export type SlugSeparator = typeof slugSeparators[number]
 export const compassToSlug = (compass: Compass | null, yonder: number = 0, separator: SlugSeparator = defaultSlugSeparator): string => {
   if (!compass || !validateCompass(compass)) return ''
   let result = ''
+  if (compass.gameId) {
+    result += `#${compass.gameId}`
+    if (separator) result += separator
+  }
   if (compass.over || compass.under) {
     if (compass.over && compass.over > 0) result += `O${compass.over}`
     if (compass.under && compass.under > 0) result += `U${compass.under}`
@@ -98,6 +103,7 @@ export const compassToSlug = (compass: Compass | null, yonder: number = 0, separ
 export const compassToCoord = (compass: Compass | null): bigint => {
   let result = 0n
   if (compass && validateCompass(compass)) {
+    if (compass.gameId && compass.gameId > 0) result += BigInt(compass.gameId) << 96n
     if (compass.over && compass.over > 0) result += BigInt(compass.over) << 80n
     if (compass.under && compass.under > 0) result += BigInt(compass.under) << 64n
     if (compass.north && compass.north > 0) result += BigInt(compass.north) << 48n
@@ -110,6 +116,7 @@ export const compassToCoord = (compass: Compass | null): bigint => {
 
 export const coordToCompass = (coord: bigint): Compass | null => {
   let result: Compass = {
+    gameId: Number((coord >> 96n) & BigInt(0xffffffff)),
     over: Number((coord >> 80n) & BigInt(0xffff)),
     under: Number((coord >> 64n) & BigInt(0xffff)),
     north: Number((coord >> 48n) & BigInt(0xffff)),

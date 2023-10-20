@@ -6,7 +6,8 @@ use underdark::types::dir::{Dir, DIR, DirTrait};
 #[starknet::interface]
 trait IActions<TContractState> {
     fn start_level(self: @TContractState,
-        level_number: u128,
+        game_id: u32,
+        level_number: u32,
         from_coord: u128,
         from_dir_u128: u128, 
         generator_name: felt252,
@@ -28,7 +29,8 @@ mod actions {
     #[external(v0)]
     impl ActionsImpl of IActions<ContractState> {
         fn start_level(self: @ContractState,
-            level_number: u128,
+            game_id: u32,
+            level_number: u32,
             from_coord: u128,
             from_dir_u128: u128, 
             generator_name: felt252,
@@ -44,9 +46,9 @@ mod actions {
             let from_dir: Dir = maybe_from_dir.unwrap();
             assert(from_dir != Dir::Over, 'Invalid from direction (Over)');
             
-            let from_location: Location = LocationTrait::from_coord(from_coord);
+            let from_location: Location = LocationTrait::from_coord(game_id, from_coord);
 
-            generate_chamber(world, level_number, from_location, from_dir, generator_name, generator_value_u128.try_into().unwrap());
+            generate_chamber(world, game_id, level_number, from_location, from_dir, generator_name, generator_value_u128.try_into().unwrap());
 
             return ();
         }

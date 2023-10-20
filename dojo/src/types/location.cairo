@@ -6,6 +6,7 @@ use underdark::types::dir::{Dir};
 
 #[derive(Copy, Drop, Serde, PartialEq)]
 struct Location {
+    game_id: u32,
     over: u16,
     under: u16,
     north: u16,
@@ -16,6 +17,7 @@ struct Location {
 
 mod CONSTANTS {
     mod OFFSET {
+        const GAME_ID: usize    = 96;
         const OVER: usize       = 80;
         const UNDER: usize      = 64;
         const NORTH: usize      = 48;
@@ -24,6 +26,7 @@ mod CONSTANTS {
         const SOUTH: usize      = 0;
     }
     mod MASK {
+        const GAME_ID: u128     = 0xffffffff000000000000000000000000;
         const OVER: u128        = 0xffff00000000000000000000;
         const UNDER: u128       = 0xffff0000000000000000;
         const NORTH: u128       = 0xffff000000000000;
@@ -39,20 +42,22 @@ trait LocationTrait {
     fn offset(self: Location, dir: Dir) -> Location;
     fn to_id(self: Location) -> u128;
     fn from_id(location_id: u128) -> Location;
-    fn from_coord(coord: u128) -> Location;
+    fn from_coord(game_id: u32, coord: u128) -> Location;
 }
 
 impl LocationTraitImpl of LocationTrait {
     fn validate(self: Location) -> bool {
         (
-            !((self.over == 0 && self.under == 0) || (self.over > 0 && self.under > 0))
+            self.game_id > 0
+            && !((self.over == 0 && self.under == 0) || (self.over > 0 && self.under > 0))
             && !((self.north == 0 && self.south == 0) || (self.north > 0 && self.south > 0))
             && !((self.east == 0 && self.west == 0) || (self.east > 0 && self.west > 0))
         )
     }
     fn validate_entry(self: Location) -> bool {
         (
-            (self.over == 0 && self.under == 0)
+            self.game_id > 0
+            && (self.over == 0 && self.under == 0)
             && !((self.north == 0 && self.south == 0) || (self.north > 0 && self.south > 0))
             && !((self.east == 0 && self.west == 0) || (self.east > 0 && self.west > 0))
         )
@@ -112,6 +117,7 @@ impl LocationTraitImpl of LocationTrait {
         result
     }
     fn to_id(self: Location) -> u128 {
+        U128Bitwise::shl(self.game_id.into(), CONSTANTS::OFFSET::GAME_ID) |
         U128Bitwise::shl(self.over.into(), CONSTANTS::OFFSET::OVER) |
         U128Bitwise::shl(self.under.into(), CONSTANTS::OFFSET::UNDER) |
         U128Bitwise::shl(self.north.into(), CONSTANTS::OFFSET::NORTH) |
@@ -121,6 +127,7 @@ impl LocationTraitImpl of LocationTrait {
     }
     fn from_id(location_id: u128) -> Location {
         Location {
+            game_id: U128Bitwise::shr(location_id & CONSTANTS::MASK::GAME_ID, CONSTANTS::OFFSET::GAME_ID).try_into().unwrap(),
             over: U128Bitwise::shr(location_id & CONSTANTS::MASK::OVER, CONSTANTS::OFFSET::OVER).try_into().unwrap(),
             under: U128Bitwise::shr(location_id & CONSTANTS::MASK::UNDER, CONSTANTS::OFFSET::UNDER).try_into().unwrap(),
             north: U128Bitwise::shr(location_id & CONSTANTS::MASK::NORTH, CONSTANTS::OFFSET::NORTH).try_into().unwrap(),
@@ -129,8 +136,11 @@ impl LocationTraitImpl of LocationTrait {
             south: U128Bitwise::shr(location_id & CONSTANTS::MASK::SOUTH, CONSTANTS::OFFSET::SOUTH).try_into().unwrap(),
         }
     }
-    fn from_coord(coord: u128) -> Location {
-        LocationTrait::from_id(coord)
+    fn from_coord(game_id: u32, coord: u128) -> Location {
+        let mut result = LocationTrait::from_id(coord);
+        result.game_id = game_id;
+        result
+
     }
 }
 

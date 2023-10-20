@@ -858,7 +858,7 @@
     {
       "name": "actions",
       "address": "0x1ecc984f2f872bdadd43ab1762c87de3d445b8eb134e6b475f37f23e8a551a3",
-      "class_hash": "0x723ad3559609085f6b34775e0243bfa26f9d5acafc09bc9d7e2b01146d57965",
+      "class_hash": "0x731297bdf52d3832d27ac5be8d3e33d6b5bf832141b2786ac066cc83b1c76b6",
       "abi": [
         {
           "type": "impl",
@@ -897,8 +897,12 @@
               "name": "start_level",
               "inputs": [
                 {
+                  "name": "game_id",
+                  "type": "core::integer::u32"
+                },
+                {
                   "name": "level_number",
-                  "type": "core::integer::u128"
+                  "type": "core::integer::u32"
                 },
                 {
                   "name": "from_coord",
@@ -952,13 +956,18 @@
           "key": true
         },
         {
-          "name": "seed",
-          "type": "u256",
+          "name": "game_id",
+          "type": "u32",
           "key": false
         },
         {
           "name": "level_number",
-          "type": "u128",
+          "type": "u32",
+          "key": false
+        },
+        {
+          "name": "seed",
+          "type": "u256",
           "key": false
         },
         {
@@ -967,7 +976,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x2b67aaa0d333a0a5b7db2beb95e1ee5859a93f0bf63129cda3506de65a4f7e6",
+      "class_hash": "0x643819e4d9d18621e5459560744d6769e8be264f60e4ec22412b689b4fd255b",
       "abi": [
         {
           "type": "function",

@@ -16,7 +16,8 @@ use underdark::core::generator::{generate};
 
 #[inline(always)]
 fn generate_chamber(world: IWorldDispatcher,
-    level_number: u128,
+    game_id: u32,
+    level_number: u32,
     from_location: Location,
     from_dir: Dir,
     mut generator_name: felt252,
@@ -57,7 +58,7 @@ fn generate_chamber(world: IWorldDispatcher,
     // Chamber
     //
     // create seed, the initial bitmap state that is used to sculpt it
-    let seed: u256 = make_seed(level_number.into(), location_id);
+    let seed: u256 = make_seed(game_id.into(), location_id);
     // clone seed for value randomization
     let mut rnd: u256 = seed;
 
@@ -86,6 +87,7 @@ fn generate_chamber(world: IWorldDispatcher,
         Chamber {
             location_id,
             seed,
+            game_id,
             level_number,
             yonder,
         },

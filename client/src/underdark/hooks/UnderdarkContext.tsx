@@ -9,12 +9,14 @@ import React, { ReactNode, createContext, useReducer, useContext, useEffect } fr
 // Constants
 //
 export const initialState = {
+  gameId: 1,
   chamberId: 0n,
   // constants
   logo: '/pubic/logo.png',
 }
 
 const UnderdarkActions = {
+  SET_GAME: 'SET_GAME',
   SET_CHAMBER: 'SET_CHAMBER',
 }
 
@@ -22,12 +24,14 @@ const UnderdarkActions = {
 // Types
 //
 type UnderdarkStateType = {
+  gameId: number,
   chamberId: bigint,
   // constants
   logo: string,
 }
 
 type ActionType =
+  | { type: 'SET_GAME', payload: number }
   | { type: 'SET_CHAMBER', payload: bigint }
 
 
@@ -55,8 +59,13 @@ const UnderdarkProvider = ({
   const [state, dispatch] = useReducer((state: UnderdarkStateType, action: ActionType) => {
     let newState = { ...state }
     switch (action.type) {
+      case UnderdarkActions.SET_GAME: {
+        newState.gameId = action.payload as number
+        newState.chamberId = 0n
+        break
+      }
       case UnderdarkActions.SET_CHAMBER: {
-        newState.chamberId = action.payload
+        newState.chamberId = action.payload as bigint
         break
       }
       default:

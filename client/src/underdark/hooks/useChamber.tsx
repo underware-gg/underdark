@@ -19,6 +19,15 @@ export const useAllChamberIds = () => {
   }
 }
 
+export const useGameChamberIds = (gameId: number) => {
+  const { Chamber } = useDojoComponents()
+  const entityIds = useEntityQuery([HasValue(Chamber, { game_id: gameId })])
+  const chamberIds: bigint[] = useMemo(() => (entityIds ?? []).map((entityId) => BigInt(entityId)), [entityIds])
+  return {
+    chamberIds,
+  }
+}
+
 
 //------------------
 // Single Chamber
