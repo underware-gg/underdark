@@ -14,7 +14,11 @@ Underdark for the Dojo Game Jam #2
 
 ## Resources
 
-* Starter from open-source [Loot Underworld](https://github.com/funDAOmental/lootunderworld) current rev ([f3b317f](https://github.com/funDAOmental/lootunderworld/tree/f3b317ff03a7b62620f055e5238b9d300f7be189))
+* Starter from open-source [Loot Underworld](https://github.com/funDAOmental/lootunderworld) current rev ([f3b317f](https://github.com/funDAOmental/lootunderworld/tree/f3b317ff03a7b62620f055e5238b9d300f7be189)) CC0
+* threejs depth texture [example](https://threejs.org/examples/#webgl_depth_texture) by [@mattdesl](https://twitter.com/mattdesl) CC0
+* Color reduction and dither [shader](https://godotshaders.com/shader/color-reduction-and-dither/) by **whiteshampoo**
+
+
 
 
 ## Environment Setup [🔗](https://book.dojoengine.org/getting-started/setup.html)

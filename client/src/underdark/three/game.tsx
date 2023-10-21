@@ -23,6 +23,9 @@ const SIZE = 1;
 const CAM_FOV = 70;
 const CAM_FAR = 10;
 const GAMMA = 1;
+const COLOR_COUNT = 8;
+const DITHER = 0.5;
+const DITHER_SIZE = 4;
 
 let _width: number;
 let _height: number;
@@ -43,7 +46,10 @@ let _tile_material: THREE.Material;
 const params = {
   fov: CAM_FOV,
   far: CAM_FAR,
-  gamma: 0,
+  gamma: GAMMA,
+  colorCount: COLOR_COUNT,
+  dither: DITHER,
+  ditherSize: DITHER_SIZE,
 };
 
 
@@ -98,6 +104,9 @@ export function init(canvas, width, height) {
   gui.add(params, 'fov', 45, 90, 1).onChange(guiUpdatedCamera);
   gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdatedCamera);
   gui.add(params, 'gamma', 0, 1, 0.01).onChange(guiUpdatedShader);
+  gui.add(params, 'colorCount', 1, 16, 1).onChange(guiUpdatedShader);
+  gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdatedShader);
+  gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdatedShader);
   gui.open();
 
   _stats = new Stats();
@@ -114,6 +123,9 @@ function guiUpdatedCamera() {
 
 function guiUpdatedShader() {
   _postMaterial.uniforms.uGamma.value = params.gamma;
+  _postMaterial.uniforms.uColorCount.value = params.colorCount;
+  _postMaterial.uniforms.uDither.value = params.dither;
+  _postMaterial.uniforms.uDitherSize.value = params.ditherSize;
 }
 
 // Create a render target with depth texture
@@ -142,6 +154,9 @@ function setupPost() {
       uCameraNear: { value: _camera.near },
       uCameraFar: { value: _camera.far },
       uGamma: { value: GAMMA },
+      uColorCount: { value: COLOR_COUNT },
+      uDither: { value: DITHER },
+      uDitherSize: { value: DITHER_SIZE },
       tDiffuse: { value: null },
       tDepth: { value: null }
     }

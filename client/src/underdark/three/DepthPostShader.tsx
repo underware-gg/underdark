@@ -20,12 +20,10 @@ const DepthPostShader = {
 
   vertexShader: /* glsl */`
 			varying vec2 vUv;
-
 			void main() {
 				vUv = uv;
 				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 			}
-
 		`,
 
   fragmentShader: /* glsl */`
@@ -38,22 +36,44 @@ const DepthPostShader = {
 			uniform float uCameraNear;
 			uniform float uCameraFar;
       uniform float uGamma;
+      uniform float uColorCount;
+      uniform float uDither;
+      uniform float uDitherSize;
 
-      #define applyGamma(a,g)		( (a) > 0.0 ? pow( (a), (1.0/(g)) ) : (a) )
+      #define apply_gamma(a,g)		( (a) > 0.0 ? pow( (a), (1.0/(g)) ) : (a) )
+
+      vec3 apply_dither(vec3 color) {
+        vec2 pixelSize = 1.0 / vec2(textureSize(tDiffuse, 0));
+        float a = floor(mod(vUv.x / pixelSize.x, uDitherSize));
+        float b = floor(mod(vUv.y / pixelSize.y, uDitherSize));
+        float c = mod(a + b, uDitherSize);
+        vec3 result = vec3(
+          (round(color.r * uColorCount + uDither) / uColorCount) * c,
+          (round(color.g * uColorCount + uDither) / uColorCount) * c,
+          (round(color.b * uColorCount + uDither) / uColorCount) * c
+        );
+        c = 1.0 - c;
+        result.r += (round(color.r * uColorCount - uDither) / uColorCount) * c;
+        result.g += (round(color.g * uColorCount - uDither) / uColorCount) * c;
+        result.b += (round(color.b * uColorCount - uDither) / uColorCount) * c;
+        return result;
+      }
 
 			float readDepth( sampler2D depthSampler, vec2 coord ) {
 				float fragCoordZ = texture2D( depthSampler, coord ).x;
 				float viewZ = perspectiveDepthToViewZ( fragCoordZ, uCameraNear, uCameraFar );
-				float depth = viewZToOrthographicDepth( viewZ, uCameraNear, uCameraFar );
-        depth = applyGamma(depth, uGamma);
-        return depth;
+				return viewZToOrthographicDepth( viewZ, uCameraNear, uCameraFar );
 			}
 
 			void main() {
 				//vec3 diffuse = texture2D( tDiffuse, vUv ).rgb;
 				float depth = readDepth( tDepth, vUv );
+        depth = apply_gamma(depth, uGamma);
 
-				gl_FragColor.rgb = 1.0 - vec3( depth );
+        vec3 color = 1.0 - vec3( depth );
+        color = apply_dither(color);
+
+				gl_FragColor.rgb = color;
 				gl_FragColor.a = 1.0;
 			}
 
