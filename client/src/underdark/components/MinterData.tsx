@@ -107,7 +107,7 @@ function MinterData() {
   const { start_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
-  const [generatorIndex, setGeneratorIndex] = useState(5)
+  const [generatorIndex, setGeneratorIndex] = useState(9)
 
   // Current Realm / Chamber
   const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -192,15 +192,13 @@ function MinterData() {
           <br />
           {chamberId.toString()}
         </p>
-        <p>
-          Yonder: <b>{yonder}</b>
-        </p>
-        <p>
-          Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]
-        </p>
-        <p>
-          State: [{state.light},{state.threat},{state.wealth}]
-        </p>
+        
+        <p>Yonder: <b>{yonder}</b></p>
+
+        {/* <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p> */}
+        
+        {/* <p>State: [{state.light},{state.threat},{state.wealth}]</p> */}
+
         <div className='Padded'>
           <DirectionButton chamberId={chamberId} dir={Dir.North} doorTile={doors?.north ?? 0} generator={_generators[generatorIndex]} />
           <div>
