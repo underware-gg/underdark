@@ -1,0 +1,3 @@
+export WORLD=0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a
+echo "@WORLD: $WORLD"
+torii -w $WORLD
