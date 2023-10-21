@@ -22,6 +22,7 @@ import { TileType } from '../utils/underdark';
 const SIZE = 1;
 const CAM_FOV = 70;
 const CAM_FAR = 10;
+const GAMMA = 1;
 
 let _width: number;
 let _height: number;
@@ -42,6 +43,7 @@ let _tile_material: THREE.Material;
 const params = {
   fov: CAM_FOV,
   far: CAM_FAR,
+  gamma: 0,
 };
 
 
@@ -95,6 +97,7 @@ export function init(canvas, width, height) {
   const gui = new GUI({ width: 300 });
   gui.add(params, 'fov', 45, 90, 1).onChange(guiUpdatedCamera);
   gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdatedCamera);
+  gui.add(params, 'gamma', 0, 1, 0.01).onChange(guiUpdatedShader);
   gui.open();
 
   _stats = new Stats();
@@ -105,6 +108,12 @@ function guiUpdatedCamera() {
   _camera.fov = params.fov;
   _camera.far = params.far;
   _camera.updateProjectionMatrix();
+  _postMaterial.uniforms.uCameraNear.value = _camera.near;
+  _postMaterial.uniforms.uCameraFar.value = _camera.far;
+}
+
+function guiUpdatedShader() {
+  _postMaterial.uniforms.uGamma.value = params.gamma;
 }
 
 // Create a render target with depth texture
@@ -130,8 +139,9 @@ function setupPost() {
     vertexShader: DepthPostShader.vertexShader,
     fragmentShader: DepthPostShader.fragmentShader,
     uniforms: {
-      cameraNear: { value: _camera.near },
-      cameraFar: { value: _camera.far },
+      uCameraNear: { value: _camera.near },
+      uCameraFar: { value: _camera.far },
+      uGamma: { value: GAMMA },
       tDiffuse: { value: null },
       tDepth: { value: null }
     }

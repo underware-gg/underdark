@@ -35,14 +35,18 @@ const DepthPostShader = {
 			varying vec2 vUv;
 			uniform sampler2D tDiffuse;
 			uniform sampler2D tDepth;
-			uniform float cameraNear;
-			uniform float cameraFar;
+			uniform float uCameraNear;
+			uniform float uCameraFar;
+      uniform float uGamma;
 
+      #define applyGamma(a,g)		( (a) > 0.0 ? pow( (a), (1.0/(g)) ) : (a) )
 
 			float readDepth( sampler2D depthSampler, vec2 coord ) {
 				float fragCoordZ = texture2D( depthSampler, coord ).x;
-				float viewZ = perspectiveDepthToViewZ( fragCoordZ, cameraNear, cameraFar );
-				return viewZToOrthographicDepth( viewZ, cameraNear, cameraFar );
+				float viewZ = perspectiveDepthToViewZ( fragCoordZ, uCameraNear, uCameraFar );
+				float depth = viewZToOrthographicDepth( viewZ, uCameraNear, uCameraFar );
+        depth = applyGamma(depth, uGamma);
+        return depth;
 			}
 
 			void main() {
