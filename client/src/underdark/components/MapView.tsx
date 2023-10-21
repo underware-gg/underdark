@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { Compass, TileType } from '../utils/underdark'
+import { Compass, Dir, GameTilemap, TileType } from '../utils/underdark'
 import { MapColors } from '../utils/colors'
+import { useGameplayContext } from '../hooks/GameplayContext'
 
 export interface Point {
   x: number
@@ -22,7 +23,7 @@ export interface MapChamber {
   coord: bigint
   compass: Compass | null
   mapPos: Point
-  tilemap: number[]
+  gameTilemap: GameTilemap
   exists: boolean
 }
 
@@ -42,12 +43,12 @@ export function MapView({
   viewSize = 350,
 }: MapViewProps) {
 
-  if (!targetChamber?.tilemap?.length) {
+  if (!targetChamber?.gameTilemap) {
     return <></>
   }
 
   // view size in pixels
-  const gridSize = Math.sqrt(targetChamber.tilemap.length)
+  const gridSize = targetChamber.gameTilemap.gridSize
   const chamberSize = tileSize * gridSize
   const strokeWidth = 1.0 / tileSize
 
@@ -65,7 +66,7 @@ export function MapView({
         const isTarget = (chamber.coord == targetChamber.coord && chamber.exists)
         return (
           <g key={`map_${chamber.coord.toString()}`} transform={`translate(${chamber.mapPos.x},${chamber.mapPos.y})`} >
-            <Map tilemap={chamber.tilemap} gridSize={gridSize} strokeWidth={strokeWidth} isTarget={isTarget} />
+            <Map targetChamber={chamber.gameTilemap} strokeWidth={strokeWidth} isTarget={isTarget} />
           </g>
         )
       })}
@@ -78,25 +79,27 @@ export function MapView({
 // Single Map
 //
 interface MapProps {
-  tilemap: number[]
-  gridSize: number
-  strokeWidth: number,
+  targetChamber: GameTilemap
+  strokeWidth: number
   isTarget: boolean
 }
 export function Map({
-  tilemap,
-  gridSize,
+  targetChamber,
   strokeWidth,
   isTarget,
 }: MapProps) {
+  const { playerPosition } = useGameplayContext()
+
+  const gridSize = targetChamber.gridSize
+  const gridOrigin = targetChamber.gridOrigin
 
   const tiles = useMemo(() => {
     const result: any = []
-    for (let i = 0; i < tilemap.length; ++i) {
+    for (let i = 0; i < targetChamber.tilemap.length; ++i) {
       const key = `tile_${i}`
-      const tileType = tilemap[i]
-      const x = i % gridSize
-      const y = Math.floor(i / gridSize)
+      const tileType = targetChamber.tilemap[i]
+      const x = i % gridSize + gridOrigin.x
+      const y = Math.floor(i / gridSize) + gridOrigin.y
       let tile = null
       let tileColor = null
       if (tileType == TileType.Path) {
@@ -129,13 +132,42 @@ export function Map({
       }
     }
     return result
-  }, [tilemap])
+  }, [targetChamber?.tilemap])
+
+  const player = useMemo(() => {
+    const result: any = []
+    if (isTarget && playerPosition) {
+      const x = playerPosition.tile % 16
+      const y = Math.floor(playerPosition.tile / 16)
+      result.push(<rect
+        key='player_rect'
+        x={x} y={y}
+        width='1' height='1'
+        fill={MapColors.PLAYER}
+      />)
+      const dir = playerPosition.facing
+      result.push(<line
+        key='player_line'
+        x1={x + 0.5} y1={y + 0.5}
+        x2={x + 0.5 + (dir == Dir.West ? -1 : dir == Dir.East ? 1 : 0)}
+        y2={y + 0.5 + (dir == Dir.North ? -1 : dir == Dir.South ? 1 : 0)}
+        stroke={MapColors.PLAYER}
+        strokeWidth={0.2}
+      />)
+    }
+    return result
+  }, [isTarget, playerPosition])
 
   return (
-    <svg width='1' height='1' viewBox={`0 0 ${gridSize} ${gridSize}`}>
+    <svg width='1' height='1' viewBox={`${gridOrigin.x} ${gridOrigin.y} ${gridSize} ${gridSize}`}>
       {tiles}
+      {player}
       {isTarget &&
-        <rect x='0' y='0' width='100%' height='100%' fill='none' stroke={MapColors.CURRENT} strokeWidth={strokeWidth * 2} />
+        <rect
+          x={gridOrigin.x} y={gridOrigin.y}
+          width={gridSize} height={gridSize}
+          fill='none' stroke={MapColors.CURRENT} strokeWidth={strokeWidth * 2}
+        />
       }
     </svg>
   )

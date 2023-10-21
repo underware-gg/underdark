@@ -15,4 +15,5 @@ export enum MapColors {
   LOCKED = 'rgb(209, 49, 0)',
   EXIT = RealmsColors.TEXT,
   CURRENT = RealmsColors.TEXT,
+  PLAYER = 'rgb(0, 232, 232)',
 }

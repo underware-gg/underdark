@@ -1,8 +1,9 @@
 import { useSyncWorld } from '../hooks/useGraphQLQueries'
 import { UnderdarkProvider } from '../hooks/UnderdarkContext'
+import { GameplayProvider } from '../hooks/GameplayContext'
 import MinterMap from './MinterMap'
 import MinterData from './MinterData'
-import GameCanvas from './GameCanvas'
+import GameView from './GameView'
 
 function Underdark() {
   const { loading } = useSyncWorld()
@@ -13,14 +14,16 @@ function Underdark() {
 
   return (
     <UnderdarkProvider>
-      <div className="card MinterPanel">
-        <MinterMap />
-        <MinterData />
-      </div>
-      <br />
-      <div className="card MinterPanel">
-        <GameCanvas />
-      </div>
+      <GameplayProvider>
+        <div className="card MinterPanel">
+          <MinterMap />
+          <MinterData />
+        </div>
+        <br />
+        <div className="card MinterPanel">
+          <GameView />
+        </div>
+      </GameplayProvider>
     </UnderdarkProvider>
   )
 }

@@ -11,7 +11,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 import { DepthPostShader } from './DepthPostShader'
-import { TileType } from '../utils/underdark';
+import { Dir, GameTilemap, Position, TileType } from '../utils/underdark';
 
 //
 // Depth render based on:
@@ -23,11 +23,11 @@ const SIZE = 1;
 const CAM_FOV = 70;
 const CAM_FAR = 10;
 const GAMMA = 1;
-const COLOR_COUNT = 8;
-const DITHER = 0; // 0.5
+const COLOR_COUNT = 0; //16;
+const DITHER = 0;
 const DITHER_SIZE = 4;
-const BAYER = 4;
-const PALETTE = 1;
+const BAYER = 0;//4;
+const PALETTE = 0;//1;
 
 const PALETTE_PATHS = [
   '/colors/blues1.png',
@@ -39,14 +39,17 @@ let _height: number;
 let _aspect: number;
 let _eyeZ: number;
 let _palettes = [];
+let _gameTilemap: GameTilemap | null = null
 
 let _renderer: THREE.WebGLRenderer;
 let _camera: THREE.PerspectiveCamera;
+let _cameraRig: THREE.Object3D;
 let _scene: THREE.Scene
 let _map: THREE.Object3D;
-let _controls, _stats;
 let _target, _postScene, _postCamera, _postMaterial;
 let _supportsExtension: boolean = true;
+let _stats;
+// let _controls;
 
 let _tile_geometry: THREE.BoxGeometry;
 let _tile_material: THREE.Material;
@@ -91,14 +94,22 @@ export function init(canvas, width, height) {
   _renderer.setPixelRatio(window.devicePixelRatio);
   _renderer.setSize(_width, _height);
 
+  setupScene();
+
+  _cameraRig = new THREE.Object3D();
+  _cameraRig.position.set(0, 0, 0);
+  _scene.add(_cameraRig)
+
   _camera = new THREE.PerspectiveCamera(
     CAM_FOV,  // fov
     _aspect,  // aspect
     0.01,     // near
     CAM_FAR,  // far
   );
-  _camera.position.set(0, 0, _eyeZ);
-  _camera.lookAt(0, 10, _eyeZ);
+  _cameraRig.add(_camera)
+  _camera.up.set(0, 0, 1);
+  _camera.position.set(0, 0, _eyeZ)
+  _camera.lookAt(0, -SIZE, _eyeZ);
 
   // _controls = new OrbitControls(camera, renderer.domElement);
   // _controls.enableDamping = true;
@@ -110,16 +121,14 @@ export function init(canvas, width, height) {
     _palettes.push(tex);
   })
 
-
   setupRenderTarget();
-  setupScene();
   setupPost();
 
   onWindowResize();
   window.addEventListener('resize', onWindowResize);
 
   const gui = new GUI({ width: 300 });
-  gui.add(params, 'fov', 45, 90, 1).onChange(guiUpdatedCamera);
+  gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdatedCamera);
   gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdatedCamera);
   gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdatedShader);
   gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdatedShader);
@@ -148,7 +157,7 @@ function guiUpdatedShader() {
   _postMaterial.uniforms.uDitherSize.value = params.ditherSize;
   _postMaterial.uniforms.uBayer.value = params.bayer;
   _postMaterial.uniforms.uPalette.value = params.palette;
-  _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette-1] : null;
+  _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette - 1] : null;
 }
 
 // Create a render target with depth texture
@@ -169,7 +178,7 @@ function setupRenderTarget() {
 }
 
 function setupPost() {
-  _postCamera = new THREE.OrthographicCamera(- 1, 1, 1, - 1, 0, 1);
+  _postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   _postMaterial = new THREE.ShaderMaterial({
     vertexShader: DepthPostShader.vertexShader,
     fragmentShader: DepthPostShader.fragmentShader,
@@ -192,6 +201,7 @@ function setupPost() {
   const postQuad = new THREE.Mesh(postPlane, _postMaterial);
   _postScene = new THREE.Scene();
   _postScene.add(postQuad);
+  postQuad.scale.set(-1,1,1);
 }
 
 function onWindowResize() {
@@ -264,34 +274,47 @@ function setupScene() {
   const floor_geometry = new THREE.PlaneGeometry(40 * SIZE, 40 * SIZE);
   const floor_material = new THREE.MeshBasicMaterial({ color: 'cyan' });
   const floor = new THREE.Mesh(floor_geometry, floor_material);
-  floor.position.set(0,0,0);
+  floor.position.set(-SIZE * 2, -SIZE * 2, 0);
   const ceiling = new THREE.Mesh(floor_geometry, floor_material);
-  ceiling.position.set(0, 0, SIZE);
-  ceiling.scale.set(1,1,-1);
+  ceiling.position.set(-SIZE * 2, -SIZE * 2, 0);
+  ceiling.scale.set(1, 1, -1);
 
   _scene.add(floor);
-  _scene.add(ceiling);
+  // _scene.add(ceiling);
 
   // makeTorus(_scene);
 }
 
-export function setupMap(tilemap: number[]) {
+export function movePlayer(position: Position) {
+  const x = (position.tile % 16) * SIZE
+  const y = Math.floor(position.tile / 16) * SIZE
+  const rot = position.facing == Dir.North ? Math.PI * 0
+    : position.facing == Dir.East ? Math.PI * 0.5
+      : position.facing == Dir.South ? Math.PI * 1.0
+        : Math.PI * 1.5 // Dir.West
+  _cameraRig.position.set(x, y, 0);
+  _cameraRig.rotation.set(0, 0, rot + Math.PI * 0);
+}
 
-  const gridSize = Math.sqrt(tilemap.length)
+export function setupMap(gameTilemap: GameTilemap) {
+
+  _gameTilemap = gameTilemap
+
+  const gridSize = gameTilemap.gridSize
+  const gridOrigin = gameTilemap.gridOrigin
+  const tilemap = gameTilemap.tilemap
 
   if (_map) {
     _scene.remove(_map)
   }
 
   _map = new THREE.Object3D();
-  _map.position.set(- (gridSize * SIZE) / 2, - (gridSize * SIZE) / 2, 0);
+  _map.position.set(0, 0, 0);
 
-  const result: any = []
   for (let i = 0; i < tilemap.length; ++i) {
-    const key = `tile_${i}`
     const tileType = tilemap[i]
-    const x = (i % gridSize) * SIZE
-    const y = Math.floor(i / gridSize) * SIZE
+    const x = ((i % gridSize) + gridOrigin.x) * SIZE
+    const y = (Math.floor(i / gridSize) + gridOrigin.y) * SIZE
     let mesh = null
     if (tileType == TileType.Path) {
     } else if (tileType == TileType.Entry) {
@@ -301,11 +324,13 @@ export function setupMap(tilemap: number[]) {
       mesh = new THREE.Mesh(_tile_geometry, _tile_material);
     }
     if (mesh) {
-      mesh.position.set(x, y, SIZE / 2)
       _map.add(mesh);
+      // console.log(i, x, y, tileType)
+      mesh.position.set(x, y, SIZE * 0.5)
     }
   }
 
   _scene.add(_map)
 
+  movePlayer(gameTilemap.playerStart)
 }

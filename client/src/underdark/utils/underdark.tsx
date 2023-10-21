@@ -3,6 +3,8 @@
 // From Crawler SDK
 //
 
+import { Point } from "../components/MapView"
+
 export enum Dir {
   North = 0,
   East = 1,
@@ -19,6 +21,15 @@ export const DirNames = {
   [Dir.South]: 'South',
   [Dir.Over]: 'Over',
   [Dir.Under]: 'Under',
+}
+
+export const FlippedDir = {
+  [Dir.North]: Dir.South,
+  [Dir.East]: Dir.West,
+  [Dir.West]: Dir.East,
+  [Dir.South]: Dir.North,
+  [Dir.Over]: Dir.Under,
+  [Dir.Under]: Dir.Over,
 }
 
 export enum TileType {
@@ -176,16 +187,55 @@ export const makeEntryChamberId = (): bigint => {
   return compassToCoord(entryCoord)
 }
 
-export const expandTilemap_1p = (tilemap: number[]) => {
-  const gridSize = 18
+export type TilemapGridSize = 18 | 20
+
+export type Position = {
+  tile: number,
+  facing: Dir,
+}
+
+export type GameTilemap = {
+  gridSize: TilemapGridSize
+  gridOrigin: Point,
+  playerStart: Position,
+  tilemap: TileType[]
+}
+
+export const tilemapToGameTilemap = (tilemap: TileType[], gridSize: TilemapGridSize): GameTilemap | null => {
+  if (tilemap.length != 256) return null
+  return gridSize == 18 ? expandTilemap_18(tilemap)
+    : gridSize == 20 ? expandTilemap_20(tilemap)
+      : null
+}
+
+const _makePlayerStart = (tile: number) => {
+  const x = tile % 16
+  const y = Math.floor(tile / 16)
+  return {
+    tile: tile,
+    facing: y == 0 ? Dir.South
+      : y == 15 ? Dir.North
+        : x == 0 ? Dir.East
+          : x == 15 ? Dir.West
+            : x < 8 ? Dir.South
+              : Dir.North
+  }
+}
+
+const expandTilemap_18 = (tilemap: TileType[]): GameTilemap => {
+  const gridSize: TilemapGridSize = 18
+  let playerStart: Position | null = null
   let result = Array(gridSize * gridSize).fill(tilemap.length > 0 ? TileType.Void : TileType.Path)
-  const _set = (xx: number, yy: number, tileType: number) => { result[yy * gridSize + xx] = tileType }
+  const _set = (x: number, y: number, tileType: number) => { result[y * gridSize + x] = tileType }
   for (let i = 0; i < tilemap.length; ++i) {
     const tileType = tilemap[i]
     const x = i % 16
     const y = Math.floor(i / 16)
     let xx = x + 1
     let yy = y + 1
+    if (tileType == TileType.Entry) {
+      playerStart = _makePlayerStart(i)
+    }
     if ([TileType.Entry, TileType.Exit, TileType.LockedExit].includes(tileType)) {
       if (x == 0) {
         _set(xx, yy, TileType.Path)
@@ -206,38 +256,53 @@ export const expandTilemap_1p = (tilemap: number[]) => {
       _set(xx, yy, tileType)
     }
   }
-  return result
+  return {
+    gridSize,
+    gridOrigin: { x: -1, y: -1 },
+    playerStart,
+    tilemap: result,
+  }
 }
 
-export const expandTilemap_2p = (tilemap: number[]) => {
-  // if (tilemap.length == 0) return []
-  // let result = Array(400).fill(TileType.Void)
-  const gridSize = 20
+const expandTilemap_20 = (tilemap: TileType[]): GameTilemap => {
+  const gridSize: TilemapGridSize = 20
+  let playerStart: Position | null = null
   let result = Array(gridSize * gridSize).fill(tilemap.length > 0 ? TileType.Void : TileType.Path)
-  const _set = (xx: number, yy: number, tileType: number) => { result[yy * gridSize + xx] = tileType }
+  const _set = (x: number, y: number, tileType: number) => { result[y * gridSize + x] = tileType }
   for (let i = 0; i < tilemap.length; ++i) {
     const tileType = tilemap[i]
     const x = i % 16
     const y = Math.floor(i / 16)
     let xx = x + 2
     let yy = y + 2
+    if(tileType == TileType.Entry) {
+      playerStart = _makePlayerStart(i)
+    }
     if ([TileType.Entry, TileType.Exit, TileType.LockedExit].includes(tileType)) {
       if (x == 0) {
         _set(xx, yy, TileType.Path)
-        _set(xx - 1, yy, TileType.Path)
-        _set(xx - 2, yy, tileType)
+        _set(xx - 1, yy, tileType)
+        _set(xx - 2, yy, TileType.Void)
+        // _set(xx - 1, yy, TileType.Path)
+        // _set(xx - 2, yy, tileType)
       } else if (x == 15) {
         _set(xx, yy, TileType.Path)
-        _set(xx + 1, yy, TileType.Path)
-        _set(xx + 2, yy, tileType)
+        _set(xx + 1, yy, tileType)
+        _set(xx + 2, yy, TileType.Void)
+        // _set(xx + 1, yy, TileType.Path)
+        // _set(xx + 2, yy, tileType)
       } else if (y == 0) {
         _set(xx, yy, TileType.Path)
-        _set(xx, yy - 1, TileType.Path)
-        _set(xx, yy - 2, tileType)
+        _set(xx, yy - 1, tileType)
+        _set(xx, yy - 2, TileType.Void)
+        // _set(xx, yy - 1, TileType.Path)
+        // _set(xx, yy - 2, tileType)
       } else if (y == 15) {
         _set(xx, yy, TileType.Path)
-        _set(xx, yy + 1, TileType.Path)
-        _set(xx, yy + 2, tileType)
+        _set(xx, yy + 1, tileType)
+        _set(xx, yy + 2, TileType.Void)
+        // _set(xx, yy + 1, TileType.Path)
+        // _set(xx, yy + 2, tileType)
       } else {
         _set(xx, yy, tileType)
       }
@@ -245,6 +310,11 @@ export const expandTilemap_2p = (tilemap: number[]) => {
       _set(xx, yy, tileType)
     }
   }
-  return result
+  return {
+    gridSize,
+    gridOrigin: { x: -2, y: -2 },
+    playerStart,
+    tilemap: result,
+  }
 }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import * as game from '../three/game'
 import { useChamberMap } from '../hooks/useChamber'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
+import { useGameplayContext } from '../hooks/GameplayContext'
 
 const GameCanvas = ({
   width = 620,
@@ -24,13 +25,20 @@ const GameCanvas = ({
   }, [canvasRef.current])
 
   const { chamberId } = useUnderdarkContext()
-  const { bitmap, expandedTilemap } = useChamberMap(chamberId)
+  const { gameTilemap } = useChamberMap(chamberId)
+  const { playerPosition } = useGameplayContext()
 
   useEffect(() => {
-    if (isInitialized && bitmap) {
-      game.setupMap(expandedTilemap)
+    if (isInitialized && gameTilemap) {
+      game.setupMap(gameTilemap)
     }
-  }, [isInitialized, bitmap, expandedTilemap])
+  }, [isInitialized, gameTilemap])
+
+  useEffect(() => {
+    if (isInitialized && gameTilemap) {
+      game.movePlayer(playerPosition)
+    }
+  }, [isInitialized, playerPosition])
 
 return (
   <canvas

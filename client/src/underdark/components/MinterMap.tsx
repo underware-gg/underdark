@@ -91,19 +91,19 @@ function MapLoader({
   coord,
   addChamber,
 }: MapLoaderProps) {
-  const { bitmap, tilemap, expandedTilemap } = useChamberMap(coord)
+  const { gameTilemap } = useChamberMap(coord)
   useEffect(() => {
-    if (bitmap > 0n && expandedTilemap) {
+    if (gameTilemap) {
       const compass = coordToCompass(coord)
       addChamber({
         coord,
         compass,
         mapPos: compassToMapViewPos(compass),
-        tilemap: expandedTilemap,
-        exists: (tilemap.length > 0),
+        gameTilemap,
+        exists: true,
       })
     }
-  }, [coord, expandedTilemap])
+  }, [coord, gameTilemap])
   return <></>
 }
 

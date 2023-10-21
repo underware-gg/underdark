@@ -3,7 +3,7 @@ import { Entity, HasValue, Has, getComponentValue } from '@latticexyz/recs'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react"
 import { useDojoComponents } from '../../DojoContext'
 import { bigintToEntity, bigintToHex } from "../utils/utils"
-import { Dir, TileType, expandTilemap_1p, offsetCoord } from "../utils/underdark"
+import { Dir, TileType, tilemapToGameTilemap, offsetCoord } from "../utils/underdark"
 
 
 //------------------
@@ -85,12 +85,12 @@ export const useChamberMap = (locationId: bigint) => {
   }, [bitmap, tiles])
   // useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
-  const expandedTilemap = useMemo(() => expandTilemap_1p(tilemap), [tilemap])
+  const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
 
   return {
     bitmap,
     tilemap,
-    expandedTilemap,
+    gameTilemap,
     doors: {
       north: map?.north ?? 0,
       east: map?.east ?? 0,
