@@ -39,6 +39,13 @@ const DepthPostShader = {
       uniform float uColorCount;
       uniform float uDither;
       uniform float uDitherSize;
+      uniform float uBayer;
+
+			float readDepth( sampler2D depthSampler, vec2 coord ) {
+				float fragCoordZ = texture2D( depthSampler, coord ).x;
+				float viewZ = perspectiveDepthToViewZ( fragCoordZ, uCameraNear, uCameraFar );
+				return viewZToOrthographicDepth( viewZ, uCameraNear, uCameraFar );
+			}
 
       #define apply_gamma(a,g)		( (a) > 0.0 ? pow( (a), (1.0/(g)) ) : (a) )
 
@@ -59,11 +66,24 @@ const DepthPostShader = {
         return result;
       }
 
-			float readDepth( sampler2D depthSampler, vec2 coord ) {
-				float fragCoordZ = texture2D( depthSampler, coord ).x;
-				float viewZ = perspectiveDepthToViewZ( fragCoordZ, uCameraNear, uCameraFar );
-				return viewZToOrthographicDepth( viewZ, uCameraNear, uCameraFar );
-			}
+
+      // https://www.shadertoy.com/view/7sfXDn
+      float Bayer2(vec2 a) {
+        a = floor(a);
+        return fract(a.x / 2. + a.y * a.y * .75);
+      }
+      #define Bayer4(a)   (Bayer2 (.5 *(a)) * .25 + Bayer2(a))
+      #define Bayer8(a)   (Bayer4 (.5 *(a)) * .25 + Bayer2(a))
+      #define Bayer16(a)  (Bayer8 (.5 *(a)) * .25 + Bayer2(a))
+      #define Bayer32(a)  (Bayer16(.5 *(a)) * .25 + Bayer2(a))
+      #define Bayer64(a)  (Bayer32(.5 *(a)) * .25 + Bayer2(a))
+      vec3 apply_dither_bayer(vec3 color) {
+        vec2 frag = vUv * vec2(textureSize(tDiffuse, 0)) * uBayer;
+        float dithering = (Bayer64(frag * 0.25) * 2.0 - 1.0) * 0.5;
+        float d = color.g + dithering;
+        return 1.0 - vec3(d < 0.5);
+      }
+
 
 			void main() {
 				//vec3 diffuse = texture2D( tDiffuse, vUv ).rgb;
@@ -71,8 +91,13 @@ const DepthPostShader = {
         depth = apply_gamma(depth, uGamma);
 
         vec3 color = 1.0 - vec3( depth );
-        color = apply_dither(color);
-
+        if(uColorCount > 0.0) {
+          color = apply_dither(color);
+        }
+        if (uBayer > 0.0) {
+          color = apply_dither_bayer(color);
+        }
+ 
 				gl_FragColor.rgb = color;
 				gl_FragColor.a = 1.0;
 			}

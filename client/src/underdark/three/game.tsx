@@ -24,8 +24,9 @@ const CAM_FOV = 70;
 const CAM_FAR = 10;
 const GAMMA = 1;
 const COLOR_COUNT = 8;
-const DITHER = 0.5;
+const DITHER = 0; // 0.5
 const DITHER_SIZE = 4;
+const BAYER = 4;
 
 let _width: number;
 let _height: number;
@@ -50,6 +51,7 @@ const params = {
   colorCount: COLOR_COUNT,
   dither: DITHER,
   ditherSize: DITHER_SIZE,
+  bayer: BAYER,
 };
 
 
@@ -103,10 +105,11 @@ export function init(canvas, width, height) {
   const gui = new GUI({ width: 300 });
   gui.add(params, 'fov', 45, 90, 1).onChange(guiUpdatedCamera);
   gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdatedCamera);
-  gui.add(params, 'gamma', 0, 1, 0.01).onChange(guiUpdatedShader);
-  gui.add(params, 'colorCount', 1, 16, 1).onChange(guiUpdatedShader);
+  gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdatedShader);
+  gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdatedShader);
   gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdatedShader);
   gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdatedShader);
+  gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdatedShader);
   gui.open();
 
   _stats = new Stats();
@@ -126,6 +129,7 @@ function guiUpdatedShader() {
   _postMaterial.uniforms.uColorCount.value = params.colorCount;
   _postMaterial.uniforms.uDither.value = params.dither;
   _postMaterial.uniforms.uDitherSize.value = params.ditherSize;
+  _postMaterial.uniforms.uBayer.value = params.bayer;
 }
 
 // Create a render target with depth texture
@@ -157,6 +161,7 @@ function setupPost() {
       uColorCount: { value: COLOR_COUNT },
       uDither: { value: DITHER },
       uDitherSize: { value: DITHER_SIZE },
+      uBayer: { value: BAYER },
       tDiffuse: { value: null },
       tDepth: { value: null }
     }
