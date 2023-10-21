@@ -27,11 +27,18 @@ const COLOR_COUNT = 8;
 const DITHER = 0; // 0.5
 const DITHER_SIZE = 4;
 const BAYER = 4;
+const PALETTE = 1;
+
+const PALETTE_PATHS = [
+  '/colors/blues1.png',
+  '/colors/pinks1.png',
+]
 
 let _width: number;
 let _height: number;
 let _aspect: number;
 let _eyeZ: number;
+let _palettes = [];
 
 let _renderer: THREE.WebGLRenderer;
 let _camera: THREE.PerspectiveCamera;
@@ -52,6 +59,7 @@ const params = {
   dither: DITHER,
   ditherSize: DITHER_SIZE,
   bayer: BAYER,
+  palette: PALETTE,
 };
 
 
@@ -95,6 +103,14 @@ export function init(canvas, width, height) {
   // _controls = new OrbitControls(camera, renderer.domElement);
   // _controls.enableDamping = true;
 
+  PALETTE_PATHS.forEach(path => {
+    const tex = new THREE.TextureLoader().load(path);
+    tex.magFilter = THREE.NearestFilter;
+    tex.minFilter = THREE.NearestFilter;
+    _palettes.push(tex);
+  })
+
+
   setupRenderTarget();
   setupScene();
   setupPost();
@@ -110,6 +126,7 @@ export function init(canvas, width, height) {
   gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdatedShader);
   gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdatedShader);
   gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdatedShader);
+  gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdatedShader);
   gui.open();
 
   _stats = new Stats();
@@ -130,6 +147,8 @@ function guiUpdatedShader() {
   _postMaterial.uniforms.uDither.value = params.dither;
   _postMaterial.uniforms.uDitherSize.value = params.ditherSize;
   _postMaterial.uniforms.uBayer.value = params.bayer;
+  _postMaterial.uniforms.uPalette.value = params.palette;
+  _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette-1] : null;
 }
 
 // Create a render target with depth texture
@@ -162,10 +181,13 @@ function setupPost() {
       uDither: { value: DITHER },
       uDitherSize: { value: DITHER_SIZE },
       uBayer: { value: BAYER },
+      uPalette: { value: params.palette },
+      tPalette: { value: null },
       tDiffuse: { value: null },
       tDepth: { value: null }
     }
   });
+  guiUpdatedShader();
   const postPlane = new THREE.PlaneGeometry(2, 2);
   const postQuad = new THREE.Mesh(postPlane, _postMaterial);
   _postScene = new THREE.Scene();

@@ -33,6 +33,8 @@ const DepthPostShader = {
 			varying vec2 vUv;
 			uniform sampler2D tDiffuse;
 			uniform sampler2D tDepth;
+			uniform sampler2D tPalette;
+      uniform float uPalette;
 			uniform float uCameraNear;
 			uniform float uCameraFar;
       uniform float uGamma;
@@ -90,14 +92,27 @@ const DepthPostShader = {
 				float depth = readDepth( tDepth, vUv );
         depth = apply_gamma(depth, uGamma);
 
+        // invert
         vec3 color = 1.0 - vec3( depth );
+
+        // save intensity
+        float d = color.x;
+
+        // color reduction + dither
         if(uColorCount > 0.0) {
           color = apply_dither(color);
         }
+
+        // another dither
         if (uBayer > 0.0) {
           color = apply_dither_bayer(color);
         }
- 
+
+        // palette
+        if (uPalette > 0.0) {
+          color *= texture2D(tPalette, vec2(d, 0.0) ).rgb;
+        }
+
 				gl_FragColor.rgb = color;
 				gl_FragColor.a = 1.0;
 			}
