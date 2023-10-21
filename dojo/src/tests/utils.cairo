@@ -7,7 +7,7 @@ mod utils {
     use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
     use dojo::test_utils::{spawn_test_world, deploy_contract};
 
-    use underdark::systems::{actions, IActionsDispatcher, IActionsDispatcherTrait};
+    use underdark::systems::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
     use underdark::models::chamber::{Chamber, chamber, Map, map, State, state};
     use underdark::models::tile::{Tile, tile};
     use underdark::types::location::{Location, LocationTrait};
@@ -22,7 +22,7 @@ mod utils {
     }
 
     fn execute_start_level(world: IWorldDispatcher, system: IActionsDispatcher, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) {
-        system.start_level(from_coord.to_id(), from_dir.into(), generator_name, generator_value.into());
+        system.start_level(1, 1, from_coord.to_id(), from_dir.into(), generator_name, generator_value.into());
     }
 
     fn start_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) -> Chamber {
@@ -66,7 +66,7 @@ mod utils {
     }
 
     fn make_from_location() -> (Location, Dir, u128) {
-        let location: Location = Location{ over:0, under:0, north:1, east:1, west:0, south:0 };
+        let location: Location = Location{ game_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
         let location_id: u128 = location.to_id();
         let dir: Dir = Dir::Under;
         let to_location: Location = location.offset(dir);

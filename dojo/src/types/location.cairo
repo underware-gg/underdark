@@ -146,6 +146,7 @@ impl LocationTraitImpl of LocationTrait {
 
 impl LocationPrintImpl of PrintTrait<Location> {
     fn print(self: Location) {
+        self.game_id.print();
         self.over.print();
         self.under.print();
         self.north.print();
