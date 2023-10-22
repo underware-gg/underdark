@@ -13,6 +13,10 @@ trait IActions<TContractState> {
         generator_name: felt252,
         generator_value_u128: u128,
     );
+    fn finish_level(self: @TContractState,
+        location_id: u128,
+        proof: u256,
+    );
 }
 
 #[dojo::contract]
@@ -22,6 +26,7 @@ mod actions {
     use core::option::OptionTrait;
 
     use underdark::systems::generate_chamber::{generate_chamber};
+    use underdark::systems::verify_level_proof::{verify_level_proof};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DIR, DirTrait};
 
@@ -47,6 +52,17 @@ mod actions {
             let location: Location = Location{ game_id, over:0, under:1, north: 0, east: level_number.try_into().unwrap(), west:0, south:1 };
 
             generate_chamber(world, game_id, level_number, location, Dir::West, generator_name, generator_value_u128.try_into().unwrap());
+
+            return ();
+        }
+        
+        fn finish_level(self: @ContractState,
+            location_id: u128,
+            proof: u256,
+        ) {
+            let world: IWorldDispatcher = self.world_dispatcher.read();
+
+            verify_level_proof(world, location_id, proof);
 
             return ();
         }

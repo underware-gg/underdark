@@ -42,4 +42,5 @@ struct State {
     light: u8,
     threat: u8,
     wealth: u8,
+    wins: u8,
 }

@@ -82,6 +82,7 @@ fn generate_chamber(world: IWorldDispatcher,
             light: 0,
             threat: 0,
             wealth: 0,
+            wins: 0,
         },
     ) );
 
