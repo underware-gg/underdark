@@ -1,3 +1,11 @@
+[tool.dojo.world]
+name = "Underdark"
+description = "Lose yourself in the Underdark!"
+icon_uri = "https://underdark.vercel.app/images/logo.jpg"
+cover_uri = "https://underdark.vercel.app/images/splash.jpg"
+website = "https://underdark-splash.vercel.app/"
+socials.x = "https://twitter.com/lootunderworld"
+
 [package]
 cairo-version = "2.2.0"
 name = "underdark"
@@ -24,3 +32,4 @@ account_address = "0x517ececd29116499f4a1b64b094da79ba08dfd54a3edaa316134c41f816
 # also from Katana log
 private_key = "0x1800000000300000180000000000030000000000003006001800006600"
 world_address = "0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a"
+
