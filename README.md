@@ -51,8 +51,7 @@ Losing our mind in the Underdark, for the Dojo Game Jam #2
 * Ordered Dithering (Bayer) [shader](https://www.shadertoy.com/view/7sfXDn) by **Tech_*
 * [three.js](https://threejs.org/) for graphics
 * [tween.js](https://github.com/tweenjs/tween.js) for animation
-
-
+* Music: Biodecay -- Mazzive Injection (Bonus Track) [1999], Biodecay - Down (Depression) [1999]
 
 ## Environment Setup [🔗](https://book.dojoengine.org/getting-started/setup.html)
 
