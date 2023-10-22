@@ -125,10 +125,10 @@ const GameControls = () => {
   const { gameState, playerPosition, dispatch, GameplayActions, GameState } = useGameplayContext()
 
   const directional = false
-  useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight'])
-  useKeyDown(() => (directional ? _moveToDirection(Dir.West) : _rotate(-1)), ['ArrowLeft'])
-  useKeyDown(() => (directional ? _moveToDirection(Dir.North) : _move(1)), ['ArrowUp'])
-  useKeyDown(() => (directional ? _moveToDirection(Dir.South) : _move(-1)), ['ArrowDown'])
+  useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight', 'd'])
+  useKeyDown(() => (directional ? _moveToDirection(Dir.West) : _rotate(-1)), ['ArrowLeft', 'a'])
+  useKeyDown(() => (directional ? _moveToDirection(Dir.North) : _move(1)), ['ArrowUp', 'w'])
+  useKeyDown(() => (directional ? _moveToDirection(Dir.South) : _move(-1)), ['ArrowDown', 's'])
 
   const _moveToDirection = (dir) => {
     if (gameState != GameState.Playing) return;
