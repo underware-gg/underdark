@@ -10,23 +10,25 @@ import { Dir, Position, TileType } from '../utils/underdark'
 // State Types
 //
 export const initialState = {
+  gameInProgress: false,
   playerPosition: null,
   steps: [],
 }
 
 type Step = {
-  tile: number,
-  dir: Dir,
+  tile: number
+  dir: Dir
 }
 
 type Movement = {
-  dir: Dir,
-  tilemap: TileType[],
+  dir: Dir
+  tilemap: TileType[]
 }
 
 type GameplayStateType = {
-  playerPosition: Position,
-  steps: Step[],
+  gameInProgress: boolean
+  playerPosition: Position
+  steps: Step[]
 }
 
 //--------------------------------
@@ -71,6 +73,7 @@ const GameplayProvider = ({
     switch (action.type) {
       case GameplayActions.RESET: {
         const position = action.payload as Position
+        newState.gameInProgress = true
         newState.playerPosition = position
         newState.steps = []
         break
@@ -93,7 +96,7 @@ const GameplayProvider = ({
             dir: movement.dir,
           }
           newState.steps = [...state.steps, step]
-          // console.log(`moved:`, step)
+          console.log(`steps:`, newState.steps)
         }
         break
       }

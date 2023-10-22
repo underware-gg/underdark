@@ -14,8 +14,10 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { tilemap, gameTilemap } = useChamberMap(chamberId)
-  const { playerPosition, dispatch, GameplayActions } = useGameplayContext()
+  const { gameInProgress, playerPosition, dispatch, GameplayActions } = useGameplayContext()
 
+  //
+  // Start game!
   useEffect(() => {
     if (gameTilemap) {
       dispatch({
@@ -25,14 +27,30 @@ const GameView = ({
     }
   }, [gameTilemap])
 
-  const directional = false
 
+  return (
+    <>
+      <GameControls />
+      <GameCanvas gameTilemap={gameTilemap} />
+    </>
+  )
+}
+
+const GameControls = () => {
+  const { chamberId } = useUnderdarkContext()
+  const { tilemap } = useChamberMap(chamberId)
+  const { gameInProgress, playerPosition, dispatch, GameplayActions } = useGameplayContext()
+
+  //
+  // Controls
+  const directional = false
   useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight'])
   useKeyDown(() => (directional ? _moveToDirection(Dir.West) : _rotate(-1)), ['ArrowLeft'])
   useKeyDown(() => (directional ? _moveToDirection(Dir.North) : _move(1)), ['ArrowUp'])
   useKeyDown(() => (directional ? _moveToDirection(Dir.South) : _move(-1)), ['ArrowDown'])
 
   const _moveToDirection = (dir) => {
+    if (!gameInProgress) return;
     dispatch({
       type: GameplayActions.MOVE_TO,
       payload: { dir, tilemap },
@@ -44,6 +62,7 @@ const GameView = ({
   }
 
   const _move = (signal) => {
+    if (!gameInProgress) return;
     const dir = signal < 0 ? FlippedDir[playerPosition.facing] : playerPosition.facing
     dispatch({
       type: GameplayActions.MOVE_TO,
@@ -52,6 +71,7 @@ const GameView = ({
   }
 
   const _rotate = (signal) => {
+    if (!gameInProgress) return;
     const dir = signal < 0 ? { [Dir.North]: Dir.West, [Dir.West]: Dir.South, [Dir.South]: Dir.East, [Dir.East]: Dir.North }[playerPosition.facing]
       : { [Dir.North]: Dir.East, [Dir.East]: Dir.South, [Dir.South]: Dir.West, [Dir.West]: Dir.North }[playerPosition.facing]
     dispatch({
@@ -60,9 +80,7 @@ const GameView = ({
     })
   }
 
-  return (
-    <GameCanvas gameTilemap={gameTilemap} />
-  )
+  return <></>
 }
 
 export default GameView

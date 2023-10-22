@@ -86,7 +86,7 @@ export const useChamberMap = (locationId: bigint) => {
   useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
-  useEffect(() => console.log(`gameTilemap:`, gameTilemap), [gameTilemap])
+  // useEffect(() => console.log(`gameTilemap:`, gameTilemap), [gameTilemap])
 
   return {
     bitmap,

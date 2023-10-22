@@ -88,7 +88,6 @@ function DirectionButton({
 
   const { locationId, seed } = useChamberOffset(chamberId, dir)
   const exists = useMemo(() => (seed > 0n), [seed, locationId])
-  console.log(`button >`, bigintToHex(chamberId), dir, bigintToHex(locationId),exists)
 
   const _mint = () => {
     start_level(account, gameId, yonder+1, 0n, dir, generator.name, generator.value)
