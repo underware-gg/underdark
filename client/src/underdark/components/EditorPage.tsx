@@ -13,6 +13,7 @@ function EditorPage() {
 function EditorMap() {
   const [bitmap, setBitmap] = useState(BigInt('0xffffa8a8aeec82a0fbbfa209fbefe822effe80a0febe88aeeebfa83eafbee0e0'))
   const [activeTile, setActiveTile] = useState(-1)
+  const activeBit = (255-activeTile)
 
   const tilemap = useMemo(() => {
     let result: number[] = []
@@ -58,10 +59,10 @@ function EditorMap() {
         {_tileRect(activeTile)}
       </svg>
       <p>
-        Tile: [<b>{activeTile < 0 ? '-' : activeTile}</b>]
+        Tile: [<b>{activeTile < 0 ? '-' : `${activeTile}/${bigintToHex(BigInt(activeTile))}`}</b>]
         X: [<b>{activeTile < 0 ? '-' : (activeTile % 16)}</b>]
         Y: [<b>{activeTile < 0 ? '-' : Math.floor(activeTile / 16)}</b>]
-        Bit: [<b>{activeTile < 0 ? '-' : (255 - activeTile)}</b >]
+        Bit: [<b>{activeTile < 0 ? '-' : `${activeBit}/${bigintToHex(BigInt(activeBit))}`}</b >]
       </p>
       <p>
         {bigintToHex(bitmap)}

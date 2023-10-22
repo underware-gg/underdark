@@ -16,6 +16,7 @@ trait IActions<TContractState> {
     fn finish_level(self: @TContractState,
         location_id: u128,
         proof: u256,
+        moves_count: usize,
     );
 }
 
@@ -59,10 +60,11 @@ mod actions {
         fn finish_level(self: @ContractState,
             location_id: u128,
             proof: u256,
+            moves_count: usize,
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
 
-            verify_level_proof(world, location_id, proof);
+            verify_level_proof(world, location_id, proof, moves_count);
 
             return ();
         }

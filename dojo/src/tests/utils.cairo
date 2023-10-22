@@ -21,14 +21,14 @@ mod utils {
         (world, IActionsDispatcher { contract_address })
     }
 
-    fn execute_start_level(world: IWorldDispatcher, system: IActionsDispatcher, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) {
-        system.start_level(1, 1, from_coord.to_id(), from_dir.into(), generator_name, generator_value.into());
+    fn execute_start_level(world: IWorldDispatcher, system: IActionsDispatcher, game_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) {
+        system.start_level(game_id, level_number, 0x0, 0, generator_name, generator_value.into());
     }
 
-    fn start_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) -> Chamber {
-        execute_start_level(world, system, from_coord, from_dir, generator_name, generator_value);
-        let to_location: Location = from_coord.offset(from_dir);
-        get_world_Chamber(world, to_location.to_id())
+    fn start_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, game_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) -> Chamber {
+        execute_start_level(world, system, game_id, level_number, generator_name, generator_value);
+        let location: Location = Location { game_id, over:0, under:1, north:0, east: level_number.try_into().unwrap(), west:0, south:1 };
+        get_world_Chamber(world, location.to_id())
     }
 
     fn get_world_Chamber(world: IWorldDispatcher, location_id: u128) -> Chamber {

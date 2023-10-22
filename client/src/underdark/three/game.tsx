@@ -294,13 +294,13 @@ function setupScene() {
   const floor_geometry = new THREE.PlaneGeometry(40 * SIZE, 40 * SIZE);
   const floor_material = new THREE.MeshBasicMaterial({ color: 'cyan' });
   const floor = new THREE.Mesh(floor_geometry, floor_material);
-  floor.position.set(-SIZE * 2, -SIZE * 2, 0);
   const ceiling = new THREE.Mesh(floor_geometry, floor_material);
-  ceiling.position.set(-SIZE * 2, -SIZE * 2, 0);
+  floor.position.set(-SIZE * 2, -SIZE * 2, 0);
+  ceiling.position.set(-SIZE * 2, -SIZE * 2, SIZE);
   ceiling.scale.set(1, 1, -1);
 
   _scene.add(floor);
-  // _scene.add(ceiling);
+  _scene.add(ceiling);
 
   // makeTorus(_scene);
 }
