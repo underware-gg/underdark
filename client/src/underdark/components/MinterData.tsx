@@ -182,7 +182,7 @@ function MinterData() {
         
         <p>Level: <b>{yonder}</b></p>
 
-        <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p>
+        {/* <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p> */}
         
         {/* <p>State: [{state.light},{state.threat},{state.wealth}]</p> */}
 

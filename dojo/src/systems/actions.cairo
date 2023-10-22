@@ -15,7 +15,8 @@ trait IActions<TContractState> {
     );
     fn finish_level(self: @TContractState,
         location_id: u128,
-        proof: u256,
+        proof_low: u128,
+        proof_high: u128,
         moves_count: usize,
     );
 }
@@ -59,12 +60,17 @@ mod actions {
         
         fn finish_level(self: @ContractState,
             location_id: u128,
-            proof: u256,
+            proof_low: u128,
+            proof_high: u128,
             moves_count: usize,
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
             let caller = starknet::contract_address_const::<0x0>();
 
+            let proof = u256 {
+                low: proof_low,
+                high: proof_high,
+            };
             verify_level_proof(world, caller, location_id, proof, moves_count);
 
             return ();

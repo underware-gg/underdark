@@ -27,7 +27,7 @@ mod utils {
     }
 
     fn execute_finish_level(world: IWorldDispatcher, system: IActionsDispatcher, location_id: u128, proof: u256, moves_count: usize) {
-        system.finish_level(location_id, proof, moves_count);
+        system.finish_level(location_id, proof.low, proof.high, moves_count);
     }
 
     fn start_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, game_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) -> Chamber {

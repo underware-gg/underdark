@@ -858,7 +858,7 @@
     {
       "name": "actions",
       "address": "0x1ecc984f2f872bdadd43ab1762c87de3d445b8eb134e6b475f37f23e8a551a3",
-      "class_hash": "0x5aca98820969be30265a4f2397340a53b61d768aa9fa00ed8877b7b0f98c9a9",
+      "class_hash": "0x674707e00a5a67acf844c9b0968a0be5480227ec34841756ccdf054a25dc542",
       "abi": [
         {
           "type": "impl",
@@ -887,20 +887,6 @@
           "type": "impl",
           "name": "ActionsImpl",
           "interface_name": "underdark::systems::actions::IActions"
-        },
-        {
-          "type": "struct",
-          "name": "core::integer::u256",
-          "members": [
-            {
-              "name": "low",
-              "type": "core::integer::u128"
-            },
-            {
-              "name": "high",
-              "type": "core::integer::u128"
-            }
-          ]
         },
         {
           "type": "interface",
@@ -947,8 +933,12 @@
                   "type": "core::integer::u128"
                 },
                 {
-                  "name": "proof",
-                  "type": "core::integer::u256"
+                  "name": "proof_low",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "proof_high",
+                  "type": "core::integer::u128"
                 },
                 {
                   "name": "moves_count",

@@ -6,15 +6,6 @@ import { Dir, Position, TileType } from '../utils/underdark'
 // https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/context
 //
 
-//--------------------------------
-// State Types
-//
-export const initialState = {
-  gameInProgress: false,
-  playerPosition: null,
-  steps: [],
-}
-
 type Step = {
   tile: number
   dir: Dir
@@ -25,8 +16,25 @@ type Movement = {
   tilemap: TileType[]
 }
 
+export enum GameState {
+  Stoped = 0,
+  Playing = 1,
+  Verifying = 10,
+  Won = 11,
+  Lost = 12,
+}
+
+//--------------------------------
+// State
+//
+export const initialState = {
+  gameState: GameState.Stoped,
+  playerPosition: null,
+  steps: [],
+}
+
 type GameplayStateType = {
-  gameInProgress: boolean
+  gameState: GameState
   playerPosition: Position
   steps: Step[]
 }
@@ -37,12 +45,14 @@ type GameplayStateType = {
 
 const GameplayActions = {
   RESET: 'RESET',
+  SET_STATE: 'SET_STATE',
   MOVE_TO: 'MOVE_TO',
   TURN_TO: 'TURN_TO',
 }
 
 type ActionType =
   | { type: 'RESET', payload: Position }
+  | { type: 'SET_STATE', payload: GameState }
   | { type: 'MOVE_TO', payload: Movement }
   | { type: 'TURN_TO', payload: Dir }
 
@@ -73,9 +83,15 @@ const GameplayProvider = ({
     switch (action.type) {
       case GameplayActions.RESET: {
         const position = action.payload as Position
-        newState.gameInProgress = true
+        newState.gameState = GameState.Playing
         newState.playerPosition = position
         newState.steps = []
+        console.log(`>>> GAME START`)
+        break
+      }
+      case GameplayActions.SET_STATE: {
+        newState.gameState = action.payload as GameState
+        console.log(`>>> GAME STATE:`, newState.gameState)
         break
       }
       case GameplayActions.MOVE_TO: {
@@ -135,6 +151,7 @@ export const useGameplayContext = () => {
     ...state,
     dispatch,
     GameplayActions,
+    GameState,
   }
 }
 
