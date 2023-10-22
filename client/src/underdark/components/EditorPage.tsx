@@ -11,7 +11,7 @@ function EditorPage() {
 }
 
 function EditorMap() {
-  const [bitmap, setBitmap] = useState(BigInt('0xfffea8b8aeee82a0fabea208fbeee802effa80a0febf88bfeebfa83caffe00e0'))
+  const [bitmap, setBitmap] = useState(BigInt('0xffffa8a8aeec82a0fbbfa209fbefe822effe80a0febe88aeeebfa83eafbee0e0'))
   const [activeTile, setActiveTile] = useState(-1)
 
   const tilemap = useMemo(() => {
@@ -76,6 +76,10 @@ function EditorMap() {
         <button onClick={() => { navigator?.clipboard?.writeText(bigintToHex(bitmap)) }}>copy</button>
         &nbsp;
         <button onClick={async () => { setBitmap(BigInt(await navigator?.clipboard?.readText() ?? bitmap)) }}>paste</button>
+        &nbsp;
+        /
+        &nbsp;
+        <button onClick={() => { window.location.href = `/editor/playtest/?bitmap=${bigintToHex(bitmap) }` }}>playtest</button>
       </p>
     </div>
   )

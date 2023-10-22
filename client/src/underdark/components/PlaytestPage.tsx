@@ -1,19 +1,52 @@
-import React, { useState, useEffect, useRef } from 'react'
-import GameCanvas from './GameCanvas'
-import { useUnderdarkContext } from '../hooks/UnderdarkContext'
+import { useEffect, useMemo } from 'react'
+import MinterMap from './MinterMap'
+import MinterData from './MinterData'
+import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '../utils/underdark'
 import { useGameplayContext } from '../hooks/GameplayContext'
-import { useChamberMap } from '../hooks/useChamber'
 import { useKeyDown } from '../hooks/useKeyDown'
-import { Dir, FlippedDir } from '../utils/underdark'
+import GameCanvas from './GameCanvas'
+import { bigintToHex } from '../utils/utils'
 
+// set index.html
+//@ts-ignore
+const _bitmap = BigInt(playtest_bitmap)
+
+function PlaytestPage() {
+
+  return (
+    <div>
+      {/* <div className="card MinterPanel">
+        <MinterMap />
+        <MinterData />
+      </div>
+      <br /> */}
+      <div className="card MinterPanel">
+        <GameView />
+      </div>
+    </div>
+  )
+}
 
 const GameView = ({
   // width = 620,
   // height = 350,
 }) => {
 
-  const { chamberId } = useUnderdarkContext()
-  const { tilemap, gameTilemap } = useChamberMap(chamberId)
+  const tilemap = useMemo(() => {
+    let result: TileType[] = []
+    if (_bitmap) {
+      for (let i = 0; i < 256; ++i) {
+        const bit = _bitmap & (BigInt(1) << BigInt(255 - i))
+        result.push(i == 0 ? TileType.Entry : bit ? TileType.Path : TileType.Void)
+      }
+    }
+    return result
+  }, [_bitmap])
+  // useEffect(() => console.log(`tilemap:`, bigintToHex(_bitmap), tilemap), [tilemap])
+
+  const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
+  useEffect(() => console.log(`gameTilemap:`, bigintToHex(_bitmap), gameTilemap), [gameTilemap])
+
   const { playerPosition, dispatch, GameplayActions } = useGameplayContext()
 
   useEffect(() => {
@@ -65,4 +98,9 @@ const GameView = ({
   )
 }
 
-export default GameView
+
+
+
+
+
+export default PlaytestPage
