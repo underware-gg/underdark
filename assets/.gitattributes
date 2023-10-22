@@ -4,3 +4,4 @@ titletrack_biodecay.mp3 filter=lfs diff=lfs merge=lfs -text
 underdark-logo-nonpixellated.png filter=lfs diff=lfs merge=lfs -text
 underdark-logo.jpg filter=lfs diff=lfs merge=lfs -text
 audio filter=lfs diff=lfs merge=lfs -text
+makingof filter=lfs diff=lfs merge=lfs -text

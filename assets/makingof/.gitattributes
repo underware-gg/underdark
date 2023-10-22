@@ -1,0 +1,11 @@
+jubilee-darktar-voxels.png filter=lfs diff=lfs merge=lfs -text
+jubilee-voxelchaos.png filter=lfs diff=lfs merge=lfs -text
+mataleone-depthrender.png filter=lfs diff=lfs merge=lfs -text
+recipromancer-wip-notes.png filter=lfs diff=lfs merge=lfs -text
+shader1.png filter=lfs diff=lfs merge=lfs -text
+ascii-title.png filter=lfs diff=lfs merge=lfs -text
+jubilee-voxelify.mp4 filter=lfs diff=lfs merge=lfs -text
+jubiliee-voxeldoor.mp4 filter=lfs diff=lfs merge=lfs -text
+mataleone-notes.png filter=lfs diff=lfs merge=lfs -text
+shader2.png filter=lfs diff=lfs merge=lfs -text
+door.png filter=lfs diff=lfs merge=lfs -text
