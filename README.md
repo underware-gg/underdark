@@ -18,7 +18,8 @@ Underdark for the Dojo Game Jam #2
 * threejs depth texture [example](https://threejs.org/examples/#webgl_depth_texture) by [@mattdesl](https://twitter.com/mattdesl) CC0
 * Color reduction and dither [shader](https://godotshaders.com/shader/color-reduction-and-dither/) by **whiteshampoo**
 * Ordered Dithering (Bayer) [shader](https://www.shadertoy.com/view/7sfXDn) by **Tech_*
-
+* [three.js](https://threejs.org/) for graphics
+* [tween.js](https://github.com/tweenjs/tween.js) for animation
 
 
 

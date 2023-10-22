@@ -1,7 +1,5 @@
-
-
-
-import * as THREE from 'three';
+import * as THREE from 'three'
+import TWEEN from '@tweenjs/tween.js'
 
 //@ts-ignore
 import Stats from 'three/addons/libs/stats.module.js'
@@ -11,7 +9,13 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 import { DepthPostShader } from './DepthPostShader'
-import { Dir, GameTilemap, Position, TileType } from '../utils/underdark';
+import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
+
+const PI = Math.PI
+const HALF_PI = Math.PI * 0.5
+const ONE_HALF_PI = Math.PI * 1.5
+const TWO_PI = Math.PI * 2
+const R_TO_D = (180 / Math.PI)
 
 //
 // Depth render based on:
@@ -219,7 +223,7 @@ function makeTorus(scene) {
   const count = 50;
   const scale = 5;
   for (let i = 0; i < count; i++) {
-    const r = Math.random() * 2.0 * Math.PI;
+    const r = Math.random() * 2.0 * PI;
     const z = (Math.random() * 2.0) - 1.0;
     const zScale = Math.sqrt(1.0 - z * z) * scale;
     const mesh = new THREE.Mesh(geometry, material);
@@ -242,6 +246,8 @@ export function animate() {
   if (!_supportsExtension) return;
 
   requestAnimationFrame(animate);
+
+  TWEEN.update();
 
   // render scene into target
   _renderer.setRenderTarget(_target);
@@ -288,12 +294,21 @@ function setupScene() {
 export function movePlayer(position: Position) {
   const x = (position.tile % 16) * SIZE
   const y = Math.floor(position.tile / 16) * SIZE
-  const rot = position.facing == Dir.North ? Math.PI * 0
-    : position.facing == Dir.East ? Math.PI * 0.5
-      : position.facing == Dir.South ? Math.PI * 1.0
-        : Math.PI * 1.5 // Dir.West
-  _cameraRig.position.set(x, y, 0);
-  _cameraRig.rotation.set(0, 0, rot + Math.PI * 0);
+  new TWEEN.Tween(_cameraRig.position).to({ x, y }, 100).start()
+  // _cameraRig.position.set(x, y, 0);
+
+  let rot =
+    position.facing == Dir.East ? HALF_PI
+      : position.facing == Dir.South ? PI
+        : position.facing == Dir.West ? ONE_HALF_PI
+          : 0
+  if (_cameraRig.rotation.z - rot > PI) rot += TWO_PI
+  if (rot - _cameraRig.rotation.z > PI) rot -= TWO_PI
+  new TWEEN.Tween(_cameraRig.rotation).to({ z: rot }, 100).start().onComplete(() => {
+    if (_cameraRig.rotation.z < 0) _cameraRig.rotation.z += TWO_PI;
+    if (_cameraRig.rotation.z > TWO_PI) _cameraRig.rotation.z -= TWO_PI;
+  })
+  // _cameraRig.rotation.set(0, 0, rot);
 }
 
 export function setupMap(gameTilemap: GameTilemap) {
