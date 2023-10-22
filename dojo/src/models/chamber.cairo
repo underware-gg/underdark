@@ -31,6 +31,10 @@ struct Map {
     south: u8,
     over: u8,
     under: u8,
+    // monsters
+    monsters: u256,
+    slender_duck: u256,
+    dark_tar: u256,
 }
 
 // The current conditions of a Chamebr

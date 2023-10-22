@@ -1,7 +1,7 @@
 use traits::Into;
 use debug::PrintTrait;
-use underdark::core::seeder::{make_seed};
-use underdark::utils::hash::{hash_u128};
+use underdark::core::seeder::{make_seed, make_underseed};
+use underdark::utils::hash::{hash_u128, hash_u128_to_u256};
 use underdark::utils::bitwise::{U8Bitwise};
 use underdark::utils::bitmap::{Bitmap};
 use underdark::types::location::{Location, LocationTrait};
@@ -157,6 +157,48 @@ fn randomize_door_permissions(ref rnd: u256, chamber_location: Location, entry_d
     // (result & 0b110000) | 0b001001 // test north-south connection
     (result)
 }
+
+
+
+fn randomize_monsters(ref rnd: u256, bitmap: u256, level_number: u32) -> u256 {
+    let mut result: u256 = 0;
+
+    rnd = _rnd_rnd_(rnd);
+    result = hash_u128_to_u256(rnd.low);
+
+    result = make_underseed(result) & ~bitmap;
+    result = make_underseed(result) & ~bitmap;
+    result = make_underseed(result) & ~bitmap;
+
+    (result)
+}
+
+fn randomize_slender_duck(ref rnd: u256, bitmap: u256, level_number: u32) -> u256 {
+    let mut result:u256 = 0;
+
+    rnd = _rnd_rnd_(rnd);
+    result = hash_u128_to_u256(rnd.low);
+
+    result = make_underseed(result) & ~bitmap;
+    result = make_underseed(result) & ~bitmap;
+    result = make_underseed(result) & ~bitmap;
+
+    (result)
+}
+
+fn randomize_dark_tar(ref rnd: u256, bitmap: u256, level_number: u32) -> u256 {
+    let mut result:u256 = 0;
+
+    rnd = _rnd_rnd_(rnd);
+    result = hash_u128_to_u256(rnd.low);
+
+    result = make_underseed(result) & ~bitmap;
+    result = make_underseed(result) & ~bitmap;
+    result = make_underseed(result) & ~bitmap;
+
+    (result)
+}
+
 
 
 
@@ -320,3 +362,5 @@ fn test_randomize_game_tile() {
         i += 1;
     };
 }
+
+

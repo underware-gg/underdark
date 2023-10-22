@@ -6,7 +6,10 @@ mod tests {
 
     use dojo::world::{IWorldDispatcherTrait, IWorldDispatcher};
 
+    use underdark::core::seeder::{make_seed, make_underseed};
     use underdark::systems::verify_level_proof::{verify_map, pack_proof_moves, unpack_proof_moves};
+    use underdark::core::randomizer::{randomize_monsters,randomize_slender_duck,randomize_dark_tar};
+    use underdark::core::binary_tree::{binary_tree_pro};
     use underdark::models::chamber::{Chamber, Map, Score};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DirTrait, DIR};
@@ -263,4 +266,23 @@ mod tests {
         assert(score.moves == proof_best.len(), 'moves=proof_best'); // dir not overrite!
     }
 
+
+    #[test]
+    #[available_gas(1_000_000_000_000)]
+    fn test_mosnters_seed() {
+        let mut rnd = make_seed(1234, 1234);
+        let level_number: u32 = 1;
+        let bitmap: u256 = binary_tree_pro(rnd, Dir::West);
+
+        // randomize_monsters,randomize_slender_duck,randomize_dark_tar
+        let mut i: usize = 0;
+        loop {
+            if (i >= 10) { break; }
+            let monsters: u256 = randomize_monsters(ref rnd, bitmap, level_number);
+            let monster_count: usize = U256Bitwise::count_bits(monsters);
+            assert(monster_count != 0, 'monster_count');
+            // monster_count.print();
+            i += 1;
+        };
+   }
 }
