@@ -6,6 +6,7 @@ const GameCanvas = ({
   width = 720,
   height = 540,
   gameTilemap,
+  gameParams = {},
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -28,6 +29,7 @@ const GameCanvas = ({
   useEffect(() => {
     if (isInitialized && gameTilemap) {
       game.setupMap(gameTilemap)
+      game.setGameParams(gameParams)
     }
   }, [isInitialized, gameTilemap])
 
@@ -36,6 +38,12 @@ const GameCanvas = ({
       game.movePlayer(playerPosition)
     }
   }, [isInitialized, playerPosition])
+
+  useEffect(() => {
+    if (isInitialized) {
+      game.setGameParams(gameParams)
+    }
+  }, [gameParams])
 
 return (
   <canvas

@@ -27,7 +27,7 @@ const R_TO_D = (180 / Math.PI)
 
 const SIZE = 1;
 const CAM_FOV = 70;
-const CAM_FAR = 10;
+const CAM_FAR = 5; // 1.3 .. 5
 const GAMMA = 1;
 const COLOR_COUNT = 0; //16;
 const DITHER = 0;
@@ -59,13 +59,14 @@ let _scene: THREE.Scene
 let _map: THREE.Object3D;
 let _target, _postScene, _postCamera, _postMaterial;
 let _supportsExtension: boolean = true;
+let _gui
 let _stats;
 // let _controls;
 
 let _tile_geometry: THREE.BoxGeometry;
 let _tile_material: THREE.Material;
 
-const params = {
+let params = {
   fov: CAM_FOV,
   far: CAM_FAR,
   gamma: GAMMA,
@@ -76,6 +77,15 @@ const params = {
   palette: PALETTE,
 };
 
+export function setGameParams(newParams: any) {
+  console.log(`setGameParams()`, newParams)
+  paramsUpdated({
+    ...params,
+    ...newParams,
+  })
+  // paramsUpdated(params)
+  // _gui?.controllersRecursive().forEach(c => c.updateDisplay())
+}
 
 //-------------------------------------------
 // Setup
@@ -138,37 +148,40 @@ export function init(canvas, width, height) {
   onWindowResize();
   window.addEventListener('resize', onWindowResize);
 
-  const gui = new GUI({ width: 300 });
-  gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdatedCamera);
-  gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdatedCamera);
-  gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdatedShader);
-  gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdatedShader);
-  gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdatedShader);
-  gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdatedShader);
-  gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdatedShader);
-  gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdatedShader);
-  gui.open();
+  _gui = new GUI({ width: 300 });
+  _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
+  _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
+  _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
+  _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
+  _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
+  _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
+  _gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdated);
+  _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
+  _gui.open();
 
   _stats = new Stats();
   document.body.appendChild(_stats.dom);
 }
 
-function guiUpdatedCamera() {
-  _camera.fov = params.fov;
-  _camera.far = params.far;
+function guiUpdated() {
+  paramsUpdated(params)
+}
+
+function paramsUpdated(newParams: any) {
+  // Camera
+  _camera.fov = newParams.fov;
+  _camera.far = newParams.far;
   _camera.updateProjectionMatrix();
   _postMaterial.uniforms.uCameraNear.value = _camera.near;
   _postMaterial.uniforms.uCameraFar.value = _camera.far;
-}
-
-function guiUpdatedShader() {
-  _postMaterial.uniforms.uGamma.value = params.gamma;
-  _postMaterial.uniforms.uColorCount.value = params.colorCount;
-  _postMaterial.uniforms.uDither.value = params.dither;
-  _postMaterial.uniforms.uDitherSize.value = params.ditherSize;
-  _postMaterial.uniforms.uBayer.value = params.bayer;
-  _postMaterial.uniforms.uPalette.value = params.palette;
-  _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette - 1] : null;
+  // Shader
+  _postMaterial.uniforms.uGamma.value = newParams.gamma;
+  _postMaterial.uniforms.uColorCount.value = newParams.colorCount;
+  _postMaterial.uniforms.uDither.value = newParams.dither;
+  _postMaterial.uniforms.uDitherSize.value = newParams.ditherSize;
+  _postMaterial.uniforms.uBayer.value = newParams.bayer;
+  _postMaterial.uniforms.uPalette.value = newParams.palette;
+  _postMaterial.uniforms.tPalette.value = newParams.palette > 0 ? _palettes[newParams.palette - 1] : null;
 }
 
 // Create a render target with depth texture
@@ -207,7 +220,7 @@ function setupPost() {
       tDepth: { value: null }
     }
   });
-  guiUpdatedShader();
+  guiUpdated();
   const postPlane = new THREE.PlaneGeometry(2, 2);
   const postQuad = new THREE.Mesh(postPlane, _postMaterial);
   _postScene = new THREE.Scene();

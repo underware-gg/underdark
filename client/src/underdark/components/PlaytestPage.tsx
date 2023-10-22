@@ -92,7 +92,7 @@ const GameView = ({
   }
 
   return (
-    <GameCanvas gameTilemap={gameTilemap} />
+    <GameCanvas gameTilemap={gameTilemap} gameParams={{}}/>
   )
 }
 

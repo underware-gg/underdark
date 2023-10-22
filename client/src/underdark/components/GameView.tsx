@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import GameCanvas from './GameCanvas'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { useGameplayContext } from '../hooks/GameplayContext'
@@ -6,7 +6,7 @@ import { useChamberMap } from '../hooks/useChamber'
 import { useKeyDown } from '../hooks/useKeyDown'
 import { Dir, FlippedDir, TileType } from '../utils/underdark'
 import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
-import { bigintToHex } from '../utils/utils'
+import { bigintToHex, map } from '../utils/utils'
 
 
 const GameView = ({
@@ -16,7 +16,8 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { gameState, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const { light, gameState, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const [gameParams, setGameParams] = useState({})
 
   //
   // Start game!
@@ -29,11 +30,20 @@ const GameView = ({
     }
   }, [gameTilemap])
 
+  const _setGameParams = (newParams) => {
+    setGameParams({ ...gameParams, ...newParams })
+  }
+  useEffect(() => {
+    setGameParams({
+      far: map(light, 0.0, 100.0, 1.5, 5.0),
+    })
+  }, [light])
+
 
   return (
     <div className='Relative GameView'>
       <GameControls />
-      {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} />}
+      {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} gameParams={gameParams} />}
       {gameState == GameState.Verifying && <GameProof />}
       <GameTriggers />
     </div>

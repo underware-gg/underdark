@@ -30,12 +30,14 @@ export enum GameState {
 export const initialState = {
   gameState: GameState.Stoped,
   playerPosition: null,
+  light: 0,
   steps: [],
 }
 
 type GameplayStateType = {
   gameState: GameState
   playerPosition: Position
+  light: number
   steps: Step[]
 }
 
@@ -85,6 +87,7 @@ const GameplayProvider = ({
         const position = action.payload as Position
         newState.gameState = GameState.Playing
         newState.playerPosition = position
+        newState.light = 100
         newState.steps = []
         console.log(`>>> GAME START`)
         break
@@ -103,6 +106,7 @@ const GameplayProvider = ({
         const dy = (movement.dir == Dir.North && y > 0) ? -1 : (movement.dir == Dir.South && y < 15) ? 1 : 0
         const tile = currentTile + dx + (16 * dy)
         if (tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
+          newState.light = Math.max(0, state.light - 10)
           newState.playerPosition = {
             ...state.playerPosition,
             tile,
@@ -112,7 +116,7 @@ const GameplayProvider = ({
             dir: movement.dir,
           }
           newState.steps = [...state.steps, step]
-          console.log(`steps:`, newState.steps)
+          // console.log(`steps:`, newState.steps)
         }
         break
       }
