@@ -6,7 +6,7 @@ use core::option::OptionTrait;
 use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use underdark::models::chamber::{Map, State};
+use underdark::models::chamber::{Map, State, Score};
 use underdark::models::tile::{Tile};
 // use underdark::types::location::{Location, LocationTrait};
 use underdark::types::dir::{Dir, DirTrait};
@@ -16,6 +16,7 @@ use underdark::utils::bitmap::{Bitmap};
 
 
 fn verify_level_proof(world: IWorldDispatcher,
+    caller: ContractAddress,
     location_id: u128,
     proof: u256,
     moves_count: usize,
@@ -34,17 +35,17 @@ fn verify_level_proof(world: IWorldDispatcher,
     // Save map state
     //
 
-    let wins: u8 = if (win) { 1 } else { 0 };
+    if(win) {
+        let mut score : Score = get!(world, (location_id, caller), (Score));
+        if(score.moves == 0 || moves_count < score.moves) {
+            score.moves = moves_count;
+            set!(world, (score) );
+        }
 
-    set!(world, (
-        State {
-            location_id,
-            light: 0,
-            threat: 0,
-            wealth: 0,
-            wins,
-        },
-    ) );
+        let mut state : State = get!(world, location_id, (State));
+        state.wins += 1;
+        set!(world, (state) );
+    }
 
     location_id
 }
@@ -74,14 +75,14 @@ fn verify_map(
             pos = pos_tile.try_into().unwrap();
             if (pos == exit) {
                 win = true;
-                pos.print();
-                '---win!!!'.print();
+                // pos.print();
+                // '---win!!!'.print();
                 break;
             }
             if (Bitmap::is_set_tile(bitmap, pos_tile) == false) {
                 // its a wall, invalid move!
-                pos.print();
-                '---wall'.print();
+                // pos.print();
+                // '---wall'.print();
                 break;
             }
         }

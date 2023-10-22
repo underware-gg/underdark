@@ -15,15 +15,20 @@ fn generate_doors(world: IWorldDispatcher,
     location_id: u128,
     ref rnd: u256,
     permissions: u8,
+    generator_name: felt252,
 ) -> (Doors, u256) {
 
-    let doors = Doors {
+    let mut doors = Doors {
         north: 0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::North.into()),
         east:  create_door(world, location, location_id, ref rnd, Dir::West, permissions, Dir::East.into()),
         west:  create_door(world, location, location_id, ref rnd, Dir::East, permissions, Dir::West.into()),
         south: 0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::South.into()),
         over:  0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::Over.into()),
         under: 0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::Under.into()),
+    };
+
+    if (generator_name == 'empty') {
+        doors = Doors {north: 0,east:95,west:80,south:0,over:0,under:0};
     };
 
     // make doors protection bitmap

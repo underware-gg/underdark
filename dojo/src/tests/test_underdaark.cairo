@@ -7,7 +7,7 @@ mod tests {
     use dojo::world::{IWorldDispatcherTrait, IWorldDispatcher};
 
     use underdark::systems::verify_level_proof::{verify_map, pack_proof_moves, unpack_proof_moves};
-    use underdark::models::chamber::{Chamber, Map};
+    use underdark::models::chamber::{Chamber, Map, Score};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DirTrait, DIR};
     use underdark::types::doors::{Doors};
@@ -18,8 +18,10 @@ mod tests {
     use underdark::tests::utils::utils::{
         setup_world,
         start_level_get_chamber,
+        execute_finish_level,
         get_world_Chamber,
         get_world_Map,
+        get_world_Score,
         get_world_Doors_as_Tiles,
     };
 
@@ -199,7 +201,66 @@ mod tests {
             let win: bool = verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
             assert(win == false, 'wall_in_the_way');
         }
-
-
     }
+
+    #[test]
+    #[available_gas(1_000_000_000_000)]
+    fn test_score() {
+        let (world, system) = setup_world();
+        let player = starknet::contract_address_const::<0x0>();
+        let game_id: u32 = 1;
+
+        let chamber1: Chamber = start_level_get_chamber(world, system, game_id, 1, 'empty', 0);
+        let chamber2 = start_level_get_chamber(world, system, game_id, 2, 'empty', 0);
+        
+        // check test if chamber is correct
+        let map: Map = get_world_Map(world, chamber2.location_id);
+        assert(map.west == 80, 'bad_entry');
+        assert(map.east == 95, 'bad_exit');
+
+        let mut score: Score = get_world_Score(world, chamber2.location_id, player);
+        assert(score.moves == 0, 'moves=0');
+
+        let proof_best = array![
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+        ];
+        let proof_mid = array![
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::SOUTH, DIR::NORTH,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+        ];
+        let proof_low = array![
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::SOUTH, DIR::SOUTH, DIR::NORTH, DIR::NORTH,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+        ];
+        let proof_low_packed: u256 = pack_proof_moves(proof_low.clone());
+        let mut win: bool = verify_map(map.bitmap, map.west, map.east, proof_low_packed, proof_low.len());
+        assert(win == true, 'proof_low');
+        // execute
+        execute_finish_level(world, system, chamber2.location_id, proof_low_packed, proof_low.len());
+        score = get_world_Score(world, chamber2.location_id, player);
+        assert(score.moves == proof_low.len(), 'moves=proof_low');
+
+        let proof_best_packed: u256 = pack_proof_moves(proof_best.clone());
+        win = verify_map(map.bitmap, map.west, map.east, proof_best_packed, proof_best.len());
+        assert(win == true, 'proof_best');
+        // execute
+        execute_finish_level(world, system, chamber2.location_id, proof_best_packed, proof_best.len());
+        score = get_world_Score(world, chamber2.location_id, player);
+        assert(score.moves == proof_best.len(), 'moves=proof_best');
+
+        let proof_mid_packed: u256 = pack_proof_moves(proof_mid.clone());
+        win = verify_map(map.bitmap, map.west, map.east, proof_mid_packed, proof_mid.len());
+        assert(win == true, 'proof_mid');
+        // execute
+        execute_finish_level(world, system, chamber2.location_id, proof_mid_packed, proof_mid.len());
+        score = get_world_Score(world, chamber2.location_id, player);
+        assert(score.moves == proof_best.len(), 'moves=proof_best'); // dir not overrite!
+    }
+
 }

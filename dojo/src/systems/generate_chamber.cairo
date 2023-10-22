@@ -45,7 +45,7 @@ fn generate_chamber(world: IWorldDispatcher,
     // let entry_dir: Dir = from_dir.flip();
     // let permissions: u8 = randomize_door_permissions(ref rnd, chamber_location, entry_dir, yonder, generator_name);
     let permissions: u8 = 0b000100;
-    let (doors, protected): (Doors, u256) = generate_doors(world, location, location_id, ref rnd, permissions);
+    let (doors, protected): (Doors, u256) = generate_doors(world, location, location_id, ref rnd, permissions, generator_name);
 
 
     //---------------------

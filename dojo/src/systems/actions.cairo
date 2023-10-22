@@ -63,8 +63,9 @@ mod actions {
             moves_count: usize,
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
+            let caller = starknet::contract_address_const::<0x0>();
 
-            verify_level_proof(world, location_id, proof, moves_count);
+            verify_level_proof(world, caller, location_id, proof, moves_count);
 
             return ();
         }

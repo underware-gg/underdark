@@ -44,3 +44,17 @@ struct State {
     wealth: u8,
     wins: u8,
 }
+
+// The current conditions of a Chamebr
+// (Mutable)
+#[derive(Model, Copy, Drop, Serde)]
+struct Score {
+    #[key]
+    key_location_id: u128,
+    #[key]
+    key_player: ContractAddress,
+    // fields
+    location_id: u128,
+    player: ContractAddress,
+    moves: usize,
+}
