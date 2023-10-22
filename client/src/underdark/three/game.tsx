@@ -44,6 +44,7 @@ let _aspect: number;
 let _eyeZ: number;
 let _palettes = [];
 let _gameTilemap: GameTilemap | null = null
+let _stepCounter = 0
 
 let _renderer: THREE.WebGLRenderer;
 let _camera: THREE.PerspectiveCamera;
@@ -297,18 +298,23 @@ export function movePlayer(position: Position) {
   new TWEEN.Tween(_cameraRig.position).to({ x, y }, 100).start()
   // _cameraRig.position.set(x, y, 0);
 
-  let rot =
+  // Rotate player
+  let tilt = (++_stepCounter % 2 == 0 ? 1 : -1) / R_TO_D
+  let rotX = (position.facing == Dir.East || position.facing == Dir.West) ? tilt : 0
+  let rotY = (position.facing == Dir.North || position.facing == Dir.South) ? tilt : 0
+  let rotZ =
     position.facing == Dir.East ? HALF_PI
       : position.facing == Dir.South ? PI
         : position.facing == Dir.West ? ONE_HALF_PI
           : 0
-  if (_cameraRig.rotation.z - rot > PI) rot += TWO_PI
-  if (rot - _cameraRig.rotation.z > PI) rot -= TWO_PI
-  new TWEEN.Tween(_cameraRig.rotation).to({ z: rot }, 100).start().onComplete(() => {
+  if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
+  if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
+  new TWEEN.Tween(_cameraRig.rotation).to({ x: rotX, y: rotY, z: rotZ }, 100).start().onComplete(() => {
     if (_cameraRig.rotation.z < 0) _cameraRig.rotation.z += TWO_PI;
     if (_cameraRig.rotation.z > TWO_PI) _cameraRig.rotation.z -= TWO_PI;
   })
   // _cameraRig.rotation.set(0, 0, rot);
+
 }
 
 export function setupMap(gameTilemap: GameTilemap) {
