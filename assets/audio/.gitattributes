@@ -2,3 +2,5 @@ sfx filter=lfs diff=lfs merge=lfs -text
 underdark[[:space:]]-[[:space:]]poem.aup3 filter=lfs diff=lfs merge=lfs -text
 underdark[[:space:]]-[[:space:]]slenderduck.aup3 filter=lfs diff=lfs merge=lfs -text
 underdark-poem.mp3 filter=lfs diff=lfs merge=lfs -text
+music-ambient.mp3 filter=lfs diff=lfs merge=lfs -text
+music-title.mp3 filter=lfs diff=lfs merge=lfs -text
