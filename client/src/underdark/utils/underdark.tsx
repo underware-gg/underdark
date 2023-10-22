@@ -4,6 +4,7 @@
 //
 
 import { Point } from "../components/MapView"
+import { bigintToHex } from "./utils"
 
 export enum Dir {
   North = 0,

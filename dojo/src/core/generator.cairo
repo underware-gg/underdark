@@ -28,8 +28,10 @@ fn generate(
         bitmap = protected;
     } else if(generator_name == 'entry') {
         // the entry is always a wide chamber
-        bitmap = carve(bitmap, protected, 3);
-        bitmap = carve(bitmap, protected, 7);
+        // bitmap = carve(bitmap, protected, 3);
+        // bitmap = carve(bitmap, protected, 7);
+        bitmap = carve(bitmap, protected, 4);
+        bitmap = carve(bitmap, protected, 5);
     } else if(generator_name == 'connection') {
         bitmap = connect_doors(protected, entry_dir, generator_value);
     } else if(generator_name == 'binary_tree_classic') {

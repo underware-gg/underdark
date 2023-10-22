@@ -74,8 +74,7 @@ function MinterMap() {
       </div>
 
       <div className='AlignBottom'>
-        tile&nbsp;
-        {[2, 3, 4, 5, 6, 8, 10, 12, 16].map((value: number) => {
+        {[2, 3, 4, 5].map((value: number) => {
           return <button key={`tileSize_${value}`} className={`SmallButton ${value == tileSize ? 'Unlocked' : 'Locked'}`} onClick={() => seTtileSize(value)}>{value}</button>
         })}
       </div>

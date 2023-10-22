@@ -62,9 +62,9 @@ fn binary_tree_pro(seed: u256, entry_dir: Dir) -> u256 {
             result = Bitmap::set_xy(result, xx, yy - 1); // set north
         }
         // open some random paths
-        if (Bitmap::is_set_xy(underseed, x * 2, y * 2)) {
+        // if (Bitmap::is_set_xy(underseed, x * 2, y * 2)) {
             result = Bitmap::set_xy(result, x * 2, y * 2);
-        }
+        // }
         i += 1;
     };
     // rotate to keep the long row always on the entry

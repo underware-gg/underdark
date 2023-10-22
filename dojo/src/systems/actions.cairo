@@ -38,17 +38,15 @@ mod actions {
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
 
-            // TODO: verify token ownership
-            
             // verify its a valid direction
-            // assert(from_dir < DIR::COUNT, 'Invalid from direction');
-            let maybe_from_dir: Option<Dir> = from_dir_u128.try_into();
-            let from_dir: Dir = maybe_from_dir.unwrap();
-            assert(from_dir != Dir::Over, 'Invalid from direction (Over)');
-            
-            let from_location: Location = LocationTrait::from_coord(game_id, from_coord);
+            // let maybe_from_dir: Option<Dir> = from_dir_u128.try_into();
+            // let from_dir: Dir = maybe_from_dir.unwrap();
+            // assert(from_dir != Dir::Over, 'Invalid from direction (Over)');
+            // let from_location: Location = LocationTrait::from_coord(game_id, from_coord);
 
-            generate_chamber(world, game_id, level_number, from_location, from_dir, generator_name, generator_value_u128.try_into().unwrap());
+            let location: Location = Location{ game_id, over:0, under:1, north: 0, east: level_number.try_into().unwrap(), west:0, south:1 };
+
+            generate_chamber(world, game_id, level_number, location, Dir::West, generator_name, generator_value_u128.try_into().unwrap());
 
             return ();
         }

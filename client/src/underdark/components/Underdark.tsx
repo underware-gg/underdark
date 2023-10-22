@@ -20,7 +20,7 @@ function Underdark() {
           <MinterData />
         </div>
         <br />
-        <div className="card MinterPanel">
+        <div className="card GamePanel">
           <GameView />
         </div>
       </GameplayProvider>

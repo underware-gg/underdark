@@ -67,6 +67,8 @@ const _generators: Generator[] = [
 
 interface DirectionButtonProps {
   chamberId: bigint
+  gameId: number
+  yonder: number
   dir: Dir
   doorTile: number
   generator: Generator
@@ -74,19 +76,22 @@ interface DirectionButtonProps {
 
 function DirectionButton({
   chamberId,
+  gameId,
+  yonder,
   dir,
   doorTile,
   generator,
 }: DirectionButtonProps) {
-  const { gameId, dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { dispatch, UnderdarkActions } = useUnderdarkContext()
   const { start_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
   const { locationId, seed } = useChamberOffset(chamberId, dir)
   const exists = useMemo(() => (seed > 0n), [seed, locationId])
+  console.log(`button >`, bigintToHex(chamberId), dir, bigintToHex(locationId),exists)
 
   const _mint = () => {
-    start_level(account, gameId, 1, chamberId, dir, generator.name, generator.value)
+    start_level(account, gameId, yonder+1, 0n, dir, generator.name, generator.value)
   }
   const _open = () => {
     dispatch({
@@ -95,10 +100,10 @@ function DirectionButton({
     })
   }
 
-  if (!exists) {
-    return <button className='DirectionButton Locked' disabled={doorTile == 0} onClick={() => _mint()}>Unlock<br />{DirNames[dir]}</button>
+  if (exists) {
+    return <button className='DirectionButton Unlocked' onClick={() => _open()}>Go<br />{DirNames[dir]}</button>
   }
-  return <button className='DirectionButton Unocked' onClick={() => _open()}>Go<br />{DirNames[dir]}</button>
+  return <button className='DirectionButton Locked' disabled={dir == Dir.West} onClick={() => _mint()}>Unlock<br />{DirNames[dir]}</button>
 }
 
 
@@ -107,7 +112,7 @@ function MinterData() {
   const { start_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
-  const [generatorIndex, setGeneratorIndex] = useState(9)
+  const [generatorIndex, setGeneratorIndex] = useState(10)
 
   // Current Realm / Chamber
   const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -141,8 +146,8 @@ function MinterData() {
 
   const _mintFirst = () => {
     if (canMintFirst && gameId) {
-      const coord = makeEntryChamberId()
-      start_level(account, gameId, 1, coord, Dir.Under, 'entry', 0)
+      // const coord = makeEntryChamberId()
+      start_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
     }
   }
 
@@ -164,48 +169,27 @@ function MinterData() {
         <span className='Anchor' onClick={() => _setSelectedGame(gameId + 1)}>⏩️</span>
         {' '}
         <span className='Anchor' onClick={() => _setSelectedGame(Math.floor(Math.random() * 10000) + 1)}>🔄</span>
-        <br />
-        {bigintToHex(chamberId)}
       </p>
 
       {!chamberExists && <>
         <div>
-          <button disabled={!canMintFirst} onClick={() => _mintFirst()}>Create Underground</button>
+          <button disabled={!canMintFirst} onClick={() => _mintFirst()}>Start New Game</button>
         </div>
         <br />
       </>}
 
       {chamberExists && <>
-        <div>
-          <select value={chamberId?.toString()} onChange={e => _selectChamber(BigInt(e.target.value))}>
-            {chamberIds.map((locationId) => {
-              const _id = locationId.toString()
-              return <option value={_id} key={_id}>{coordToSlug(locationId)}</option>
-            })}
-          </select>
-        </div>
-
-        <p>
-          <b>{coordToSlug(chamberId, yonder)}</b>
-          <br />
-          {bigintToHex(chamberId)}
-          <br />
-          {chamberId.toString()}
-        </p>
+        <p><b>{coordToSlug(chamberId, yonder)}</b></p>
         
-        <p>Yonder: <b>{yonder}</b></p>
+        <p>Level: <b>{yonder}</b></p>
 
-        {/* <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p> */}
+        <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p>
         
         {/* <p>State: [{state.light},{state.threat},{state.wealth}]</p> */}
 
         <div className='Padded'>
-          <DirectionButton chamberId={chamberId} dir={Dir.North} doorTile={doors?.north ?? 0} generator={_generators[generatorIndex]} />
-          <div>
-            <DirectionButton chamberId={chamberId} dir={Dir.West} doorTile={doors?.west ?? 0} generator={_generators[generatorIndex]} />
-            <DirectionButton chamberId={chamberId} dir={Dir.East} doorTile={doors?.east ?? 0} generator={_generators[generatorIndex]} />
-          </div>
-          <DirectionButton chamberId={chamberId} dir={Dir.South} doorTile={doors?.south ?? 0} generator={_generators[generatorIndex]} />
+          <DirectionButton chamberId={chamberId} gameId={gameId} yonder={yonder} dir={Dir.West} doorTile={doors?.west ?? 0} generator={_generators[generatorIndex]} />
+          <DirectionButton chamberId={chamberId} gameId={gameId} yonder={yonder} dir={Dir.East} doorTile={doors?.east ?? 0} generator={_generators[generatorIndex]} />
         </div>
 
         <div>

@@ -363,7 +363,7 @@ export function setupMap(gameTilemap: GameTilemap) {
       mesh.position.set(x, y, SIZE * 0.5)
     }
   }
-
+  
   // loadFBX(MODELS.DUCK, _map, 0, 0, 0)
 
   _scene.add(_map)

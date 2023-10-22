@@ -40,7 +40,7 @@ export function MapView({
   targetChamber,
   chambers,
   tileSize = 4,
-  viewSize = 350,
+  viewSize = 200,
 }: MapViewProps) {
 
   if (!targetChamber?.gameTilemap) {

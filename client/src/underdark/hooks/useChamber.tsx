@@ -3,7 +3,7 @@ import { Entity, HasValue, Has, getComponentValue } from '@latticexyz/recs'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react"
 import { useDojoComponents } from '../../DojoContext'
 import { bigintToEntity, bigintToHex } from "../utils/utils"
-import { Dir, TileType, tilemapToGameTilemap, offsetCoord } from "../utils/underdark"
+import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToSlug } from "../utils/underdark"
 
 
 //------------------
@@ -66,7 +66,7 @@ export const useChamberMap = (locationId: bigint) => {
   // useEffect(() => console.log(`map:`, map, typeof map?.bitmap, bitmap), [bitmap])
 
   const tileIds: Entity[] = useEntityQuery([HasValue(Tile, { location_id: locationId ?? 0n })])
-  // useEffect(() => console.log(`tileIds:`, tileIds), [tileIds])
+  // useEffect(() => console.log(`tileIds:`, coordToSlug(locationId), tileIds), [tileIds])
 
   const tiles: any[] = useMemo(() => tileIds.map((tileId) => getComponentValue(Tile, tileId)), [tileIds])
 
@@ -83,9 +83,10 @@ export const useChamberMap = (locationId: bigint) => {
     }
     return result
   }, [bitmap, tiles])
-  // useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
+  useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
+  useEffect(() => console.log(`gameTilemap:`, gameTilemap), [gameTilemap])
 
   return {
     bitmap,

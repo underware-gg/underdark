@@ -3,8 +3,8 @@ import * as game from '../three/game'
 import { useGameplayContext } from '../hooks/GameplayContext'
 
 const GameCanvas = ({
-  width = 620,
-  height = 350,
+  width = 720,
+  height = 540,
   gameTilemap,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
