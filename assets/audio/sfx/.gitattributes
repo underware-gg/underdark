@@ -1,0 +1,8 @@
+extinguish.mp3 filter=lfs diff=lfs merge=lfs -text
+fight.mp3 filter=lfs diff=lfs merge=lfs -text
+footsteps.mp3 filter=lfs diff=lfs merge=lfs -text
+key.mp3 filter=lfs diff=lfs merge=lfs -text
+stairs.mp3 filter=lfs diff=lfs merge=lfs -text
+chest.mp3 filter=lfs diff=lfs merge=lfs -text
+darktar.mp3 filter=lfs diff=lfs merge=lfs -text
+slenderduck.mp3 filter=lfs diff=lfs merge=lfs -text
