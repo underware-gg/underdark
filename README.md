@@ -35,13 +35,16 @@ Losing our mind in the Underdark, for the Dojo Game Jam #2
 
 ## Team
 
-* Mataleone
+* Mataleone - Game & Engineering
   * GitHub: [@rsodre](https://github.com/rsodre)
   * Twitter: [@matalecode](https://twitter.com/matalecode)
-* Recipromancer
+* Recipromancer - Renaissance Chaos Mode (& Sound)
   * GitHub: [@Rob-Morris](https://github.com/Rob-Morris)
   * Twitter: [@recipromancer](https://twitter.com/recipromancer)
-
+* Mononoke - Art & Website
+  * Twitter: [@MononokeArts](https://twitter.com/MononokeArts)
+* Jubilee - Game Art & 3D
+  * Only the dark night follows Jubilee, so that it may collect the glittering baubles he leaves behind
 
 ## Resources
 
@@ -51,7 +54,18 @@ Losing our mind in the Underdark, for the Dojo Game Jam #2
 * Ordered Dithering (Bayer) [shader](https://www.shadertoy.com/view/7sfXDn) by **Tech_*
 * [three.js](https://threejs.org/) for graphics
 * [tween.js](https://github.com/tweenjs/tween.js) for animation
-* Music: Biodecay -- Mazzive Injection (Bonus Track) [1999], Biodecay - Down (Depression) [1999]
+* Original art made lovingly by hand by `Mononoke`, semi-original art made lovingly with AI assistance by `recipromancer`
+* 3D Assets made by `Jubilee`
+* Music by `recipromancer`:
+  * Title Track: Biodecay -- Mazzive Injection (Bonus Track) [1999]
+  * Ambient: Biodecay -- Down (Depression) [1999]
+* Sound effects built by `recipromancer` using sounds from [freesound.org](https://freesound.org/)
+  * CC0 sounds by `MATRIXXX_`, `DigPro120`, `Merrick079`, `the_semen_incident`, `Nox_Sound`
+  * [CC Attribution 3.0](https://creativecommons.org/licenses/by/3.0/) sounds
+    * in fight.mp3 `shocked duck.wav` by `crazyduckman` [on freesound.org](https://freesound.org/people/crazyduckman/sounds/185550/)
+    * in stairs.mp3 `footsteps_down_stairs_3.WAV` by `sinatra314` [on freesound.org](https://freesound.org/people/sinatra314/sounds/209474/)
+  * [CC Attribution 4.0](https://creativecommons.org/licenses/by/4.0/)
+    * in footsteps.mp3 `Footsteps, Muddy, E.wav` by `InspectorJ` [on freesound.org](https://freesound.org/people/InspectorJ/sounds/339325/)
 
 ## Environment Setup [🔗](https://book.dojoengine.org/getting-started/setup.html)
 
