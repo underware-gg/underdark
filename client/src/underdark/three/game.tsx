@@ -7,6 +7,8 @@ import Stats from 'three/addons/libs/stats.module.js'
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 //@ts-ignore
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+//@ts-ignore
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 import { DepthPostShader } from './DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
@@ -37,6 +39,10 @@ const PALETTE_PATHS = [
   '/colors/blues1.png',
   '/colors/pinks1.png',
 ]
+
+const MODELS = {
+  DUCK: { path: '/models/duck.fbx', scale: 0.5 },
+} 
 
 let _width: number;
 let _height: number;
@@ -238,6 +244,13 @@ function makeTorus(scene) {
   }
 }
 
+function loadFBX(model, parent, x, y, rot) {
+  const loader = new FBXLoader();
+  loader.load(model.path, function (object) {
+    object.scale.set(model.scale)
+    parent.add(object);
+  });
+}
 
 //-------------------------------------------
 // Game Loop
@@ -350,6 +363,8 @@ export function setupMap(gameTilemap: GameTilemap) {
       mesh.position.set(x, y, SIZE * 0.5)
     }
   }
+
+  // loadFBX(MODELS.DUCK, _map, 0, 0, 0)
 
   _scene.add(_map)
 
