@@ -36,11 +36,14 @@ export function defineContractComponents(world: World) {
           south: RecsType.Number,
           over: RecsType.Number,
           under: RecsType.Number,
+          monsters: RecsType.BigInt,
+          slender_duck: RecsType.BigInt,
+          dark_tar: RecsType.BigInt,
         },
         {
           metadata: {
             name: name,
-            types: ["u256","felt252","u32","u8","u8","u8","u8","u8","u8"],
+            types: ["u256","felt252","u32","u8","u8","u8","u8","u8","u8","u256","u256","u256"],
           },
         }
       );
@@ -53,11 +56,29 @@ export function defineContractComponents(world: World) {
           light: RecsType.Number,
           threat: RecsType.Number,
           wealth: RecsType.Number,
+          wins: RecsType.Number,
         },
         {
           metadata: {
             name: name,
-            types: ["u8","u8","u8"],
+            types: ["u8","u8","u8","u8"],
+          },
+        }
+      );
+    })(),
+    Score: (() => {
+      const name = "Score";
+      return defineComponent(
+        world,
+        {
+          location_id: RecsType.BigInt,
+          player: RecsType.BigInt,
+          moves: RecsType.Number,
+        },
+        {
+          metadata: {
+            name: name,
+            types: ["u128","ContractAddress","usize"],
           },
         }
       );
