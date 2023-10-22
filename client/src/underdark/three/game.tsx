@@ -40,9 +40,9 @@ const PALETTE_PATHS = [
   '/colors/pinks1.png',
 ]
 
-const MODELS = {
-  DUCK: { path: '/models/duck.fbx', scale: 0.5 },
-} 
+// const MODELS = {
+//   DUCK: { path: '/models/duck.fbx', scale: 0.5 },
+// } 
 
 let _width: number;
 let _height: number;
@@ -224,33 +224,33 @@ function onWindowResize() {
   // renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function makeTorus(scene) {
-  const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 64);
-  const material = new THREE.MeshBasicMaterial({ color: 'blue' });
-  const count = 50;
-  const scale = 5;
-  for (let i = 0; i < count; i++) {
-    const r = Math.random() * 2.0 * PI;
-    const z = (Math.random() * 2.0) - 1.0;
-    const zScale = Math.sqrt(1.0 - z * z) * scale;
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(
-      Math.cos(r) * zScale,
-      Math.sin(r) * zScale,
-      z * scale
-    );
-    mesh.rotation.set(Math.random(), Math.random(), Math.random());
-    scene.add(mesh);
-  }
-}
+// function makeTorus(scene) {
+//   const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 64);
+//   const material = new THREE.MeshBasicMaterial({ color: 'blue' });
+//   const count = 50;
+//   const scale = 5;
+//   for (let i = 0; i < count; i++) {
+//     const r = Math.random() * 2.0 * PI;
+//     const z = (Math.random() * 2.0) - 1.0;
+//     const zScale = Math.sqrt(1.0 - z * z) * scale;
+//     const mesh = new THREE.Mesh(geometry, material);
+//     mesh.position.set(
+//       Math.cos(r) * zScale,
+//       Math.sin(r) * zScale,
+//       z * scale
+//     );
+//     mesh.rotation.set(Math.random(), Math.random(), Math.random());
+//     scene.add(mesh);
+//   }
+// }
 
-function loadFBX(model, parent, x, y, rot) {
-  const loader = new FBXLoader();
-  loader.load(model.path, function (object) {
-    object.scale.set(model.scale)
-    parent.add(object);
-  });
-}
+// function loadFBX(model, parent) {
+//   const loader = new FBXLoader();
+//   loader.load(model.path, function (object) {
+//     object.scale.set(model.scale)
+//     parent.add(object);
+//   });
+// }
 
 //-------------------------------------------
 // Game Loop
@@ -334,9 +334,9 @@ export function setupMap(gameTilemap: GameTilemap) {
 
   _gameTilemap = gameTilemap
 
-  const gridSize = gameTilemap.gridSize
-  const gridOrigin = gameTilemap.gridOrigin
-  const tilemap = gameTilemap.tilemap
+  const gridSize = _gameTilemap.gridSize
+  const gridOrigin = _gameTilemap.gridOrigin
+  const tilemap = _gameTilemap.tilemap
 
   if (_map) {
     _scene.remove(_map)
@@ -364,9 +364,9 @@ export function setupMap(gameTilemap: GameTilemap) {
     }
   }
   
-  // loadFBX(MODELS.DUCK, _map, 0, 0, 0)
+  // loadFBX(MODELS.DUCK, _map)
 
   _scene.add(_map)
 
-  movePlayer(gameTilemap.playerStart)
+  movePlayer(_gameTilemap.playerStart)
 }

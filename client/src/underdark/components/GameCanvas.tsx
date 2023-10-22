@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import * as game from '../three/game'
 import { useGameplayContext } from '../hooks/GameplayContext'
 

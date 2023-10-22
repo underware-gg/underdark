@@ -137,27 +137,27 @@ function hexToAscii(hex: string) {
   return str;
 }
 
-function asciiToHex(ascii: string) {
-  var hex = '';
-  for (var i = 0; i < ascii.length; i++) {
-    var charCode = ascii.charCodeAt(i);
-    hex += charCode.toString(16).padStart(2, '0');
-  }
-  return `0x${hex}`;
-}
+// function asciiToHex(ascii: string) {
+//   var hex = '';
+//   for (var i = 0; i < ascii.length; i++) {
+//     var charCode = ascii.charCodeAt(i);
+//     hex += charCode.toString(16).padStart(2, '0');
+//   }
+//   return `0x${hex}`;
+// }
 
-function getEntityIdFromEvents(events: Event[], componentName: string): number {
-  let entityId = 0;
-  const event = events.find((event) => {
-    //@ts-ignore
-    return event.data[0] === asciiToHex(componentName);
-  });
-  if (event) {
-    //@ts-ignore
-    entityId = parseInt(event.data[2]);
-  }
-  return entityId;
-}
+// function getEntityIdFromEvents(events: Event[], componentName: string): number {
+//   let entityId = 0;
+//   const event = events.find((event) => {
+//     //@ts-ignore
+//     return event.data[0] === asciiToHex(componentName);
+//   });
+//   if (event) {
+//     //@ts-ignore
+//     entityId = parseInt(event.data[2]);
+//   }
+//   return entityId;
+// }
 
 
 // Event keys (event hash)

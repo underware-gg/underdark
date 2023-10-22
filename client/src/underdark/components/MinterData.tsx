@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDojoSystemCalls, useDojoAccount } from '../../DojoContext'
-import { useChamber, useChamberState, useChamberMap, useChamberOffset, useGameChamberIds } from '../hooks/useChamber'
+import { useChamber, useChamberMap, useChamberOffset, useGameChamberIds } from '../hooks/useChamber'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { bigintToHex } from '../utils/utils'
-import { Dir, DirNames, coordToCompass, coordToSlug, makeEntryChamberId, offsetCompass } from '../utils/underdark'
+import { Dir, DirNames, coordToSlug } from '../utils/underdark'
 
 interface Generator {
   name: string
@@ -79,7 +78,7 @@ function DirectionButton({
   gameId,
   yonder,
   dir,
-  doorTile,
+  // doorTile,
   generator,
 }: DirectionButtonProps) {
   const { dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -117,7 +116,6 @@ function MinterData() {
   const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
   const { seed, yonder } = useChamber(chamberId)
   const { doors } = useChamberMap(chamberId)
-  const state = useChamberState(chamberId)
 
   const chamberExists = useMemo(() => (seed > 0), [seed])
   const canMintFirst = useMemo(() => (gameId > 0 && !chamberExists), [gameId, chamberExists])

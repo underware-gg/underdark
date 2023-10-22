@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import GameCanvas from './GameCanvas'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { GameState, useGameplayContext } from '../hooks/GameplayContext'
-import { useChamberMap, useChamberOffset } from '../hooks/useChamber'
+import { useGameplayContext } from '../hooks/GameplayContext'
+import { useChamberMap } from '../hooks/useChamber'
 import { useKeyDown } from '../hooks/useKeyDown'
 import { Dir, FlippedDir, TileType } from '../utils/underdark'
 import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
@@ -15,7 +15,7 @@ const GameView = ({
 }) => {
 
   const { chamberId } = useUnderdarkContext()
-  const { tilemap, gameTilemap } = useChamberMap(chamberId)
+  const { gameTilemap } = useChamberMap(chamberId)
   const { gameState, dispatch, GameplayActions, GameState } = useGameplayContext()
 
   //
@@ -43,8 +43,8 @@ const GameView = ({
 
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
-  const { tilemap, gameTilemap } = useChamberMap(chamberId)
-  const { gameState, playerPosition, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const { tilemap } = useChamberMap(chamberId)
+  const { playerPosition, dispatch, GameplayActions, GameState } = useGameplayContext()
 
   useEffect(() => {
     if (!playerPosition) return
@@ -73,10 +73,11 @@ const GameTriggers = () => {
 //
 
 const GameProof = () => {
-  const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { chamberId } = useUnderdarkContext()
   const { finish_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
-  const { gameState, steps, dispatch: dispatchGameplay, GameplayActions, GameState } = useGameplayContext()
+  const { gameState, steps, GameState } = useGameplayContext()
+  // const { gameState, steps, dispatch: dispatchGameplay, GameplayActions, GameState } = useGameplayContext()
 
   // const { locationId, seed } = useChamberOffset(chamberId, dir)
   // const exists = useMemo(() => (seed > 0n), [seed, locationId])

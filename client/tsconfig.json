@@ -8,6 +8,7 @@
       "DOM.Iterable"
     ],
     "skipLibCheck": true,
+    "types": [],
     "useDefineForClassFields": true,
     /* Bundler mode */
     "moduleResolution": "node",

@@ -55,6 +55,7 @@ function EditorMap() {
     <div>
       <svg width='400' height='400' viewBox={`0 0 16 16`}>
         <style>{`svg{background-color:${MapColors.BG1}}`}</style>
+        {/* @ts-ignore */}
         {tilemap.map((bit: number, index: number) => _tileRect(index))}
         {_tileRect(activeTile)}
       </svg>
