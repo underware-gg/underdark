@@ -52,6 +52,7 @@ let _palettes = [];
 let _gameTilemap: GameTilemap | null = null
 let _stepCounter = 0
 
+let _animationRequest = null
 let _renderer: THREE.WebGLRenderer;
 let _camera: THREE.PerspectiveCamera;
 let _cameraRig: THREE.Object3D;
@@ -90,6 +91,14 @@ export function setGameParams(newParams: any) {
 //-------------------------------------------
 // Setup
 //
+
+export function dispose() {
+  if (_animationRequest) cancelAnimationFrame(_animationRequest)
+  _animationRequest = null
+  _renderer?.dispose()
+  _renderer = null
+  _scene = null
+}
 
 export function init(canvas, width, height) {
 
@@ -270,9 +279,9 @@ function onWindowResize() {
 //
 
 export function animate() {
-  if (!_supportsExtension) return;
+  if (!_supportsExtension || !_scene || !_renderer) return;
 
-  requestAnimationFrame(animate);
+  _animationRequest = requestAnimationFrame(animate);
 
   TWEEN.update();
 

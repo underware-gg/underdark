@@ -21,7 +21,8 @@ export enum GameState {
   Playing = 1,
   Verifying = 10,
   Won = 11,
-  Lost = 12,
+  Lost = 20,
+  NoEnergy = 21,
 }
 
 //--------------------------------
@@ -31,6 +32,7 @@ export const initialState = {
   gameState: GameState.Stoped,
   playerPosition: null,
   light: 0,
+  stepCount: 0,
   steps: [],
 }
 
@@ -38,6 +40,7 @@ type GameplayStateType = {
   gameState: GameState
   playerPosition: Position
   light: number
+  stepCount: number
   steps: Step[]
 }
 
@@ -88,6 +91,7 @@ const GameplayProvider = ({
         newState.gameState = GameState.Playing
         newState.playerPosition = position
         newState.light = 100
+        newState.stepCount = 64
         newState.steps = []
         console.log(`>>> GAME START`)
         break
@@ -105,7 +109,7 @@ const GameplayProvider = ({
         const dx = (movement.dir == Dir.West && x > 0) ? -1 : (movement.dir == Dir.East && x < 15) ? 1 : 0
         const dy = (movement.dir == Dir.North && y > 0) ? -1 : (movement.dir == Dir.South && y < 15) ? 1 : 0
         const tile = currentTile + dx + (16 * dy)
-        if (tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
+        if (newState.stepCount > 0 && tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
           newState.light = Math.max(0, state.light - 10)
           newState.playerPosition = {
             ...state.playerPosition,
@@ -116,6 +120,7 @@ const GameplayProvider = ({
             dir: movement.dir,
           }
           newState.steps = [...state.steps, step]
+          newState.stepCount--
           // console.log(`steps:`, newState.steps)
         }
         break

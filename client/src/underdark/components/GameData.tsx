@@ -4,6 +4,7 @@ import { useChamber, useChamberMap, useChamberOffset, useGameChamberIds } from '
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { Dir, DirNames, coordToSlug } from '../utils/underdark'
 import { useGameplayContext } from '../hooks/GameplayContext'
+import { map } from '../utils/utils'
 
 interface Generator {
   name: string
@@ -113,7 +114,7 @@ function MinterData() {
 
   const [generatorIndex, setGeneratorIndex] = useState(10)
 
-  const { light } = useGameplayContext()
+  const { light, stepCount } = useGameplayContext()
 
   // Current Realm / Chamber
   const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -184,6 +185,8 @@ function MinterData() {
         <p>Level: <b>{yonder}</b></p>
 
         <p>Light: <b>{light}%</b></p>
+
+        <p>Energy: <b>{Math.floor(map(stepCount, 0, 64, 0, 100))}%</b></p>
 
         {/* <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p> */}
         

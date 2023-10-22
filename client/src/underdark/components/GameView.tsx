@@ -34,7 +34,7 @@ const GameView = ({
     setGameParams({ ...gameParams, ...newParams })
   }
   useEffect(() => {
-    setGameParams({
+    _setGameParams({
       far: map(light, 0.0, 100.0, 1.5, 5.0),
     })
   }, [light])
@@ -45,6 +45,7 @@ const GameView = ({
       <GameControls />
       {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} gameParams={gameParams} />}
       {gameState == GameState.Verifying && <GameProof />}
+      {gameState == GameState.NoEnergy && <GameOver reason={'You got exhausted!!!'} />}
       <GameTriggers />
     </div>
   )
@@ -54,7 +55,7 @@ const GameView = ({
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { playerPosition, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const { playerPosition, stepCount, dispatch, GameplayActions, GameState } = useGameplayContext()
 
   useEffect(() => {
     if (!playerPosition) return
@@ -67,8 +68,16 @@ const GameTriggers = () => {
         payload: GameState.Verifying,
       })
     }
-
   }, [playerPosition])
+
+  useEffect(() => {
+    if (stepCount == 0) {
+      dispatch({
+        type: GameplayActions.SET_STATE,
+        payload: GameState.NoEnergy,
+      })
+    }
+  }, [stepCount])
 
   return (
     <>
@@ -122,6 +131,32 @@ const GameProof = () => {
   )
 }
 
+
+
+const GameOver = ({
+  reason,
+}) => {
+  const { chamberId } = useUnderdarkContext()
+  const { gameTilemap } = useChamberMap(chamberId)
+  const { dispatch, GameplayActions } = useGameplayContext()
+
+  const _restart = () => {
+    dispatch({
+      type: GameplayActions.RESET,
+      payload: gameTilemap.playerStart,
+    })
+  }
+
+  return (
+    <div className='FillParent'>
+      <br />
+      <br />
+      <h2>{reason}</h2>
+      <br />
+      <h2><button onClick={() => _restart()}>RESTART</button></h2>
+    </div>
+  )
+}
 
 
 

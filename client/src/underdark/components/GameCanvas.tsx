@@ -14,6 +14,7 @@ const GameCanvas = ({
 
   useEffect(() => {
     if (canvasRef.current && !isLoading) {
+      console.log(`RESET CANVAS`)
       setIsLoading(true)
       game.init(canvasRef.current, width, height)
       game.animate()
@@ -21,6 +22,11 @@ const GameCanvas = ({
       setIsInitialized(true)
       //@ts-ignore
       canvasRef.current.focus()
+    }
+    return () => {
+      if (isInitialized) {
+        game.dispose()
+      }
     }
   }, [canvasRef.current])
 
