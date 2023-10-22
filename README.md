@@ -1,6 +1,37 @@
 # Underdark
-Underdark for the Dojo Game Jam #2
 
+Losing our mind in the Underdark, for the Dojo Game Jam #2
+
+```
+   __  __     __   __     _____     ______     ______   
+  /\ \/\ \   /\ "-.\ \   /\  __-.  /\  ___\   /\  == \  
+  \ \ \_\ \  \ \ \-.  \  \ \ \/\ \ \ \  __\   \ \  __<  
+   \ \_____\  \ \_\\"\_\  \ \____-  \ \_____\  \ \_\ \_\
+    \/_____/   \/_/ \/_/   \/____/   \/_____/   \/_/ /_/
+       _____     ______     ______     __  __           
+      /\  __-.  /\  __ \   /\  == \   /\ \/ /     s̶̩̆̋c̷̢͂ǒ̶̖̞͋h̵̤̚ë̸̮́ṭ̵̇͘h̴̦͊      
+      \ \ \/\ \ \ \  __ \  \ \  __<   \ \  _"-.    ş̵̄̎ḧ̴̫̙͆o̵̺̍b̸̡̞̍r̴͉̕o̵̱͗͛     
+       \ \____-  \ \_\ \_\  \ \_\ \_\  \ \_\ \_\    b̵̫̐̓l̸̡͎͗͋ǘ̴̘b̶͕̌b̷̮̕l̶̢̊̔ė̶͍    
+        \/____/   \/_/\/_/   \/_/ /_/   \/_/\/_/     q̸̖͙̾u̷̗͋̈a̸̡̞̚̕c̴̫͑k̸̨̨͑ī̷̳̽͜r̵̯͖̍́   
+  
+         ,----------------------------------------------------.         
+        (_\                                                    \        
+           \       Something ill under  Kurnkornor stirs,       \       
+            \       down those crumbling old manor stairs,       \      
+             \       dark tar that claws and sucks the light,     \     
+              \       a   ghastly   duck  no-one   can  fight,     \    
+               \       yet  all  in  life  and  death  be  fair,    \   
+                \       there's gold  and treasure  buried there.    \  
+               _|                                                     | 
+              (_/_________________________(*)_________________________/ 
+                                          | |                           
+                                          ) )            _            
+                                          ^%'          >(~)____/             
+                                                        (``~~~/     
+                ".....had a nightmare about the Slenderduck last night"
+                -- gabe | cartridge                                       
+
+```
 
 ## Team
 
