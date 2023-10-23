@@ -343,8 +343,8 @@ function setupScene() {
 
   _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
   // _monster_geometry = new THREE.BoxGeometry(SIZE / 4, SIZE / 4, SIZE / 4);
-  _slender_geometry = new THREE.ConeGeometry(SIZE/4, SIZE, 16);
   _tar_geometry = new THREE.IcosahedronGeometry(SIZE / 4);
+  _slender_geometry =new THREE.ConeGeometry(SIZE / 4, SIZE * 0.75, 16)
 
   const shape = new THREE.Shape();
   const x = -2.5;
@@ -444,11 +444,12 @@ export function setupMap(gameTilemap: GameTilemap) {
     } else if (tileType == TileType.LockedExit) {
     } else if (tileType == TileType.Monster) {
       mesh = new THREE.Mesh(_monster_geometry, _material);
-      mesh.scale.set(0.1, 0.1, 0.1)
+      mesh.scale.set(0.06, 0.06, 0.06)
       loadModel('MONSTER', _map, x, y)
-    } else if (tileType == TileType.SlenderDuck) {
-      mesh = new THREE.Mesh(_slender_geometry, _material);
-      loadModel('SLENDER_DUCK', _map, x, y)
+    // } else if (tileType == TileType.SlenderDuck) {
+    //   mesh = new THREE.Mesh(_slender_geometry, _material);
+    //   mesh.rotateX(HALF_PI)
+    //   loadModel('SLENDER_DUCK', _map, x, y)
     } else if (tileType == TileType.DarkTar) {
       mesh = new THREE.Mesh(_tar_geometry, _material);
       loadModel('DARK_TAR', _map, x, y)
@@ -463,8 +464,6 @@ export function setupMap(gameTilemap: GameTilemap) {
   }
   
   _scene.add(_map)
-
-  movePlayer(_gameTilemap.playerStart)
 }
 
 function loadModel(modelName, parent, x, y) {

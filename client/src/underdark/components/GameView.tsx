@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import GameCanvas from './GameCanvas'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { useGameplayContext } from '../hooks/GameplayContext'
@@ -7,6 +7,7 @@ import { useKeyDown } from '../hooks/useKeyDown'
 import { Dir, FlippedDir, TileType } from '../utils/underdark'
 import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
 import { bigintToHex, map } from '../utils/utils'
+import ReactAudioPlayer from 'react-audio-player'
 
 
 const GameView = ({
@@ -35,7 +36,7 @@ const GameView = ({
   }
   useEffect(() => {
     _setGameParams({
-      far: map(light, 0.0, 100.0, 1.5, 5.0),
+      far: map(light, 0.0, 100.0, 1.6, 5.0),
     })
   }, [light])
 
@@ -45,30 +46,76 @@ const GameView = ({
       <GameControls />
       {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} gameParams={gameParams} />}
       {gameState == GameState.Verifying && <GameProof />}
-      {gameState == GameState.NoEnergy && <GameOver reason={'You got exhausted!!!'} />}
+      {gameState == GameState.NoEnergy && <GameOver reason={'You died!!!'} />}
+      {light > 0
+        ? <ReactAudioPlayer
+          src='/audio/music-ambient.mp3'
+          autoPlay={true}
+          loop={true}
+        // volume={1}
+        />
+        : <ReactAudioPlayer
+          src='/audio/sfx/slenderduck.mp3'
+          autoPlay={true}
+          loop={true}
+        // volume={1}
+        />
+      }
       <GameTriggers />
     </div>
   )
 }
 
+const _isAround = (tilemap, tile, type) => {
+  const x = tile % 16
+  const y = Math.floor(tile / 16)
+  if (x > 0 && tilemap[(x - 1) + (y) * 16] == type) return true
+  if (x < 15 && tilemap[(x + 1) + (y) * 16] == type) return true
+  if (y > 0 && tilemap[(x) + (y - 1) * 16] == type) return true
+  if (y < 15 && tilemap[(x) + (y + 1) * 16] == type) return true
+  return false
+}
 
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { gameState, playerPosition, stepCount, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const { light, gameState, playerPosition, stepCount, dispatch, GameplayActions, GameState } = useGameplayContext()
 
   useEffect(() => {
     if (!playerPosition || gameState != GameState.Playing) return
-    // Reached end
     const { tile, facing } = playerPosition
     // console.log(`Player at:`, tile, tilemap[tile])
+    //
+    // Reached door
     if (tilemap[tile] == TileType.Exit && facing == Dir.East) {
       dispatch({
         type: GameplayActions.SET_STATE,
         payload: GameState.Verifying,
       })
+    } else {
+      if (tilemap[tile] == TileType.DarkTar) {
+        dispatch({
+          type: GameplayActions.REFILL_LIGHT,
+          payload: 100,
+        })
+      }
+      if (_isAround(tilemap, tile, TileType.Monster)) {
+        dispatch({
+          type: GameplayActions.DAMAGE,
+          payload: 10,
+        })
+      }
     }
   }, [playerPosition])
+
+  useEffect(() => {
+    if (gameState == GameState.Playing && light == 0) {
+      dispatch({
+        type: GameplayActions.SET_MESSAGE,
+        payload: 'No light! Beware the Slender Duck!',
+      })
+    }
+  }, [light])
 
   useEffect(() => {
     if (gameState == GameState.Playing && stepCount == 0) {

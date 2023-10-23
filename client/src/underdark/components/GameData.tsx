@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useDojoSystemCalls, useDojoAccount } from '../../DojoContext'
+import { useDojoSystemCalls, useDojoAccount, useDojoComponents } from '../../DojoContext'
 import { useChamber, useChamberMap, useChamberOffset, useGameChamberIds } from '../hooks/useChamber'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { Dir, DirNames, coordToSlug } from '../utils/underdark'
+import { Dir, coordToSlug } from '../utils/underdark'
 import { useGameplayContext } from '../hooks/GameplayContext'
 import { map } from '../utils/utils'
+import { useComponentValue } from '@latticexyz/react'
+import { getEntityIdFromKeys } from '../../utils/utils'
+// import { Account } from 'starknet'
 
 interface Generator {
   name: string
@@ -90,6 +93,11 @@ function DirectionButton({
   const { locationId, seed } = useChamberOffset(chamberId, dir)
   const exists = useMemo(() => (seed > 0n), [seed, locationId])
 
+  const { Score } = useDojoComponents()
+  const score: any = useComponentValue(Score, getEntityIdFromKeys([chamberId, BigInt(account.address)]))
+  const thisLevelIsClear = useMemo(() => ((score?.score ?? 0) > 0), [score])
+  console.log(`SCORE:`, score)
+
   const _mint = () => {
     start_level(account, gameId, yonder+1, 0n, dir, generator.name, generator.value)
   }
@@ -100,10 +108,15 @@ function DirectionButton({
     })
   }
 
+  const _prevnext = dir == Dir.West ? 'Previous':'Next'
+
   if (exists) {
-    return <button className='DirectionButton Unlocked' onClick={() => _open()}>Go<br />{DirNames[dir]}</button>
+    return <button className='DirectionButton Unlocked' onClick={() => _open()}>{_prevnext}<br />Level</button>
   }
-  return <button className='DirectionButton Locked' disabled={dir == Dir.West} onClick={() => _mint()}>Unlock<br />{DirNames[dir]}</button>
+  if (dir != Dir.West) {
+    return <button className='DirectionButton Locked' disabled={!thisLevelIsClear} onClick={() => _mint()}>Unlock<br />{_prevnext} Level</button>
+  }
+  return <></>
 }
 
 
@@ -114,7 +127,7 @@ function MinterData() {
 
   const [generatorIndex, setGeneratorIndex] = useState(10)
 
-  const { light, stepCount } = useGameplayContext()
+  const { light, stepCount, message } = useGameplayContext()
 
   // Current Realm / Chamber
   const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -187,6 +200,8 @@ function MinterData() {
         <p>Light: <b>{light}%</b></p>
 
         <p>Energy: <b>{Math.floor(map(stepCount, 0, 64, 0, 100))}%</b></p>
+
+        <p><b>{message}</b></p>
 
         {/* <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p> */}
         
