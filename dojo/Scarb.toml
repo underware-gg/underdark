@@ -1,6 +1,6 @@
 [tool.dojo.world]
 name = "Underdark"
-description = "Lose yourself in the Underdark!"
+description = "A generative, on-chain 3D skin-crawler. Something ill under Kurnkornor stirs, down those crumbling old manor stairs. Beware the fading light, and your fraying sanity. Most of all, beware the gibbering of the Slender Duck!"
 icon_uri = "https://underdark.vercel.app/images/logo.jpg"
 cover_uri = "https://underdark.vercel.app/images/splash.jpg"
 website = "https://underdark-splash.vercel.app/"
