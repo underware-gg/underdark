@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { GraphQLClient } from 'graphql-request';
 import { GraphQLClientRequestHeaders } from 'graphql-request/build/cjs/types';
 import { print } from 'graphql'
@@ -16,6 +17,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  ContractAddress: { input: any; output: any; }
   Cursor: { input: any; output: any; }
   DateTime: { input: any; output: any; }
   felt252: { input: any; output: any; }
@@ -24,6 +26,7 @@ export type Scalars = {
   u32: { input: any; output: any; }
   u128: { input: any; output: any; }
   u256: { input: any; output: any; }
+  usize: { input: any; output: any; }
 };
 
 export type Chamber = {
@@ -147,13 +150,16 @@ export type EventEdge = {
 export type Map = {
   __typename?: 'Map';
   bitmap?: Maybe<Scalars['u256']['output']>;
+  dark_tar?: Maybe<Scalars['u256']['output']>;
   east?: Maybe<Scalars['u8']['output']>;
   entity?: Maybe<Entity>;
   entity_id?: Maybe<Scalars['u128']['output']>;
   generator_name?: Maybe<Scalars['felt252']['output']>;
   generator_value?: Maybe<Scalars['u32']['output']>;
+  monsters?: Maybe<Scalars['u256']['output']>;
   north?: Maybe<Scalars['u8']['output']>;
   over?: Maybe<Scalars['u8']['output']>;
+  slender_duck?: Maybe<Scalars['u256']['output']>;
   south?: Maybe<Scalars['u8']['output']>;
   under?: Maybe<Scalars['u8']['output']>;
   west?: Maybe<Scalars['u8']['output']>;
@@ -178,12 +184,15 @@ export type MapOrder = {
 
 export enum MapOrderField {
   Bitmap = 'BITMAP',
+  DarkTar = 'DARK_TAR',
   East = 'EAST',
   EntityId = 'ENTITY_ID',
   GeneratorName = 'GENERATOR_NAME',
   GeneratorValue = 'GENERATOR_VALUE',
+  Monsters = 'MONSTERS',
   North = 'NORTH',
   Over = 'OVER',
+  SlenderDuck = 'SLENDER_DUCK',
   South = 'SOUTH',
   Under = 'UNDER',
   West = 'WEST'
@@ -197,6 +206,13 @@ export type MapWhereInput = {
   bitmapLT?: InputMaybe<Scalars['u256']['input']>;
   bitmapLTE?: InputMaybe<Scalars['u256']['input']>;
   bitmapNEQ?: InputMaybe<Scalars['u256']['input']>;
+  dark_tar?: InputMaybe<Scalars['u256']['input']>;
+  dark_tarEQ?: InputMaybe<Scalars['u256']['input']>;
+  dark_tarGT?: InputMaybe<Scalars['u256']['input']>;
+  dark_tarGTE?: InputMaybe<Scalars['u256']['input']>;
+  dark_tarLT?: InputMaybe<Scalars['u256']['input']>;
+  dark_tarLTE?: InputMaybe<Scalars['u256']['input']>;
+  dark_tarNEQ?: InputMaybe<Scalars['u256']['input']>;
   east?: InputMaybe<Scalars['u8']['input']>;
   eastEQ?: InputMaybe<Scalars['u8']['input']>;
   eastGT?: InputMaybe<Scalars['u8']['input']>;
@@ -225,6 +241,13 @@ export type MapWhereInput = {
   generator_valueLT?: InputMaybe<Scalars['u32']['input']>;
   generator_valueLTE?: InputMaybe<Scalars['u32']['input']>;
   generator_valueNEQ?: InputMaybe<Scalars['u32']['input']>;
+  monsters?: InputMaybe<Scalars['u256']['input']>;
+  monstersEQ?: InputMaybe<Scalars['u256']['input']>;
+  monstersGT?: InputMaybe<Scalars['u256']['input']>;
+  monstersGTE?: InputMaybe<Scalars['u256']['input']>;
+  monstersLT?: InputMaybe<Scalars['u256']['input']>;
+  monstersLTE?: InputMaybe<Scalars['u256']['input']>;
+  monstersNEQ?: InputMaybe<Scalars['u256']['input']>;
   north?: InputMaybe<Scalars['u8']['input']>;
   northEQ?: InputMaybe<Scalars['u8']['input']>;
   northGT?: InputMaybe<Scalars['u8']['input']>;
@@ -239,6 +262,13 @@ export type MapWhereInput = {
   overLT?: InputMaybe<Scalars['u8']['input']>;
   overLTE?: InputMaybe<Scalars['u8']['input']>;
   overNEQ?: InputMaybe<Scalars['u8']['input']>;
+  slender_duck?: InputMaybe<Scalars['u256']['input']>;
+  slender_duckEQ?: InputMaybe<Scalars['u256']['input']>;
+  slender_duckGT?: InputMaybe<Scalars['u256']['input']>;
+  slender_duckGTE?: InputMaybe<Scalars['u256']['input']>;
+  slender_duckLT?: InputMaybe<Scalars['u256']['input']>;
+  slender_duckLTE?: InputMaybe<Scalars['u256']['input']>;
+  slender_duckNEQ?: InputMaybe<Scalars['u256']['input']>;
   south?: InputMaybe<Scalars['u8']['input']>;
   southEQ?: InputMaybe<Scalars['u8']['input']>;
   southGT?: InputMaybe<Scalars['u8']['input']>;
@@ -301,7 +331,7 @@ export type ModelEdge = {
   node?: Maybe<Model>;
 };
 
-export type ModelUnion = Chamber | Map | State | Tile;
+export type ModelUnion = Chamber | Map | Score | State | Tile;
 
 export enum OrderDirection {
   Asc = 'ASC',
@@ -319,6 +349,7 @@ export type Query = {
   metadatas?: Maybe<MetadataConnection>;
   model: Model;
   models?: Maybe<ModelConnection>;
+  scoreModels?: Maybe<ScoreConnection>;
   stateModels?: Maybe<StateConnection>;
   system: System;
   systemCall: SystemCall;
@@ -409,6 +440,18 @@ export type QueryModelsArgs = {
 };
 
 
+export type QueryScoreModelsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<ScoreOrder>;
+  where?: InputMaybe<ScoreWhereInput>;
+};
+
+
 export type QueryStateModelsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -462,6 +505,79 @@ export type QueryTileModelsArgs = {
   where?: InputMaybe<TileWhereInput>;
 };
 
+export type Score = {
+  __typename?: 'Score';
+  entity?: Maybe<Entity>;
+  key_location_id?: Maybe<Scalars['u128']['output']>;
+  key_player?: Maybe<Scalars['ContractAddress']['output']>;
+  location_id?: Maybe<Scalars['u128']['output']>;
+  moves?: Maybe<Scalars['usize']['output']>;
+  player?: Maybe<Scalars['ContractAddress']['output']>;
+};
+
+export type ScoreConnection = {
+  __typename?: 'ScoreConnection';
+  edges?: Maybe<Array<Maybe<ScoreEdge>>>;
+  total_count: Scalars['Int']['output'];
+};
+
+export type ScoreEdge = {
+  __typename?: 'ScoreEdge';
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  node?: Maybe<Score>;
+};
+
+export type ScoreOrder = {
+  direction: OrderDirection;
+  field: ScoreOrderField;
+};
+
+export enum ScoreOrderField {
+  KeyLocationId = 'KEY_LOCATION_ID',
+  KeyPlayer = 'KEY_PLAYER',
+  LocationId = 'LOCATION_ID',
+  Moves = 'MOVES',
+  Player = 'PLAYER'
+}
+
+export type ScoreWhereInput = {
+  key_location_id?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idEQ?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idGT?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idGTE?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idLT?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idLTE?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idNEQ?: InputMaybe<Scalars['u128']['input']>;
+  key_player?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerGT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerLT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  location_id?: InputMaybe<Scalars['u128']['input']>;
+  location_idEQ?: InputMaybe<Scalars['u128']['input']>;
+  location_idGT?: InputMaybe<Scalars['u128']['input']>;
+  location_idGTE?: InputMaybe<Scalars['u128']['input']>;
+  location_idLT?: InputMaybe<Scalars['u128']['input']>;
+  location_idLTE?: InputMaybe<Scalars['u128']['input']>;
+  location_idNEQ?: InputMaybe<Scalars['u128']['input']>;
+  moves?: InputMaybe<Scalars['usize']['input']>;
+  movesEQ?: InputMaybe<Scalars['usize']['input']>;
+  movesGT?: InputMaybe<Scalars['usize']['input']>;
+  movesGTE?: InputMaybe<Scalars['usize']['input']>;
+  movesLT?: InputMaybe<Scalars['usize']['input']>;
+  movesLTE?: InputMaybe<Scalars['usize']['input']>;
+  movesNEQ?: InputMaybe<Scalars['usize']['input']>;
+  player?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerGT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerLT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  playerNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+};
+
 export type State = {
   __typename?: 'State';
   entity?: Maybe<Entity>;
@@ -469,6 +585,7 @@ export type State = {
   location_id?: Maybe<Scalars['u128']['output']>;
   threat?: Maybe<Scalars['u8']['output']>;
   wealth?: Maybe<Scalars['u8']['output']>;
+  wins?: Maybe<Scalars['u8']['output']>;
 };
 
 export type StateConnection = {
@@ -492,7 +609,8 @@ export enum StateOrderField {
   Light = 'LIGHT',
   LocationId = 'LOCATION_ID',
   Threat = 'THREAT',
-  Wealth = 'WEALTH'
+  Wealth = 'WEALTH',
+  Wins = 'WINS'
 }
 
 export type StateWhereInput = {
@@ -524,6 +642,13 @@ export type StateWhereInput = {
   wealthLT?: InputMaybe<Scalars['u8']['input']>;
   wealthLTE?: InputMaybe<Scalars['u8']['input']>;
   wealthNEQ?: InputMaybe<Scalars['u8']['input']>;
+  wins?: InputMaybe<Scalars['u8']['input']>;
+  winsEQ?: InputMaybe<Scalars['u8']['input']>;
+  winsGT?: InputMaybe<Scalars['u8']['input']>;
+  winsGTE?: InputMaybe<Scalars['u8']['input']>;
+  winsLT?: InputMaybe<Scalars['u8']['input']>;
+  winsLTE?: InputMaybe<Scalars['u8']['input']>;
+  winsNEQ?: InputMaybe<Scalars['u8']['input']>;
 };
 
 export type Subscription = {
@@ -664,7 +789,7 @@ export type GetChamberTilesQueryVariables = Exact<{
 }>;
 
 
-export type GetChamberTilesQuery = { __typename?: 'Query', entities?: { __typename?: 'EntityConnection', edges?: Array<{ __typename?: 'EntityEdge', node?: { __typename?: 'Entity', keys?: Array<string | null> | null, id?: string | null, models?: Array<{ __typename: 'Chamber' } | { __typename: 'Map' } | { __typename: 'State' } | { __typename: 'Tile', location_id?: any | null, pos?: any | null, tile_type?: any | null } | null> | null } | null } | null> | null } | null };
+export type GetChamberTilesQuery = { __typename?: 'Query', entities?: { __typename?: 'EntityConnection', edges?: Array<{ __typename?: 'EntityEdge', node?: { __typename?: 'Entity', keys?: Array<string | null> | null, id?: string | null, models?: Array<{ __typename: 'Chamber' } | { __typename: 'Map' } | { __typename: 'Score' } | { __typename: 'State' } | { __typename: 'Tile', location_id?: any | null, pos?: any | null, tile_type?: any | null } | null> | null } | null } | null> | null } | null };
 
 
 export const GetChamberTilesDocument = gql`

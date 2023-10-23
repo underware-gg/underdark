@@ -1,6 +1,4 @@
 import { useEffect, useMemo } from 'react'
-import MinterMap from './MinterMap'
-import MinterData from './MinterData'
 import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '../utils/underdark'
 import { useGameplayContext } from '../hooks/GameplayContext'
 import { useKeyDown } from '../hooks/useKeyDown'
@@ -94,7 +92,7 @@ const GameView = ({
   }
 
   return (
-    <GameCanvas gameTilemap={gameTilemap} />
+    <GameCanvas gameTilemap={gameTilemap} gameParams={{}}/>
   )
 }
 

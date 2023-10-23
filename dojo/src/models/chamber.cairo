@@ -31,6 +31,10 @@ struct Map {
     south: u8,
     over: u8,
     under: u8,
+    // monsters
+    monsters: u256,
+    slender_duck: u256,
+    dark_tar: u256,
 }
 
 // The current conditions of a Chamebr
@@ -43,4 +47,18 @@ struct State {
     threat: u8,
     wealth: u8,
     wins: u8,
+}
+
+// The current conditions of a Chamebr
+// (Mutable)
+#[derive(Model, Copy, Drop, Serde)]
+struct Score {
+    #[key]
+    key_location_id: u128,
+    #[key]
+    key_player: ContractAddress,
+    // fields
+    location_id: u128,
+    player: ContractAddress,
+    moves: usize,
 }

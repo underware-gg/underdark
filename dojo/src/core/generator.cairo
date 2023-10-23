@@ -26,6 +26,8 @@ fn generate(
         bitmap = make_overseed(seed);
     } else if(generator_name == 'protected') {
         bitmap = protected;
+    } else if(generator_name == 'empty') {
+        bitmap = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
     } else if(generator_name == 'entry') {
         // the entry is always a wide chamber
         // bitmap = carve(bitmap, protected, 3);

@@ -27,8 +27,8 @@ const R_TO_D = (180 / Math.PI)
 
 const SIZE = 1;
 const CAM_FOV = 70;
-const CAM_FAR = 10;
-const GAMMA = 1;
+const CAM_FAR = 5; // 1.3 .. 5
+const GAMMA = 1.25;
 const COLOR_COUNT = 0; //16;
 const DITHER = 0;
 const DITHER_SIZE = 4;
@@ -38,11 +38,12 @@ const PALETTE = 0;//1;
 const PALETTE_PATHS = [
   '/colors/blues1.png',
   '/colors/pinks1.png',
+  '/colors/hot.png',
+  '/colors/greeny.png',
+  '/colors/earth.png',
+  '/colors/pinks2.png',
+  '/colors/purple.png',
 ]
-
-const MODELS = {
-  DUCK: { path: '/models/duck.fbx', scale: 0.5 },
-} 
 
 let _width: number;
 let _height: number;
@@ -52,6 +53,7 @@ let _palettes = [];
 let _gameTilemap: GameTilemap | null = null
 let _stepCounter = 0
 
+let _animationRequest = null
 let _renderer: THREE.WebGLRenderer;
 let _camera: THREE.PerspectiveCamera;
 let _cameraRig: THREE.Object3D;
@@ -59,13 +61,18 @@ let _scene: THREE.Scene
 let _map: THREE.Object3D;
 let _target, _postScene, _postCamera, _postMaterial;
 let _supportsExtension: boolean = true;
-let _stats;
+// let _gui
+// let _stats;
 // let _controls;
 
-let _tile_geometry: THREE.BoxGeometry;
-let _tile_material: THREE.Material;
+let _tile_geometry;
+let _monster_geometry;
+let _slender_geometry;
+let _tar_geometry;
+let _door_geometry;
+let _material: THREE.Material;
 
-const params = {
+let params = {
   fov: CAM_FOV,
   far: CAM_FAR,
   gamma: GAMMA,
@@ -76,12 +83,65 @@ const params = {
   palette: PALETTE,
 };
 
+export function setGameParams(newParams: any) {
+  console.log(`setGameParams()`, newParams)
+  paramsUpdated({
+    ...params,
+    ...newParams,
+  })
+  // paramsUpdated(params)
+  // _gui?.controllersRecursive().forEach(c => c.updateDisplay())
+}
+
+
+
+//-------------------------------------------
+// Models
+//
+
+let MODELS = {
+  // MONSTER: { path: '/models/duck3.fbx', scale: 0.02 },
+  // SLENDER_DUCK: { path: '/models/slendie.fbx', scale: 0.5 },
+  // DARK_TAR: { path: '/models/tar.fbx', scale: 0.5 },
+  // EXIT: { path: '/models/door.fbx', scale: 0.5 },
+} 
+
+function _loadModels() {
+  // load models
+  const loader = new FBXLoader();
+  Object.keys(MODELS).forEach(key => {
+    let model = MODELS[key]
+    if (!model.object) {
+      console.log(`CACHING MODEL...`, model)
+      loader.load(model.path, function (object) {
+        console.log(`FBX OBJECT:`, object, object.scale)
+        if (object) {
+          object.scale.set(model.scale, model.scale, model.scale)
+          model.object = object
+          model.loaded = true
+        }
+      });
+    }
+  });
+}
+
+_loadModels();
+
+
 
 //-------------------------------------------
 // Setup
 //
 
-export function init(canvas, width, height) {
+export function dispose() {
+  if (_animationRequest) cancelAnimationFrame(_animationRequest)
+  _animationRequest = null
+  _renderer?.dispose()
+  _renderer = null
+  _scene = null
+}
+
+export async function init(canvas, width, height) {
 
   if (_scene) return;
 
@@ -138,37 +198,40 @@ export function init(canvas, width, height) {
   onWindowResize();
   window.addEventListener('resize', onWindowResize);
 
-  const gui = new GUI({ width: 300 });
-  gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdatedCamera);
-  gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdatedCamera);
-  gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdatedShader);
-  gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdatedShader);
-  gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdatedShader);
-  gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdatedShader);
-  gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdatedShader);
-  gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdatedShader);
-  gui.open();
+  // _gui = new GUI({ width: 300 });
+  // _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
+  // _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
+  // _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
+  // _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
+  // _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
+  // _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
+  // _gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdated);
+  // _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
+  // _gui.open();
 
-  _stats = new Stats();
-  document.body.appendChild(_stats.dom);
+  // _stats = new Stats();
+  // document.body.appendChild(_stats.dom);
 }
 
-function guiUpdatedCamera() {
-  _camera.fov = params.fov;
-  _camera.far = params.far;
+function guiUpdated() {
+  paramsUpdated(params)
+}
+
+function paramsUpdated(newParams: any) {
+  // Camera
+  _camera.fov = newParams.fov;
+  _camera.far = newParams.far;
   _camera.updateProjectionMatrix();
   _postMaterial.uniforms.uCameraNear.value = _camera.near;
   _postMaterial.uniforms.uCameraFar.value = _camera.far;
-}
-
-function guiUpdatedShader() {
-  _postMaterial.uniforms.uGamma.value = params.gamma;
-  _postMaterial.uniforms.uColorCount.value = params.colorCount;
-  _postMaterial.uniforms.uDither.value = params.dither;
-  _postMaterial.uniforms.uDitherSize.value = params.ditherSize;
-  _postMaterial.uniforms.uBayer.value = params.bayer;
-  _postMaterial.uniforms.uPalette.value = params.palette;
-  _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette - 1] : null;
+  // Shader
+  _postMaterial.uniforms.uGamma.value = newParams.gamma;
+  _postMaterial.uniforms.uColorCount.value = newParams.colorCount;
+  _postMaterial.uniforms.uDither.value = newParams.dither;
+  _postMaterial.uniforms.uDitherSize.value = newParams.ditherSize;
+  _postMaterial.uniforms.uBayer.value = newParams.bayer;
+  _postMaterial.uniforms.uPalette.value = newParams.palette;
+  _postMaterial.uniforms.tPalette.value = newParams.palette > 0 ? _palettes[newParams.palette - 1] : null;
 }
 
 // Create a render target with depth texture
@@ -207,7 +270,7 @@ function setupPost() {
       tDepth: { value: null }
     }
   });
-  guiUpdatedShader();
+  guiUpdated();
   const postPlane = new THREE.PlaneGeometry(2, 2);
   const postQuad = new THREE.Mesh(postPlane, _postMaterial);
   _postScene = new THREE.Scene();
@@ -224,42 +287,35 @@ function onWindowResize() {
   // renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function makeTorus(scene) {
-  const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 64);
-  const material = new THREE.MeshBasicMaterial({ color: 'blue' });
-  const count = 50;
-  const scale = 5;
-  for (let i = 0; i < count; i++) {
-    const r = Math.random() * 2.0 * PI;
-    const z = (Math.random() * 2.0) - 1.0;
-    const zScale = Math.sqrt(1.0 - z * z) * scale;
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(
-      Math.cos(r) * zScale,
-      Math.sin(r) * zScale,
-      z * scale
-    );
-    mesh.rotation.set(Math.random(), Math.random(), Math.random());
-    scene.add(mesh);
-  }
-}
+// function makeTorus(scene) {
+//   const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 64);
+//   const material = new THREE.MeshBasicMaterial({ color: 'blue' });
+//   const count = 50;
+//   const scale = 5;
+//   for (let i = 0; i < count; i++) {
+//     const r = Math.random() * 2.0 * PI;
+//     const z = (Math.random() * 2.0) - 1.0;
+//     const zScale = Math.sqrt(1.0 - z * z) * scale;
+//     const mesh = new THREE.Mesh(geometry, material);
+//     mesh.position.set(
+//       Math.cos(r) * zScale,
+//       Math.sin(r) * zScale,
+//       z * scale
+//     );
+//     mesh.rotation.set(Math.random(), Math.random(), Math.random());
+//     scene.add(mesh);
+//   }
+// }
 
-function loadFBX(model, parent, x, y, rot) {
-  const loader = new FBXLoader();
-  loader.load(model.path, function (object) {
-    object.scale.set(model.scale)
-    parent.add(object);
-  });
-}
 
 //-------------------------------------------
 // Game Loop
 //
 
 export function animate() {
-  if (!_supportsExtension) return;
+  if (!_supportsExtension || !_scene || !_renderer) return;
 
-  requestAnimationFrame(animate);
+  _animationRequest = requestAnimationFrame(animate);
 
   TWEEN.update();
 
@@ -276,7 +332,7 @@ export function animate() {
 
   // _controls.update(); // required because damping is enabled
 
-  _stats.update();
+  // _stats.update();
 }
 
 
@@ -288,19 +344,53 @@ function setupScene() {
 
   _scene = new THREE.Scene();
 
+  _material = new THREE.MeshBasicMaterial({ color: 'blue' });
+
   _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
-  _tile_material = new THREE.MeshBasicMaterial({ color: 'blue' });
+  // _monster_geometry = new THREE.BoxGeometry(SIZE / 4, SIZE / 4, SIZE / 4);
+  _tar_geometry = new THREE.IcosahedronGeometry(SIZE / 4);
+  _slender_geometry =new THREE.ConeGeometry(SIZE / 4, SIZE * 0.75, 16)
+
+  const shape = new THREE.Shape();
+  const x = -2.5;
+  const y = -5;
+  shape.moveTo(x + 2.5, y + 2.5);
+  shape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
+  shape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
+  shape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
+  shape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 4.5, x + 8, y + 3.5);
+  shape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
+  shape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
+  const extrudeSettings = {
+    steps: 1,
+    depth: 1.0,
+    bevelEnabled: true,
+    bevelThickness: 0.10,
+    bevelSize: 0.10,
+    bevelSegments: 0,
+  };
+  _door_geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+
+
+  const radius = 3.5;
+  const tubeRadius = 1.1;
+  const radialSegments = 7;
+  const tubularSegments = 58;
+  const p = 2;
+  const q = 3;
+  _monster_geometry = new THREE.TorusKnotGeometry(radius, tubeRadius, tubularSegments, radialSegments, p, q);
+
 
   const floor_geometry = new THREE.PlaneGeometry(40 * SIZE, 40 * SIZE);
   const floor_material = new THREE.MeshBasicMaterial({ color: 'cyan' });
   const floor = new THREE.Mesh(floor_geometry, floor_material);
-  floor.position.set(-SIZE * 2, -SIZE * 2, 0);
   const ceiling = new THREE.Mesh(floor_geometry, floor_material);
-  ceiling.position.set(-SIZE * 2, -SIZE * 2, 0);
+  floor.position.set(-SIZE * 2, -SIZE * 2, 0);
+  ceiling.position.set(-SIZE * 2, -SIZE * 2, SIZE);
   ceiling.scale.set(1, 1, -1);
 
   _scene.add(floor);
-  // _scene.add(ceiling);
+  _scene.add(ceiling);
 
   // makeTorus(_scene);
 }
@@ -334,9 +424,9 @@ export function setupMap(gameTilemap: GameTilemap) {
 
   _gameTilemap = gameTilemap
 
-  const gridSize = gameTilemap.gridSize
-  const gridOrigin = gameTilemap.gridOrigin
-  const tilemap = gameTilemap.tilemap
+  const gridSize = _gameTilemap.gridSize
+  const gridOrigin = _gameTilemap.gridOrigin
+  const tilemap = _gameTilemap.tilemap
 
   if (_map) {
     _scene.remove(_map)
@@ -350,12 +440,26 @@ export function setupMap(gameTilemap: GameTilemap) {
     const x = ((i % gridSize) + gridOrigin.x) * SIZE
     const y = (Math.floor(i / gridSize) + gridOrigin.y) * SIZE
     let mesh = null
-    if (tileType == TileType.Path) {
-    } else if (tileType == TileType.Entry) {
+    if (tileType == TileType.Entry) {
     } else if (tileType == TileType.Exit) {
+      mesh = new THREE.Mesh(_door_geometry, _material);
+      mesh.rotation.set(-HALF_PI, HALF_PI, 0)
+      mesh.scale.set(0.1, 0.1, 0.1)
+      loadModel('DOOR', _map, x, y)
     } else if (tileType == TileType.LockedExit) {
-    } else {
-      mesh = new THREE.Mesh(_tile_geometry, _tile_material);
+    } else if (tileType == TileType.Monster) {
+      mesh = new THREE.Mesh(_monster_geometry, _material);
+      mesh.scale.set(0.06, 0.06, 0.06)
+      loadModel('MONSTER', _map, x, y)
+    // } else if (tileType == TileType.SlenderDuck) {
+    //   mesh = new THREE.Mesh(_slender_geometry, _material);
+    //   mesh.rotateX(HALF_PI)
+    //   loadModel('SLENDER_DUCK', _map, x, y)
+    } else if (tileType == TileType.DarkTar) {
+      mesh = new THREE.Mesh(_tar_geometry, _material);
+      loadModel('DARK_TAR', _map, x, y)
+    } else if (tileType == TileType.Void) {
+      mesh = new THREE.Mesh(_tile_geometry, _material);
     }
     if (mesh) {
       _map.add(mesh);
@@ -364,9 +468,15 @@ export function setupMap(gameTilemap: GameTilemap) {
     }
   }
   
-  // loadFBX(MODELS.DUCK, _map, 0, 0, 0)
-
   _scene.add(_map)
+}
 
-  movePlayer(gameTilemap.playerStart)
+function loadModel(modelName, parent, x, y) {
+  const model = MODELS[modelName]
+  // const obj = model?.object?.clone() ?? null
+  console.log(`___MODEL_instance`, modelName, model)//, obj)
+  // if(obj) {
+  //   obj.position.set(x, y, 0)
+  //   parent.add(obj);
+  // }
 }

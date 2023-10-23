@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { GraphQLClient } from "graphql-request";
-import { getSdk } from "../../generated/graphql";
+// import { getSdk } from "../../generated/graphql";
 import { useDojo } from "../../DojoContext";
 import { setComponentFromEntity } from "../../utils/utils";
 import { Components } from "@latticexyz/recs";
@@ -13,7 +13,7 @@ export enum FetchStatus {
 }
 
 const client = new GraphQLClient(import.meta.env.VITE_PUBLIC_TORII!);
-const sdk = getSdk(client);
+// const sdk = getSdk(client);
 
 type DojoEntity = {
   __typename?: "Entity";

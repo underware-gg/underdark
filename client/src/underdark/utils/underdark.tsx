@@ -4,7 +4,6 @@
 //
 
 import { Point } from "../components/MapView"
-import { bigintToHex } from "./utils"
 
 export enum Dir {
   North = 0,
@@ -39,9 +38,15 @@ export enum TileType {
   Exit = 0x02,
   LockedExit = 0x03,
   Gem = 0x04,
+  // Loot Underworld
   HatchClosed = 0x05,
   HatchDown = 0x06,
   HatchUp = 0x07,
+  // Underdark
+  Monster = 0x10,
+  SlenderDuck = 0x11,
+  DarkTar = 0x12,
+  // Crawler
   Empty = 0xfe,
   Path = 0xff,
 }

@@ -3,7 +3,7 @@ import { Entity, HasValue, Has, getComponentValue } from '@latticexyz/recs'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react"
 import { useDojoComponents } from '../../DojoContext'
 import { bigintToEntity, bigintToHex } from "../utils/utils"
-import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToSlug } from "../utils/underdark"
+import { Dir, TileType, tilemapToGameTilemap, offsetCoord } from "../utils/underdark"
 
 
 //------------------
@@ -60,22 +60,44 @@ export const useChamberOffset = (chamberId: bigint, dir: Dir) => {
 
 export const useChamberMap = (locationId: bigint) => {
   const { Map, Tile } = useDojoComponents()
-
   const map: any = useComponentValue(Map, bigintToEntity(locationId))
   const bitmap: bigint = useMemo(() => BigInt(map?.bitmap ?? 0), [map])
+  const monsters: bigint = useMemo(() => BigInt(map?.monsters ?? 0), [map])
+  const slender_duck: bigint = useMemo(() => BigInt(map?.slender_duck ?? 0), [map])
+  const dark_tar: bigint = useMemo(() => BigInt(map?.dark_tar ?? 0), [map])
   // useEffect(() => console.log(`map:`, map, typeof map?.bitmap, bitmap), [bitmap])
 
+  //
+  // Parse tiles
   const tileIds: Entity[] = useEntityQuery([HasValue(Tile, { location_id: locationId ?? 0n })])
+  const tiles: any[] = useMemo(() => tileIds.map((tileId) => getComponentValue(Tile, tileId)), [tileIds])
   // useEffect(() => console.log(`tileIds:`, coordToSlug(locationId), tileIds), [tileIds])
 
-  const tiles: any[] = useMemo(() => tileIds.map((tileId) => getComponentValue(Tile, tileId)), [tileIds])
-
+  //
+  // Parse tilemap
   const tilemap = useMemo(() => {
     let result: number[] = []
     if (bitmap && tiles.length > 0) {
       for (let i = 0; i < 256; ++i) {
-        const bit = bitmap & (BigInt(1) << BigInt(255-i))
-        result.push(bit ? TileType.Path : TileType.Void)
+        const bit = BigInt(255 - i)
+        const isPath = bitmap & (BigInt(1) << bit)
+        const isMonster = monsters & (BigInt(1) << bit)
+        const isSlenderDuck = slender_duck & (BigInt(1) << bit)
+        const isDarkTar = dark_tar & (BigInt(1) << bit)
+        if (isDarkTar) {
+          result.push(TileType.DarkTar)
+          // console.log(`++++++TileType.DarkTar`, bit)
+        } else if (isSlenderDuck) {
+          result.push(TileType.SlenderDuck)
+          // console.log(`++++++TileType.SlenderDuck`, bit)
+        } else if (isMonster) {
+          result.push(TileType.Monster)
+          // console.log(`++++++TileType.Monster`, bit)
+        } else if (!isPath) {
+          result.push(TileType.Void)
+        } else {
+          result.push(TileType.Path)
+        }
       }
       tiles.forEach((tile) => {
         result[tile.pos] = tile.tile_type
@@ -83,10 +105,10 @@ export const useChamberMap = (locationId: bigint) => {
     }
     return result
   }, [bitmap, tiles])
-  useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
+  // useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
-  useEffect(() => console.log(`gameTilemap:`, gameTilemap), [gameTilemap])
+  // useEffect(() => console.log(`gameTilemap:`, gameTilemap), [gameTilemap])
 
   return {
     bitmap,

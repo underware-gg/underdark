@@ -102,10 +102,10 @@ impl Bitmap of BitmapTrait {
     fn move_tile(i: usize, dir: Dir) -> usize {
         let (x, y): (usize, usize) = Bitmap::tile_to_xy(i);
         match dir {
-            Dir::North => if (y > 0) { Bitmap::xy_to_tile(x, y-1) } else { i },
-            Dir::East  => if (x < 15) { Bitmap::xy_to_tile(x+1, y) } else { i },
-            Dir::West  => if (x > 0) { Bitmap::xy_to_tile(x-1, y) } else { i },
-            Dir::South => if (y < 15) { Bitmap::xy_to_tile(x, y+1) } else { i },
+            Dir::North => if (y > 0)  { Bitmap::xy_to_tile(x, y - 1) } else { i },
+            Dir::East  => if (x < 15) { Bitmap::xy_to_tile(x + 1, y) } else { i },
+            Dir::West  => if (x > 0)  { Bitmap::xy_to_tile(x - 1, y) } else { i },
+            Dir::South => if (y < 15) { Bitmap::xy_to_tile(x, y + 1) } else { i },
             Dir::Over  => i,
             Dir::Under => i,
         }

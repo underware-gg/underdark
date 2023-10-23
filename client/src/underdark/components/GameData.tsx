@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useDojoSystemCalls, useDojoAccount } from '../../DojoContext'
+import { useDojoSystemCalls, useDojoAccount, useDojoComponents } from '../../DojoContext'
 import { useChamber, useChamberMap, useChamberOffset, useGameChamberIds } from '../hooks/useChamber'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { Dir, DirNames, coordToSlug } from '../utils/underdark'
+import { Dir, coordToSlug } from '../utils/underdark'
+import { useGameplayContext } from '../hooks/GameplayContext'
+import { map } from '../utils/utils'
+import { useComponentValue } from '@latticexyz/react'
+import { getEntityIdFromKeys } from '../../utils/utils'
+import { levels } from '../utils/levels'
+// import { Account } from 'starknet'
 
 interface Generator {
   name: string
@@ -63,6 +69,18 @@ const _generators: Generator[] = [
   { name: 'collapse_carve', value: 6, description: '' },
 ]
 
+// let params = {
+//   fov: CAM_FOV,
+//   far: CAM_FAR,
+//   gamma: GAMMA,
+//   colorCount: COLOR_COUNT,
+//   dither: DITHER,
+//   ditherSize: DITHER_SIZE,
+//   bayer: BAYER,
+//   palette: PALETTE,
+// };
+
+
 
 interface DirectionButtonProps {
   chamberId: bigint
@@ -88,8 +106,15 @@ function DirectionButton({
   const { locationId, seed } = useChamberOffset(chamberId, dir)
   const exists = useMemo(() => (seed > 0n), [seed, locationId])
 
+  const { Score } = useDojoComponents()
+  const score: any = useComponentValue(Score, getEntityIdFromKeys([chamberId, BigInt(account.address)]))
+  const thisLevelIsClear = useMemo(() => ((score?.score ?? 0) > 0), [score])
+  console.log(`SCORE:`, score)
+
   const _mint = () => {
-    start_level(account, gameId, yonder+1, 0n, dir, generator.name, generator.value)
+    const _level = levels[Math.floor(Math.random() * levels.length)]
+    // start_level(account, gameId, yonder + 1, 0n, dir, generator.name, generator.value)
+    start_level(account, gameId, yonder + 1, 0n, dir, _level.generatorName, generator.value)
   }
   const _open = () => {
     dispatch({
@@ -98,10 +123,15 @@ function DirectionButton({
     })
   }
 
+  const _prevnext = dir == Dir.West ? 'Previous':'Next'
+
   if (exists) {
-    return <button className='DirectionButton Unlocked' onClick={() => _open()}>Go<br />{DirNames[dir]}</button>
+    return <button className='DirectionButton Unlocked' onClick={() => _open()}>{_prevnext}<br />Level</button>
   }
-  return <button className='DirectionButton Locked' disabled={dir == Dir.West} onClick={() => _mint()}>Unlock<br />{DirNames[dir]}</button>
+  if (dir != Dir.West) {
+    return <button className='DirectionButton Locked' disabled={!thisLevelIsClear} onClick={() => _mint()}>Unlock<br />{_prevnext} Level</button>
+  }
+  return <></>
 }
 
 
@@ -111,6 +141,8 @@ function MinterData() {
   const { account } = useDojoAccount()
 
   const [generatorIndex, setGeneratorIndex] = useState(10)
+
+  const { light, stepCount, message } = useGameplayContext()
 
   // Current Realm / Chamber
   const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -134,6 +166,10 @@ function MinterData() {
     }
   }
 
+  useEffect(() => {
+    setGeneratorIndex(Number(chamberId % BigInt(levels.length)))
+  }, [chamberId])
+
   const _selectChamber = (coord: bigint) => {
     dispatch({
       type: UnderdarkActions.SET_CHAMBER,
@@ -144,7 +180,10 @@ function MinterData() {
   const _mintFirst = () => {
     if (canMintFirst && gameId) {
       // const coord = makeEntryChamberId()
-      start_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
+      const _level = levels[Math.floor(Math.random()*levels.length)]
+      // console.log(_level)
+      // start_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
+      start_level(account, gameId, 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
     }
   }
 
@@ -159,14 +198,14 @@ function MinterData() {
 
   return (
     <div className='MinterData AlignTop'>
-      <p>
+      <h2>
         Game #{gameId.toString()}
         {' '}
         <span className='Anchor' onClick={() => _setSelectedGame(gameId - 1)}>⏪️</span>
         <span className='Anchor' onClick={() => _setSelectedGame(gameId + 1)}>⏩️</span>
         {' '}
         <span className='Anchor' onClick={() => _setSelectedGame(Math.floor(Math.random() * 10000) + 1)}>🔄</span>
-      </p>
+      </h2>
 
       {!chamberExists && <>
         <div>
@@ -180,6 +219,12 @@ function MinterData() {
         
         <p>Level: <b>{yonder}</b></p>
 
+        <p>Light: <b>{light}%</b></p>
+
+        <p>Energy: <b>{Math.floor(map(stepCount, 0, 64, 0, 100))}%</b></p>
+
+        <p><b>{message}</b></p>
+
         {/* <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p> */}
         
         {/* <p>State: [{state.light},{state.threat},{state.wealth}]</p> */}
@@ -189,14 +234,14 @@ function MinterData() {
           <DirectionButton chamberId={chamberId} gameId={gameId} yonder={yonder} dir={Dir.East} doorTile={doors?.east ?? 0} generator={_generators[generatorIndex]} />
         </div>
 
-        <div>
+        {/* <div>
           <select value={generatorIndex} onChange={e => setGeneratorIndex(parseInt(e.target.value))}>
             {_generators.map((g: Generator, index: number) => {
               const _desc = `${g.name}(${g.value}) : ${g.description}`
               return <option value={index} key={`gen_${index}`}>{_desc}</option>
             })}
           </select>
-        </div>
+        </div> */}
       </>}
 
     </div>

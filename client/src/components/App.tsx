@@ -1,6 +1,4 @@
 import Burner from './Burner';
-// import Example from './Example';
-import TestMinter from '../underdark/components/TestMinter';
 import { useSyncWorld } from '../underdark/hooks/useGraphQLQueries';
 
 function App() {
@@ -13,10 +11,6 @@ function App() {
   return (
     <>
       <Burner />
-      <hr />
-      <TestMinter />
-      <hr />
-      {/* <Example /> */}
     </>
   );
 }

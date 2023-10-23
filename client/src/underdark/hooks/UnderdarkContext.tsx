@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useReducer, useContext, useEffect } from 'react'
+import React, { ReactNode, createContext, useReducer, useContext } from 'react'
 
 //
 // React + Typescript + Context

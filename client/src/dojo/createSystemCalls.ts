@@ -21,7 +21,7 @@ export function createSystemCalls(
       console.log(args)
       const tx = await execute(signer, 'actions', 'start_level', args)
       console.log(`start_level tx:`, tx)
-      const receipt = await provider.provider.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
+      const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
       console.log(`start_level receipt:`, receipt)
       processReceipt(receipt, contractComponents);
     } catch (e) {
@@ -30,8 +30,26 @@ export function createSystemCalls(
     }
   }
 
+  const finish_level = async (signer: Account, locationId: bigint, proof: bigint, movesCount: number) => {
+    try {
+      const proof_low = proof & BigInt('0xffffffffffffffffffffffffffffffff')
+      const proof_high = proof >> 128n
+      const args = [locationId, proof_low, proof_high, movesCount]
+      console.log(args)
+      const tx = await execute(signer, 'actions', 'finish_level', args)
+      console.log(`finish_level tx:`, tx)
+      const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
+      console.log(`finish_level receipt:`, receipt)
+      processReceipt(receipt, contractComponents);
+    } catch (e) {
+      console.log(`finish_level exception:`, e)
+    } finally {
+    }
+  }
+
   return {
     start_level,
+    finish_level,
   }
 }
 
@@ -119,27 +137,27 @@ function hexToAscii(hex: string) {
   return str;
 }
 
-function asciiToHex(ascii: string) {
-  var hex = '';
-  for (var i = 0; i < ascii.length; i++) {
-    var charCode = ascii.charCodeAt(i);
-    hex += charCode.toString(16).padStart(2, '0');
-  }
-  return `0x${hex}`;
-}
+// function asciiToHex(ascii: string) {
+//   var hex = '';
+//   for (var i = 0; i < ascii.length; i++) {
+//     var charCode = ascii.charCodeAt(i);
+//     hex += charCode.toString(16).padStart(2, '0');
+//   }
+//   return `0x${hex}`;
+// }
 
-function getEntityIdFromEvents(events: Event[], componentName: string): number {
-  let entityId = 0;
-  const event = events.find((event) => {
-    //@ts-ignore
-    return event.data[0] === asciiToHex(componentName);
-  });
-  if (event) {
-    //@ts-ignore
-    entityId = parseInt(event.data[2]);
-  }
-  return entityId;
-}
+// function getEntityIdFromEvents(events: Event[], componentName: string): number {
+//   let entityId = 0;
+//   const event = events.find((event) => {
+//     //@ts-ignore
+//     return event.data[0] === asciiToHex(componentName);
+//   });
+//   if (event) {
+//     //@ts-ignore
+//     entityId = parseInt(event.data[2]);
+//   }
+//   return entityId;
+// }
 
 
 // Event keys (event hash)

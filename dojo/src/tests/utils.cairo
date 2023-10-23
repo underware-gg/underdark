@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod utils {
+     use starknet::ContractAddress;
     use core::traits::Into;
     use array::ArrayTrait;
     use debug::PrintTrait;
@@ -8,27 +9,31 @@ mod utils {
     use dojo::test_utils::{spawn_test_world, deploy_contract};
 
     use underdark::systems::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
-    use underdark::models::chamber::{Chamber, chamber, Map, map, State, state};
+    use underdark::models::chamber::{Chamber, chamber, Map, map, State, state, Score, score};
     use underdark::models::tile::{Tile, tile};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DirTrait};
     use underdark::types::doors::{Doors};
 
     fn setup_world() -> (IWorldDispatcher, IActionsDispatcher) {
-        let mut models = array![chamber::TEST_CLASS_HASH, map::TEST_CLASS_HASH, tile::TEST_CLASS_HASH, state::TEST_CLASS_HASH];
+        let mut models = array![chamber::TEST_CLASS_HASH, map::TEST_CLASS_HASH, tile::TEST_CLASS_HASH, state::TEST_CLASS_HASH, score::TEST_CLASS_HASH];
         let world: IWorldDispatcher = spawn_test_world(models);
         let contract_address = world.deploy_contract('salt', actions::TEST_CLASS_HASH.try_into().unwrap());
         (world, IActionsDispatcher { contract_address })
     }
 
-    fn execute_start_level(world: IWorldDispatcher, system: IActionsDispatcher, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) {
-        system.start_level(1, 1, from_coord.to_id(), from_dir.into(), generator_name, generator_value.into());
+    fn execute_start_level(world: IWorldDispatcher, system: IActionsDispatcher, game_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) {
+        system.start_level(game_id, level_number, 0x0, 0, generator_name, generator_value.into());
     }
 
-    fn start_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, from_coord: Location, from_dir: Dir, generator_name: felt252, generator_value: u32) -> Chamber {
-        execute_start_level(world, system, from_coord, from_dir, generator_name, generator_value);
-        let to_location: Location = from_coord.offset(from_dir);
-        get_world_Chamber(world, to_location.to_id())
+    fn execute_finish_level(world: IWorldDispatcher, system: IActionsDispatcher, location_id: u128, proof: u256, moves_count: usize) {
+        system.finish_level(location_id, proof.low, proof.high, moves_count);
+    }
+
+    fn start_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, game_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) -> Chamber {
+        execute_start_level(world, system, game_id, level_number, generator_name, generator_value);
+        let location: Location = Location { game_id, over:0, under:1, north:0, east: level_number.try_into().unwrap(), west:0, south:1 };
+        get_world_Chamber(world, location.to_id())
     }
 
     fn get_world_Chamber(world: IWorldDispatcher, location_id: u128) -> Chamber {
@@ -43,6 +48,11 @@ mod utils {
 
     fn get_world_State(world: IWorldDispatcher, location_id: u128) -> State {
         let result: State = get!(world, location_id, State);
+        (result)
+    }
+
+    fn get_world_Score(world: IWorldDispatcher, key_location_id: u128, key_caller: ContractAddress) -> Score {
+        let result: Score = get!(world, (key_location_id, key_caller), Score);
         (result)
     }
 
