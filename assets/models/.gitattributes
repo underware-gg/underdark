@@ -4,3 +4,10 @@ duck-large.fbx filter=lfs diff=lfs merge=lfs -text
 duck3.fbx filter=lfs diff=lfs merge=lfs -text
 key.fbx filter=lfs diff=lfs merge=lfs -text
 slendie.fbx filter=lfs diff=lfs merge=lfs -text
+tar.png filter=lfs diff=lfs merge=lfs -text
+chest.png filter=lfs diff=lfs merge=lfs -text
+door.png filter=lfs diff=lfs merge=lfs -text
+duck3.png filter=lfs diff=lfs merge=lfs -text
+key.png filter=lfs diff=lfs merge=lfs -text
+slendie.png filter=lfs diff=lfs merge=lfs -text
+tar.fbx filter=lfs diff=lfs merge=lfs -text
