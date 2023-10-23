@@ -17,7 +17,7 @@ function Underdark() {
     <UnderdarkProvider>
       <GameplayProvider>
         <div className="card MinterPanel">
-          <MinterMap />
+          {/* <MinterMap /> */}
           <GameData />
         </div>
         <br />

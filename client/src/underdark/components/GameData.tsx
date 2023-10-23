@@ -112,7 +112,9 @@ function DirectionButton({
   console.log(`SCORE:`, score)
 
   const _mint = () => {
-    start_level(account, gameId, yonder+1, 0n, dir, generator.name, generator.value)
+    const _level = levels[Math.floor(Math.random() * levels.length)]
+    // start_level(account, gameId, yonder + 1, 0n, dir, generator.name, generator.value)
+    start_level(account, gameId, yonder + 1, 0n, dir, _level.generatorName, generator.value)
   }
   const _open = () => {
     dispatch({
@@ -178,7 +180,10 @@ function MinterData() {
   const _mintFirst = () => {
     if (canMintFirst && gameId) {
       // const coord = makeEntryChamberId()
-      start_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
+      const _level = levels[Math.floor(Math.random()*levels.length)]
+      // console.log(_level)
+      // start_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
+      start_level(account, gameId, 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
     }
   }
 
@@ -193,14 +198,14 @@ function MinterData() {
 
   return (
     <div className='MinterData AlignTop'>
-      <p>
+      <h2>
         Game #{gameId.toString()}
         {' '}
         <span className='Anchor' onClick={() => _setSelectedGame(gameId - 1)}>⏪️</span>
         <span className='Anchor' onClick={() => _setSelectedGame(gameId + 1)}>⏩️</span>
         {' '}
         <span className='Anchor' onClick={() => _setSelectedGame(Math.floor(Math.random() * 10000) + 1)}>🔄</span>
-      </p>
+      </h2>
 
       {!chamberExists && <>
         <div>
