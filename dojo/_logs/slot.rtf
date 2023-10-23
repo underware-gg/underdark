@@ -1,0 +1,180 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fmodern\fcharset0 CourierNewPSMT;\f1\fmodern\fcharset0 CourierNewPS-BoldMT;}
+{\colortbl;\red255\green255\blue255;\red255\green232\blue203;\red255\green255\blue10;}
+{\*\expandedcolortbl;;\csgenericrgb\c100000\c90980\c79608;\cssrgb\c99942\c98555\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww27680\viewh16600\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl264\slmult1\pardirnatural\partightenfactor0
+
+\f0\fs22 \cf0 \cb2 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl264\slmult1\pardirnatural\partightenfactor0
+
+\f1\b \cf0 \cb3 roger@R7 dojo % slot auth login\
+
+\f0\b0 \cb2 Your browser has been opened to visit: \
+\
+    https://x.cartridge.gg/slot/auth?callback_uri=http%3A%2F%2Flocalhost%3A52377%2Fcallback\
+\
+You are now logged in!\
+\
+\
+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl264\slmult1\pardirnatural\partightenfactor0
+
+\f1\b \cf0 \cb3 roger@R7 dojo % slot deployments create underdark katana\
+
+\f0\b0 \cb2 Deployment success \
+\
+Endpoints:\
+  RPC: 
+\f1\b https://api.cartridge.gg/x/underdark/katana
+\f0\b0 \
+\
+Stream logs with `
+\f1\b slot deployments logs underdark katana -f
+\f0\b0 `\
+roger@R7 dojo % \
+roger@R7 dojo % slot deployments create underdark torii --world 
+\f1\b 0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a
+\f0\b0 \
+error: the following required arguments were not provided:\
+  --rpc <rpc>\
+  --start-block <START_BLOCK>\
+\
+Usage: slot deployments create <PROJECT> torii --rpc <rpc> --world <world> --start-block <START_BLOCK>\
+\
+For more information, try '--help'.\
+\
+\
+
+\f1\b \cb3 roger@R7 dojo % slot deployments create underdark torii --world 0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a --rpc https://api.cartridge.gg/x/underdark/katana --start-block 0\
+
+\f0\b0 \cb2 Deployment success \
+\
+
+\f1\b Configuration:\
+  World: 0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a\
+  RPC: https://api.cartridge.gg/x/underdark/katana\
+  Start Block: 0\
+\
+Endpoints:\
+  GRAPHQL: https://api.cartridge.gg/x/underdark/torii/graphql\
+  GRPC: https://api.cartridge.gg/x/underdark/torii/grpc\
+
+\f0\b0 \
+Stream logs with `
+\f1\b slot deployments logs underdark torii -f
+\f0\b0 `\
+\
+\
+curl -X POST -H 'Content-Type: application/json' -d '\{"jsonrpc":"2.0","id":"id","method":"katana_predeployedAccounts","params":[]\}' https://api.cartridge.gg/x/underdark/katana\
+\
+\
+\
+
+\f1\b \cb3 roger@R7 dojo % slot deployments list\
+
+\f0\b0 \cb2 Project: underdark\
+Service: katana\
+---\
+Project: underdark\
+Service: torii\
+---\
+\
+\
+\
+
+\f1\b \cb3 roger@R7 dojo % sozo migrate --rpc-url https://api.cartridge.gg/x/underdark/katana --account-address 0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84 --verbose\
+
+\f0\b0 \cb2 \
+Migration account: 0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84\
+\
+World name: underdark\
+\
+[1]  Building World state....\
+  > No remote World found\
+[2]  Evaluating Worlds diff....\
+  > Total diffs found: 8\
+[3]  Preparing for migration....\
+  > Total items to be migrated (8): New 8 Update 0\
+  \
+# Executor\
+error: Problem trying to migrate.\
+\
+Caused by:\
+    Failed to migrate executor: Migrator(Provider(StarknetError(StarknetErrorWithMessage \{ code: Known(ContractError), message: "Contract error" \})))\
+\
+\
+\
+\
+
+\f1\b \cb3 roger@R7 dojo % curl -X POST -H 'Content-Type: application/json' -d '\{"jsonrpc":"2.0","id":"id","method":"katana_predeployedAccounts","params":[]\}' https://api.cartridge.gg/x/underdark/katana\
+
+\f0\b0 \cb2 \{"jsonrpc":"2.0","result":[\{"balance":"0x3635c9adc5dea00000","public_key":"0x2fe6ab1c2a879cd0adf4226c98ba675011d5e56c758ce1a06f52ce733493c0f","private_key":"0x2d2cfc9cecececa0cd9c66e87a59d85fc725862f7aeb003842b1a3bf42f8897","address":"0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x1dbe71a650b0055a0e1612b38f18eec65a06940e35903cc4d3e78075cb17be9","private_key":"0x1fd008dcd43512cadb6ce3e83f50159219d820b23098ad668d964d6d412d110","address":"0x313d2e624cf8ba92e38ec9a81b52c0226024dee90b1ee05ef51f2c9f6d40481","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x500cdffa231efe71ff49906f376b63622785828b1faa88c73e6f6e73e340744","private_key":"0x48e9fc1b8f6827dea4f845262efc24fc44435b9a49ea5d4b32492d5c993848f","address":"0x2f25db5ca14f3581a69db41ccfc18db21cefd80bb7298208015c3310d8c448e","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x69af1737d061d3c99391cef9fcc6a2e64520f240507f98d33a7b475acf08721","private_key":"0x111261d928fcebe3e7d4f66be99cfcb32923c49dcc5070292dfde0ca7c3ed22","address":"0x359a4993c3bb2fd500867bd486ad688a26eec6689684903b8a64ce4e79cdd4d","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x5966923e05e3cb970d07c21e50b4c0072be94c5a0c33312e2ec796924028904","private_key":"0x2ef16670a92635be6d47df7fb52ceafb3f6181957d97bf95402145447ff1884","address":"0x2ebbd11e40ba10a2dab4a4535b6d385ee6191f51867f13b06e2f55673f5e1ea","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x2275b06a09317fe75c29fb0be32b1cc36b5659919a18d96c561457d5718574d","private_key":"0x2ad86128327410472ff54d31d5b8209dfce24aae08e076d86821f41a8f2dfee","address":"0x1514f1e659efec86f4e9a86fa43353d2d4a00f70061b948979d540abf0a4226","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x4d6c9bf64c5b5c885844847397a5854c5f40fc5a1fbdcba86d1fe6ddec173ff","private_key":"0x73d00d79afaea198b3e772078903774e11f875200d1bc35ba3f76efe1ca19b4","address":"0x54f055bb1a724ab0656cc562152e90e0edd59641daaef95acf005ac35e255af","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x37fb005dfc9e1ad7e2c064c58de0357f2aefe585fef1e446973c435175c3c68","private_key":"0x13fe737d9354ed8a2317e233e4a36de2434253e68b336186e06b27ed0d54120","address":"0x200b0ab6d6901bd9f45206e1906389c555e065c9a2bf232bc690c0dd95d8bd7","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x4fb004b61d1aac7ba3654aa11346c68c736a46128a9507b8e90e2a7a232717","private_key":"0x687e3ef7b8229ad72a281ada1be68295955694111e35d056f8d9a54cf74db5c","address":"0x48acaf801ce71886118b637e645463a4435326b06b261da6ff595cc306d5a0b","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\},\{"balance":"0x3635c9adc5dea00000","public_key":"0x13b3dc83f7925678860269ca71aa549d74d6c88487cb2c9f1d753de05256aac","private_key":"0x189682a86c1cb5216e717b6586b623ea02a479b43b09240ed8e69b212e17a1a","address":"0x4f2a63009ba8d37b4bff0d718700595b9afde41898be5dd08a48b72d6a0027e","class_hash":"0x4d07e40e93398ed3c76981e72dd1fd22557a78ce36c0515f679e27f0bb5bc5f"\}],"id":"id"\}\
+\
+\
+\
+\
+
+\f1\b \cb3 roger@R7 dojo % sozo migrate --rpc-url https://api.cartridge.gg/x/underdark/katana --account-address 0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84 --verbose\
+
+\f0\b0 \cb2 \
+Migration account: 0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84\
+\
+World name: underdark\
+\
+[1]  Building World state....\
+  > No remote World found\
+[2]  Evaluating Worlds diff....\
+  > Total diffs found: 8\
+[3]  Preparing for migration....\
+  > Total items to be migrated (8): New 8 Update 0\
+  \
+# Executor\
+  > Declare transaction: 0x5f2d7a31ca339596e49dc002000d3e48a445773e3568fa1952065cec3f3ea36\
+  > Deploy transaction: 0xf1254bf9cc0bf3b89f4eeed67f3566d8d679e4d09368cc80f1429975d6e519\
+  > Contract address: 0x5c3494b21bc92d40abdc40cdc54af66f22fb92bf876665d982c765a2cc0e06a\
+# Base Contract\
+  > Class Hash: 0x7aec2b7d7064c1294a339cd90060331ff704ab573e4ee9a1b699be2215c11c9\
+# World\
+  > Declare transaction: 0x1cb8735da7fe1c78c7b1d63bbcf0beb9f9ed2cdcd41f29ddff5effa1e5c56f4\
+  > Deploy transaction: 0x5a220006e581119995a9a91b44bbade6329de5d1f242def312a65d4276f8013\
+
+\f1\b   > Contract address: 0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a\
+
+\f0\b0   > Set Metadata transaction: 0x3967de4b13dfba70cadbfe7126a6d81b887235c3d39ceaad8cac951a216decf\
+  > Metadata uri: ipfs://QmYLWVBVSR34H9ep1nGmuoNL9x9Zy5qvbminc8rrMiJSqF\
+# Models (5)\
+Chamber\
+  > Declare transaction: 0x432ea084a3e7e47e53f01fdf058483ec2271d625025bdc1094f9d60ef4d3d7e\
+  > Class hash: 0x643819e4d9d18621e5459560744d6769e8be264f60e4ec22412b689b4fd255b\
+Map\
+  > Declare transaction: 0x39b24e18db6238f5bb8995934e6caa114bb9952c8c99d9dfe4e5f61e4d103e8\
+  > Class hash: 0x64ea0296f7d02ac1677cefacd1db736e1ca0b8dae5ef7c9025fdbd78ae4c4fc\
+State\
+  > Declare transaction: 0x1a923be836300257e5926dafed6836ab36378493908f13aa1e8da78f637892f\
+  > Class hash: 0x163fafd056fe4f3f0e6434c5ee9644ca4807d7b6e6ca74e33fb5615611fc175\
+Score\
+  > Declare transaction: 0x12203cb709802853870fa7fb1a0962a1a375f4dc2494c8bf405aaa8338c49c8\
+  > Class hash: 0x6751610d1577faa7e89ecd7f3306b4c50d4a2b860952d32f3f52fe0b1c12c1f\
+Tile\
+  > Declare transaction: 0x79d66d933b969122ea9dda6d65f81c772b51757bb0682a46a9426b4de32db04\
+  > Class hash: 0x80b8669ccfb85dda7499fa10378760aee6df5279978ea835e1642e7e742e67\
+  > Registered at: 0x467b0d1011ec3d8816dd0b2f01a643f858c33e27536363f3f8603b30a5f1540\
+# Contracts (1)\
+actions\
+  > Declare transaction: 0x582161e64d08ffed3144f430c906eca184423cafb4c03dc893a95b4dc031472\
+  > Deploy transaction: 0x6a065fa32edeae0bd9a9c6da61c538d40e757f5e2d9889daa33a0e5c0fb6da9\
+
+\f1\b   > Contract address: 0x1ecc984f2f872bdadd43ab1762c87de3d445b8eb134e6b475f37f23e8a551a3\
+
+\f0\b0 \
+
+\f1\b \uc0\u55356 \u57225  Successfully migrated World at address 0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a\
+
+\f0\b0 \
+\uc0\u10024  Updating manifest.json...\
+\
+\uc0\u10024  Done.\
+\
+}

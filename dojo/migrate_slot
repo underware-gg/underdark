@@ -2,14 +2,14 @@
 set -e
 
 #sozo --offline build
-sozo migrate --rpc-url https://api.cartridge.gg/x/underdark/katana
+sozo migrate --rpc-url https://api.cartridge.gg/x/underdark/katana --account-address 0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84 --verbose
 
 scripts/default_auth.sh
 
-cp target/dev/manifest.json ../client/src/
+# cp target/dev/manifest.json ../client/src/
 
-cd ../client
-yarn run codegen
-yarn run create-components
+# cd ../client
+# yarn run codegen
+# yarn run create-components
 
 echo "--- DONE!"
