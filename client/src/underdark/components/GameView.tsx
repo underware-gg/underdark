@@ -55,13 +55,13 @@ const GameView = ({
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { playerPosition, stepCount, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const { gameState, playerPosition, stepCount, dispatch, GameplayActions, GameState } = useGameplayContext()
 
   useEffect(() => {
-    if (!playerPosition) return
+    if (!playerPosition || gameState != GameState.Playing) return
     // Reached end
     const { tile, facing } = playerPosition
-    console.log(`Player at:`, tile, tilemap[tile])
+    // console.log(`Player at:`, tile, tilemap[tile])
     if (tilemap[tile] == TileType.Exit && facing == Dir.East) {
       dispatch({
         type: GameplayActions.SET_STATE,
@@ -71,7 +71,7 @@ const GameTriggers = () => {
   }, [playerPosition])
 
   useEffect(() => {
-    if (stepCount == 0) {
+    if (gameState == GameState.Playing && stepCount == 0) {
       dispatch({
         type: GameplayActions.SET_STATE,
         payload: GameState.NoEnergy,

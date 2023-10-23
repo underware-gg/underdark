@@ -168,7 +168,7 @@ fn randomize_monsters(ref rnd: u256, bitmap: u256, level_number: u32) -> u256 {
 
     result = make_underseed(result) & ~bitmap;
     result = make_underseed(result) & ~bitmap;
-    result = make_underseed(result) & ~bitmap;
+    // result = make_underseed(result) & ~bitmap;
 
     (result)
 }
@@ -181,7 +181,7 @@ fn randomize_slender_duck(ref rnd: u256, bitmap: u256, level_number: u32) -> u25
 
     result = make_underseed(result) & ~bitmap;
     result = make_underseed(result) & ~bitmap;
-    result = make_underseed(result) & ~bitmap;
+    // result = make_underseed(result) & ~bitmap;
 
     (result)
 }
@@ -194,7 +194,7 @@ fn randomize_dark_tar(ref rnd: u256, bitmap: u256, level_number: u32) -> u256 {
 
     result = make_underseed(result) & ~bitmap;
     result = make_underseed(result) & ~bitmap;
-    result = make_underseed(result) & ~bitmap;
+    // result = make_underseed(result) & ~bitmap;
 
     (result)
 }
