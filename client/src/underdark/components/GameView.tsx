@@ -157,7 +157,13 @@ const GameProof = () => {
   //   })
   // }
 
+  const dataFetch = useRef(false)
+
   useEffect(() => {
+    // avoid calling effect twice
+    if (dataFetch.current) return
+    dataFetch.current = true
+
     if(gameState == GameState.Verifying) {
       let proof = BigInt(0)
       steps.map((step, index) => {

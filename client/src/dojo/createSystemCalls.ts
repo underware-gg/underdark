@@ -21,7 +21,7 @@ export function createSystemCalls(
       console.log(args)
       const tx = await execute(signer, 'actions', 'start_level', args)
       console.log(`start_level tx:`, tx)
-      const receipt = await provider.provider.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
+      const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
       console.log(`start_level receipt:`, receipt)
       processReceipt(receipt, contractComponents);
     } catch (e) {
@@ -38,7 +38,7 @@ export function createSystemCalls(
       console.log(args)
       const tx = await execute(signer, 'actions', 'finish_level', args)
       console.log(`finish_level tx:`, tx)
-      const receipt = await provider.provider.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
+      const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
       console.log(`finish_level receipt:`, receipt)
       processReceipt(receipt, contractComponents);
     } catch (e) {
