@@ -25,6 +25,7 @@ type Props = {
 };
 
 export const DojoProvider = ({ children, value }: Props) => {
+  console.log(import.meta.env)
   const { VITE_PUBLIC_MASTER_ADDRESS, VITE_PUBLIC_MASTER_PRIVATE_KEY, VITE_PUBLIC_ACCOUNT_CLASS_HASH, VITE_PUBLIC_NODE_URL } = import.meta.env;
 
   const currentValue = useContext(DojoContext);
@@ -50,6 +51,7 @@ export const DojoProvider = ({ children, value }: Props) => {
   const { create, list, get, account, select, isDeploying, clear } = useBurner({
     masterAccount: masterAccount,
     accountClassHash: VITE_PUBLIC_ACCOUNT_CLASS_HASH!,
+    nodeUrl: VITE_PUBLIC_NODE_URL!,
   });
 
   const selectedAccount = useMemo(() => {
