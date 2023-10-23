@@ -151,4 +151,4 @@ Open [http://localhost:5173/](http://localhost:5173/)
 
 ## Splash Screen
 
-The splash screen code needed to be deployed as separately due to time constraints. The code can be found in this (GitHub Repository)[https://github.com/fundaomental/underdark-splash]
+The splash screen code needed to be deployed as separately due to time constraints. The code can be found in this [GitHub Repository](https://github.com/fundaomental/underdark-splash)
