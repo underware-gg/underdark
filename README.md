@@ -1,6 +1,5 @@
 # Underdark
-
-Losing our mind in the Underdark, for the Dojo Game Jam #2
+Losing our mind in the Underdark, a generative, on-chain 3D skin-crawler for the Dojo Game Jam #2.
 
 ```
    __  __     __   __     _____     ______     ______   
@@ -32,6 +31,13 @@ Losing our mind in the Underdark, for the Dojo Game Jam #2
                 -- gabe | cartridge                                       
 
 ```
+
+Dripping from the walls, and tangled in your hair,
+The dark tar saps your light and strength, 'tis everywhere.
+Beware the fading light, and your fraying sanity.
+Treading those dark, tangled halls, oh vanity!
+Find the treasure, find the key, find stairs to deeper hubris.
+Most of all, beware the terrible gibbering of Slenderin Duckeris.
 
 ## Team
 
@@ -142,3 +148,7 @@ sozo build
 
 Open [http://localhost:5173/](http://localhost:5173/)
 
+
+## Splash Screen
+
+The splash screen code needed to be deployed as separately due to time constraints. The code can be found in this (GitHub Repository)[https://github.com/fundaomental/underdark-splash]
