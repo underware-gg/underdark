@@ -38,6 +38,11 @@ const PALETTE = 0;//1;
 const PALETTE_PATHS = [
   '/colors/blues1.png',
   '/colors/pinks1.png',
+  '/colors/hot.png',
+  '/colors/greeny.png',
+  '/colors/earth.png',
+  '/colors/pinks2.png',
+  '/colors/purple.png',
 ]
 
 let _width: number;

@@ -8,6 +8,7 @@ import { Dir, FlippedDir, TileType } from '../utils/underdark'
 import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
 import { bigintToHex, map } from '../utils/utils'
 import ReactAudioPlayer from 'react-audio-player'
+import { levels } from '../utils/levels'
 
 
 const GameView = ({
@@ -40,6 +41,9 @@ const GameView = ({
     })
   }, [light])
 
+  useEffect(() => {
+    setGameParams(levels[Number(chamberId % BigInt(levels.length))].renderParams)
+  }, [chamberId])
 
   return (
     <div className='Relative GameView'>

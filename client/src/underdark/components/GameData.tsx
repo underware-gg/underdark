@@ -7,6 +7,7 @@ import { useGameplayContext } from '../hooks/GameplayContext'
 import { map } from '../utils/utils'
 import { useComponentValue } from '@latticexyz/react'
 import { getEntityIdFromKeys } from '../../utils/utils'
+import { levels } from '../utils/levels'
 // import { Account } from 'starknet'
 
 interface Generator {
@@ -67,6 +68,18 @@ const _generators: Generator[] = [
   { name: 'collapse_carve', value: 5, description: 'OK' },
   { name: 'collapse_carve', value: 6, description: '' },
 ]
+
+// let params = {
+//   fov: CAM_FOV,
+//   far: CAM_FAR,
+//   gamma: GAMMA,
+//   colorCount: COLOR_COUNT,
+//   dither: DITHER,
+//   ditherSize: DITHER_SIZE,
+//   bayer: BAYER,
+//   palette: PALETTE,
+// };
+
 
 
 interface DirectionButtonProps {
@@ -151,6 +164,10 @@ function MinterData() {
     }
   }
 
+  useEffect(() => {
+    setGeneratorIndex(Number(chamberId % BigInt(levels.length)))
+  }, [chamberId])
+
   const _selectChamber = (coord: bigint) => {
     dispatch({
       type: UnderdarkActions.SET_CHAMBER,
@@ -212,14 +229,14 @@ function MinterData() {
           <DirectionButton chamberId={chamberId} gameId={gameId} yonder={yonder} dir={Dir.East} doorTile={doors?.east ?? 0} generator={_generators[generatorIndex]} />
         </div>
 
-        <div>
+        {/* <div>
           <select value={generatorIndex} onChange={e => setGeneratorIndex(parseInt(e.target.value))}>
             {_generators.map((g: Generator, index: number) => {
               const _desc = `${g.name}(${g.value}) : ${g.description}`
               return <option value={index} key={`gen_${index}`}>{_desc}</option>
             })}
           </select>
-        </div>
+        </div> */}
       </>}
 
     </div>
