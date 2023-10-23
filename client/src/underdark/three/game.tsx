@@ -61,8 +61,8 @@ let _scene: THREE.Scene
 let _map: THREE.Object3D;
 let _target, _postScene, _postCamera, _postMaterial;
 let _supportsExtension: boolean = true;
-let _gui
-let _stats;
+// let _gui
+// let _stats;
 // let _controls;
 
 let _tile_geometry;
@@ -198,19 +198,19 @@ export async function init(canvas, width, height) {
   onWindowResize();
   window.addEventListener('resize', onWindowResize);
 
-  _gui = new GUI({ width: 300 });
-  _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
-  _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
-  _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
-  _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
-  _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
-  _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
-  _gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdated);
-  _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
-  _gui.open();
+  // _gui = new GUI({ width: 300 });
+  // _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
+  // _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
+  // _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
+  // _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
+  // _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
+  // _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
+  // _gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdated);
+  // _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
+  // _gui.open();
 
-  _stats = new Stats();
-  document.body.appendChild(_stats.dom);
+  // _stats = new Stats();
+  // document.body.appendChild(_stats.dom);
 }
 
 function guiUpdated() {
@@ -332,7 +332,7 @@ export function animate() {
 
   // _controls.update(); // required because damping is enabled
 
-  _stats.update();
+  // _stats.update();
 }
 
 
