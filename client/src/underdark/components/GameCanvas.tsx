@@ -7,6 +7,7 @@ const GameCanvas = ({
   height = 540,
   gameTilemap,
   gameParams = {},
+  guiEnabled = false,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -16,7 +17,7 @@ const GameCanvas = ({
     if (canvasRef.current && !isLoading) {
       console.log(`RESET CANVAS`)
       setIsLoading(true)
-      game.init(canvasRef.current, width, height)
+      game.init(canvasRef.current, width, height, guiEnabled)
       game.animate()
       setIsLoading(false)
       setIsInitialized(true)

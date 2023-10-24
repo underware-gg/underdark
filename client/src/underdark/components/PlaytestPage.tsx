@@ -13,22 +13,19 @@ function PlaytestPage() {
 
   return (
     <div>
-      {/* <div className="card MinterPanel">
+      {/* <div className='card MinterPanel'>
         <MinterMap />
         <MinterData />
       </div>
       <br /> */}
-      <div className="card MinterPanel">
+      <div className=''>
         <GameView />
       </div>
     </div>
   )
 }
 
-const GameView = ({
-  // width = 620,
-  // height = 350,
-}) => {
+const GameView = () => {
 
   const tilemap = useMemo(() => {
     let result: TileType[] = []
@@ -57,11 +54,10 @@ const GameView = ({
   }, [gameTilemap])
 
   const directional = false
-
-  useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight'])
-  useKeyDown(() => (directional ? _moveToDirection(Dir.West) : _rotate(-1)), ['ArrowLeft'])
-  useKeyDown(() => (directional ? _moveToDirection(Dir.North) : _move(1)), ['ArrowUp'])
-  useKeyDown(() => (directional ? _moveToDirection(Dir.South) : _move(-1)), ['ArrowDown'])
+  useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight', 'd'])
+  useKeyDown(() => (directional ? _moveToDirection(Dir.West) : _rotate(-1)), ['ArrowLeft', 'a'])
+  useKeyDown(() => (directional ? _moveToDirection(Dir.North) : _move(1)), ['ArrowUp', 'w'])
+  useKeyDown(() => (directional ? _moveToDirection(Dir.South) : _move(-1)), ['ArrowDown', 's'])
 
   const _moveToDirection = (dir) => {
     dispatch({
@@ -92,13 +88,8 @@ const GameView = ({
   }
 
   return (
-    <GameCanvas gameTilemap={gameTilemap} gameParams={{}}/>
+    <GameCanvas gameTilemap={gameTilemap} guiEnabled={true} gameParams={{}} width={1000} height={500}/>
   )
 }
-
-
-
-
-
 
 export default PlaytestPage
