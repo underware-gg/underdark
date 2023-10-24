@@ -35,6 +35,7 @@ const DepthPostShader = {
 			uniform sampler2D tDepth;
 			uniform sampler2D tPalette;
       uniform float uPalette;
+      uniform bool uLightness;
 			uniform float uCameraNear;
 			uniform float uCameraFar;
       uniform float uGamma;
@@ -91,9 +92,11 @@ const DepthPostShader = {
 				//vec3 diffuse = texture2D( tDiffuse, vUv ).rgb;
 				float depth = readDepth( tDepth, vUv );
         depth = apply_gamma(depth, uGamma);
+        depth = 1.0 - depth;
+        float depth0 = depth;
 
         // invert
-        vec3 color = 1.0 - vec3( depth );
+        vec3 color = vec3( depth );
 
         // save intensity
         float d = color.x;
@@ -110,7 +113,15 @@ const DepthPostShader = {
 
         // palette
         if (uPalette > 0.0) {
-          color *= texture2D(tPalette, vec2(d, 0.0) ).rgb;
+          vec3 albedo = texture2D(tPalette, vec2(d, 0.0) ).rgb;
+          if (uLightness) {
+            vec3 back = texture2D(tPalette, vec2(0.0, 0.0) ).rgb;
+            color = (albedo * color) + (back * (1.0- color));
+          } else {
+            color *= albedo;
+          }
+        } else if (uLightness) {
+          color = 1.0 - color;
         }
 
 				gl_FragColor.rgb = color;

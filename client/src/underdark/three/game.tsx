@@ -37,13 +37,14 @@ const BAYER = 0;//4;
 const PALETTE = 0;//1;
 
 const PALETTE_PATHS = [
-  '/colors/blues1.png',
-  '/colors/pinks1.png',
-  '/colors/hot.png',
-  '/colors/greeny.png',
-  '/colors/earth.png',
-  '/colors/pinks2.png',
+  '/colors/gameboy.png',
+  '/colors/blue.png',
+  '/colors/pink.png',
   '/colors/purple.png',
+  '/colors/earth.png',
+  '/colors/hot.png',
+  '/colors/spectrum.png',
+  // '/colors/greeny.png',
 ]
 
 let _width: number;
@@ -83,6 +84,7 @@ const defaultParams = {
   ditherSize: DITHER_SIZE,
   bayer: BAYER,
   palette: PALETTE,
+  lightness: false,
 };
 let params = defaultParams;
 
@@ -212,6 +214,7 @@ export async function init(canvas, width, height, guiEnabled) {
     _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
     _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
     _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
+    _gui.add(params, 'lightness', true).onChange(guiUpdated);
     _gui.open();
     // framerate
     _stats = new Stats();
@@ -238,6 +241,7 @@ function paramsUpdated(newParams: any) {
   _postMaterial.uniforms.uBayer.value = newParams.bayer;
   _postMaterial.uniforms.uPalette.value = newParams.palette;
   _postMaterial.uniforms.tPalette.value = newParams.palette > 0 ? _palettes[newParams.palette - 1] : null;
+  _postMaterial.uniforms.uLightness.value = newParams.lightness;
 }
 
 // Create a render target with depth texture
@@ -271,6 +275,7 @@ function setupPost() {
       uDitherSize: { value: DITHER_SIZE },
       uBayer: { value: BAYER },
       uPalette: { value: params.palette },
+      uLightness: { value: params.lightness },
       tPalette: { value: null },
       tDiffuse: { value: null },
       tDepth: { value: null }
