@@ -25,14 +25,13 @@ dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.1" }
 initializer_class_hash = "0xbeef"
 
 [tool.dojo.env]
-# rpc_url = "http://localhost:5050/"
-# SLOT
-rpc_url = "https://api.cartridge.gg/x/underdark/katana"
+rpc_url = "http://localhost:5050/"
+# rpc_url = "https://api.cartridge.gg/x/underdark/katana" # SLOT
 
 # Default account for katana with seed = 0
-# (the address from Katana log)
-account_address = "0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84"
-# also from Katana log
-private_key = "0x2d2cfc9cecececa0cd9c66e87a59d85fc725862f7aeb003842b1a3bf42f8897"
+account_address = "0x517ececd29116499f4a1b64b094da79ba08dfd54a3edaa316134c41f8160973"
+private_key = "0x1800000000300000180000000000030000000000003006001800006600"
+# account_address = "0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84" # SLOT
+# private_key = "0x2d2cfc9cecececa0cd9c66e87a59d85fc725862f7aeb003842b1a3bf42f8897"     # SLOT
 world_address = "0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a"
 
