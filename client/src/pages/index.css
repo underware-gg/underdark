@@ -14,6 +14,14 @@
   -webkit-text-size-adjust: 100%;
 }
 
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -22,14 +30,6 @@ a {
 
 a:hover {
   color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {
@@ -106,14 +106,14 @@ canvas {
 }
 
 .MinterPanel {
-  width: 620px;
+  width: 720px;
   height: 200px;
   display: block;
 }
 
 .MinterMap,
 .MinterData {
-  width: 250px;
+  /* width: 250px; */
   height: 200px;
   display: inline-block;
 }
@@ -143,12 +143,12 @@ canvas {
 
 .GameView {
   width: 720px;
-  height: 540px;
+  height: 360px;
 }
 
 .GameCanvas {
   width: 720px;
-  height: 540px;
+  height: 360px;
   display: block;
   background-color: #0000;
   border: 0.5px solid #444;
