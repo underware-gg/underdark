@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import GameCanvas from './GameCanvas'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { useGameplayContext } from '../hooks/GameplayContext'
+import { useGameplayContext, GameplayActions, GameState } from '../hooks/GameplayContext'
 import { useChamberMap } from '../hooks/useChamber'
 import { useKeyDown } from '../hooks/useKeyDown'
 import { Dir, FlippedDir, TileType } from '../utils/underdark'
@@ -18,8 +18,7 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { light, gameState, dispatch, GameplayActions, GameState } = useGameplayContext()
-  const [gameParams, setGameParams] = useState({})
+  const { gameLoop, light, gameState, dispatch } = useGameplayContext()
 
   //
   // Start game!
@@ -32,23 +31,20 @@ const GameView = ({
     }
   }, [gameTilemap])
 
-  const _setGameParams = (newParams) => {
-    setGameParams({ ...gameParams, ...newParams })
-  }
   useEffect(() => {
-    _setGameParams({
-      far: map(light, 0.0, 100.0, 1.6, 5.0),
-    })
-  }, [light])
+    gameLoop?.resetGameParams(levels[Number(chamberId % BigInt(levels.length))].renderParams)
+  }, [gameLoop, chamberId])
 
   useEffect(() => {
-    setGameParams(levels[Number(chamberId % BigInt(levels.length))].renderParams)
-  }, [chamberId])
+    gameLoop?.setGameParams({
+      far: map(light, 0.0, 100.0, 1.6, 5.0),
+    })
+  }, [gameLoop, light])
 
   return (
     <div className='Relative GameView'>
       <GameControls />
-      {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} gameParams={gameParams} />}
+      {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} />}
       {gameState == GameState.Verifying && <GameProof />}
       {gameState == GameState.NoEnergy && <GameOver reason={'You died!!!'} />}
       {light > 0
@@ -83,7 +79,7 @@ const _isAround = (tilemap, tile, type) => {
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { light, gameState, playerPosition, stepCount, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const { light, gameState, playerPosition, stepCount, dispatch } = useGameplayContext()
 
   useEffect(() => {
     if (!playerPosition || gameState != GameState.Playing) return
@@ -146,8 +142,8 @@ const GameProof = () => {
   const { chamberId } = useUnderdarkContext()
   const { finish_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
-  const { gameState, steps, GameState } = useGameplayContext()
-  // const { gameState, steps, dispatch: dispatchGameplay, GameplayActions, GameState } = useGameplayContext()
+  const { gameState, steps } = useGameplayContext()
+  // const { gameState, steps, dispatch: dispatchGameplay } = useGameplayContext()
 
   // const { locationId, seed } = useChamberOffset(chamberId, dir)
   // const exists = useMemo(() => (seed > 0n), [seed, locationId])
@@ -195,7 +191,7 @@ const GameOver = ({
 }) => {
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { dispatch, GameplayActions } = useGameplayContext()
+  const { dispatch } = useGameplayContext()
 
   const _restart = () => {
     dispatch({
@@ -224,7 +220,7 @@ const GameOver = ({
 const GameControls = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { gameState, playerPosition, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const { gameState, playerPosition, dispatch } = useGameplayContext()
 
   const directional = false
   useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight', 'd'])

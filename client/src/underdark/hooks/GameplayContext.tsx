@@ -1,5 +1,6 @@
 import React, { ReactNode, createContext, useReducer, useContext } from 'react'
 import { Dir, Position, TileType } from '../utils/underdark'
+import { ThreeJsGame } from '../components/GameCanvas'
 
 //
 // React + Typescript + Context
@@ -30,6 +31,7 @@ const _lightDrop = 10;
 // State
 //
 export const initialState = {
+  gameLoop: null,
   gameState: GameState.Stoped,
   playerPosition: null,
   light: 0,
@@ -39,6 +41,7 @@ export const initialState = {
 }
 
 type GameplayStateType = {
+  gameLoop: ThreeJsGame,
   gameState: GameState
   playerPosition: Position
   light: number
@@ -52,6 +55,7 @@ type GameplayStateType = {
 //
 
 const GameplayActions = {
+  SET_GAME_LOOP: 'SET_GAME_LOOP',
   RESET: 'RESET',
   SET_STATE: 'SET_STATE',
   SET_MESSAGE: 'SET_MESSAGE',
@@ -62,6 +66,7 @@ const GameplayActions = {
 }
 
 type ActionType =
+  | { type: 'SET_GAME_LOOP', payload: ThreeJsGame }
   | { type: 'RESET', payload: Position }
   | { type: 'SET_STATE', payload: GameState }
   | { type: 'SET_MESSAGE', payload: string }
@@ -95,6 +100,10 @@ const GameplayProvider = ({
   const [state, dispatch] = useReducer((state: GameplayStateType, action: ActionType) => {
     let newState = { ...state }
     switch (action.type) {
+      case GameplayActions.SET_GAME_LOOP: {
+        newState.gameLoop = action.payload as ThreeJsGame
+        break
+      }
       case GameplayActions.RESET: {
         const position = action.payload as Position
         newState.gameState = GameState.Playing
@@ -183,7 +192,6 @@ export const useGameplayContext = () => {
     ...state,
     dispatch,
     GameplayActions,
-    GameState,
   }
 }
 

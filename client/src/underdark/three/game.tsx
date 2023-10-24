@@ -89,13 +89,24 @@ const defaultParams = {
 let params = defaultParams;
 
 
-export function setGameParams(newParams: any | null) {
-  console.log(`setGameParams()`, newParams)
-  paramsUpdated(newParams === null ? defaultParams : {
+export function resetGameParams(moreParams: any = {}) {
+  console.log(`resetGameParams() + `, moreParams)
+  params = {
+    ...defaultParams,
+    ...moreParams,
+  }
+  paramsUpdated()
+  // _gui?.controllersRecursive().forEach(c => c.updateDisplay())
+}
+
+export function setGameParams(moreParams: any) {
+  console.log(`setGameParams()`, moreParams)
+  params = {
     ...params,
-    ...newParams,
-  })
-  _gui?.controllersRecursive().forEach(c => c.updateDisplay())
+    ...moreParams,
+  }
+  paramsUpdated()
+  // _gui?.controllersRecursive().forEach(c => c.updateDisplay())
 }
 
 
@@ -223,25 +234,25 @@ export async function init(canvas, width, height, guiEnabled) {
 }
 
 function guiUpdated() {
-  paramsUpdated(params)
+  paramsUpdated()
 }
 
-function paramsUpdated(newParams: any) {
+function paramsUpdated() {
   // Camera
-  _camera.fov = newParams.fov;
-  _camera.far = newParams.far;
+  _camera.fov = params.fov;
+  _camera.far = params.far;
   _camera.updateProjectionMatrix();
   _postMaterial.uniforms.uCameraNear.value = _camera.near;
   _postMaterial.uniforms.uCameraFar.value = _camera.far;
   // Shader
-  _postMaterial.uniforms.uGamma.value = newParams.gamma;
-  _postMaterial.uniforms.uColorCount.value = newParams.colorCount;
-  _postMaterial.uniforms.uDither.value = newParams.dither;
-  _postMaterial.uniforms.uDitherSize.value = newParams.ditherSize;
-  _postMaterial.uniforms.uBayer.value = newParams.bayer;
-  _postMaterial.uniforms.uPalette.value = newParams.palette;
-  _postMaterial.uniforms.tPalette.value = newParams.palette > 0 ? _palettes[newParams.palette - 1] : null;
-  _postMaterial.uniforms.uLightness.value = newParams.lightness;
+  _postMaterial.uniforms.uGamma.value = params.gamma;
+  _postMaterial.uniforms.uColorCount.value = params.colorCount;
+  _postMaterial.uniforms.uDither.value = params.dither;
+  _postMaterial.uniforms.uDitherSize.value = params.ditherSize;
+  _postMaterial.uniforms.uBayer.value = params.bayer;
+  _postMaterial.uniforms.uPalette.value = params.palette;
+  _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette - 1] : null;
+  _postMaterial.uniforms.uLightness.value = params.lightness;
 }
 
 // Create a render target with depth texture

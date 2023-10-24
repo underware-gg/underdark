@@ -45,7 +45,7 @@ const GameView = () => {
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
   useEffect(() => console.log(`gameTilemap:`, bigintToHex(_bitmap), gameTilemap), [gameTilemap])
 
-  const { playerPosition, dispatch, GameplayActions } = useGameplayContext()
+  const { gameLoop, playerPosition, dispatch, GameplayActions } = useGameplayContext()
 
   useEffect(() => {
     if (gameTilemap) {
@@ -91,14 +91,14 @@ const GameView = () => {
   }
 
   // level selector
-  const [gameParams, setGameParams] = useState({} as any)
   const _selectLevel = (level: LevelParams | null) => {
-    setGameParams(level === null ? null : level.renderParams)
+    const params = (level === null ? null : level.renderParams)
+    gameLoop?.resetGameParams(params)
   }
 
   return (
     <>
-      <GameCanvas gameTilemap={gameTilemap} guiEnabled={true} width={1000} height={500} gameParams={gameParams} />
+      <GameCanvas gameTilemap={gameTilemap} guiEnabled={true} width={1000} height={500} />
       <br />
       {[null, ...levels].map((level: LevelParams | null, index: number) => {
         return (
