@@ -28,6 +28,7 @@ const R_TO_D = (180 / Math.PI)
 const SIZE = 1;
 const CAM_FOV = 70;
 const CAM_FAR = 5; // 1.3 .. 5
+const TILT = 2;
 const GAMMA = 1.25;
 const COLOR_COUNT = 0; //16;
 const DITHER = 0;
@@ -75,6 +76,7 @@ let _material: THREE.Material;
 let params = {
   fov: CAM_FOV,
   far: CAM_FAR,
+  tilt: TILT,
   gamma: GAMMA,
   colorCount: COLOR_COUNT,
   dither: DITHER,
@@ -202,6 +204,7 @@ export async function init(canvas, width, height, guiEnabled) {
     _gui = new GUI({ width: 300 });
     _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
     _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
+    _gui.add(params, 'tilt', 0, 15, 0.1).onChange(guiUpdated);
     _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
     _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
     _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
@@ -404,7 +407,7 @@ export function movePlayer(position: Position) {
   // _cameraRig.position.set(x, y, 0);
 
   // Rotate player
-  let tilt = (++_stepCounter % 2 == 0 ? 1 : -1) / R_TO_D
+  let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
   let rotX = (position.facing == Dir.East || position.facing == Dir.West) ? tilt : 0
   let rotY = (position.facing == Dir.North || position.facing == Dir.South) ? tilt : 0
   let rotZ =
