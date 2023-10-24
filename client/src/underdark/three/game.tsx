@@ -28,7 +28,7 @@ const R_TO_D = (180 / Math.PI)
 const SIZE = 1;
 const CAM_FOV = 70;
 const CAM_FAR = 5; // 1.3 .. 5
-const TILT = 2;
+const TILT = 1;
 const GAMMA = 1.25;
 const COLOR_COUNT = 0; //16;
 const DITHER = 0;
@@ -73,7 +73,7 @@ let _tar_geometry;
 let _door_geometry;
 let _material: THREE.Material;
 
-let params = {
+const defaultParams = {
   fov: CAM_FOV,
   far: CAM_FAR,
   tilt: TILT,
@@ -84,15 +84,16 @@ let params = {
   bayer: BAYER,
   palette: PALETTE,
 };
+let params = defaultParams;
 
-export function setGameParams(newParams: any) {
+
+export function setGameParams(newParams: any | null) {
   console.log(`setGameParams()`, newParams)
-  paramsUpdated({
+  paramsUpdated(newParams === null ? defaultParams : {
     ...params,
     ...newParams,
   })
-  // paramsUpdated(params)
-  // _gui?.controllersRecursive().forEach(c => c.updateDisplay())
+  _gui?.controllersRecursive().forEach(c => c.updateDisplay())
 }
 
 

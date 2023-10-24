@@ -1,9 +1,10 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '../utils/underdark'
 import { useGameplayContext } from '../hooks/GameplayContext'
 import { useKeyDown } from '../hooks/useKeyDown'
-import GameCanvas from './GameCanvas'
+import { LevelParams, levels } from '../utils/levels'
 import { bigintToHex } from '../utils/utils'
+import GameCanvas from './GameCanvas'
 
 // set index.html
 //@ts-ignore
@@ -24,6 +25,8 @@ function PlaytestPage() {
     </div>
   )
 }
+
+
 
 const GameView = () => {
 
@@ -87,8 +90,22 @@ const GameView = () => {
     })
   }
 
+  // level selector
+  const [gameParams, setGameParams] = useState({} as any)
+  const _selectLevel = (level: LevelParams | null) => {
+    setGameParams(level === null ? null : level.renderParams)
+  }
+
   return (
-    <GameCanvas gameTilemap={gameTilemap} guiEnabled={true} gameParams={{}} width={1000} height={500}/>
+    <>
+      <GameCanvas gameTilemap={gameTilemap} guiEnabled={true} width={1000} height={500} gameParams={gameParams} />
+      <br />
+      {[null, ...levels].map((level: LevelParams | null, index: number) => {
+        return (
+          <div key={`level_${index}`} className='Anchor Padded Block' onClick={() => _selectLevel(level)} >{index}</div>
+        )
+      })}
+    </>
   )
 }
 

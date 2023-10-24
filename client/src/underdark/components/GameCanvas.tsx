@@ -6,7 +6,7 @@ const GameCanvas = ({
   width = 720,
   height = 540,
   gameTilemap,
-  gameParams = {},
+  gameParams = {} as any,
   guiEnabled = false,
 }) => {
   const [isLoading, setIsLoading] = useState(false)

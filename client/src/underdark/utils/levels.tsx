@@ -1,5 +1,11 @@
 
-export const levels = [
+export type LevelParams = {
+  generatorName: string
+  generatorValue: number
+  renderParams: any
+}
+
+export const levels: LevelParams[] = [
   {
     generatorName: 'entry',
     generatorValue: 0,

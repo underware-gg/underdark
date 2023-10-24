@@ -90,6 +90,7 @@ canvas {
 .NoPadding { padding: 0; }
 .Padded { padding: 0.5em; }
 .NoBorder { border: 0!important }
+.Block { display: inline-block; }
 
 .Anchor {
   cursor: pointer;
