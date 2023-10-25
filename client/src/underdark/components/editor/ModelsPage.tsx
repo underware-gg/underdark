@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '../utils/underdark'
-import { useGameplayContext } from '../hooks/GameplayContext'
-import { useKeyDown } from '../hooks/useKeyDown'
-import { LevelParams, levels } from '../data/levels'
-import { bigintToHex } from '../utils/utils'
-import GameCanvas from './GameCanvas'
+import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '../../utils/underdark'
+import { useGameplayContext } from '../../hooks/GameplayContext'
+import { useKeyDown } from '../../hooks/useKeyDown'
+import { LevelParams, levels } from '../../data/levels'
+import { bigintToHex } from '../../utils/utils'
+import GameCanvas from '../GameCanvas'
 
 // set index.html
 //@ts-ignore
-const _bitmap = BigInt(playtest_bitmap)
+const _bitmap = BigInt(0n)
 
-function PlaytestPage() {
+function ModelsPage() {
 
   return (
     <div>
@@ -109,4 +109,4 @@ const GameView = () => {
   )
 }
 
-export default PlaytestPage
+export default ModelsPage

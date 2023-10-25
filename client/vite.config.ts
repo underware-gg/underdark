@@ -12,6 +12,7 @@ export default defineConfig({
         underdark: resolve(__dirname, 'underdark/index.html'),
         editor: resolve(__dirname, 'editor/index.html'),
         playtest: resolve(__dirname, 'editor/playtest/index.html'),
+        models: resolve(__dirname, 'editor/models/index.html'),
       },
     },
   },
