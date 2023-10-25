@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { GraphQLClient } from 'graphql-request';
 import { GraphQLClientRequestHeaders } from 'graphql-request/build/cjs/types';
 import { print } from 'graphql'
@@ -508,8 +507,6 @@ export type QueryTileModelsArgs = {
 export type Score = {
   __typename?: 'Score';
   entity?: Maybe<Entity>;
-  key_location_id?: Maybe<Scalars['u128']['output']>;
-  key_player?: Maybe<Scalars['ContractAddress']['output']>;
   location_id?: Maybe<Scalars['u128']['output']>;
   moves?: Maybe<Scalars['usize']['output']>;
   player?: Maybe<Scalars['ContractAddress']['output']>;
@@ -533,28 +530,12 @@ export type ScoreOrder = {
 };
 
 export enum ScoreOrderField {
-  KeyLocationId = 'KEY_LOCATION_ID',
-  KeyPlayer = 'KEY_PLAYER',
   LocationId = 'LOCATION_ID',
   Moves = 'MOVES',
   Player = 'PLAYER'
 }
 
 export type ScoreWhereInput = {
-  key_location_id?: InputMaybe<Scalars['u128']['input']>;
-  key_location_idEQ?: InputMaybe<Scalars['u128']['input']>;
-  key_location_idGT?: InputMaybe<Scalars['u128']['input']>;
-  key_location_idGTE?: InputMaybe<Scalars['u128']['input']>;
-  key_location_idLT?: InputMaybe<Scalars['u128']['input']>;
-  key_location_idLTE?: InputMaybe<Scalars['u128']['input']>;
-  key_location_idNEQ?: InputMaybe<Scalars['u128']['input']>;
-  key_player?: InputMaybe<Scalars['ContractAddress']['input']>;
-  key_playerEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
-  key_playerGT?: InputMaybe<Scalars['ContractAddress']['input']>;
-  key_playerGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
-  key_playerLT?: InputMaybe<Scalars['ContractAddress']['input']>;
-  key_playerLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
-  key_playerNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
   location_id?: InputMaybe<Scalars['u128']['input']>;
   location_idEQ?: InputMaybe<Scalars['u128']['input']>;
   location_idGT?: InputMaybe<Scalars['u128']['input']>;
@@ -791,6 +772,13 @@ export type GetChamberTilesQueryVariables = Exact<{
 
 export type GetChamberTilesQuery = { __typename?: 'Query', entities?: { __typename?: 'EntityConnection', edges?: Array<{ __typename?: 'EntityEdge', node?: { __typename?: 'Entity', keys?: Array<string | null> | null, id?: string | null, models?: Array<{ __typename: 'Chamber' } | { __typename: 'Map' } | { __typename: 'Score' } | { __typename: 'State' } | { __typename: 'Tile', location_id?: any | null, pos?: any | null, tile_type?: any | null } | null> | null } | null } | null> | null } | null };
 
+export type GetLevelScoresQueryVariables = Exact<{
+  locationId: Scalars['u128']['input'];
+}>;
+
+
+export type GetLevelScoresQuery = { __typename?: 'Query', entities?: { __typename?: 'ScoreConnection', edges?: Array<{ __typename?: 'ScoreEdge', node?: { __typename?: 'Score', entity?: { __typename?: 'Entity', keys?: Array<string | null> | null, id?: string | null, models?: Array<{ __typename?: 'Chamber' } | { __typename?: 'Map' } | { __typename: 'Score', location_id?: any | null, player?: any | null, moves?: any | null } | { __typename?: 'State' } | { __typename?: 'Tile' } | null> | null } | null } | null } | null> | null } | null };
+
 
 export const GetChamberTilesDocument = gql`
     query getChamberTiles($locationId: String!) {
@@ -812,16 +800,42 @@ export const GetChamberTilesDocument = gql`
   }
 }
     `;
+export const GetLevelScoresDocument = gql`
+    query getLevelScores($locationId: u128!) {
+  entities: scoreModels(where: {location_id: $locationId}, first: 100) {
+    edges {
+      node {
+        entity {
+          keys
+          id
+          models {
+            ... on Score {
+              __typename
+              location_id
+              player
+              moves
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
 
 const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
 const GetChamberTilesDocumentString = print(GetChamberTilesDocument);
+const GetLevelScoresDocumentString = print(GetLevelScoresDocument);
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
     getChamberTiles(variables: GetChamberTilesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: GetChamberTilesQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
         return withWrapper((wrappedRequestHeaders) => client.rawRequest<GetChamberTilesQuery>(GetChamberTilesDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getChamberTiles', 'query');
+    },
+    getLevelScores(variables: GetLevelScoresQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: GetLevelScoresQuery; errors?: GraphQLError[]; extensions?: any; headers: Headers; status: number; }> {
+        return withWrapper((wrappedRequestHeaders) => client.rawRequest<GetLevelScoresQuery>(GetLevelScoresDocumentString, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getLevelScores', 'query');
     }
   };
 }

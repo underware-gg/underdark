@@ -71,7 +71,7 @@ mod actions {
                 low: proof_low,
                 high: proof_high,
             };
-            verify_level_proof(world, caller, location_id, proof, moves_count);
+            verify_level_proof(world, location_id, caller, proof, moves_count);
 
             return ();
         }

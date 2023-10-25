@@ -62,6 +62,9 @@ mod tests {
         assert_doors('level_4', world, chamber4.location_id);
     }
 
+    //
+    // Proof packing
+    //
     #[test]
     #[available_gas(100_000_000)]
     fn test_bitmap_move_tile() {
@@ -122,31 +125,18 @@ mod tests {
         assert(*moves_1[4] == *moves_2[4], '*[4]');
     }
 
+    //
+    // verify_map
+    //
+    const VERIFY_BITMAP: u256 = 0xffffffffffffffffffffffff000000030002f80278027ffe7ffe7ffe7ffe7ffe;
+    const VERIFY_ENTRY: u8 = 144;
+    const VERIFY_EXIT :u8 = 127;
+
     #[test]
     #[available_gas(1_000_000_000_000)]
-    fn test_verify_map() {
+    fn test_verify_map_wins() {
         let (world, system) = setup_world();
-        let bitmap: u256 = 0xffffffffffffffffffffffff000000030002f80278027ffe7ffe7ffe7ffe7ffe;
-        let entry: u8 = 144;
-        let exit: u8 = 127;
-
-        {
-            let proof = array![];
-            let win: bool = verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
-            assert(win == false, 'no_proof');
-        }
-
-        {
-            let proof = array![DIR::EAST, DIR::EAST];
-            let win: bool = verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
-            assert(win == false, 'short_proof');
-        }
-
-        {
-            let proof = array![DIR::NORTH];
-            let win: bool = verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
-            assert(win == false, 'north_wall');
-        }
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
 
         // good proof
         {
@@ -157,8 +147,7 @@ mod tests {
                 DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
                 DIR::EAST
             ];
-            let win: bool = verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
-            assert(win == true, 'good_proof');
+            verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
         }
 
         // ignore edges
@@ -171,11 +160,10 @@ mod tests {
                 DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
                 DIR::EAST
             ];
-            let win: bool = verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
-            assert(win == true, 'ignore_edges');
+            verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
         }
 
-        // circles
+        // run in circles
         {
             let proof = array![
                 DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
@@ -186,24 +174,61 @@ mod tests {
                 DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
                 DIR::EAST
             ];
-            let win: bool = verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
-            assert(win == true, 'circles');
-        }
-
-        {
-            let proof = array![
-                DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
-                DIR::SOUTH, DIR::SOUTH,
-                DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
-                DIR::EAST, // wall
-                DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
-                DIR::EAST
-            ];
-            let win: bool = verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
-            assert(win == false, 'wall_in_the_way');
+            verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
         }
     }
 
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Didnt find the exit!',))]
+    fn test_verify_map_no_proof() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let proof = array![];
+        verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Didnt find the exit!',))]
+    fn test_verify_map_short_proof() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let proof = array![DIR::EAST, DIR::EAST];
+        verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Hit a wall!',))]
+    fn test_verify_map_wall() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let proof = array![DIR::NORTH];
+        verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+    
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Hit a wall!',))]
+    fn test_verify_map_hit_a_wall() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let proof = array![
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::SOUTH, DIR::SOUTH,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::EAST, // wall
+            DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
+            DIR::EAST
+        ];
+        verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+
+
+    //
+    // Score
+    //
     #[test]
     #[available_gas(1_000_000_000_000)]
     fn test_score() {
@@ -245,6 +270,8 @@ mod tests {
         // execute
         execute_finish_level(world, system, chamber2.location_id, proof_low_packed, proof_low.len());
         score = get_world_Score(world, chamber2.location_id, player);
+        assert(score.location_id == chamber2.location_id, 'moves=player');
+        assert(score.player == player, 'moves=player');
         assert(score.moves == proof_low.len(), 'moves=proof_low');
 
         let proof_best_packed: u256 = pack_proof_moves(proof_best.clone());

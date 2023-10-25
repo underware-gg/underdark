@@ -4,7 +4,7 @@ import { useChamber, useChamberMap, useChamberOffset, useGameChamberIds, useLeve
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { Dir, coordToSlug } from '../utils/underdark'
 import { useGameplayContext } from '../hooks/GameplayContext'
-import { map } from '../utils/utils'
+import { bigintToHex, map } from '../utils/utils'
 import { useComponentValue } from '@latticexyz/react'
 import { getEntityIdFromKeys } from '../../utils/utils'
 import { levels } from '../data/levels'
@@ -212,7 +212,11 @@ function MinterData() {
       </>}
 
       {chamberExists && <>
-        <p><b>{coordToSlug(chamberId, yonder)}</b></p>
+        <p>
+          <b>{coordToSlug(chamberId, yonder)}</b>
+          <br />
+          {bigintToHex(chamberId)}
+        </p>
         
         <p>Level: <b>{yonder}</b></p>
 

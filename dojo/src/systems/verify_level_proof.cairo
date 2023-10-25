@@ -16,8 +16,8 @@ use underdark::utils::bitmap::{Bitmap};
 
 
 fn verify_level_proof(world: IWorldDispatcher,
-    caller: ContractAddress,
     location_id: u128,
+    caller: ContractAddress,
     proof: u256,
     moves_count: usize,
 ) -> u128 {
@@ -29,30 +29,31 @@ fn verify_level_proof(world: IWorldDispatcher,
     let entry: u8 = map.west;
     let exit: u8 = map.east;
 
-    let mut win: bool = verify_map(bitmap, entry, exit, proof, moves_count);
+    verify_map(bitmap, entry, exit, proof, moves_count);
 
     //---------------------
     // Save map state
     //
 
-    if(win) {
-        let score : Score = get!(world, (location_id, caller), (Score));
-        if(score.moves == 0 || moves_count < score.moves) {
-            set!(world, (Score {
-                key_location_id: location_id,
-                key_player: caller,
-                location_id: location_id,
-                player: caller,
-                moves: moves_count,
-            }));
-        }
-
-        let mut state : State = get!(world, location_id, (State));
-        state.wins += 1;
-        set!(world, (state) );
+    let score : Score = get!(world, (location_id, caller), (Score));
+score.moves.print();
+moves_count.print();
+    if(score.moves == 0 || moves_count < score.moves) {
+        'NEW SCORE'.print();
+        set!(world, (Score {
+            key_location_id: location_id,
+            key_player: caller,
+            location_id: location_id,
+            player: caller,
+            moves: moves_count,
+        }));
     }
 
-    location_id
+    let mut state : State = get!(world, location_id, (State));
+    state.wins += 1;
+    set!(world, (state) );
+
+    (location_id)
 }
 
 fn verify_map(
@@ -66,35 +67,26 @@ fn verify_map(
     // get all the moves from the proof big number
     let mut moves: Array<u8> = unpack_proof_moves(proof, moves_count);
 
-    let mut win: bool = false;
-
     // reproduce moves step by step
     let mut pos: u8 = entry;
     let mut i = 0;
     loop {
-        if(i == moves.len()) { break; }
+        assert(i < moves.len(), 'Didnt find the exit!');
         let move: u8 = *moves[i];
-        if (move < 4) { // Dir::North .. Dir::South
+        // Moves in four directions, mapping Dir::North .. Dir::South
+        if (move < 4) {
             let dir: Option<Dir> = move.try_into();
             let pos_tile: usize = Bitmap::move_tile(pos.into(), dir.unwrap());
             pos = pos_tile.try_into().unwrap();
             if (pos == exit) {
-                win = true;
-                // pos.print();
-                // '---win!!!'.print();
-                break;
+                break; // win!!
             }
-            if (Bitmap::is_set_tile(bitmap, pos_tile) == false) {
-                // its a wall, invalid move!
-                // pos.print();
-                // '---wall'.print();
-                break;
-            }
+            assert(Bitmap::is_set_tile(bitmap, pos_tile) == true, 'Hit a wall!');
         }
         i += 1;
     };
 
-    (win)
+    (true)
 }
 
 
