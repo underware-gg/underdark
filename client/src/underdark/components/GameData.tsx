@@ -139,7 +139,7 @@ function MinterData() {
 
   const [generatorIndex, setGeneratorIndex] = useState(10)
 
-  const { light, stepCount, message } = useGameplayContext()
+  const { light, health, stepCount, message } = useGameplayContext()
 
   // Current Realm / Chamber
   const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -222,7 +222,9 @@ function MinterData() {
 
         <p>Light: <b>{light}%</b></p>
 
-        <p>Energy: <b>{Math.floor(map(stepCount, 0, 64, 0, 100))}%</b></p>
+        <p>Health: <b>{health}%</b></p>
+
+        <p>steps: <b>{stepCount}</b></p>
 
         {/* <p><b>{message}</b></p> */}
 

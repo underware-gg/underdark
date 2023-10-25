@@ -22,8 +22,8 @@ export enum GameState {
   Playing = 1,
   Verifying = 10,
   Won = 11,
-  Lost = 20,
-  NoEnergy = 21,
+  NoHealth = 20,
+  Slendered = 21,
 }
 const _lightDrop = 10;
 
@@ -35,6 +35,7 @@ export const initialState = {
   gameState: GameState.Stoped,
   playerPosition: null,
   light: 0,
+  health: 0,
   stepCount: 0,
   message: null,
   steps: [],
@@ -44,8 +45,9 @@ type GameplayStateType = {
   gameLoop: ThreeJsGame,
   gameState: GameState
   playerPosition: Position
-  light: number
-  stepCount: number
+  light: number     // 0..100
+  health: number    // 0..100
+  stepCount: number // 0..64
   message: string
   steps: Step[]
 }
@@ -109,7 +111,8 @@ const GameplayProvider = ({
         newState.gameState = GameState.Playing
         newState.playerPosition = position
         newState.light = 100
-        newState.stepCount = 64
+        newState.health = 100
+        newState.stepCount = 0
         newState.steps = []
         console.log(`>>> GAME START!`)
         break
@@ -120,7 +123,7 @@ const GameplayProvider = ({
         break
       }
       case GameplayActions.DAMAGE: {
-        newState.stepCount = Math.max(0, newState.stepCount-6)
+        newState.health = Math.max(0, newState.health - 5)
         newState.message = 'Monster damage!!!!'
         break
       }
@@ -141,19 +144,26 @@ const GameplayProvider = ({
         const dx = (movement.dir == Dir.West && x > 0) ? -1 : (movement.dir == Dir.East && x < 15) ? 1 : 0
         const dy = (movement.dir == Dir.North && y > 0) ? -1 : (movement.dir == Dir.South && y < 15) ? 1 : 0
         const tile = currentTile + dx + (16 * dy)
-        if (newState.stepCount > 0 && tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
+        if (state.stepCount < 64 && tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
           newState.light = Math.max(0, state.light - _lightDrop)
           newState.playerPosition = {
             ...state.playerPosition,
             tile,
           }
-          const step = {
-            tile,
-            dir: movement.dir,
+          const stepIndex = state.steps.findIndex((v) => v.tile == tile)
+          if (stepIndex != -1) {
+            // step back
+            newState.steps = [...state.steps.slice(0, stepIndex + 1)]
+          } else {
+            // new step
+            const step = {
+              tile,
+              dir: movement.dir,
+            }
+            newState.steps = [...state.steps, step]
           }
-          newState.steps = [...state.steps, step]
-          newState.stepCount--
-          // console.log(`steps:`, newState.steps)
+          newState.stepCount = newState.steps.length
+          console.log(`steps:`, newState.stepCount, newState.steps)
         }
         break
       }

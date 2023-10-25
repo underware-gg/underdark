@@ -90,7 +90,7 @@ let params = defaultParams;
 
 
 export function resetGameParams(moreParams: any = {}) {
-  console.log(`resetGameParams() + `, moreParams)
+  // console.log(`resetGameParams() + `, moreParams)
   params = {
     ...defaultParams,
     ...moreParams,
@@ -100,7 +100,7 @@ export function resetGameParams(moreParams: any = {}) {
 }
 
 export function setGameParams(moreParams: any) {
-  console.log(`setGameParams()`, moreParams)
+  // console.log(`setGameParams()`, moreParams)
   params = {
     ...params,
     ...moreParams,

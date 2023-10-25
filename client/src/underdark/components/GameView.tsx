@@ -48,7 +48,8 @@ const GameView = ({
         <GameControls />
         {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} />}
         {gameState == GameState.Verifying && <GameProof />}
-        {gameState == GameState.NoEnergy && <GameOver reason={'You died!!!'} />}
+        {gameState == GameState.NoHealth && <GameOver reason={'You died!!!'} />}
+        {gameState == GameState.Slendered && <GameOver reason={'You\'ve been Slendered!!!'} />}
         {light > 0
           ? <ReactAudioPlayer
             src='/audio/music-ambient.mp3'
@@ -85,7 +86,7 @@ const _isAround = (tilemap, tile, type) => {
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { light, gameState, playerPosition, stepCount, dispatch } = useGameplayContext()
+  const { gameState, playerPosition, light, health, stepCount, dispatch } = useGameplayContext()
 
   useEffect(() => {
     if (!playerPosition || gameState != GameState.Playing) return
@@ -112,7 +113,7 @@ const GameTriggers = () => {
         })
       }
     }
-  }, [playerPosition])
+  }, [gameState, playerPosition])
 
   useEffect(() => {
     if (gameState == GameState.Playing && light == 0) {
@@ -121,16 +122,25 @@ const GameTriggers = () => {
         payload: 'No light! Beware the Slender Duck!',
       })
     }
-  }, [light])
+  }, [gameState, light])
 
   useEffect(() => {
-    if (gameState == GameState.Playing && stepCount == 0) {
+    if (gameState == GameState.Playing && health == 0) {
       dispatch({
         type: GameplayActions.SET_STATE,
-        payload: GameState.NoEnergy,
+        payload: GameState.NoHealth,
       })
     }
-  }, [stepCount])
+  }, [gameState, health])
+
+  useEffect(() => {
+    if (gameState == GameState.Playing && stepCount == 64) {
+      dispatch({
+        type: GameplayActions.SET_STATE,
+        payload: GameState.Slendered,
+      })
+    }
+  }, [gameState, stepCount])
 
   return (
     <>
