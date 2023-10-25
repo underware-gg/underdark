@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Compass, Dir, GameTilemap, TileType } from '../utils/underdark'
-import { MapColors } from '../utils/colors'
+import { MapColors } from '../data/colors'
 import { useGameplayContext } from '../hooks/GameplayContext'
 
 export interface Point {

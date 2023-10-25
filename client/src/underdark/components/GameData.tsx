@@ -7,7 +7,7 @@ import { useGameplayContext } from '../hooks/GameplayContext'
 import { map } from '../utils/utils'
 import { useComponentValue } from '@latticexyz/react'
 import { getEntityIdFromKeys } from '../../utils/utils'
-import { levels } from '../utils/levels'
+import { levels } from '../data/levels'
 // import { Account } from 'starknet'
 
 interface Generator {

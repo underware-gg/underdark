@@ -10,10 +10,10 @@ export const levels: LevelParams[] = [
     generatorName: 'entry',
     generatorValue: 0,
     renderParams: {
+      gamma: 1,
       colorCount: 16,
       palette: 0,
-      dither: 0.5,
-      ditherSize: 4,
+      bayer: 4,
     }
   },
   {
@@ -89,7 +89,8 @@ export const levels: LevelParams[] = [
     renderParams: {
       // colorCount: 16,
       palette: 7,
-      bayer: 4,
+      // bayer: 4,
+      lightness: true,
     }
   },
 ]

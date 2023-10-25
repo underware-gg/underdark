@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { MapColors } from '../utils/colors'
+import { MapColors } from '../data/colors'
 import { bigintToHex } from '../utils/utils'
 
 function EditorPage() {
