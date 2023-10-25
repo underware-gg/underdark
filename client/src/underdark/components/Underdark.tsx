@@ -5,6 +5,11 @@ import MinterMap from './MinterMap'
 // import MinterData from './MinterData'
 import GameData from './GameData'
 import GameView from './GameView'
+import ScoreBoard from './ScoreBoard'
+import { Container, Grid } from 'semantic-ui-react'
+
+const Row = Grid.Row
+const Col = Grid.Column
 
 function Underdark() {
   const { loading } = useSyncWorld()
@@ -16,13 +21,28 @@ function Underdark() {
   return (
     <UnderdarkProvider>
       <GameplayProvider>
-        <div className="card MinterPanel">
-          <MinterMap />
-          <GameData />
-        </div>
-        <br />
-        <div className="card GamePanel">
-          <GameView />
+        <div>
+
+          <Grid className='MinterPanel'>
+            <Row>
+              <Col width={5}>
+                <MinterMap />
+              </Col>
+              <Col width={6}>
+                <GameData />
+              </Col>
+              <Col width={5}>
+                <ScoreBoard />
+              </Col>
+            </Row>
+          </Grid>
+
+          <br />
+
+          <div className="card">
+            <GameView />
+          </div>
+
         </div>
       </GameplayProvider>
     </UnderdarkProvider>

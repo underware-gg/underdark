@@ -18,7 +18,7 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { gameLoop, light, gameState, dispatch } = useGameplayContext()
+  const { gameLoop, light, message, gameState, dispatch } = useGameplayContext()
 
   //
   // Start game!
@@ -38,31 +38,37 @@ const GameView = ({
   useEffect(() => {
     gameLoop?.setGameParams({
       far: map(light, 0.0, 100.0, 1.6, 5.0),
+      gamma: map(light, 0.0, 100.0, 2.0, 1.25),
     })
   }, [gameLoop, light])
 
   return (
-    <div className='Relative GameView'>
-      <GameControls />
-      {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} />}
-      {gameState == GameState.Verifying && <GameProof />}
-      {gameState == GameState.NoEnergy && <GameOver reason={'You died!!!'} />}
-      {light > 0
-        ? <ReactAudioPlayer
-          src='/audio/music-ambient.mp3'
-          autoPlay={true}
-          loop={true}
-        // volume={1}
-        />
-        : <ReactAudioPlayer
-          src='/audio/sfx/slenderduck.mp3'
-          autoPlay={true}
-          loop={true}
-        // volume={1}
-        />
-      }
-      <GameTriggers />
-    </div>
+    <>
+      <div className='Relative GameView'>
+        <GameControls />
+        {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} />}
+        {gameState == GameState.Verifying && <GameProof />}
+        {gameState == GameState.NoEnergy && <GameOver reason={'You died!!!'} />}
+        {light > 0
+          ? <ReactAudioPlayer
+            src='/audio/music-ambient.mp3'
+            autoPlay={true}
+            loop={true}
+          // volume={1}
+          />
+          : <ReactAudioPlayer
+            src='/audio/sfx/slenderduck.mp3'
+            autoPlay={true}
+            loop={true}
+          // volume={1}
+          />
+        }
+        <GameTriggers />
+      </div>
+      <div>
+        <h2>{message}</h2>
+      </div>
+    </>
   )
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDojoSystemCalls, useDojoAccount, useDojoComponents } from '../../DojoContext'
-import { useChamber, useChamberMap, useChamberOffset, useGameChamberIds } from '../hooks/useChamber'
+import { useChamber, useChamberMap, useChamberOffset, useGameChamberIds, useLevelScores, usePlayerScore } from '../hooks/useChamber'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { Dir, coordToSlug } from '../utils/underdark'
 import { useGameplayContext } from '../hooks/GameplayContext'
@@ -106,10 +106,7 @@ function DirectionButton({
   const { locationId, seed } = useChamberOffset(chamberId, dir)
   const exists = useMemo(() => (seed > 0n), [seed, locationId])
 
-  const { Score } = useDojoComponents()
-  const score: any = useComponentValue(Score, getEntityIdFromKeys([chamberId, BigInt(account.address)]))
-  const thisLevelIsClear = useMemo(() => ((score?.score ?? 0) > 0), [score])
-  console.log(`SCORE:`, score)
+  const { levelClear } = usePlayerScore(chamberId, account)
 
   const _mint = () => {
     const _level = levels[Math.floor(Math.random() * levels.length)]
@@ -129,7 +126,7 @@ function DirectionButton({
     return <button className='DirectionButton Unlocked' onClick={() => _open()}>{_prevnext}<br />Level</button>
   }
   if (dir != Dir.West) {
-    return <button className='DirectionButton Locked' disabled={!thisLevelIsClear} onClick={() => _mint()}>Unlock<br />{_prevnext} Level</button>
+    return <button className='DirectionButton Locked' disabled={!levelClear} onClick={() => _mint()}>Unlock<br />{_prevnext} Level</button>
   }
   return <></>
 }
@@ -223,7 +220,7 @@ function MinterData() {
 
         <p>Energy: <b>{Math.floor(map(stepCount, 0, 64, 0, 100))}%</b></p>
 
-        <p><b>{message}</b></p>
+        {/* <p><b>{message}</b></p> */}
 
         {/* <p>Doors: [{doors.north},{doors.east},{doors.west},{doors.south}]</p> */}
         

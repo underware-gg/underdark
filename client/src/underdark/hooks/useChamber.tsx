@@ -3,7 +3,9 @@ import { Entity, HasValue, Has, getComponentValue } from '@latticexyz/recs'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react"
 import { useDojoComponents } from '../../DojoContext'
 import { bigintToEntity, bigintToHex } from "../utils/utils"
-import { Dir, TileType, tilemapToGameTilemap, offsetCoord } from "../utils/underdark"
+import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToSlug } from "../utils/underdark"
+import { Account } from "starknet"
+import { getEntityIdFromKeys } from "../../utils/utils"
 
 
 //------------------
@@ -130,3 +132,35 @@ export const useChamberState = (chamberId: bigint) => {
   const state: any = useComponentValue(State, bigintToEntity(chamberId))
   return state ?? {}
 }
+
+
+//---------------------
+// Scores
+//
+
+export const useLevelScores = (chamberId: bigint) => {
+  const { Score } = useDojoComponents()
+  const scoreKeys = useEntityQuery([HasValue(Score, { location_id: chamberId ?? 0n })])
+  useEffect(() => console.log(`Level scores:`, coordToSlug(chamberId ?? 0n) , scoreKeys), [scoreKeys])
+  return {
+    scoreKeys,
+  }
+}
+
+export const useScoreByKey = (key: Entity) => {
+  const { Score } = useDojoComponents()
+  const score: any = useComponentValue(Score, key ?? '0' as Entity)
+  useEffect(() => console.log(`Account score:`, coordToSlug(score?.location_id ?? 0n), score), [score])
+  return {
+    location_id: score?.location_id ?? 0n,
+    player: score?.player ?? 0n,
+    moves: score?.moves ?? 0,
+    levelClear: (score?.moves > 0),
+  }
+}
+
+export const usePlayerScore = (chamberId: bigint, account: Account) => {
+  const key = useMemo(() => getEntityIdFromKeys([chamberId, BigInt(account.address)]), [chamberId, account])
+  return useScoreByKey(key)
+}
+

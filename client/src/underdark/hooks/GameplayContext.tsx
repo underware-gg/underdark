@@ -120,7 +120,7 @@ const GameplayProvider = ({
         break
       }
       case GameplayActions.DAMAGE: {
-        newState.stepCount = Math.max(0, newState.stepCount-10)
+        newState.stepCount = Math.max(0, newState.stepCount-6)
         newState.message = 'Monster damage!!!!'
         break
       }
