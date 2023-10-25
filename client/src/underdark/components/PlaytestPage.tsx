@@ -98,7 +98,7 @@ const GameView = () => {
 
   return (
     <>
-      <GameCanvas gameTilemap={gameTilemap} guiEnabled={true} width={1000} height={500} />
+      <GameCanvas gameTilemap={gameTilemap} guiEnabled={true} />
       <br />
       {[null, ...levels].map((level: LevelParams | null, index: number) => {
         return (

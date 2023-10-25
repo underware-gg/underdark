@@ -5,8 +5,8 @@ import { useGameplayContext } from '../hooks/GameplayContext'
 export type ThreeJsGame = typeof game
 
 const GameCanvas = ({
-  width = 720,
-  height = 540,
+  width = 900,
+  height = 450,
   gameTilemap,
   // gameParams = {} as any,
   guiEnabled = false,

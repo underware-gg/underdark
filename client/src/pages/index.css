@@ -4,14 +4,16 @@
   line-height: 1.2;
   font-weight: 400;
 
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+html, body {
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
 }
 
 body {
@@ -106,8 +108,8 @@ canvas {
 }
 
 .MinterPanel {
-  width: 720px;
-  height: 200px;
+  width: 900px;
+  height: 250px;
   display: block;
 }
 
@@ -142,13 +144,13 @@ canvas {
 }
 
 .GameView {
-  width: 720px;
-  height: 360px;
+  width: 900px;
+  height: 450px;
 }
 
 .GameCanvas {
-  width: 720px;
-  height: 360px;
+  width: 900px;
+  height: 450px;
   display: block;
   background-color: #0000;
   border: 0.5px solid #444;
