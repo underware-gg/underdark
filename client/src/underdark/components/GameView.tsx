@@ -171,7 +171,7 @@ const GameProof = () => {
     dataFetch.current = true
 
     if(gameState == GameState.Verifying) {
-      let proof = BigInt(0)
+      let proof = 0n
       steps.map((step, index) => {
         proof |= (BigInt(step.dir) << BigInt(index * 4))
       });

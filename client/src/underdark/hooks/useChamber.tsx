@@ -82,10 +82,11 @@ export const useChamberMap = (locationId: bigint) => {
     if (bitmap && tiles.length > 0) {
       for (let i = 0; i < 256; ++i) {
         const bit = BigInt(255 - i)
-        const isPath = bitmap & (BigInt(1) << bit)
-        const isMonster = monsters & (BigInt(1) << bit)
-        const isSlenderDuck = slender_duck & (BigInt(1) << bit)
-        const isDarkTar = dark_tar & (BigInt(1) << bit)
+        const isPath = (bitmap & (1n << bit)) != 0n
+        const isMonster = (monsters & (1n << bit)) != 0n
+        const isSlenderDuck = (slender_duck & (1n << bit)) != 0n
+        const isDarkTar = (dark_tar & (1n << bit)) != 0n
+        // console.log(`GAMETILEMAP`, i, isPath, isMonster, isSlenderDuck, isDarkTar)
         if (isDarkTar) {
           result.push(TileType.DarkTar)
           // console.log(`++++++TileType.DarkTar`, bit)

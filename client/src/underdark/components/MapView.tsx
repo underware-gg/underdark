@@ -102,7 +102,8 @@ export function Map({
       const y = Math.floor(i / gridSize) + gridOrigin.y
       let tile = null
       let tileColor = null
-      if (tileType == TileType.Path) {
+      if (tileType == TileType.Void) {
+        tileColor = MapColors.WALL
       } else if (tileType == TileType.Entry) {
         tileColor = MapColors.ENTRY
       } else if (tileType == TileType.Exit) {
@@ -110,7 +111,7 @@ export function Map({
       } else if (tileType == TileType.LockedExit) {
         tileColor = MapColors.LOCKED
       } else {
-        tileColor = MapColors.WALL
+        // TileType.Path
       }
       if (!tile && !tileColor && (x + y) % 2 == 0) {
         tileColor = MapColors.BG2

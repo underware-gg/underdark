@@ -8,7 +8,7 @@ mod tests {
 
     use underdark::core::seeder::{make_seed, make_underseed};
     use underdark::systems::verify_level_proof::{verify_map, pack_proof_moves, unpack_proof_moves};
-    use underdark::core::randomizer::{randomize_monsters,randomize_slender_duck,randomize_dark_tar};
+    use underdark::core::randomizer::{randomize_monsters};
     use underdark::core::binary_tree::{binary_tree_pro};
     use underdark::models::chamber::{Chamber, Map, Score};
     use underdark::types::location::{Location, LocationTrait};
@@ -292,22 +292,52 @@ mod tests {
     }
 
 
+    //
+    // Monsters
+    //
+    
     #[test]
     #[available_gas(1_000_000_000_000)]
-    fn test_mosnters_seed() {
+    fn test_monsters_seed() {
         let mut rnd = make_seed(1234, 1234);
-        let level_number: u32 = 1;
         let bitmap: u256 = binary_tree_pro(rnd, Dir::West);
 
         // randomize_monsters,randomize_slender_duck,randomize_dark_tar
         let mut i: usize = 0;
         loop {
             if (i >= 10) { break; }
-            let monsters: u256 = randomize_monsters(ref rnd, bitmap, level_number);
+            let level_number: u32 = i + 1;
+            let (monsters, slender_duck, dark_tar) = randomize_monsters(ref rnd, bitmap, level_number);
             let monster_count: usize = U256Bitwise::count_bits(monsters);
             assert(monster_count != 0, 'monster_count');
             // monster_count.print();
             i += 1;
         };
    }
+
+    #[test]
+    #[available_gas(1_000_000_000_000)]
+    fn test_monsters_in_walls() {
+        let (world, system) = setup_world();
+        let game_id: u32 = 1;
+
+        let mut i: usize = 0;
+        loop {
+            if (i >= 10) { break; }
+            // 1st chamber: entry from above, all other locked
+            let level_number: u32 = i + 1;
+            let chamber1: Chamber = start_level_get_chamber(world, system, game_id, level_number, 'binary_tree_classic', 0);
+            let map1: Map = get_world_Map(world, chamber1.location_id);
+            // no monsters wall overlaps
+            assert((map1.bitmap & map1.monsters) == map1.monsters, 'monsters_in_wall');
+            assert((map1.bitmap & map1.slender_duck) == map1.slender_duck, 'slender_duck_in_wall');
+            assert((map1.bitmap & map1.dark_tar) == map1.dark_tar, 'dark_tar_in_wall');
+            // no monsters overlap
+            assert((map1.monsters & map1.slender_duck) == 0, 'monsters & slender_duck');
+            assert((map1.monsters & map1.dark_tar) == 0, 'monsters & dark_tar');
+            assert((map1.dark_tar & map1.slender_duck) == 0, 'dark_tar & slender_duck');
+            i += 1;
+        };
+    }
+
 }

@@ -159,44 +159,50 @@ fn randomize_door_permissions(ref rnd: u256, chamber_location: Location, entry_d
 }
 
 
+// 2 iterations = ~16 monsters
+// 3 iterations = ~8 monsters
+fn _randomize_monsters(ref rnd: u256, bitmap: u256, iterations: usize) -> u256 {
+    let mut result: u256 = 0;
+    rnd = _rnd_rnd_(rnd);
+    result = hash_u128_to_u256(rnd.low);
+    result = result & bitmap;
 
-fn randomize_monsters(ref rnd: u256, bitmap: u256, level_number: u32) -> u256 {
+    let mut i: usize = 0;
+    loop {
+        if i >= iterations { break; }
+        result = make_underseed(result);
+        i += 1;
+    };
+    
+    (result)
+}
+
+fn _reduce_monsters(priority1: u256, ref priority2: u256, ref priority3: u256) {
+    priority2 = priority2 & ~priority1;
+    priority3 = (priority3 & ~priority1) & ~priority2;
+
+}
+
+fn randomize_monsters(ref rnd: u256, bitmap: u256, protected: u256, level_number: u32) -> (u256,u256,u256) {
     let mut result: u256 = 0;
 
-    rnd = _rnd_rnd_(rnd);
-    result = hash_u128_to_u256(rnd.low);
+    let allowed_area = bitmap & ~protected;
+    let mut monsters: u256 = _randomize_monsters(ref rnd, allowed_area, 2);
+    let mut slender_duck: u256 = _randomize_monsters(ref rnd, allowed_area, 2);
+    let mut dark_tar: u256 = _randomize_monsters(ref rnd, allowed_area, 2);
 
-    result = make_underseed(result) & ~bitmap;
-    result = make_underseed(result) & ~bitmap;
-    // result = make_underseed(result) & ~bitmap;
+    // avoid overlaps
+    if (level_number <= 2) {
+        _reduce_monsters(dark_tar, ref monsters, ref slender_duck);
+    } else if (level_number <= 6) {
+        _reduce_monsters(monsters, ref dark_tar, ref slender_duck);
+    } else if (level_number <= 10) {
+        _reduce_monsters(slender_duck, ref dark_tar, ref monsters);
+    } else {
+        _reduce_monsters(slender_duck, ref monsters, ref dark_tar);
+    }
 
-    (result)
-}
-
-fn randomize_slender_duck(ref rnd: u256, bitmap: u256, level_number: u32) -> u256 {
-    let mut result:u256 = 0;
-
-    rnd = _rnd_rnd_(rnd);
-    result = hash_u128_to_u256(rnd.low);
-
-    result = make_underseed(result) & ~bitmap;
-    result = make_underseed(result) & ~bitmap;
-    // result = make_underseed(result) & ~bitmap;
-
-    (result)
-}
-
-fn randomize_dark_tar(ref rnd: u256, bitmap: u256, level_number: u32) -> u256 {
-    let mut result:u256 = 0;
-
-    rnd = _rnd_rnd_(rnd);
-    result = hash_u128_to_u256(rnd.low);
-
-    result = make_underseed(result) & ~bitmap;
-    result = make_underseed(result) & ~bitmap;
-    // result = make_underseed(result) & ~bitmap;
-
-    (result)
+    (monsters, slender_duck, dark_tar)
 }
 
 

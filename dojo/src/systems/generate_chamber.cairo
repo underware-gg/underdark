@@ -6,7 +6,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use underdark::systems::generate_doors::{generate_doors};
 use underdark::models::chamber::{Chamber, Map, State};
-use underdark::core::randomizer::{randomize_door_permissions,randomize_monsters,randomize_slender_duck,randomize_dark_tar};
+use underdark::core::randomizer::{randomize_door_permissions,randomize_monsters};
 use underdark::types::location::{Location, LocationTrait};
 use underdark::types::dir::{Dir, DirTrait};
 use underdark::types::doors::{Doors};
@@ -52,9 +52,7 @@ fn generate_chamber(world: IWorldDispatcher,
     let bitmap: u256= generate(seed, protected, entry_dir, generator_name, generator_value);
     assert(bitmap != 0, 'Chamber is empty');
 
-    let monsters: u256 = randomize_monsters(ref rnd, bitmap, level_number);
-    let slender_duck: u256 = randomize_slender_duck(ref rnd, bitmap, level_number);
-    let dark_tar: u256 = randomize_dark_tar(ref rnd, bitmap, level_number);
+    let (monsters, slender_duck, dark_tar): (u256,u256,u256) = randomize_monsters(ref rnd, bitmap, protected, level_number);
 
     //---------------------
     // Map Component

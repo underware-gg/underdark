@@ -36,10 +36,7 @@ fn verify_level_proof(world: IWorldDispatcher,
     //
 
     let score : Score = get!(world, (location_id, caller), (Score));
-score.moves.print();
-moves_count.print();
     if(score.moves == 0 || moves_count < score.moves) {
-        'NEW SCORE'.print();
         set!(world, (Score {
             key_location_id: location_id,
             key_player: caller,

@@ -18,7 +18,7 @@ function EditorMap() {
   const tilemap = useMemo(() => {
     let result: number[] = []
     for (let i = 0; i < 256; ++i) {
-      const bit = bitmap & (BigInt(1) << BigInt(255 - i))
+      const bit = bitmap & (1n << BigInt(255 - i))
       result.push(bit ? 1 : 0)
     }
     return result
@@ -26,7 +26,7 @@ function EditorMap() {
   useEffect(() => console.log(`EDITOR tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
   const _setTileBit = (index: number) => {
-    setBitmap(bitmap ^ (BigInt(1) << BigInt(255 - index)))
+    setBitmap(bitmap ^ (1n << BigInt(255 - index)))
   }
 
   const _tileRect = (index: number) => {

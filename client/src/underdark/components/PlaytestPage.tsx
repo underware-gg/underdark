@@ -34,7 +34,7 @@ const GameView = () => {
     let result: TileType[] = []
     if (_bitmap) {
       for (let i = 0; i < 256; ++i) {
-        const bit = _bitmap & (BigInt(1) << BigInt(255 - i))
+        const bit = _bitmap & (1n << BigInt(255 - i))
         result.push(i == 0 ? TileType.Entry : bit ? TileType.Path : TileType.Void)
       }
     }
