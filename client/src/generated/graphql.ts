@@ -507,6 +507,8 @@ export type QueryTileModelsArgs = {
 export type Score = {
   __typename?: 'Score';
   entity?: Maybe<Entity>;
+  key_location_id?: Maybe<Scalars['u128']['output']>;
+  key_player?: Maybe<Scalars['ContractAddress']['output']>;
   location_id?: Maybe<Scalars['u128']['output']>;
   moves?: Maybe<Scalars['usize']['output']>;
   player?: Maybe<Scalars['ContractAddress']['output']>;
@@ -530,12 +532,28 @@ export type ScoreOrder = {
 };
 
 export enum ScoreOrderField {
+  KeyLocationId = 'KEY_LOCATION_ID',
+  KeyPlayer = 'KEY_PLAYER',
   LocationId = 'LOCATION_ID',
   Moves = 'MOVES',
   Player = 'PLAYER'
 }
 
 export type ScoreWhereInput = {
+  key_location_id?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idEQ?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idGT?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idGTE?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idLT?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idLTE?: InputMaybe<Scalars['u128']['input']>;
+  key_location_idNEQ?: InputMaybe<Scalars['u128']['input']>;
+  key_player?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerGT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerGTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerLT?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
+  key_playerNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
   location_id?: InputMaybe<Scalars['u128']['input']>;
   location_idEQ?: InputMaybe<Scalars['u128']['input']>;
   location_idGT?: InputMaybe<Scalars['u128']['input']>;
