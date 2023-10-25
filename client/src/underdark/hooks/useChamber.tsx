@@ -142,7 +142,7 @@ export const useChamberState = (chamberId: bigint) => {
 export const useLevelScores = (chamberId: bigint) => {
   const { Score } = useDojoComponents()
   const scoreKeys = useEntityQuery([HasValue(Score, { location_id: chamberId ?? 0n })])
-  useEffect(() => console.log(`Level scores:`, coordToSlug(chamberId ?? 0n) , scoreKeys), [scoreKeys])
+  // useEffect(() => console.log(`Level scores:`, coordToSlug(chamberId ?? 0n) , scoreKeys), [scoreKeys])
   return {
     scoreKeys,
   }

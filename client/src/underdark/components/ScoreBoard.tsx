@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { useLevelScores, useScoreByKey } from '../hooks/useChamber'
+import { useLevelScores, usePlayerScore, useScoreByKey } from '../hooks/useChamber'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
+import { useDojoAccount } from '../../DojoContext'
 
 function Score({
   scoreKey,
@@ -18,6 +19,7 @@ function ScoreBoard({
 }) {
   const { chamberId } = useUnderdarkContext()
   const { scoreKeys } = useLevelScores(chamberId)
+  const { account } = useDojoAccount()
 
   const scores = useMemo(() => {
     return scoreKeys.map((scoreKey) => {
@@ -25,11 +27,15 @@ function ScoreBoard({
     })
   }, [scoreKeys])
 
+  const score = usePlayerScore(chamberId, account);
+
   return (
     <div className=''>
       {/* <h2>Game #{gameId.toString()}</h2> */}
       <h2>Scores</h2>
-      {scores}
+      {scores.length > 0 ? scores : '-'}
+      <h2>Your</h2>
+      {score.moves > 0 ? score.moves : '-'}
     </div>
   )
 }

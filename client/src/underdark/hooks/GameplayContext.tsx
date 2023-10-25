@@ -163,7 +163,7 @@ const GameplayProvider = ({
             newState.steps = [...state.steps, step]
           }
           newState.stepCount = newState.steps.length
-          console.log(`steps:`, newState.stepCount, newState.steps)
+          // console.log(`steps:`, newState.stepCount, newState.steps)
         }
         break
       }
