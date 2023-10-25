@@ -14,3 +14,7 @@ shader5.png filter=lfs diff=lfs merge=lfs -text
 slenderduck.png filter=lfs diff=lfs merge=lfs -text
 underdark-ansi-animation.mov filter=lfs diff=lfs merge=lfs -text
 shader3.png filter=lfs diff=lfs merge=lfs -text
+shader8.png filter=lfs diff=lfs merge=lfs -text
+shader9.png filter=lfs diff=lfs merge=lfs -text
+shader6.png filter=lfs diff=lfs merge=lfs -text
+shader7.png filter=lfs diff=lfs merge=lfs -text
