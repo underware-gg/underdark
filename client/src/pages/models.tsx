@@ -2,6 +2,7 @@ import 'semantic-ui-css/semantic.min.css'
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { GameplayProvider } from '../underdark/hooks/GameplayContext'
 import ModelsPage from '../underdark/components/editor/ModelsPage';
 
 async function init() {
@@ -10,9 +11,11 @@ async function init() {
   const root = ReactDOM.createRoot(rootElement as HTMLElement);
   root.render(
     <React.StrictMode>
-      <ModelsPage />
+        <GameplayProvider>
+          <ModelsPage />
+        </GameplayProvider>
     </React.StrictMode>
   );
 }
 
-init();
+init(); 
