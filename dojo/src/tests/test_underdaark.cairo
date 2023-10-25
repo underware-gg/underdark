@@ -114,8 +114,6 @@ mod tests {
         assert(proof_1 == 0b1000_0100_0010_0001, 'proof_1');
         assert(proof_1 == 0x8421, 'proof_1');
         let moves_2 = unpack_proof_moves(proof_1, moves_1.len());
-        moves_1.len().print();
-        moves_2.len().print();
         assert(moves_1.len() == moves_2.len(), 'len');
         assert(*moves_1[0] == *moves_2[0], '*[0]');
         assert(*moves_1[1] == *moves_2[1], '*[1]');
@@ -210,7 +208,7 @@ mod tests {
     #[available_gas(1_000_000_000_000)]
     fn test_score() {
         let (world, system) = setup_world();
-        let player = starknet::contract_address_const::<0x0>();
+        let player = starknet::get_caller_address();
         let game_id: u32 = 1;
 
         let chamber1: Chamber = start_level_get_chamber(world, system, game_id, 1, 'empty', 0);

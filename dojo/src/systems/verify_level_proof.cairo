@@ -36,10 +36,15 @@ fn verify_level_proof(world: IWorldDispatcher,
     //
 
     if(win) {
-        let mut score : Score = get!(world, (location_id, caller), (Score));
+        let score : Score = get!(world, (location_id, caller), (Score));
         if(score.moves == 0 || moves_count < score.moves) {
-            score.moves = moves_count;
-            set!(world, (score) );
+            set!(world, (Score {
+                key_location_id: location_id,
+                key_player: caller,
+                location_id: location_id,
+                player: caller,
+                moves: moves_count,
+            }));
         }
 
         let mut state : State = get!(world, location_id, (State));

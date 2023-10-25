@@ -65,7 +65,7 @@ mod actions {
             moves_count: usize,
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
-            let caller = starknet::contract_address_const::<0x0>();
+            let caller = starknet::get_caller_address();
 
             let proof = u256 {
                 low: proof_low,
