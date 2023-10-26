@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useGameplayContext } from '../../hooks/GameplayContext'
 import { useKeyDown } from '../../hooks/useKeyDown'
-import ModelsCanvas from './ModelsCanvas'
 import { Point } from '../MapView'
+import ThreeJsCanvas from '../../three/ThreeJsCanvas'
+import * as game from './game'
 
 function ModelsPage() {
   return (
@@ -31,9 +32,7 @@ const ModelsView = () => {
     gameLoop?.movePlayer(playerPosition)
   }, [gameLoop, playerPosition])
 
-  return (
-    <ModelsCanvas />
-  )
+  return <ThreeJsCanvas width={900} height={700} guiEnabled={true} gameLoop={game} />
 }
 
 export default ModelsPage

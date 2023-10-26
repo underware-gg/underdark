@@ -115,7 +115,7 @@ export function dispose() {
   _scene = null
 }
 
-export async function init(canvas, width, height) {
+export async function init(canvas, width, height, guiEnabled) {
 
   if (_scene) return
 
@@ -171,21 +171,23 @@ export async function init(canvas, width, height) {
   setupRenderTarget();
   setupPost();
 
-  _gui = new GUI({ width: 300 });
-  _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
-  _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
-  _gui.add(params, 'tilt', 0, 15, 0.1).onChange(guiUpdated);
-  _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
-  _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
-  _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
-  _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
-  _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
-  _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
-  _gui.add(params, 'lightness', true).onChange(guiUpdated);
-  _gui.open();
-  // framerate
-  _stats = new Stats();
-  document.body.appendChild(_stats.dom);
+  if (guiEnabled) {
+    _gui = new GUI({ width: 300 });
+    _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
+    _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
+    _gui.add(params, 'tilt', 0, 15, 0.1).onChange(guiUpdated);
+    _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
+    _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
+    _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
+    _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
+    _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
+    _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
+    _gui.add(params, 'lightness', true).onChange(guiUpdated);
+    _gui.open();
+    // framerate
+    _stats = new Stats();
+    document.body.appendChild(_stats.dom);
+  }
 }
 
 function guiUpdated() {

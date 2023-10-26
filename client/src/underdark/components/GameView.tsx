@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import GameCanvas from './GameCanvas'
-import { useUnderdarkContext } from '../hooks/UnderdarkContext'
+import ReactAudioPlayer from 'react-audio-player'
+import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
 import { useGameplayContext, GameplayActions, GameState } from '../hooks/GameplayContext'
 import { useChamberMap } from '../hooks/useChamber'
 import { useKeyDown } from '../hooks/useKeyDown'
+import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { Dir, FlippedDir, TileType } from '../utils/underdark'
-import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
 import { bigintToHex, map } from '../utils/utils'
-import ReactAudioPlayer from 'react-audio-player'
 import { levels } from '../data/levels'
+import GameCanvas from './GameCanvas'
 
 
 const GameView = ({
@@ -18,7 +18,7 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { gameLoop, light, message, gameState, dispatch } = useGameplayContext()
+  const { gameLoop, gameState, light, message, playerPosition, dispatch } = useGameplayContext()
 
   //
   // Start game!
@@ -42,11 +42,23 @@ const GameView = ({
     })
   }, [gameLoop, light])
 
+
+  useEffect(() => {
+    if (gameState == GameState.Playing) {
+      gameLoop?.movePlayer(playerPosition)
+    }
+  }, [gameLoop, gameState, playerPosition])
+
+
+  useEffect(() => {
+    gameLoop?.setupMap(gameTilemap)
+  }, [gameLoop, gameTilemap])
+
   return (
     <>
       <div className='Relative GameView'>
         <GameControls />
-        {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} />}
+        {gameState == GameState.Playing && <GameCanvas guiEnabled={true} />}
         {gameState == GameState.Verifying && <GameProof />}
         {gameState == GameState.NoHealth && <GameOver reason={'You died!!!'} />}
         {gameState == GameState.Slendered && <GameOver reason={'You\'ve been Slendered!!!'} />}

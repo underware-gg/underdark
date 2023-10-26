@@ -12,6 +12,7 @@ import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 import { DepthPostShader } from './DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
+import { loadAssets, MODELS_ASSETS } from '../data/assets'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5
@@ -67,12 +68,8 @@ let _gui
 let _stats;
 // let _controls;
 
-let _tile_geometry;
-let _monster_geometry;
-let _slender_geometry;
-let _tar_geometry;
-let _door_geometry;
 let _material: THREE.Material;
+let _tile_geometry;
 
 const defaultParams = {
   fov: CAM_FOV,
@@ -112,40 +109,6 @@ export function setGameParams(moreParams: any) {
 
 
 //-------------------------------------------
-// Models
-//
-
-let MODELS = {
-  // MONSTER: { path: '/models/duck3.fbx', scale: 0.02 },
-  // SLENDER_DUCK: { path: '/models/slendie.fbx', scale: 0.5 },
-  // DARK_TAR: { path: '/models/tar.fbx', scale: 0.5 },
-  // EXIT: { path: '/models/door.fbx', scale: 0.5 },
-} 
-
-function _loadModels() {
-  // load models
-  const loader = new FBXLoader();
-  Object.keys(MODELS).forEach(key => {
-    let model = MODELS[key]
-    if (!model.object) {
-      console.log(`CACHING MODEL...`, model)
-      loader.load(model.path, function (object) {
-        console.log(`FBX OBJECT:`, object, object.scale)
-        if (object) {
-          object.scale.set(model.scale, model.scale, model.scale)
-          model.object = object
-          model.loaded = true
-        }
-      });
-    }
-  });
-}
-
-_loadModels();
-
-
-
-//-------------------------------------------
 // Setup
 //
 
@@ -160,6 +123,8 @@ export function dispose() {
 export async function init(canvas, width, height, guiEnabled) {
 
   if (_scene) return;
+
+  await loadAssets()
 
   _width = width;
   _height = height;
@@ -309,26 +274,6 @@ function onWindowResize() {
   // renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// function makeTorus(scene) {
-//   const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 64);
-//   const material = new THREE.MeshBasicMaterial({ color: 'blue' });
-//   const count = 50;
-//   const scale = 5;
-//   for (let i = 0; i < count; i++) {
-//     const r = Math.random() * 2.0 * PI;
-//     const z = (Math.random() * 2.0) - 1.0;
-//     const zScale = Math.sqrt(1.0 - z * z) * scale;
-//     const mesh = new THREE.Mesh(geometry, material);
-//     mesh.position.set(
-//       Math.cos(r) * zScale,
-//       Math.sin(r) * zScale,
-//       z * scale
-//     );
-//     mesh.rotation.set(Math.random(), Math.random(), Math.random());
-//     scene.add(mesh);
-//   }
-// }
-
 
 //-------------------------------------------
 // Game Loop
@@ -352,9 +297,7 @@ export function animate() {
   _renderer.setRenderTarget(null);
   _renderer.render(_postScene, _postCamera);
 
-  // _controls.update(); // required because damping is enabled
-
-  // _stats.update();
+  if (_stats) _stats.update();
 }
 
 
@@ -367,41 +310,7 @@ function setupScene() {
   _scene = new THREE.Scene();
 
   _material = new THREE.MeshBasicMaterial({ color: 'blue' });
-
   _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
-  // _monster_geometry = new THREE.BoxGeometry(SIZE / 4, SIZE / 4, SIZE / 4);
-  _tar_geometry = new THREE.IcosahedronGeometry(SIZE / 4);
-  _slender_geometry =new THREE.ConeGeometry(SIZE / 4, SIZE * 0.75, 16)
-
-  const shape = new THREE.Shape();
-  const x = -2.5;
-  const y = -5;
-  shape.moveTo(x + 2.5, y + 2.5);
-  shape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
-  shape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
-  shape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
-  shape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 4.5, x + 8, y + 3.5);
-  shape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
-  shape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
-  const extrudeSettings = {
-    steps: 1,
-    depth: 1.0,
-    bevelEnabled: true,
-    bevelThickness: 0.10,
-    bevelSize: 0.10,
-    bevelSegments: 0,
-  };
-  _door_geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-
-
-  const radius = 3.5;
-  const tubeRadius = 1.1;
-  const radialSegments = 7;
-  const tubularSegments = 58;
-  const p = 2;
-  const q = 3;
-  _monster_geometry = new THREE.TorusKnotGeometry(radius, tubeRadius, tubularSegments, radialSegments, p, q);
-
 
   const floor_geometry = new THREE.PlaneGeometry(40 * SIZE, 40 * SIZE);
   const floor_material = new THREE.MeshBasicMaterial({ color: 'cyan' });
@@ -413,8 +322,6 @@ function setupScene() {
 
   _scene.add(floor);
   _scene.add(ceiling);
-
-  // makeTorus(_scene);
 }
 
 export function movePlayer(position: Position) {
@@ -461,44 +368,36 @@ export function setupMap(gameTilemap: GameTilemap) {
     const tileType = tilemap[i]
     const x = ((i % gridSize) + gridOrigin.x) * SIZE
     const y = (Math.floor(i / gridSize) + gridOrigin.y) * SIZE
+    let z = 0
     let mesh = null
     if (tileType == TileType.Entry) {
     } else if (tileType == TileType.Exit) {
-      mesh = new THREE.Mesh(_door_geometry, _material);
-      mesh.rotation.set(-HALF_PI, HALF_PI, 0)
-      mesh.scale.set(0.1, 0.1, 0.1)
-      loadModel('DOOR', _map, x, y)
+      mesh = loadModel('DOOR')
     } else if (tileType == TileType.LockedExit) {
     } else if (tileType == TileType.Monster) {
-      mesh = new THREE.Mesh(_monster_geometry, _material);
-      mesh.scale.set(0.06, 0.06, 0.06)
-      loadModel('MONSTER', _map, x, y)
-    // } else if (tileType == TileType.SlenderDuck) {
-    //   mesh = new THREE.Mesh(_slender_geometry, _material);
-    //   mesh.rotateX(HALF_PI)
-    //   loadModel('SLENDER_DUCK', _map, x, y)
+      mesh = loadModel('MONSTER')
+      // } else if (tileType == TileType.SlenderDuck) {
+      //   mesh = new THREE.Mesh(_slender_geometry, _material);
+      //   mesh.rotateX(HALF_PI)
+      //   loadModel('SLENDER_DUCK')
     } else if (tileType == TileType.DarkTar) {
-      mesh = new THREE.Mesh(_tar_geometry, _material);
-      loadModel('DARK_TAR', _map, x, y)
+      mesh = loadModel('DARK_TAR')
     } else if (tileType == TileType.Void) {
-      mesh = new THREE.Mesh(_tile_geometry, _material);
+      mesh = new THREE.Mesh(_tile_geometry, _material)
+      z = SIZE * 0.5
     }
     if (mesh) {
-      _map.add(mesh);
-      // console.log(i, x, y, tileType)
-      mesh.position.set(x, y, SIZE * 0.5)
+      mesh.position.set(x, y, z)
+     _map.add(mesh)
     }
   }
-  
+
   _scene.add(_map)
 }
 
-function loadModel(modelName, parent, x, y) {
-  const model = MODELS[modelName]
-  // const obj = model?.object?.clone() ?? null
-  console.log(`___MODEL_instance`, modelName, model)//, obj)
-  // if(obj) {
-  //   obj.position.set(x, y, 0)
-  //   parent.add(obj);
-  // }
+function loadModel(modelName) {
+  const model = MODELS_ASSETS[modelName]
+  const obj = model?.object?.clone() ?? null
+  console.log(`___MODEL_instance`, modelName, obj)
+  return obj
 }

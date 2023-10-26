@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useReducer, useContext } from 'react'
 import { Dir, Position, TileType } from '../utils/underdark'
-import { ThreeJsGame } from '../components/GameCanvas'
+// import { ThreeJsGame } from '../components/GameCanvas'
 
 //
 // React + Typescript + Context
@@ -26,6 +26,8 @@ export enum GameState {
   Slendered = 21,
 }
 const _lightDrop = 10;
+
+type ThreeJsGame = any;
 
 //--------------------------------
 // State

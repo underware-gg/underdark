@@ -1,14 +1,12 @@
-import { useState, useEffect, useRef } from 'react'
-import { useGameplayContext } from '../../hooks/GameplayContext'
-import { useEffectOnce } from '../../hooks/useEffectOnce'
-import * as game from './game'
+import { useState, useRef } from 'react'
+import { useEffectOnce } from '../hooks/useEffectOnce'
+import { useGameplayContext } from '../hooks/GameplayContext'
 
-export type ThreeJsGame = typeof game
-
-
-const ModelsCanvas = ({
+export const ThreeJsCanvas = ({
   width = 900,
   height = 700,
+  guiEnabled = false,
+  gameLoop,
 }) => {
   const { dispatch, GameplayActions } = useGameplayContext()
   const [isLoading, setIsLoading] = useState(false)
@@ -18,15 +16,15 @@ const ModelsCanvas = ({
   useEffectOnce(() => {
     let _mounted = true
     const _initialize = async () => {
-      await game.init(canvasRef.current, width, height)
+      await gameLoop.init(canvasRef.current, width, height, guiEnabled)
       if (!_mounted) return
-      game.animate()
+      gameLoop.animate()
       // game.resetGameParams(gameParams)
       setIsLoading(false)
       setIsRunning(true)
       dispatch({
         type: GameplayActions.SET_GAME_LOOP,
-        payload: game,
+        payload: gameLoop,
       })
       //@ts-ignore
       canvasRef.current.focus()
@@ -40,23 +38,23 @@ const ModelsCanvas = ({
     return () => {
       _mounted = false
       if (isRunning) {
-        game.dispose()
+        gameLoop.dispose()
       }
     }
   }, [canvasRef.current])
 
 
-return (
-  <canvas
-    id='gameCanvas'
-    className='GameCanvas'
-    ref={canvasRef}
-    width={width * 2}
-    height={height * 2}
-  >
-    Canvas not supported by your browser.
-  </canvas>
-)
+  return (
+    <canvas
+      id='gameCanvas'
+      className='GameCanvas'
+      ref={canvasRef}
+      width={width * 2}
+      height={height * 2}
+    >
+      Canvas not supported by your browser.
+    </canvas>
+  )
 }
 
-export default ModelsCanvas
+export default ThreeJsCanvas
