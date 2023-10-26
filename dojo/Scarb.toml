@@ -7,7 +7,7 @@ website = "https://underdark-splash.vercel.app"
 socials.x = "https://twitter.com/lootunderworld"
 
 [package]
-cairo-version = "2.2.0"
+cairo-version = "2.3.0"
 name = "underdark"
 version = "0.1.0"
 
@@ -16,7 +16,7 @@ sierra-replace-ids = true
 
 [dependencies]
 # dojo = { git = "https://github.com/dojoengine/dojo.git", rev = "47c0cbcfa4ebd4d4b504ec959fdbcfd3e4271e8a" }
-dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.1" }
+dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.2" }
 
 
 [[target.dojo]]
