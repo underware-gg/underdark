@@ -6,13 +6,11 @@ import Stats from 'three/addons/libs/stats.module.js'
 //@ts-ignore
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 //@ts-ignore
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-//@ts-ignore
-import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+// import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 import { DepthPostShader } from '../../three/DepthPostShader'
-import { Position } from '../../utils/underdark'
 import { Point } from '../MapView'
+import { MODELS_ASSETS, loadAssets } from '../../data/assets'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5
@@ -28,9 +26,9 @@ const R_TO_D = (180 / Math.PI)
 
 const SIZE = 1;
 const CAM_FOV = 70;
-const CAM_FAR = 5; // 1.3 .. 5
+const CAM_FAR = 6; // 1.3 .. 5
 const TILT = 1;
-const GAMMA = 1.25;
+const GAMMA = 1.5;
 const COLOR_COUNT = 0; //16;
 const DITHER = 0;
 const DITHER_SIZE = 4;
@@ -105,41 +103,6 @@ export function setGameParams(moreParams: any) {
 }
 
 
-
-//-------------------------------------------
-// Models
-//
-
-let MODELS = {
-  // MONSTER: { path: '/models/duck3.fbx', scale: 0.02 },
-  // SLENDER_DUCK: { path: '/models/slendie.fbx', scale: 0.5 },
-  // DARK_TAR: { path: '/models/tar.fbx', scale: 0.5 },
-  // EXIT: { path: '/models/door.fbx', scale: 0.5 },
-}
-
-function _loadModels() {
-  // load models
-  const loader = new FBXLoader();
-  Object.keys(MODELS).forEach(key => {
-    let model = MODELS[key]
-    if (!model.object) {
-      console.log(`CACHING MODEL...`, model)
-      loader.load(model.path, function (object) {
-        console.log(`FBX OBJECT:`, object, object.scale)
-        if (object) {
-          object.scale.set(model.scale, model.scale, model.scale)
-          model.object = object
-          model.loaded = true
-        }
-      });
-    }
-  });
-}
-
-_loadModels();
-
-
-
 //-------------------------------------------
 // Setup
 //
@@ -152,9 +115,11 @@ export function dispose() {
   _scene = null
 }
 
-export function init(canvas, width, height) {
+export async function init(canvas, width, height) {
 
-  if (_scene) return;
+  if (_scene) return
+
+  await loadAssets()
 
   _width = width;
   _height = height;
@@ -205,9 +170,6 @@ export function init(canvas, width, height) {
 
   setupRenderTarget();
   setupPost();
-
-  onWindowResize();
-  window.addEventListener('resize', onWindowResize);
 
   _gui = new GUI({ width: 300 });
   _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
@@ -293,36 +255,6 @@ function setupPost() {
   postQuad.scale.set(-1, 1, 1);
 }
 
-function onWindowResize() {
-  // const aspect = window.innerWidth / window.innerHeight;
-  // camera.aspect = aspect;
-  // camera.updateProjectionMatrix();
-  // const dpr = renderer.getPixelRatio();
-  // target.setSize(window.innerWidth * dpr, window.innerHeight * dpr);
-  // renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-// function makeTorus(scene) {
-//   const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 64);
-//   const material = new THREE.MeshBasicMaterial({ color: 'blue' });
-//   const count = 50;
-//   const scale = 5;
-//   for (let i = 0; i < count; i++) {
-//     const r = Math.random() * 2.0 * PI;
-//     const z = (Math.random() * 2.0) - 1.0;
-//     const zScale = Math.sqrt(1.0 - z * z) * scale;
-//     const mesh = new THREE.Mesh(geometry, material);
-//     mesh.position.set(
-//       Math.cos(r) * zScale,
-//       Math.sin(r) * zScale,
-//       z * scale
-//     );
-//     mesh.rotation.set(Math.random(), Math.random(), Math.random());
-//     scene.add(mesh);
-//   }
-// }
-
-
 //-------------------------------------------
 // Game Loop
 //
@@ -347,7 +279,7 @@ export function animate() {
 
   // _controls.update(); // required because damping is enabled
 
-  // _stats.update();
+  _stats.update();
 }
 
 export function movePlayer(position: Point) {
@@ -356,7 +288,7 @@ export function movePlayer(position: Point) {
     y: position.y,
   }, 100).start()
   // _cameraRig.position.set(x, y, 0);
-  console.log(`movePlayer()`, position)
+  // console.log(`movePlayer()`, position)
 }
 
 
@@ -378,11 +310,18 @@ function setupScene() {
   ceiling.scale.set(1, 1, -1);
 
   _scene.add(floor);
-  // _scene.add(ceiling);
+  _scene.add(ceiling);
 
   addTile(-1, 0)
   addTile(1, 0)
   addTile(0, 1)
+
+  // loadModel('MONSTER', _scene, 0, 0)
+  // loadModel('SLENDER_DUCK', _scene, 0, 0)
+  loadModel('DARK_TAR', _scene, 0, 0)
+  // loadModel('EXIT', _scene, 0, 0)
+  // loadModel('STAIRS', _scene, 0, 0)
+  // loadModel('CHEST', _scene, 0, 0)
 
 }
 
@@ -394,11 +333,11 @@ function addTile(x, y) {
 }
 
 function loadModel(modelName, parent, x, y) {
-  const model = MODELS[modelName]
-  // const obj = model?.object?.clone() ?? null
+  const model = MODELS_ASSETS[modelName]
+  const obj = model?.object?.clone() ?? null
   console.log(`___MODEL_instance`, modelName, model)//, obj)
-  // if(obj) {
-  //   obj.position.set(x, y, 0)
-  //   parent.add(obj);
-  // }
+    if(obj) {
+      obj.position.set(x, y, 0)
+      parent.add(obj);
+    }
 }

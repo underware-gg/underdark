@@ -13,7 +13,7 @@ const GameCanvas = ({
 }) => {
   const { playerPosition, dispatch, GameplayActions } = useGameplayContext()
   const [isLoading, setIsLoading] = useState(false)
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [isRunning, setIsRunning] = useState(false)
   const canvasRef = useRef()
 
   useEffect(() => {
@@ -31,29 +31,29 @@ const GameCanvas = ({
       game.animate()
       // game.resetGameParams(gameParams)
       setIsLoading(false)
-      setIsInitialized(true)
+      setIsRunning(true)
       //@ts-ignore
       canvasRef.current.focus()
     }
     return () => {
-      if (isInitialized) {
+      if (isRunning) {
         game.dispose()
       }
     }
   }, [canvasRef.current])
 
   useEffect(() => {
-    if (isInitialized && gameTilemap) {
+    if (isRunning && gameTilemap) {
       game.movePlayer(playerPosition)
     }
-  }, [isInitialized, playerPosition])
+  }, [isRunning, playerPosition])
 
 
   useEffect(() => {
-    if (isInitialized && gameTilemap) {
+    if (isRunning && gameTilemap) {
       game.setupMap(gameTilemap)
     }
-  }, [isInitialized, gameTilemap])
+  }, [isRunning, gameTilemap])
 
 return (
   <canvas

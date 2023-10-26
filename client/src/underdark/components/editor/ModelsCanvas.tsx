@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useGameplayContext } from '../../hooks/GameplayContext'
+import { useEffectOnce } from '../../hooks/useEffectOnce'
 import * as game from './game'
 
 export type ThreeJsGame = typeof game
+
 
 const ModelsCanvas = ({
   width = 900,
@@ -10,29 +12,34 @@ const ModelsCanvas = ({
 }) => {
   const { dispatch, GameplayActions } = useGameplayContext()
   const [isLoading, setIsLoading] = useState(false)
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [isRunning, setIsRunning] = useState(false)
   const canvasRef = useRef()
 
-  useEffect(() => {
-    if (canvasRef.current && !isLoading) {
-      console.log(`RESET CANVAS`)
-      setIsLoading(true)
-      game.init(canvasRef.current, width, height)
+  useEffectOnce(() => {
+    let _mounted = true
+    const _initialize = async () => {
+      await game.init(canvasRef.current, width, height)
+      if (!_mounted) return
       game.animate()
       // game.resetGameParams(gameParams)
       setIsLoading(false)
-      setIsInitialized(true)
-
+      setIsRunning(true)
       dispatch({
         type: GameplayActions.SET_GAME_LOOP,
         payload: game,
       })
-
       //@ts-ignore
       canvasRef.current.focus()
     }
+
+    if (canvasRef.current && !isLoading && !isRunning) {
+      setIsLoading(true)
+      _initialize()
+    }
+
     return () => {
-      if (isInitialized) {
+      _mounted = false
+      if (isRunning) {
         game.dispose()
       }
     }
