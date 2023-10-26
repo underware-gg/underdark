@@ -52,7 +52,7 @@ export const _loader = async (ASSETS, onLoading) => {
   return new Promise<void>((resolve, reject) => {
     let assetsToLoad = Object.keys(ASSETS).length
     Object.keys(ASSETS).forEach((name) => {
-      onLoading(ASSETS[name], () => {
+      onLoading(name, () => {
         if (--assetsToLoad == 0) {
           resolve()
         }
@@ -65,15 +65,16 @@ export const _loader = async (ASSETS, onLoading) => {
 // Models
 export const _loadModels = async () => {
   const loader = new FBXLoader();
-  return _loader(MODELS_ASSETS, (asset, resolve) => {
-    loader.load(asset.path, function (object) {
+  return _loader(MODELS_ASSETS, (name, resolve) => {
+    const model = MODELS_ASSETS[name]
+    loader.load(model.path, function (object) {
       // load asset...
       console.log(`CACHED MODEL [${name}]:`, object, object?.scale)
       if (object) {
-        if (asset.rotation) object.rotation.set(asset.rotation[0], asset.rotation[1], asset.rotation[2])
-        if (asset.scale) object.scale.set(asset.scale, asset.scale, asset.scale)
-        asset.object = object
-        asset.loaded = true
+        if (model.rotation) object.rotation.set(model.rotation[0], model.rotation[1], model.rotation[2])
+        if (model.scale) object.scale.set(model.scale, model.scale, model.scale)
+        model.object = object
+        model.loaded = true
       }
       // loaded
       resolve()

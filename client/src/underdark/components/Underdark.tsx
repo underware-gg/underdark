@@ -2,14 +2,11 @@ import { useSyncWorld } from '../hooks/useGraphQLQueries'
 import { UnderdarkProvider } from '../hooks/UnderdarkContext'
 import { GameplayProvider } from '../hooks/GameplayContext'
 import MinterMap from './MinterMap'
-// import MinterData from './MinterData'
 import GameData from './GameData'
 import GameView from './GameView'
 import ScoreBoard from './ScoreBoard'
-import { Container, Grid } from 'semantic-ui-react'
-
-const Row = Grid.Row
-const Col = Grid.Column
+// import { Container } from 'semantic-ui-react'
+import { Grid, Row, Col } from './Grid'
 
 function Underdark() {
   const { loading } = useSyncWorld()
@@ -23,15 +20,15 @@ function Underdark() {
       <GameplayProvider>
         <div>
 
-          <Grid className='MinterPanel'>
+          <Grid className='GameUI'>
             <Row>
-              <Col width={5}>
+              <Col width={4} className='UI'>
                 <MinterMap />
               </Col>
-              <Col width={6}>
+              <Col width={6} className='UI'>
                 <GameData />
               </Col>
-              <Col width={5}>
+              <Col width={5} className='UI'>
                 <ScoreBoard />
               </Col>
             </Row>
@@ -39,9 +36,7 @@ function Underdark() {
 
           <br />
 
-          <div className="card">
-            <GameView />
-          </div>
+          <GameView />
 
         </div>
       </GameplayProvider>

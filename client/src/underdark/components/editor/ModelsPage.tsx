@@ -32,7 +32,7 @@ const ModelsView = () => {
     gameImpl?.movePlayer(playerPosition)
   }, [gameImpl, playerPosition])
 
-  return <ThreeJsCanvas width={900} height={700} guiEnabled={true} gameImpl={game} />
+  return <ThreeJsCanvas width={960} height={720} guiEnabled={true} gameImpl={game} />
 }
 
 export default ModelsPage

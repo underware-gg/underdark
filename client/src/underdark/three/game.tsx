@@ -191,7 +191,7 @@ export async function init(canvas, width, height, guiEnabled) {
     _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
     _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
     _gui.add(params, 'lightness', true).onChange(guiUpdated);
-    _gui.open();
+    _gui.close();
     // framerate
     _stats = new Stats();
     document.body.appendChild(_stats.dom);

@@ -14,14 +14,7 @@ function PlaytestPage() {
 
   return (
     <div>
-      {/* <div className='card MinterPanel'>
-        <MinterMap />
-        <MinterData />
-      </div>
-      <br /> */}
-      <div className=''>
-        <GameView />
-      </div>
+      <GameView />
     </div>
   )
 }

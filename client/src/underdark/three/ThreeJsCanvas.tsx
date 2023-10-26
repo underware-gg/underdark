@@ -3,8 +3,8 @@ import { useEffectOnce } from '../hooks/useEffectOnce'
 import { useGameplayContext } from '../hooks/GameplayContext'
 
 export const ThreeJsCanvas = ({
-  width = 900,
-  height = 700,
+  width = 200,
+  height = 200,
   guiEnabled = false,
   gameImpl,
 }) => {

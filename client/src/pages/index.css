@@ -1,4 +1,4 @@
-:root {
+html, body {
   font-family: Menlo, monospace, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-size: 12px;
   line-height: 1.2;
@@ -9,9 +9,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-}
 
-html, body {
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 }
@@ -22,6 +20,12 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 a {
@@ -68,19 +72,7 @@ canvas {
   display: block;
 }
 
-/* App.css */
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.card {
-  padding: 1em;
-}
-
-/* Underdark */
+/* GENERIC */
 
 .AlignLeft { text-align: left; }
 .AlignCenter { text-align: center; }
@@ -89,8 +81,9 @@ canvas {
 .AlignMiddle { vertical-align: middle; }
 .AlignBottom { vertical-align: bottom; }
 
-.NoPadding { padding: 0; }
-.Padded { padding: 0.5em; }
+.NoPadding { padding: 0!important; }
+.Padded { padding: 0.5em!important; }
+.NoMargin { margin: 0!important }
 .NoBorder { border: 0!important }
 .Block { display: inline-block; }
 
@@ -107,54 +100,6 @@ canvas {
   min-height: 50px;
 }
 
-.MinterPanel {
-  width: 900px;
-  height: 250px;
-  display: block;
-}
-
-.MinterMap,
-.MinterData {
-  /* width: 250px; */
-  height: 200px;
-  display: inline-block;
-}
-.MinterMap {
-  width: 200px;
-  height: 200px;
-  border: 0.5px solid #444;
-}
-
-.DirectionButton {
-  /* margin: 0.25em; */
-  margin: 0.1em;
-  padding: 0.25em 1.0em;
-}
-
-.SmallButton {
-  margin: 0 0.1em;
-  padding: 0.1em 0.4em;
-}
-
-.Locked {
-  background-color: #94631f;
-}
-.Unlocked {
-  background-color: #fbf6c0;
-}
-
-.GameView {
-  width: 900px;
-  height: 450px;
-}
-
-.GameCanvas {
-  width: 900px;
-  height: 450px;
-  display: block;
-  background-color: #0000;
-  border: 0.5px solid #444;
-}
 
 .Relative {
   position: relative;
@@ -181,6 +126,61 @@ canvas {
   vertical-align: middle;
   align-items: center;
 }
+
+/* UNDERDARK */
+
+.DirectionButton {
+  /* margin: 0.25em; */
+  margin: 0.1em;
+  padding: 0.25em 1.0em;
+}
+
+.SmallButton {
+  margin: 0 0.1em;
+  padding: 0.1em 0.4em;
+}
+
+.Locked {
+  background-color: #94631f;
+}
+.Unlocked {
+  background-color: #fbf6c0;
+}
+
+.GameView {
+  width: 960px;
+  height: 480px;
+  border: 0.5px solid #444;
+}
+
+.GameCanvas {
+  width: 960px;
+  height: 480px;
+  display: block;
+  background-color: #0000;
+}
+
+.UI,
+.GameUI {
+  display: block;
+  border: 0.5px solid #444;
+  padding: 0;
+  margin: 0;
+}
+
+.GameUI {
+  width: 960px;
+  height:  240px;
+}
+
+
+.MinterMap{
+  width: 240px;
+  height: 240px;
+  display: inline-block;
+}
+
+
 
 .ProofView {
   position: absolute;
