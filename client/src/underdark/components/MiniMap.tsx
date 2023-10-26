@@ -8,7 +8,7 @@ import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../utils/underdar
 //-----------------------------
 // Entry Point
 //
-function MinterMap() {
+function MiniMap() {
   const [tileSize, seTtileSize] = useState(5)
   const { gameId, chamberId: currentChamberId } = useUnderdarkContext()
 
@@ -65,11 +65,11 @@ function MinterMap() {
   }, [currentChamberId, chambers])
 
   return (
-    <div className='MinterMap'>
+    <div className='MiniMap'>
       {loaders.map((coord: bigint) => {
         return <MapLoader key={`loader_${coord.toString()}`} coord={coord} addChamber={_addChamber} />
       })}
-      <div className='MinterMap NoBorder'>
+      <div className='MiniMap NoBorder'>
         <MapView targetChamber={targetChamber} chambers={Object.values(chambers)} tileSize={tileSize} />
       </div>
 
@@ -106,4 +106,4 @@ function MapLoader({
   return <></>
 }
 
-export default MinterMap
+export default MiniMap

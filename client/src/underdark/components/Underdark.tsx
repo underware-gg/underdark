@@ -1,7 +1,7 @@
 import { useSyncWorld } from '../hooks/useGraphQLQueries'
 import { UnderdarkProvider } from '../hooks/UnderdarkContext'
 import { GameplayProvider } from '../hooks/GameplayContext'
-import MinterMap from './MinterMap'
+import MiniMap from './MiniMap'
 import GameData from './GameData'
 import GameView from './GameView'
 import ScoreBoard from './ScoreBoard'
@@ -23,7 +23,7 @@ function Underdark() {
           <Grid className='GameUI'>
             <Row>
               <Col width={4} className='UI'>
-                <MinterMap />
+                <MiniMap />
               </Col>
               <Col width={6} className='UI'>
                 <GameData />

@@ -1,5 +1,5 @@
 import 'semantic-ui-css/semantic.min.css'
-import './index.css';
+import './index.scss';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import EditorPage from '../underdark/components/editor/EditorPage';

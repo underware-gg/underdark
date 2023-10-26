@@ -1,5 +1,17 @@
+
+$font-family: Menlo, monospace, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+$important: #fa0;
+// $ui-bg: #000a;
+$ui-color: #ddd;
+$ui-border: 5px ridge $ui-color;
+
+$game-width: 960px;
+$game-height: 480px;
+$ui-height: 240px;
+
+
 html, body {
-  font-family: Menlo, monospace, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: $font-family;
   font-size: 12px;
   line-height: 1.2;
   font-weight: 400;
@@ -148,14 +160,14 @@ canvas {
 }
 
 .GameView {
-  width: 960px;
-  height: 480px;
+  width: $game-width;
+  height: $game-height;
   border: 0.5px solid #444;
 }
 
 .GameCanvas {
-  width: 960px;
-  height: 480px;
+  width: $game-width;
+  height: $game-height;
   display: block;
   background-color: #0000;
 }
@@ -163,20 +175,22 @@ canvas {
 .UI,
 .GameUI {
   display: block;
-  border: 0.5px solid #444;
   padding: 0;
   margin: 0;
+  border: $ui-border;
 }
 
 .GameUI {
-  width: 960px;
-  height:  240px;
+  width: $game-width;
+  height: $ui-height;
+  border: 0.5px solid #444;
+  /* border: 0; */
 }
 
 
-.MinterMap{
-  width: 240px;
-  height: 240px;
+.MiniMap{
+  width: $ui-height;
+  height: $ui-height;
   display: inline-block;
 }
 
