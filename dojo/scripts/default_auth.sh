@@ -4,8 +4,8 @@ pushd $(dirname "$0")/..
 
 echo "Authorizing models..."
 
-export WORLD_ADDRESS="0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a";
-export CONTRACT_ADDRESS="0x1ecc984f2f872bdadd43ab1762c87de3d445b8eb134e6b475f37f23e8a551a3";
+export WORLD_ADDRESS="0x6d8b7e2306efa1e02bdb4d92c2c76d2bf1c5ba08544f6f5221e1030092312b8";
+export CONTRACT_ADDRESS="0x281c6928d199cbf7235c2d6840402336021003ecbdaa4e2e6396c96142bcd31";
 
 # enable system -> model authorizations
 MODELS=("Chamber" "Map" "State" "Tile" "Score" )

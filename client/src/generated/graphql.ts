@@ -131,7 +131,6 @@ export type Event = {
   data?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   id?: Maybe<Scalars['ID']['output']>;
   keys?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  systemCall: SystemCall;
   transaction_hash?: Maybe<Scalars['String']['output']>;
 };
 
@@ -351,11 +350,9 @@ export type Query = {
   models?: Maybe<ModelConnection>;
   scoreModels?: Maybe<ScoreConnection>;
   stateModels?: Maybe<StateConnection>;
-  system: System;
-  systemCall: SystemCall;
-  systemCalls?: Maybe<SystemCallConnection>;
-  systems?: Maybe<SystemConnection>;
   tileModels?: Maybe<TileConnection>;
+  transaction: Transaction;
+  transactions?: Maybe<TransactionConnection>;
 };
 
 
@@ -464,36 +461,6 @@ export type QueryStateModelsArgs = {
 };
 
 
-export type QuerySystemArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QuerySystemCallArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QuerySystemCallsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QuerySystemsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
 export type QueryTileModelsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -503,6 +470,21 @@ export type QueryTileModelsArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<TileOrder>;
   where?: InputMaybe<TileWhereInput>;
+};
+
+
+export type QueryTransactionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryTransactionsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Score = {
@@ -667,50 +649,6 @@ export type SubscriptionModelRegisteredArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
 };
 
-export type System = {
-  __typename?: 'System';
-  class_hash?: Maybe<Scalars['felt252']['output']>;
-  created_at?: Maybe<Scalars['DateTime']['output']>;
-  id?: Maybe<Scalars['ID']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  systemCalls: Array<SystemCall>;
-  transaction_hash?: Maybe<Scalars['felt252']['output']>;
-};
-
-export type SystemCall = {
-  __typename?: 'SystemCall';
-  created_at?: Maybe<Scalars['DateTime']['output']>;
-  data?: Maybe<Scalars['String']['output']>;
-  id?: Maybe<Scalars['ID']['output']>;
-  system: System;
-  system_id?: Maybe<Scalars['ID']['output']>;
-  transaction_hash?: Maybe<Scalars['String']['output']>;
-};
-
-export type SystemCallConnection = {
-  __typename?: 'SystemCallConnection';
-  edges?: Maybe<Array<Maybe<SystemCallEdge>>>;
-  total_count: Scalars['Int']['output'];
-};
-
-export type SystemCallEdge = {
-  __typename?: 'SystemCallEdge';
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  node?: Maybe<SystemCall>;
-};
-
-export type SystemConnection = {
-  __typename?: 'SystemConnection';
-  edges?: Maybe<Array<Maybe<SystemEdge>>>;
-  total_count: Scalars['Int']['output'];
-};
-
-export type SystemEdge = {
-  __typename?: 'SystemEdge';
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  node?: Maybe<System>;
-};
-
 export type Tile = {
   __typename?: 'Tile';
   entity?: Maybe<Entity>;
@@ -782,6 +720,30 @@ export type TileWhereInput = {
   tile_typeLT?: InputMaybe<Scalars['u8']['input']>;
   tile_typeLTE?: InputMaybe<Scalars['u8']['input']>;
   tile_typeNEQ?: InputMaybe<Scalars['u8']['input']>;
+};
+
+export type Transaction = {
+  __typename?: 'Transaction';
+  calldata?: Maybe<Array<Maybe<Scalars['felt252']['output']>>>;
+  created_at?: Maybe<Scalars['DateTime']['output']>;
+  id?: Maybe<Scalars['ID']['output']>;
+  max_fee?: Maybe<Scalars['felt252']['output']>;
+  nonce?: Maybe<Scalars['felt252']['output']>;
+  sender_address?: Maybe<Scalars['felt252']['output']>;
+  signature?: Maybe<Array<Maybe<Scalars['felt252']['output']>>>;
+  transaction_hash?: Maybe<Scalars['felt252']['output']>;
+};
+
+export type TransactionConnection = {
+  __typename?: 'TransactionConnection';
+  edges?: Maybe<Array<Maybe<TransactionEdge>>>;
+  total_count: Scalars['Int']['output'];
+};
+
+export type TransactionEdge = {
+  __typename?: 'TransactionEdge';
+  cursor?: Maybe<Scalars['Cursor']['output']>;
+  node?: Maybe<Transaction>;
 };
 
 export type GetChamberTilesQueryVariables = Exact<{
