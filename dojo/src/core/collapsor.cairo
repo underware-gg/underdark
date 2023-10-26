@@ -1,10 +1,7 @@
-use array::ArrayTrait;
 use traits::Into;
-use debug::PrintTrait;
+use array::ArrayTrait;
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::utils::bitmap::{Bitmap};
-use underdark::utils::arrays::{create_array};
-use underdark::core::seeder::{make_seed};
 
 /// @notice Apply Simplified Wave Function Collapse 
 /// @param seed The Chamber's seed, used as initial random bitmap
@@ -134,10 +131,20 @@ fn collapse(seed: u256, open_spaces: bool) -> u256 {
 }
 
 
-#[test]
-#[available_gas(50_000_000)]
-fn test_collapse() {
-    let seed = make_seed(1234, 5678);
-    let bitmap = collapse(seed, false);
-    assert(seed != bitmap, '');
+//----------------------------------------
+// Unit  tests
+//
+#[cfg(test)]
+mod tests {
+    use debug::PrintTrait;
+    use underdark::core::seeder::{make_seed};
+    use underdark::core::collapsor::{collapse};
+
+    #[test]
+    #[available_gas(50_000_000)]
+    fn test_collapse() {
+        let seed = make_seed(1234, 5678);
+        let bitmap = collapse(seed, false);
+        assert(seed != bitmap, '');
+    }
 }

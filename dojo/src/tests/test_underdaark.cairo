@@ -15,9 +15,9 @@ mod tests {
     use underdark::types::dir::{Dir, DirTrait, DIR};
     use underdark::types::doors::{Doors};
     use underdark::types::tile_type::{TileType, TILE};
-    use underdark::utils::string::{concat, join};
     use underdark::utils::bitwise::{U256Bitwise};
     use underdark::utils::bitmap::{Bitmap};
+    use underdark::utils::string::{String};
     use underdark::tests::utils::utils::{
         setup_world,
         start_level_get_chamber,
@@ -30,12 +30,12 @@ mod tests {
 
     fn assert_doors(prefix: felt252, world: IWorldDispatcher, location_id: u128) {
         let tiles: Doors = get_world_Doors_as_Tiles(world, location_id);
-        assert(tiles.north == 0, join(prefix, 'north'));
-        assert(tiles.east == TILE::EXIT, join(prefix, 'east'));
-        assert(tiles.west == TILE::ENTRY, join(prefix, 'west'));
-        assert(tiles.south == 0, join(prefix, 'south'));
-        assert(tiles.over == 0, join(prefix, 'over'));
-        assert(tiles.under == 0, join(prefix, 'under'));
+        assert(tiles.north == 0, String::join(prefix, 'north'));
+        assert(tiles.east == TILE::EXIT, String::join(prefix, 'east'));
+        assert(tiles.west == TILE::ENTRY, String::join(prefix, 'west'));
+        assert(tiles.south == 0, String::join(prefix, 'south'));
+        assert(tiles.over == 0, String::join(prefix, 'over'));
+        assert(tiles.under == 0, String::join(prefix, 'under'));
     }
 
     #[test]
@@ -307,7 +307,7 @@ mod tests {
         loop {
             if (i >= 10) { break; }
             let level_number: u32 = i + 1;
-            let (monsters, slender_duck, dark_tar) = randomize_monsters(ref rnd, bitmap, level_number);
+            let (monsters, slender_duck, dark_tar): (u256, u256, u256) = randomize_monsters(ref rnd, bitmap, 0x0, level_number);
             let monster_count: usize = U256Bitwise::count_bits(monsters);
             assert(monster_count != 0, 'monster_count');
             // monster_count.print();
