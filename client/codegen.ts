@@ -12,6 +12,9 @@ const config: CodegenConfig = {
         rawRequest: true
       },
     },
+  },
+  hooks: {
+    afterOneFileWrite: [String.raw`sed -i '' '1s/^/\/\/@ts-nocheck\n/'`]
   }
 };
 
