@@ -33,7 +33,7 @@ type ThreeJsGame = any;
 // State
 //
 export const initialState = {
-  gameLoop: null,
+  gameImpl: null,
   gameState: GameState.Stoped,
   playerPosition: null,
   light: 0,
@@ -44,7 +44,7 @@ export const initialState = {
 }
 
 type GameplayStateType = {
-  gameLoop: ThreeJsGame,
+  gameImpl: ThreeJsGame,
   gameState: GameState
   playerPosition: Position
   light: number     // 0..100
@@ -59,7 +59,7 @@ type GameplayStateType = {
 //
 
 const GameplayActions = {
-  SET_GAME_LOOP: 'SET_GAME_LOOP',
+  SET_GAME_IMPL: 'SET_GAME_IMPL',
   RESET: 'RESET',
   SET_STATE: 'SET_STATE',
   SET_MESSAGE: 'SET_MESSAGE',
@@ -70,7 +70,7 @@ const GameplayActions = {
 }
 
 type ActionType =
-  | { type: 'SET_GAME_LOOP', payload: ThreeJsGame }
+  | { type: 'SET_GAME_IMPL', payload: ThreeJsGame }
   | { type: 'RESET', payload: Position }
   | { type: 'SET_STATE', payload: GameState }
   | { type: 'SET_MESSAGE', payload: string }
@@ -104,8 +104,8 @@ const GameplayProvider = ({
   const [state, dispatch] = useReducer((state: GameplayStateType, action: ActionType) => {
     let newState = { ...state }
     switch (action.type) {
-      case GameplayActions.SET_GAME_LOOP: {
-        newState.gameLoop = action.payload as ThreeJsGame
+      case GameplayActions.SET_GAME_IMPL: {
+        newState.gameImpl = action.payload as ThreeJsGame
         break
       }
       case GameplayActions.RESET: {

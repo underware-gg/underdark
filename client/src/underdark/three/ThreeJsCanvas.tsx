@@ -6,7 +6,7 @@ export const ThreeJsCanvas = ({
   width = 900,
   height = 700,
   guiEnabled = false,
-  gameLoop,
+  gameImpl,
 }) => {
   const { dispatch, GameplayActions } = useGameplayContext()
   const [isLoading, setIsLoading] = useState(false)
@@ -16,15 +16,15 @@ export const ThreeJsCanvas = ({
   useEffectOnce(() => {
     let _mounted = true
     const _initialize = async () => {
-      await gameLoop.init(canvasRef.current, width, height, guiEnabled)
+      await gameImpl.init(canvasRef.current, width, height, guiEnabled)
       if (!_mounted) return
-      gameLoop.animate()
+      gameImpl.animate()
       // game.resetGameParams(gameParams)
       setIsLoading(false)
       setIsRunning(true)
       dispatch({
-        type: GameplayActions.SET_GAME_LOOP,
-        payload: gameLoop,
+        type: GameplayActions.SET_GAME_IMPL,
+        payload: gameImpl,
       })
       //@ts-ignore
       canvasRef.current.focus()
@@ -38,7 +38,7 @@ export const ThreeJsCanvas = ({
     return () => {
       _mounted = false
       if (isRunning) {
-        gameLoop.dispose()
+        gameImpl.dispose()
       }
     }
   }, [canvasRef.current])

@@ -14,7 +14,7 @@ function ModelsPage() {
 }
 
 const ModelsView = () => {
-  const { gameLoop } = useGameplayContext()
+  const { gameImpl } = useGameplayContext()
   const [playerPosition, setPlayerPosition] = useState<Point>({ x: 0, y: -3 })
 
   useKeyDown(() => (_move(0, 1)), ['ArrowUp', 'w'])
@@ -29,10 +29,10 @@ const ModelsView = () => {
 
   useEffect(() => {
     //@ts-ignore
-    gameLoop?.movePlayer(playerPosition)
-  }, [gameLoop, playerPosition])
+    gameImpl?.movePlayer(playerPosition)
+  }, [gameImpl, playerPosition])
 
-  return <ThreeJsCanvas width={900} height={700} guiEnabled={true} gameLoop={game} />
+  return <ThreeJsCanvas width={900} height={700} guiEnabled={true} gameImpl={game} />
 }
 
 export default ModelsPage

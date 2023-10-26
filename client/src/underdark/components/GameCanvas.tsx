@@ -6,7 +6,7 @@ const GameCanvas = ({
   height = 450,
   guiEnabled = false,
 }) => {
-  return <ThreeJsCanvas width={width} height={height} guiEnabled={guiEnabled} gameLoop={game} />
+  return <ThreeJsCanvas width={width} height={height} guiEnabled={guiEnabled} gameImpl={game} />
 }
 
 export default GameCanvas

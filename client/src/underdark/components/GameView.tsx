@@ -18,7 +18,7 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { gameLoop, gameState, light, message, playerPosition, dispatch } = useGameplayContext()
+  const { gameImpl, gameState, light, message, playerPosition, dispatch } = useGameplayContext()
 
   //
   // Start game!
@@ -32,27 +32,29 @@ const GameView = ({
   }, [gameTilemap])
 
   useEffect(() => {
-    gameLoop?.resetGameParams(levels[Number(chamberId % BigInt(levels.length))].renderParams)
-  }, [gameLoop, chamberId])
+    gameImpl?.resetGameParams(levels[Number(chamberId % BigInt(levels.length))].renderParams)
+  }, [gameImpl, chamberId])
 
   useEffect(() => {
-    gameLoop?.setGameParams({
+    gameImpl?.setGameParams({
       far: map(light, 0.0, 100.0, 1.6, 5.0),
       gamma: map(light, 0.0, 100.0, 2.0, 1.25),
     })
-  }, [gameLoop, light])
+  }, [gameImpl, light])
 
 
   useEffect(() => {
     if (gameState == GameState.Playing) {
-      gameLoop?.movePlayer(playerPosition)
+      gameImpl?.movePlayer(playerPosition)
     }
-  }, [gameLoop, gameState, playerPosition])
+  }, [gameImpl, gameState, playerPosition])
 
 
   useEffect(() => {
-    gameLoop?.setupMap(gameTilemap)
-  }, [gameLoop, gameTilemap])
+    if (gameTilemap) {
+      gameImpl?.setupMap(gameTilemap)
+    }
+  }, [gameImpl, gameTilemap])
 
   return (
     <>
