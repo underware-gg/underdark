@@ -364,6 +364,8 @@ export function setupMap(gameTilemap: GameTilemap) {
   _map = new THREE.Object3D();
   _map.position.set(0, 0, 0);
 
+  const _randomRotate = (mesh) => (mesh.rotation.set(0, 0, [0, 1, 2, 3][Math.floor(Math.random() * 4)] * HALF_PI))
+
   for (let i = 0; i < tilemap.length; ++i) {
     const tileType = tilemap[i]
     const x = ((i % gridSize) + gridOrigin.x) * SIZE
@@ -376,12 +378,14 @@ export function setupMap(gameTilemap: GameTilemap) {
     } else if (tileType == TileType.LockedExit) {
     } else if (tileType == TileType.Monster) {
       mesh = loadModel('MONSTER')
+      _randomRotate(mesh)
       // } else if (tileType == TileType.SlenderDuck) {
       //   mesh = new THREE.Mesh(_slender_geometry, _material);
       //   mesh.rotateX(HALF_PI)
       //   loadModel('SLENDER_DUCK')
     } else if (tileType == TileType.DarkTar) {
       mesh = loadModel('DARK_TAR')
+      _randomRotate(mesh)
     } else if (tileType == TileType.Void) {
       mesh = new THREE.Mesh(_tile_geometry, _material)
       z = SIZE * 0.5
@@ -397,7 +401,9 @@ export function setupMap(gameTilemap: GameTilemap) {
 
 function loadModel(modelName) {
   const model = MODELS_ASSETS[modelName]
-  const obj = model?.object?.clone() ?? null
-  console.log(`___MODEL_instance`, modelName, obj)
+  if (!model?.object ) return null
+  // console.log(`___MODEL_instance`, modelName, model.object)
+  const obj = new THREE.Object3D();
+  obj.add(model.object.clone())
   return obj
 }
