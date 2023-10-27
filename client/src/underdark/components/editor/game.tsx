@@ -9,7 +9,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 // import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 import { DepthPostShader } from '../../three/DepthPostShader'
-import { Point } from '../MapView'
+import { Point } from '../ui/MapView'
 import { MODELS_ASSETS, loadAssets } from '../../data/assets'
 
 const PI = Math.PI

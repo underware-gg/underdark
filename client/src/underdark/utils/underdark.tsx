@@ -3,7 +3,7 @@
 // From Crawler SDK
 //
 
-import { Point } from "../components/MapView"
+import { Point } from "../components/ui/MapView"
 
 export enum Dir {
   North = 0,

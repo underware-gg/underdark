@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useGameplayContext } from '../../hooks/GameplayContext'
 import { useKeyDown } from '../../hooks/useKeyDown'
-import { Point } from '../MapView'
+import { Point } from '../ui/MapView'
 import ThreeJsCanvas from '../../three/ThreeJsCanvas'
 import * as game from './game'
 

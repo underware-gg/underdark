@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { Compass, Dir, GameTilemap, TileType } from '../utils/underdark'
-import { MapColors } from '../data/colors'
-import { useGameplayContext } from '../hooks/GameplayContext'
+import { Compass, Dir, GameTilemap, TileType } from '../../utils/underdark'
+import { MapColors } from '../../data/colors'
+import { useGameplayContext } from '../../hooks/GameplayContext'
 
 export interface Point {
   x: number
@@ -27,9 +27,6 @@ export interface MapChamber {
   exists: boolean
 }
 
-//----------------------------
-// Maps View
-//
 interface MapViewProps {
   targetChamber: MapChamber
   chambers: MapChamber[]
@@ -37,6 +34,10 @@ interface MapViewProps {
   viewWidth?: number
   viewHeight?: number
 }
+
+//----------------------------
+// Maps View
+//
 export function MapView({
   targetChamber,
   chambers,

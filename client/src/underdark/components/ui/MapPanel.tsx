@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { useChamber, useChamberMap } from '../hooks/useChamber'
+import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
+import { useChamber, useChamberMap } from '../../hooks/useChamber'
 import { MapChamber, MapView, compassToMapViewPos } from './MapView'
-import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../utils/underdark'
-import { Col, Grid, Row } from './Grid'
+import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../../utils/underdark'
+import { Col, Grid, Row } from '../Grid'
 
 
 //-----------------------------
 // Entry Point
 //
-function MiniMap() {
+function MapPanel() {
   const [tileSize, seTtileSize] = useState(5)
   const { gameId, chamberId: currentChamberId } = useUnderdarkContext()
   const { yonder } = useChamber(currentChamberId)
@@ -71,7 +71,7 @@ function MiniMap() {
       {loaders.map((coord: bigint) => {
         return <MapLoader key={`loader_${coord.toString()}`} coord={coord} addChamber={_addChamber} />
       })}
-      <div className='MiniMap'>
+      <div className='MapPanel'>
         <MapView targetChamber={targetChamber} chambers={Object.values(chambers)} tileSize={tileSize} />
       </div>
 
@@ -126,4 +126,4 @@ function MapLoader({
   return <></>
 }
 
-export default MiniMap
+export default MapPanel
