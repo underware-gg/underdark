@@ -142,7 +142,7 @@ function DirectionButton({
     })
   }
 
-  const _label = dir == Dir.West ? '-' : '+'
+  const _label = dir == Dir.West ? '<' : '>'
 
   if (exists) {
     return <button className='DirectionButton Unlocked' onClick={() => _open()}>{_label}</button>

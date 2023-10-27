@@ -208,16 +208,19 @@ canvas {
 
 .MapView {
   width: $ui-height;
-  height: calc($ui-height - $ui-row);
+  height: $ui-height;
   background-color: #1b1b1b; //RealmsColors.BG
-  display: inline-block;
+}
+
+.GamePanel {
+  @extend .MapView;
+  height: calc($ui-height - $ui-row - $ui-row);
 }
 
 .GameInfo {
   width: $ui-compass-width;
   height: calc($ui-height - $ui-row);
   background-color: #1b1b1b; //RealmsColors.BG
-  display: inline-block;
 }
 
 .CompassUI {
@@ -240,6 +243,11 @@ canvas {
 
 .ButtonUI{
   font-size: 18px;
+}
+
+.Message {
+  width: 60%;
+  margin: auto;
 }
 
 

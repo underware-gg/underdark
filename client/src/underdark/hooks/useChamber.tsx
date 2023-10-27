@@ -48,6 +48,7 @@ export const useChamber = (chamberId: bigint) => {
     domain_id: chamber?.domain_id ?? 0,
     token_id: chamber?.token_id ?? 0,
     yonder: chamber?.yonder ?? 0,
+    chamberExists: seed > 0,
   }
 }
 

@@ -1,4 +1,5 @@
 import { useGameplayContext } from '../../hooks/GameplayContext'
+import { DirNames } from '../../utils/underdark'
 
 function LightBar() {
   const { light } = useGameplayContext()
@@ -28,10 +29,11 @@ function HealthBar() {
 
 function CompassBar() {
   const { playerPosition } = useGameplayContext()
+  const facingDirection = playerPosition ? DirNames[playerPosition.facing] : '?'
   return (
     <div className='CompassUI'>
       <h3>
-        compass: {playerPosition?.facing ?? '?'}
+        looking {facingDirection}
       </h3>
     </div>
   )

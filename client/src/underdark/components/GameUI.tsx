@@ -8,11 +8,12 @@ import GameSelector from './ui/GameSelector'
 
 function GameUI() {
   return (
-    <Grid className='GamePanel'>
+    <Grid className='GameUI'>
       <Row>
         <Col width={4} className='NoPadding'>
           <GamePanel />
           <GameSelector />
+          <LevelSelector />
         </Col>
         <Col width={1} className='UI'>
           <LightBar />
@@ -26,7 +27,6 @@ function GameUI() {
         </Col>
         <Col width={4} className='UI'>
           <MapPanel />
-          <LevelSelector />
         </Col>
       </Row>
     </Grid>

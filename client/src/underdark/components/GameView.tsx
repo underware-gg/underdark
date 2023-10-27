@@ -18,7 +18,7 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { gameImpl, gameState, light, message, playerPosition, dispatch } = useGameplayContext()
+  const { gameImpl, gameState, isPlaying, light, playerPosition, dispatch } = useGameplayContext()
 
   //
   // Start game!
@@ -44,7 +44,7 @@ const GameView = ({
 
 
   useEffect(() => {
-    if (gameState == GameState.Playing) {
+    if (isPlaying) {
       gameImpl?.movePlayer(playerPosition)
     }
   }, [gameImpl, gameState, playerPosition])
@@ -57,33 +57,28 @@ const GameView = ({
   }, [gameImpl, gameTilemap])
 
   return (
-    <>
-      <div className='Relative GameView'>
-        <GameControls />
-        {gameState == GameState.Playing && <GameCanvas guiEnabled={true} />}
-        {gameState == GameState.Verifying && <GameProof />}
-        {gameState == GameState.NoHealth && <GameOver reason={'You died!!!'} />}
-        {gameState == GameState.Slendered && <GameOver reason={'You\'ve been Slendered!!!'} />}
-        {light > 0
-          ? <ReactAudioPlayer
-            src='/audio/music-ambient.mp3'
-            autoPlay={true}
-            loop={true}
-          // volume={1}
-          />
-          : <ReactAudioPlayer
-            src='/audio/sfx/slenderduck.mp3'
-            autoPlay={true}
-            loop={true}
-          // volume={1}
-          />
-        }
-        <GameTriggers />
-      </div>
-      <div>
-        <h2>{message}</h2>
-      </div>
-    </>
+    <div className='Relative GameView'>
+      <GameControls />
+      {gameState == GameState.Playing && <GameCanvas guiEnabled={true} />}
+      {gameState == GameState.Verifying && <GameProof />}
+      {gameState == GameState.NoHealth && <GameOver reason={'You died!!!'} />}
+      {gameState == GameState.Slendered && <GameOver reason={'You\'ve been Slendered!!!'} />}
+      {light > 0
+        ? <ReactAudioPlayer
+          src='/audio/music-ambient.mp3'
+          autoPlay={true}
+          loop={true}
+        // volume={1}
+        />
+        : <ReactAudioPlayer
+          src='/audio/sfx/slenderduck.mp3'
+          autoPlay={true}
+          loop={true}
+        // volume={1}
+        />
+      }
+      <GameTriggers />
+    </div>
   )
 }
 
@@ -100,7 +95,7 @@ const _isAround = (tilemap, tile, type) => {
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { gameState, playerPosition, light, health, stepCount, dispatch } = useGameplayContext()
+  const { gameState, isPlaying, playerPosition, light, health, stepCount, dispatch } = useGameplayContext()
 
   useEffect(() => {
     if (!playerPosition || gameState != GameState.Playing) return
@@ -123,14 +118,14 @@ const GameTriggers = () => {
       if (_isAround(tilemap, tile, TileType.Monster)) {
         dispatch({
           type: GameplayActions.DAMAGE,
-          payload: 10,
+          payload: 5,
         })
       }
     }
   }, [gameState, playerPosition])
 
   useEffect(() => {
-    if (gameState == GameState.Playing && light == 0) {
+    if (isPlaying && light == 0) {
       dispatch({
         type: GameplayActions.SET_MESSAGE,
         payload: 'No light! Beware the Slender Duck!',
@@ -139,7 +134,7 @@ const GameTriggers = () => {
   }, [gameState, light])
 
   useEffect(() => {
-    if (gameState == GameState.Playing && health == 0) {
+    if (isPlaying && health == 0) {
       dispatch({
         type: GameplayActions.SET_STATE,
         payload: GameState.NoHealth,
@@ -148,7 +143,7 @@ const GameTriggers = () => {
   }, [gameState, health])
 
   useEffect(() => {
-    if (gameState == GameState.Playing && stepCount == 64) {
+    if (isPlaying && stepCount == 64) {
       dispatch({
         type: GameplayActions.SET_STATE,
         payload: GameState.Slendered,
