@@ -84,27 +84,25 @@ const defaultParams = {
   palette: PALETTE,
   lightness: false,
 };
-let params = defaultParams;
+let params = { ...defaultParams };
 
 
-export function resetGameParams(moreParams: any = {}) {
-  // console.log(`resetGameParams() + `, moreParams)
-  params = {
-    ...defaultParams,
-    ...moreParams,
-  }
+export function resetGameParams(newParams: any = {}) {
+  // console.log(`resetGameParams() + `, newParams)
+  Object.keys(defaultParams).forEach(key => {
+    params[key] = newParams[key] ?? defaultParams[key]
+  })
+  _gui?.controllersRecursive().forEach(c => c.updateDisplay())
   paramsUpdated()
-  // _gui?.controllersRecursive().forEach(c => c.updateDisplay())
 }
 
-export function setGameParams(moreParams: any) {
-  // console.log(`setGameParams()`, moreParams)
-  params = {
-    ...params,
-    ...moreParams,
-  }
+export function setGameParams(newParams: any) {
+  // console.log(`setGameParams()`, newParams)
+  Object.keys(newParams).forEach(key => {
+    params[key] = newParams[key]
+  })
+  _gui?.controllersRecursive().forEach(c => c.updateDisplay())
   paramsUpdated()
-  // _gui?.controllersRecursive().forEach(c => c.updateDisplay())
 }
 
 

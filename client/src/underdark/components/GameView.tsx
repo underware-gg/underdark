@@ -54,7 +54,7 @@ const GameView = ({
   return (
     <div className='Relative GameView'>
       <GameControls />
-      {gameState == GameState.Playing && <GameCanvas guiEnabled={true} />}
+      <GameCanvas guiEnabled={true} />
       {gameState == GameState.Verifying && <GameProof />}
       {gameState == GameState.NoHealth && <GameOver reason={'You died!!!'} />}
       {gameState == GameState.Slendered && <GameOver reason={'You\'ve been Slendered!!!'} />}
