@@ -150,10 +150,10 @@ function DirectionButton({
   if (exists) {
     return <button className='DirectionButton Unlocked' onClick={() => _open()}>{_label}</button>
   }
-  if (dir != Dir.West) {
-    return <button className='DirectionButton Locked' disabled={!levelIsCompleted} onClick={() => _mint()}>{_label}</button>
+  if (dir == Dir.West) {
+    return <button className='DirectionButton Locked' disabled={true}></button>
   }
-  return <button className='DirectionButton Locked' disabled={true}></button>
+  return <button className={`DirectionButton ${levelIsCompleted ? 'Unlocked' : 'Locked'}`} disabled={!levelIsCompleted} onClick={() => _mint()}>{_label}</button>
 }
 
 

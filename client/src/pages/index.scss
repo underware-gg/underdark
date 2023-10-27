@@ -214,6 +214,8 @@ canvas {
   width: $ui-column;
   max-width: $ui-column;
   height: 100%;
+  vertical-align: bottom;
+  margin: auto;
 }
 
 .ButtonUI{
