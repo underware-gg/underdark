@@ -156,7 +156,7 @@ export const useScoreByKey = (key: Entity) => {
     location_id: score?.location_id ?? 0n,
     player: score?.player ?? 0n,
     moves: score?.moves ?? 0,
-    levelClear: (score?.moves > 0),
+    levelIsCompleted: (score?.moves > 0),
   }
 }
 

@@ -4,6 +4,7 @@ import { useChamber, useChamberMap } from '../../hooks/useChamber'
 import { MapChamber, MapView, compassToMapViewPos } from './MapView'
 import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../../utils/underdark'
 import { Col, Grid, Row } from '../Grid'
+import LevelSelector from './LevelSelector'
 
 
 //-----------------------------
@@ -71,27 +72,11 @@ function MapPanel() {
       {loaders.map((coord: bigint) => {
         return <MapLoader key={`loader_${coord.toString()}`} coord={coord} addChamber={_addChamber} />
       })}
-      <div className='MapPanel'>
+      <div className='MapView'>
         <MapView targetChamber={targetChamber} chambers={Object.values(chambers)} tileSize={tileSize} />
       </div>
 
-      <Grid className='RowUI'>
-        <Row stretched>
-          <Col width={4} className='UI'>
-            <button className='ButtonUI'>{'<'}</button>
-          </Col>
-          <Col width={8} className='Padded'>
-            <h3>
-              Game #{gameId}
-              <br />
-              Level {yonder}
-            </h3>
-          </Col>
-          <Col width={4} className='UI'>
-            <button className='ButtonUI'>{'>'}</button>
-          </Col>
-        </Row>
-      </Grid>
+      <LevelSelector />
 
       {/* <div className='RowUI AlignBottom'>
         {[2, 3, 4, 5, 6].map((value: number) => {

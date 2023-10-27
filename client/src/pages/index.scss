@@ -151,8 +151,10 @@ canvas {
 
 .DirectionButton {
   /* margin: 0.25em; */
-  margin: 0.1em;
-  padding: 0.25em 1.0em;
+  font-size: 24px;
+  text-align: center;
+  border: 0;
+  padding: 0;
 }
 
 .SmallButton {
@@ -197,7 +199,7 @@ canvas {
   border: 0;
 }
 
-.MapPanel {
+.MapView {
   width: $ui-height;
   height: calc($ui-height - $ui-column);
   display: inline-block;
