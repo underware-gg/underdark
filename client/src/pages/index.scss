@@ -3,12 +3,18 @@ $font-family: Menlo, monospace, Inter, system-ui, Avenir, Helvetica, Arial, sans
 $important: #fa0;
 // $ui-bg: #000a;
 $ui-color: #ddd;
-$ui-border: 5px ridge $ui-color;
+// $ui-border: 5px ridge $ui-color;
+$ui-border: 0.5px solid #444;
 
 $game-width: 960px;
 $game-height: 480px;
 $ui-height: 240px;
+$ui-column: 60px;
 
+html {
+	overflow-y: scroll;
+	scroll-behavior: smooth;
+}
 
 html, body {
   font-family: $font-family;
@@ -32,6 +38,8 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  transition: border-color 0.25s;
+  overflow: hidden;
 }
 
 #root {
@@ -53,6 +61,10 @@ a:hover {
 h1 {
   font-size: 2.2em;
   line-height: 0.5em;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: $font-family;
 }
 
 hr {
@@ -127,14 +139,10 @@ canvas {
 }
 
 .FillParent {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   min-width: 100%;
   min-height: 100%;
-  background-color: #111;
   vertical-align: middle;
   align-items: center;
 }
@@ -162,7 +170,7 @@ canvas {
 .GameView {
   width: $game-width;
   height: $game-height;
-  border: 0.5px solid #444;
+  outline: 0.5px solid #444;
 }
 
 .GameCanvas {
@@ -172,26 +180,42 @@ canvas {
   background-color: #0000;
 }
 
-.UI,
+.UI {
+  outline: $ui-border;
+  vertical-align: middle;
+  margin: auto;
+}
+
 .GameUI {
+  @extend .UI;
   display: block;
   padding: 0;
   margin: 0;
-  border: $ui-border;
-}
-
-.GameUI {
   width: $game-width;
   height: $ui-height;
-  border: 0.5px solid #444;
-  /* border: 0; */
+  outline: 0.5px solid #444;
+  border: 0;
 }
 
-
-.MiniMap{
+.MiniMap {
   width: $ui-height;
-  height: $ui-height;
+  height: calc($ui-height - $ui-column);
   display: inline-block;
+}
+
+.RowUI{
+  width: 100%;
+  height: $ui-column;
+  max-height: $ui-column;
+}
+.ColUI{
+  width: $ui-column;
+  max-width: $ui-column;
+  height: 100%;
+}
+
+.ButtonUI{
+  font-size: 18px;
 }
 
 

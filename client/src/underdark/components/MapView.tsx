@@ -34,13 +34,15 @@ interface MapViewProps {
   targetChamber: MapChamber
   chambers: MapChamber[]
   tileSize?: number
-  viewSize?: number
+  viewWidth?: number
+  viewHeight?: number
 }
 export function MapView({
   targetChamber,
   chambers,
   tileSize = 4,
-  viewSize = 200,
+  viewWidth = 240,
+  viewHeight = 180,
 }: MapViewProps) {
 
   if (!targetChamber?.gameTilemap) {
@@ -53,14 +55,15 @@ export function MapView({
   const strokeWidth = 1.0 / tileSize
 
   // viewbox unit is a <Map>
-  const viewboxSize = viewSize / chamberSize
+  const viewboxWidth = viewWidth / chamberSize
+  const viewboxHeight = viewHeight / chamberSize
   const viewboxOrigin = {
-    x: targetChamber.mapPos.x - ((viewboxSize - 1) / 2),
-    y: targetChamber.mapPos.y - ((viewboxSize - 1) / 2),
+    x: targetChamber.mapPos.x - ((viewboxWidth - 1) / 2),
+    y: targetChamber.mapPos.y - ((viewboxHeight - 1) / 2),
   }
 
   return (
-    <svg width={viewSize} height={viewSize} viewBox={`${viewboxOrigin.x} ${viewboxOrigin.y} ${viewboxSize} ${viewboxSize}`}>
+    <svg width={'100%'} height={'100%'} viewBox={`${viewboxOrigin.x} ${viewboxOrigin.y} ${viewboxWidth} ${viewboxHeight}`}>
       <style>{`svg{background-color:${MapColors.BG1}}`}</style>
       {chambers.map((chamber: MapChamber) => {
         const isTarget = (chamber.coord == targetChamber.coord && chamber.exists)

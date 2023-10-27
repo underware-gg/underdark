@@ -55,6 +55,7 @@ let _eyeZ: number;
 let _palettes = [];
 let _gameTilemap: GameTilemap | null = null
 let _stepCounter = 0
+let _animSecs = 200;
 
 let _animationRequest = null
 let _renderer: THREE.WebGLRenderer;
@@ -327,7 +328,7 @@ function setupScene() {
 export function movePlayer(position: Position) {
   const x = (position.tile % 16) * SIZE
   const y = Math.floor(position.tile / 16) * SIZE
-  new TWEEN.Tween(_cameraRig.position).to({ x, y }, 100).start()
+  new TWEEN.Tween(_cameraRig.position).to({ x, y }, _animSecs).start()
   // _cameraRig.position.set(x, y, 0);
 
   // Rotate player
@@ -341,7 +342,7 @@ export function movePlayer(position: Position) {
           : 0
   if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
   if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
-  new TWEEN.Tween(_cameraRig.rotation).to({ x: rotX, y: rotY, z: rotZ }, 100).start().onComplete(() => {
+  new TWEEN.Tween(_cameraRig.rotation).to({ x: rotX, y: rotY, z: rotZ }, _animSecs).start().onComplete(() => {
     if (_cameraRig.rotation.z < 0) _cameraRig.rotation.z += TWO_PI;
     if (_cameraRig.rotation.z > TWO_PI) _cameraRig.rotation.z -= TWO_PI;
   })

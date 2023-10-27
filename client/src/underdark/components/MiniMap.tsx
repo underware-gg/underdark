@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { useChamberMap } from '../hooks/useChamber'
+import { useChamber, useChamberMap } from '../hooks/useChamber'
 import { MapChamber, MapView, compassToMapViewPos } from './MapView'
 import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../utils/underdark'
+import { Col, Grid, Row } from './Grid'
 
 
 //-----------------------------
@@ -11,6 +12,7 @@ import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../utils/underdar
 function MiniMap() {
   const [tileSize, seTtileSize] = useState(5)
   const { gameId, chamberId: currentChamberId } = useUnderdarkContext()
+  const { yonder } = useChamber(currentChamberId)
 
   useEffect(() => {
     setLoaders([])
@@ -65,19 +67,37 @@ function MiniMap() {
   }, [currentChamberId, chambers])
 
   return (
-    <div className='MiniMap'>
+    <div className='FillParent'>
       {loaders.map((coord: bigint) => {
         return <MapLoader key={`loader_${coord.toString()}`} coord={coord} addChamber={_addChamber} />
       })}
-      <div className='MiniMap NoBorder'>
+      <div className='MiniMap'>
         <MapView targetChamber={targetChamber} chambers={Object.values(chambers)} tileSize={tileSize} />
       </div>
 
-      <div className='AlignBottom'>
-        {[2, 3, 4, 5].map((value: number) => {
+      <Grid className='RowUI'>
+        <Row stretched>
+          <Col width={4} className='UI'>
+            <button className='ButtonUI'>{'<'}</button>
+          </Col>
+          <Col width={8} className='Padded'>
+            <h3>
+              Game #{gameId}
+              <br />
+              Level {yonder}
+            </h3>
+          </Col>
+          <Col width={4} className='UI'>
+            <button className='ButtonUI'>{'>'}</button>
+          </Col>
+        </Row>
+      </Grid>
+
+      {/* <div className='RowUI AlignBottom'>
+        {[2, 3, 4, 5, 6].map((value: number) => {
           return <button key={`tileSize_${value}`} className={`SmallButton ${value == tileSize ? 'Unlocked' : 'Locked'}`} onClick={() => seTtileSize(value)}>{value}</button>
         })}
-      </div>
+      </div> */}
     </div>
   )
 }

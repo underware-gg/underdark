@@ -194,7 +194,7 @@ function GameUI() {
   // }, [chamberId])
 
   return (
-    <div className='GameUI AlignTop'>
+    <div className='AlignTop'>
       <h2>
         Game #{gameId.toString()}
         {' '}
@@ -212,19 +212,17 @@ function GameUI() {
       </>}
 
       {chamberExists && <>
-        <p>
-          <b>{coordToSlug(chamberId, yonder)}</b>
-          <br />
+          {/* <b>{coordToSlug(chamberId, yonder)}</b>
+          <br /> */}
           {bigintToHex(chamberId)}
-        </p>
-        
-        <p>Level: <b>{yonder}</b></p>
-
-        <p>Light: <b>{light}%</b></p>
-
-        <p>Health: <b>{health}%</b></p>
-
-        <p>steps: <b>{stepCount}</b></p>
+        <br />
+        Level: <b>{yonder}</b>
+        <br />
+        Light: <b>{light}%</b>
+        <br />
+        Health: <b>{health}%</b>
+        <br />
+        steps: <b>{stepCount}</b>
 
         {/* <p><b>{message}</b></p> */}
 
