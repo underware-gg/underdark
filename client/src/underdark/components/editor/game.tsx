@@ -320,8 +320,8 @@ function setupScene() {
 
   // loadModel('MONSTER', _scene, 0, 0)
   // loadModel('SLENDER_DUCK', _scene, 0, 0)
-  loadModel('DARK_TAR', _scene, 0, 0)
-  // loadModel('EXIT', _scene, 0, 0)
+  // loadModel('DARK_TAR', _scene, 0, 0)
+  loadModel('DOOR', _scene, 0, 0)
   // loadModel('STAIRS', _scene, 0, 0)
   // loadModel('CHEST', _scene, 0, 0)
 

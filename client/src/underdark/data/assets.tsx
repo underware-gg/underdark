@@ -25,13 +25,13 @@ let MODELS_ASSETS = {
     scale: 0.005,
     rotation: [HALF_PI, 0, 0],
   },
-  EXIT: {
+  DOOR: {
     path: '/models/door.fbx',
     scale: 0.005,
     rotation: [HALF_PI, HALF_PI, 0],
   },
   STAIRS: {
-    path: '/models/stairs.fbx',
+    path: '/models/stairs.ok.fbx',
     scale: 0.005,
     rotation: [HALF_PI, HALF_PI, 0],
   },

@@ -313,12 +313,13 @@ function setupScene() {
   _material = new THREE.MeshBasicMaterial({ color: 'blue' });
   _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
 
-  const floor_geometry = new THREE.PlaneGeometry(40 * SIZE, 40 * SIZE);
+  const floor_geometry = new THREE.PlaneGeometry(16 * SIZE, 16 * SIZE);
+  const ceiling_geometry = new THREE.PlaneGeometry(20 * SIZE, 20 * SIZE);
   const floor_material = new THREE.MeshBasicMaterial({ color: 'cyan' });
   const floor = new THREE.Mesh(floor_geometry, floor_material);
-  const ceiling = new THREE.Mesh(floor_geometry, floor_material);
-  floor.position.set(-SIZE * 2, -SIZE * 2, 0);
-  ceiling.position.set(-SIZE * 2, -SIZE * 2, SIZE);
+  const ceiling = new THREE.Mesh(ceiling_geometry, floor_material);
+  floor.position.set(7.5 * SIZE, 7.5 * SIZE, 0);
+  ceiling.position.set(8 * SIZE, 8 * SIZE, SIZE);
   ceiling.scale.set(1, 1, -1);
 
   _scene.add(floor);
@@ -379,8 +380,9 @@ export function setupMap(gameTilemap: GameTilemap|null) {
     let z = 0
     let mesh = null
     if (tileType == TileType.Entry) {
-    } else if (tileType == TileType.Exit) {
       mesh = loadModel('DOOR')
+    } else if (tileType == TileType.Exit) {
+      mesh = loadModel('STAIRS')
     } else if (tileType == TileType.LockedExit) {
     } else if (tileType == TileType.Monster) {
       mesh = loadModel('MONSTER')
