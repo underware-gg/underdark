@@ -1,10 +1,10 @@
 import { useGameplayContext } from '../../hooks/GameplayContext'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { useChamberMap } from '../../hooks/useChamber'
+import { useChamber, useChamberMap } from '../../hooks/useChamber'
 
 
 function GameInfo() {
-  const { isPlaying, stepCount, message } = useGameplayContext()
+  const { message } = useGameplayContext()
 
   return (
     <div className='GameInfo AlignCenter AlignMiddle'>
@@ -28,15 +28,21 @@ function GameInfo() {
 
 const RestartButton = () => {
   const { chamberId } = useUnderdarkContext()
+  const { chamberExists } = useChamber(chamberId)
   const { gameTilemap } = useChamberMap(chamberId)
-  const { dispatchReset } = useGameplayContext()
 
-  const _restart = () => {
-    dispatchReset(gameTilemap.playerStart)
+  const { isLoaded, dispatchReset } = useGameplayContext()
+
+  const _startGame = () => {
+    dispatchReset(gameTilemap.playerStart, true)
   }
 
+  if (!chamberExists) return <></>
+
+  const _label = isLoaded ? 'START' : 'RESTART'
+
   return (
-    <h3><button onClick={() => _restart()}>RESTART</button></h3>
+    <h3><button onClick={() => _startGame()}>{_label}</button></h3>
   )
 }
 

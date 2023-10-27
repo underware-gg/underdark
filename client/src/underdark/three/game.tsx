@@ -349,7 +349,7 @@ export function movePlayer(position: Position) {
 
 }
 
-export function setupMap(gameTilemap: GameTilemap|null) {
+export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
 
   _gameTilemap = gameTilemap ?? {
     gridSize: 20,
@@ -377,24 +377,26 @@ export function setupMap(gameTilemap: GameTilemap|null) {
     const y = (Math.floor(i / gridSize) + gridOrigin.y) * SIZE
     let z = 0
     let mesh = null
-    if (tileType == TileType.Entry) {
-      mesh = loadModel('DOOR')
-    } else if (tileType == TileType.Exit) {
-      mesh = loadModel('STAIRS')
-    } else if (tileType == TileType.LockedExit) {
-    } else if (tileType == TileType.Monster) {
-      mesh = loadModel('MONSTER')
-      _randomRotate(mesh)
-      // } else if (tileType == TileType.SlenderDuck) {
-      //   mesh = new THREE.Mesh(_slender_geometry, _material);
-      //   mesh.rotateX(HALF_PI)
-      //   loadModel('SLENDER_DUCK')
-    } else if (tileType == TileType.DarkTar) {
-      mesh = loadModel('DARK_TAR')
-      _randomRotate(mesh)
-    } else if (tileType == TileType.Void) {
+    if (tileType == TileType.Void) {
       mesh = new THREE.Mesh(_tile_geometry, _material)
       z = SIZE * 0.5
+    } else if (isPlaying) {
+      if (tileType == TileType.Entry) {
+        mesh = loadModel('DOOR')
+      } else if (tileType == TileType.Exit) {
+        mesh = loadModel('STAIRS')
+      } else if (tileType == TileType.LockedExit) {
+      } else if (tileType == TileType.Monster) {
+        mesh = loadModel('MONSTER')
+        _randomRotate(mesh)
+        // } else if (tileType == TileType.SlenderDuck) {
+        //   mesh = new THREE.Mesh(_slender_geometry, _material);
+        //   mesh.rotateX(HALF_PI)
+        //   loadModel('SLENDER_DUCK')
+      } else if (tileType == TileType.DarkTar) {
+        mesh = loadModel('DARK_TAR')
+        _randomRotate(mesh)
+      }
     }
     if (mesh) {
       mesh.position.set(x, y, z)

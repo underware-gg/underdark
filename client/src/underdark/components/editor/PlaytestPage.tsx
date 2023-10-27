@@ -42,7 +42,7 @@ const GameView = () => {
 
   useEffect(() => {
     if (gameTilemap) {
-      dispatchReset(gameTilemap.playerStart)
+      dispatchReset(gameTilemap.playerStart, true)
     }
   }, [gameTilemap])
 

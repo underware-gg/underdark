@@ -18,13 +18,13 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { gameImpl, gameState, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
+  const { gameImpl, gameState, isLoaded, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
 
   //
   // Start game!
   useEffect(() => {
     if (gameTilemap) {
-      dispatchReset(gameTilemap.playerStart)
+      dispatchReset(gameTilemap.playerStart, false)
     }
   }, [gameTilemap])
 
@@ -41,23 +41,23 @@ const GameView = ({
 
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isLoaded || isPlaying) {
       gameImpl?.movePlayer(playerPosition)
     }
-  }, [gameImpl, gameState, playerPosition])
+  }, [gameImpl, playerPosition, isLoaded, isPlaying])
 
 
   useEffect(() => {
-    gameImpl?.setupMap(gameTilemap ?? null)
-  }, [gameImpl, gameTilemap])
+    if (gameImpl && (isLoaded || isPlaying)) {
+      gameImpl.setupMap(gameTilemap ?? null, isPlaying)
+    }
+  }, [gameImpl, gameTilemap, isLoaded, isPlaying])
 
   return (
     <div className='Relative GameView'>
       <GameControls />
       <GameCanvas guiEnabled={true} />
       {gameState == GameState.Verifying && <GameProof />}
-      {gameState == GameState.NoHealth && <GameOver reason={'You died!!!'} />}
-      {gameState == GameState.Slendered && <GameOver reason={'You\'ve been Slendered!!!'} />}
       {light > 0
         ? <ReactAudioPlayer
           src='/audio/music-ambient.mp3'
@@ -187,30 +187,6 @@ const GameProof = () => {
       <h2>You found the exit!</h2>
       <br />
       <h2>validating moves on-chain...</h2>
-    </div>
-  )
-}
-
-
-
-const GameOver = ({
-  reason,
-}) => {
-  const { chamberId } = useUnderdarkContext()
-  const { gameTilemap } = useChamberMap(chamberId)
-  const { dispatchReset } = useGameplayContext()
-
-  const _restart = () => {
-    dispatchReset(gameTilemap.playerStart)
-  }
-
-  return (
-    <div className='FillParent'>
-      <br />
-      <br />
-      <h2>{reason}</h2>
-      <br />
-      <h2><button onClick={() => _restart()}>RESTART</button></h2>
     </div>
   )
 }

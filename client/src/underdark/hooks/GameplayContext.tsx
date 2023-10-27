@@ -20,7 +20,7 @@ type Movement = {
 }
 
 export enum GameState {
-  Stoped = 0,
+  Loaded = 0,
   Playing = 1,
   Verifying = 10,
   Won = 11,
@@ -36,7 +36,7 @@ type ThreeJsGame = any;
 //
 export const initialState = {
   gameImpl: null,
-  gameState: GameState.Stoped,
+  gameState: GameState.Loaded,
   playerPosition: null,
   light: 0,
   health: 0,
@@ -110,7 +110,7 @@ const GameplayProvider = ({
       }
       case GameplayActions.RESET: {
         const position = action.payload as Position
-        newState.gameState = GameState.Playing
+        newState.gameState = GameState.Loaded
         newState.playerPosition = position
         newState.light = 100
         newState.health = 100
@@ -210,17 +210,21 @@ export const useGameplayContext = () => {
     }
   }
 
-  const dispatchReset = (playerStart: Position | null) => {
-    dispatch({ type: GameplayActions.RESET, payload: playerStart })
-    dispatchMessage(playerStart ? MESSAGES.GAME_START : null)
-  }
-
   const dispatchGameState = (newState: GameState) => {
     dispatch({ type: GameplayActions.SET_STATE, payload: newState })
-    if (newState == GameState.NoHealth) {
+    if (newState == GameState.Playing) {
+      dispatchMessage(MESSAGES.GAME_START)
+    } else if (newState == GameState.NoHealth) {
       dispatchMessage(MESSAGES.NO_HEALTH)
     } else if (newState == GameState.Slendered) {
       dispatchMessage(MESSAGES.SLENDERED)
+    }
+  }
+
+  const dispatchReset = (playerStart: Position | null, startGame: boolean) => {
+    dispatch({ type: GameplayActions.RESET, payload: playerStart })
+    if (startGame) {
+      dispatchGameState(GameState.Playing)
     }
   }
 
@@ -251,6 +255,7 @@ export const useGameplayContext = () => {
   return {
     state,
     ...state,
+    isLoaded: (state.gameState == GameState.Loaded),
     isPlaying: (state.gameState == GameState.Playing),
     stepCount: state.steps.length, // 0..64
     // GameplayActions,
