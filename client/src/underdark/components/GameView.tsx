@@ -18,16 +18,13 @@ const GameView = ({
 
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { gameImpl, gameState, isPlaying, light, playerPosition, dispatch } = useGameplayContext()
+  const { gameImpl, gameState, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
 
   //
   // Start game!
   useEffect(() => {
     if (gameTilemap) {
-      dispatch({
-        type: GameplayActions.RESET,
-        payload: gameTilemap.playerStart,
-      })
+      dispatchReset(gameTilemap.playerStart)
     }
   }, [gameTilemap])
 
@@ -95,7 +92,10 @@ const _isAround = (tilemap, tile, type) => {
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { gameState, isPlaying, playerPosition, light, health, stepCount, dispatch } = useGameplayContext()
+  const {
+    gameState, isPlaying, playerPosition, light, health, stepCount,
+    dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar,
+  } = useGameplayContext()
 
   useEffect(() => {
     if (!playerPosition || gameState != GameState.Playing) return
@@ -104,50 +104,34 @@ const GameTriggers = () => {
     //
     // Reached door
     if (tilemap[tile] == TileType.Exit && facing == Dir.East) {
-      dispatch({
-        type: GameplayActions.SET_STATE,
-        payload: GameState.Verifying,
-      })
+      dispatchGameState(GameState.Verifying)
     } else {
       if (tilemap[tile] == TileType.DarkTar) {
-        dispatch({
-          type: GameplayActions.REFILL_LIGHT,
-          payload: 100,
-        })
+        dispatchDarkTar(100)
+      } else if (tilemap[tile] == TileType.Monster) {
+        dispatchHitDamage()
       }
-      if (_isAround(tilemap, tile, TileType.Monster)) {
-        dispatch({
-          type: GameplayActions.DAMAGE,
-          payload: 5,
-        })
+      else if (_isAround(tilemap, tile, TileType.Monster)) {
+        dispatchNearDamage()
       }
     }
   }, [gameState, playerPosition])
 
   useEffect(() => {
     if (isPlaying && light == 0) {
-      dispatch({
-        type: GameplayActions.SET_MESSAGE,
-        payload: 'No light! Beware the Slender Duck!',
-      })
+      dispatchMessage('No light! Beware the Slender Duck!')
     }
   }, [gameState, light])
 
   useEffect(() => {
     if (isPlaying && health == 0) {
-      dispatch({
-        type: GameplayActions.SET_STATE,
-        payload: GameState.NoHealth,
-      })
+      dispatchGameState(GameState.NoHealth)
     }
   }, [gameState, health])
 
   useEffect(() => {
     if (isPlaying && stepCount == 64) {
-      dispatch({
-        type: GameplayActions.SET_STATE,
-        payload: GameState.Slendered,
-      })
+      dispatchGameState(GameState.Slendered)
     }
   }, [gameState, stepCount])
 
@@ -216,13 +200,10 @@ const GameOver = ({
 }) => {
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
-  const { dispatch } = useGameplayContext()
+  const { dispatchReset } = useGameplayContext()
 
   const _restart = () => {
-    dispatch({
-      type: GameplayActions.RESET,
-      payload: gameTilemap.playerStart,
-    })
+    dispatchReset(gameTilemap.playerStart)
   }
 
   return (
@@ -245,7 +226,7 @@ const GameOver = ({
 const GameControls = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { gameState, playerPosition, dispatch } = useGameplayContext()
+  const { gameState, playerPosition, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
 
   const directional = false
   useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight', 'd'])
@@ -255,33 +236,21 @@ const GameControls = () => {
 
   const _moveToDirection = (dir) => {
     if (gameState != GameState.Playing) return;
-    dispatch({
-      type: GameplayActions.MOVE_TO,
-      payload: { dir, tilemap },
-    })
-    dispatch({
-      type: GameplayActions.TURN_TO,
-      payload: dir,
-    })
+    dispatchMoveTo({ dir, tilemap })
+    dispatchTurnTo(dir)
   }
 
   const _move = (signal) => {
     if (gameState != GameState.Playing) return;
     const dir = signal < 0 ? FlippedDir[playerPosition.facing] : playerPosition.facing
-    dispatch({
-      type: GameplayActions.MOVE_TO,
-      payload: { dir, tilemap },
-    })
+    dispatchMoveTo({ dir, tilemap })
   }
 
   const _rotate = (signal) => {
     if (gameState != GameState.Playing) return;
     const dir = signal < 0 ? { [Dir.North]: Dir.West, [Dir.West]: Dir.South, [Dir.South]: Dir.East, [Dir.East]: Dir.North }[playerPosition.facing]
       : { [Dir.North]: Dir.East, [Dir.East]: Dir.South, [Dir.South]: Dir.West, [Dir.West]: Dir.North }[playerPosition.facing]
-    dispatch({
-      type: GameplayActions.TURN_TO,
-      payload: dir,
-    })
+    dispatchTurnTo(dir)
   }
 
   return <></>

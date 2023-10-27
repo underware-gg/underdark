@@ -149,6 +149,16 @@ canvas {
   align-items: center;
 }
 
+.CenteredContainer {
+	height: 100%;
+  min-height: 100%;
+	width: 100%;
+	display: flex !important;
+	justify-content: center;
+	align-items: center;
+	// text-align: center;
+}
+
 /* UNDERDARK  GENERIC */
 
 .DirectionButton {
@@ -247,6 +257,7 @@ canvas {
 
 .Message {
   width: 60%;
+  height: calc(($ui-height - $ui-row) / 2);
   margin: auto;
 }
 

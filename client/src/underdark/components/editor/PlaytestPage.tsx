@@ -38,14 +38,11 @@ const GameView = () => {
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
   useEffect(() => console.log(`gameTilemap:`, bigintToHex(_bitmap), gameTilemap), [gameTilemap])
 
-  const { gameImpl, playerPosition, dispatch, GameplayActions } = useGameplayContext()
+  const { gameImpl, playerPosition, dispatchReset, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
 
   useEffect(() => {
     if (gameTilemap) {
-      dispatch({
-        type: GameplayActions.RESET,
-        payload: gameTilemap.playerStart
-      })
+      dispatchReset(gameTilemap.playerStart)
     }
   }, [gameTilemap])
 
@@ -56,31 +53,19 @@ const GameView = () => {
   useKeyDown(() => (directional ? _moveToDirection(Dir.South) : _move(-1)), ['ArrowDown', 's'])
 
   const _moveToDirection = (dir) => {
-    dispatch({
-      type: GameplayActions.MOVE_TO,
-      payload: { dir, tilemap },
-    })
-    dispatch({
-      type: GameplayActions.TURN_TO,
-      payload: dir,
-    })
+    dispatchMoveTo({ dir, tilemap })
+    dispatchTurnTo(dir)
   }
 
   const _move = (signal) => {
     const dir = signal < 0 ? FlippedDir[playerPosition.facing] : playerPosition.facing
-    dispatch({
-      type: GameplayActions.MOVE_TO,
-      payload: { dir, tilemap },
-    })
+    dispatchMoveTo({ dir, tilemap })
   }
 
   const _rotate = (signal) => {
     const dir = signal < 0 ? { [Dir.North]: Dir.West, [Dir.West]: Dir.South, [Dir.South]: Dir.East, [Dir.East]: Dir.North }[playerPosition.facing]
       : { [Dir.North]: Dir.East, [Dir.East]: Dir.South, [Dir.South]: Dir.West, [Dir.West]: Dir.North }[playerPosition.facing]
-    dispatch({
-      type: GameplayActions.TURN_TO,
-      payload: dir,
-    })
+    dispatchTurnTo(dir)
   }
 
   // level selector

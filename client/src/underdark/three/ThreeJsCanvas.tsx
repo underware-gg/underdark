@@ -8,7 +8,7 @@ export const ThreeJsCanvas = ({
   guiEnabled = false,
   gameImpl,
 }) => {
-  const { dispatch, GameplayActions } = useGameplayContext()
+  const { dispatchGameImpl } = useGameplayContext()
   const [isLoading, setIsLoading] = useState(false)
   const [isRunning, setIsRunning] = useState(false)
   const canvasRef = useRef()
@@ -22,10 +22,7 @@ export const ThreeJsCanvas = ({
       // game.resetGameParams(gameParams)
       setIsLoading(false)
       setIsRunning(true)
-      dispatch({
-        type: GameplayActions.SET_GAME_IMPL,
-        payload: gameImpl,
-      })
+      dispatchGameImpl(gameImpl)
       //@ts-ignore
       canvasRef.current.focus()
     }
@@ -37,8 +34,9 @@ export const ThreeJsCanvas = ({
 
     return () => {
       _mounted = false
-      if (isRunning) {
+      if (isRunning && gameImpl) {
         gameImpl.dispose()
+        dispatchGameImpl(null)
       }
     }
   }, [canvasRef.current])

@@ -1,5 +1,7 @@
 import React, { ReactNode, createContext, useReducer, useContext } from 'react'
 import { Dir, Position, TileType } from '../utils/underdark'
+import { MESSAGES } from '../data/messages'
+import { clamp } from 'three/src/math/MathUtils'
 // import { ThreeJsGame } from '../components/GameCanvas'
 
 //
@@ -113,17 +115,18 @@ const GameplayProvider = ({
         newState.light = 100
         newState.health = 100
         newState.steps = []
-        console.log(`>>> GAME START!`)
+        newState.message = ''
+        console.log(`>>> GAME RESET!`)
         break
       }
       case GameplayActions.REFILL_LIGHT: {
-        newState.light = 100
-        newState.message = 'Dark Tar refills your light!'
+        const amount = action.payload as number
+        newState.light = clamp(newState.light + amount, 0, 100)
         break
       }
       case GameplayActions.DAMAGE: {
-        newState.health = Math.max(0, newState.health - 5)
-        newState.message = 'Monster damage!!!!'
+        const damage = action.payload as number
+        newState.health = clamp(newState.health - damage, 0, 100)
         break
       }
       case GameplayActions.SET_STATE: {
@@ -144,7 +147,7 @@ const GameplayProvider = ({
         const dy = (movement.dir == Dir.North && y > 0) ? -1 : (movement.dir == Dir.South && y < 15) ? 1 : 0
         const tile = currentTile + dx + (16 * dy)
         if (state.steps.length < 64 && tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
-          newState.light = Math.max(0, state.light - _lightDrop)
+          newState.light = clamp(state.light - _lightDrop, 0, 100)
           newState.playerPosition = {
             ...state.playerPosition,
             tile,
@@ -196,12 +199,71 @@ export { GameplayProvider, GameplayContext, GameplayActions }
 
 export const useGameplayContext = () => {
   const { state, dispatch } = useContext(GameplayContext)
+
+  const dispatchGameImpl = (gameImpl: ThreeJsGame) => {
+    dispatch({ type: GameplayActions.SET_GAME_IMPL, payload: gameImpl })
+  }
+
+  const dispatchMessage = (msg: string | null) => {
+    if (msg !== null) {
+      dispatch({ type: GameplayActions.SET_MESSAGE, payload: msg })
+    }
+  }
+
+  const dispatchReset = (playerStart: Position | null) => {
+    dispatch({ type: GameplayActions.RESET, payload: playerStart })
+    dispatchMessage(playerStart ? MESSAGES.GAME_START : null)
+  }
+
+  const dispatchGameState = (newState: GameState) => {
+    dispatch({ type: GameplayActions.SET_STATE, payload: newState })
+    if (newState == GameState.NoHealth) {
+      dispatchMessage(MESSAGES.NO_HEALTH)
+    } else if (newState == GameState.Slendered) {
+      dispatchMessage(MESSAGES.SLENDERED)
+    }
+  }
+
+  const dispatchMoveTo = (movement: Movement) => {
+    dispatch({ type: GameplayActions.MOVE_TO, payload: movement })
+    dispatchMessage('')
+  }
+
+  const dispatchTurnTo = (dir: Dir) => {
+    dispatch({ type: GameplayActions.TURN_TO, payload: dir })
+  }
+
+  const dispatchNearDamage = () => {
+    dispatch({ type: GameplayActions.DAMAGE, payload: 2 })
+    dispatchMessage(MESSAGES.MONSTER_DAMAGE)
+  }
+
+  const dispatchHitDamage = () => {
+    dispatch({ type: GameplayActions.DAMAGE, payload: 6 })
+    dispatchMessage(MESSAGES.MONSTER_HIT)
+  }
+
+  const dispatchDarkTar = (value: number = 100) => {
+    dispatch({ type: GameplayActions.REFILL_LIGHT, payload: value })
+    dispatchMessage(MESSAGES.DARK_TAR)
+  }
+
   return {
+    state,
     ...state,
-    isPlaying: state.gameState == GameState.Playing,
+    isPlaying: (state.gameState == GameState.Playing),
     stepCount: state.steps.length, // 0..64
-    dispatch,
-    GameplayActions,
+    // GameplayActions,
+    // dispatch,
+    dispatchGameImpl,
+    dispatchMessage,
+    dispatchReset,
+    dispatchGameState,
+    dispatchMoveTo,
+    dispatchTurnTo,
+    dispatchNearDamage,
+    dispatchHitDamage,
+    dispatchDarkTar,
   }
 }
 
