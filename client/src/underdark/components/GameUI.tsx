@@ -1,15 +1,15 @@
 import { Grid, Row, Col } from './Grid'
-import MapPanel from './ui/MapPanel'
-import GameInfo from './ui/GameInfo'
-import ScoreBoard from './ui/ScoreBoard'
 import { HealthBar, LightBar } from './ui/Bars'
+import MapPanel from './ui/MapPanel'
+import GamePanel from './ui/GamePanel'
+import GameInfo from './ui/GameInfo'
 
 function GameUI() {
   return (
-    <Grid className='GameInfo'>
+    <Grid className='GamePanel'>
       <Row>
         <Col width={4} className='NoPadding'>
-          <MapPanel />
+          <GamePanel />
         </Col>
         <Col width={1} className='UI'>
           <LightBar />
@@ -21,7 +21,7 @@ function GameUI() {
           <HealthBar />
         </Col>
         <Col width={4} className='UI'>
-          <ScoreBoard />
+          <MapPanel />
         </Col>
       </Row>
     </Grid>

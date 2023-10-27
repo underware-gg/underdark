@@ -27,15 +27,16 @@ function ScoreBoard({
     })
   }, [scoreKeys])
 
-  const score = usePlayerScore(chamberId, account);
+  const { scoreKey, moves } = usePlayerScore(chamberId, account);
 
   return (
     <div className=''>
       {/* <h2>Game #{gameId.toString()}</h2> */}
-      <h2>Scores</h2>
-      {scores.length > 0 ? scores : '-'}
-      <h2>Your</h2>
-      {score.moves > 0 ? score.moves : '-'}
+      <hr />
+      <b>Scores</b>
+      {scores.length > 0 ? scores : <li>'-'</li>}
+      <b>You</b>
+      {moves > 0 ? <Score scoreKey={scoreKey} /> : <li>'-'</li>}
     </div>
   )
 }

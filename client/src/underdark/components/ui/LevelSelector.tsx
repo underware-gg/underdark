@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { useChamber, useChamberMap, useChamberOffset, usePlayerScore } from '../../hooks/useChamber'
-import { MapChamber, MapView, compassToMapViewPos } from './MapView'
-import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../../utils/underdark'
+import { Dir } from '../../utils/underdark'
 import { Col, Grid, Row } from '../Grid'
 import { useDojoAccount, useDojoSystemCalls } from '../../../DojoContext'
 import { levels } from '../../data/levels'
@@ -85,8 +84,6 @@ function LevelSelector() {
         </Col>
         <Col width={8} className='Padded'>
           <h3>
-            Game #{gameId}
-            <br />
             Level {yonder}
           </h3>
         </Col>

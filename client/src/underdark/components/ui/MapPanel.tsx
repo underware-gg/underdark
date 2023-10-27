@@ -3,7 +3,6 @@ import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { useChamber, useChamberMap } from '../../hooks/useChamber'
 import { MapChamber, MapView, compassToMapViewPos } from './MapView'
 import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../../utils/underdark'
-import { Col, Grid, Row } from '../Grid'
 import LevelSelector from './LevelSelector'
 
 
@@ -11,7 +10,7 @@ import LevelSelector from './LevelSelector'
 // Entry Point
 //
 function MapPanel() {
-  const [tileSize, seTtileSize] = useState(5)
+  const [tileSize, seTtileSize] = useState(7)
   const { gameId, chamberId: currentChamberId } = useUnderdarkContext()
   const { yonder } = useChamber(currentChamberId)
 

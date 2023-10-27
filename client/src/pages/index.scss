@@ -203,6 +203,7 @@ canvas {
   width: $ui-height;
   height: calc($ui-height - $ui-column);
   display: inline-block;
+  background-color: #1b1b1b; //RealmsColors.BG
 }
 
 .RowUI{
