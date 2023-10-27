@@ -133,7 +133,7 @@ function DirectionButton({
 
 
 
-function MinterData() {
+function GameUI() {
   const { start_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
@@ -194,7 +194,7 @@ function MinterData() {
   // }, [chamberId])
 
   return (
-    <div className='MinterData AlignTop'>
+    <div className='GameUI AlignTop'>
       <h2>
         Game #{gameId.toString()}
         {' '}
@@ -251,4 +251,4 @@ function MinterData() {
   )
 }
 
-export default MinterData
+export default GameUI
