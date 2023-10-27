@@ -350,9 +350,14 @@ export function movePlayer(position: Position) {
 
 }
 
-export function setupMap(gameTilemap: GameTilemap) {
+export function setupMap(gameTilemap: GameTilemap|null) {
 
-  _gameTilemap = gameTilemap
+  _gameTilemap = gameTilemap ?? {
+    gridSize: 20,
+    gridOrigin: { x: 0, y: 0 },
+    playerStart: { tile: 135, facing: Dir.North },
+    tilemap: [],
+  }
 
   const gridSize = _gameTilemap.gridSize
   const gridOrigin = _gameTilemap.gridOrigin

@@ -48,9 +48,7 @@ const GameView = ({
 
 
   useEffect(() => {
-    if (gameTilemap) {
-      gameImpl?.setupMap(gameTilemap)
-    }
+    gameImpl?.setupMap(gameTilemap ?? null)
   }, [gameImpl, gameTilemap])
 
   return (
