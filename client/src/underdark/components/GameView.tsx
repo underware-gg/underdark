@@ -178,7 +178,7 @@ const GameProof = () => {
   // const { locationId, seed } = useChamberOffset(chamberId, dir)
   // const exists = useMemo(() => (seed > 0n), [seed, locationId])
   // const _mint = () => {
-  //   start_level(account, gameId, yonder + 1, 0n, dir, generator.name, generator.value)
+  //   generate_level(account, gameId, yonder + 1, 0n, dir, generator.name, generator.value)
   // }
   // const _open = () => {
   //   dispatch({

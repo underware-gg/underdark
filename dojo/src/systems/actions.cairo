@@ -5,7 +5,7 @@ use underdark::types::dir::{Dir, DIR, DirTrait};
 // define the interface
 #[starknet::interface]
 trait IActions<TContractState> {
-    fn start_level(self: @TContractState,
+    fn generate_level(self: @TContractState,
         game_id: u32,
         level_number: u32,
         from_coord: u128,
@@ -35,7 +35,7 @@ mod actions {
     // impl: implement functions specified in trait
     #[external(v0)]
     impl ActionsImpl of IActions<ContractState> {
-        fn start_level(self: @ContractState,
+        fn generate_level(self: @ContractState,
             game_id: u32,
             level_number: u32,
             from_coord: u128,

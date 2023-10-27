@@ -26,7 +26,7 @@ import ScoreBoard from './ScoreBoard'
 
 
 function GamePanel() {
-  const { start_level } = useDojoSystemCalls()
+  const { generate_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
   const { stepCount, message } = useGameplayContext()
@@ -64,8 +64,8 @@ function GamePanel() {
       // const coord = makeEntryChamberId()
       const _level = levels[Math.floor(Math.random() * levels.length)]
       // console.log(_level)
-      // start_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
-      start_level(account, gameId, 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
+      // generate_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
+      generate_level(account, gameId, 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
     }
   }
 

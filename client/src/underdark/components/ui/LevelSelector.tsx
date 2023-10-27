@@ -120,7 +120,7 @@ function DirectionButton({
   levelIndex,
 }: DirectionButtonProps) {
   const { dispatch, UnderdarkActions } = useUnderdarkContext()
-  const { start_level } = useDojoSystemCalls()
+  const { generate_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
   const { locationId, seed } = useChamberOffset(chamberId, dir)
@@ -132,8 +132,8 @@ function DirectionButton({
   // const levelAsset = useMemo(() => (levels[Math.floor(Math.random() * levels.length)]), [levelIndex])
 
   const _mint = () => {
-    // start_level(account, gameId, yonder + 1, 0n, dir, levelAsset.name, levelAsset.value)
-    start_level(account, gameId, yonder + 1, 0n, dir, levelAsset.generatorName, levelAsset.generatorValue)
+    // generate_level(account, gameId, yonder + 1, 0n, dir, levelAsset.name, levelAsset.value)
+    generate_level(account, gameId, yonder + 1, 0n, dir, levelAsset.generatorName, levelAsset.generatorValue)
   }
   const _open = () => {
     dispatch({

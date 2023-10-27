@@ -858,7 +858,7 @@
     {
       "name": "actions",
       "address": "0x281c6928d199cbf7235c2d6840402336021003ecbdaa4e2e6396c96142bcd31",
-      "class_hash": "0x1deaa6172d0d1cc9ed95e2ad8c232b572f1c91a9316572f127a79de3295ba7a",
+      "class_hash": "0x3f9a394a79fd539d6da80508c64c8a81a852eb3a21184c17bf40fb86e991830",
       "abi": [
         {
           "type": "impl",
@@ -894,7 +894,7 @@
           "items": [
             {
               "type": "function",
-              "name": "start_level",
+              "name": "generate_level",
               "inputs": [
                 {
                   "name": "game_id",

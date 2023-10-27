@@ -15,17 +15,17 @@ export function createSystemCalls(
   // { Chamber, Map }: ClientComponents,
 ) {
 
-  const start_level = async (signer: Account, gameId: number, levelNumber: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number) => {
+  const generate_level = async (signer: Account, gameId: number, levelNumber: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number) => {
     try {
       const args = [gameId, levelNumber, from_coord, from_dir, strToFelt252(generator_name), generator_value]
       console.log(args)
-      const tx = await execute(signer, 'actions', 'start_level', args)
-      console.log(`start_level tx:`, tx)
+      const tx = await execute(signer, 'actions', 'generate_level', args)
+      console.log(`generate_level tx:`, tx)
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
-      console.log(`start_level receipt:`, receipt)
+      console.log(`generate_level receipt:`, receipt)
       processReceipt(receipt, contractComponents);
     } catch (e) {
-      console.log(`start_level exception:`, e)
+      console.log(`generate_level exception:`, e)
     } finally {
     }
   }
@@ -48,7 +48,7 @@ export function createSystemCalls(
   }
 
   return {
-    start_level,
+    generate_level,
     finish_level,
   }
 }
