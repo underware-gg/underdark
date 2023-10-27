@@ -64,17 +64,19 @@ export function MapView({
   }
 
   return (
-    <svg width={'100%'} height={'100%'} viewBox={`${viewboxOrigin.x} ${viewboxOrigin.y} ${viewboxWidth} ${viewboxHeight}`}>
-      <style>{`svg{background-color:${MapColors.BG1}}`}</style>
-      {chambers.map((chamber: MapChamber) => {
-        const isTarget = (chamber.coord == targetChamber.coord && chamber.exists)
-        return (
-          <g key={`map_${chamber.coord.toString()}`} transform={`translate(${chamber.mapPos.x},${chamber.mapPos.y})`} >
-            <Map targetChamber={chamber.gameTilemap} strokeWidth={strokeWidth} isTarget={isTarget} />
-          </g>
-        )
-      })}
-    </svg>
+    <div className='MapView'>
+      <svg width={'100%'} height={'100%'} viewBox={`${viewboxOrigin.x} ${viewboxOrigin.y} ${viewboxWidth} ${viewboxHeight}`}>
+        <style>{`svg{background-color:${MapColors.BG1}}`}</style>
+        {chambers.map((chamber: MapChamber) => {
+          const isTarget = (chamber.coord == targetChamber.coord && chamber.exists)
+          return (
+            <g key={`map_${chamber.coord.toString()}`} transform={`translate(${chamber.mapPos.x},${chamber.mapPos.y})`} >
+              <Map targetChamber={chamber.gameTilemap} strokeWidth={strokeWidth} isTarget={isTarget} />
+            </g>
+          )
+        })}
+      </svg>
+    </div>
   )
 }
 
@@ -128,8 +130,8 @@ export function Map({
           width='1'
           height='1'
           fill={tileColor}
-          // stroke='#8881'
-          // strokeWidth={strokeWidth}
+        // stroke='#8881'
+        // strokeWidth={strokeWidth}
         />
       }
       if (tile) {

@@ -9,7 +9,9 @@ $ui-border: 0.5px solid #444;
 $game-width: 960px;
 $game-height: 480px;
 $ui-height: 240px;
+$ui-compass-width: 360px;
 $ui-column: 60px;
+$ui-row: 40px;
 
 html {
 	overflow-y: scroll;
@@ -147,7 +149,7 @@ canvas {
   align-items: center;
 }
 
-/* UNDERDARK */
+/* UNDERDARK  GENERIC */
 
 .DirectionButton {
   /* margin: 0.25em; */
@@ -169,6 +171,8 @@ canvas {
   background-color: #fbf6c0;
 }
 
+/* GAME CANVAS */
+
 .GameView {
   width: $game-width;
   height: $game-height;
@@ -181,6 +185,9 @@ canvas {
   display: block;
   background-color: #0000;
 }
+
+
+/* GAME UI */
 
 .UI {
   outline: $ui-border;
@@ -201,15 +208,27 @@ canvas {
 
 .MapView {
   width: $ui-height;
-  height: calc($ui-height - $ui-column);
-  display: inline-block;
+  height: calc($ui-height - $ui-row);
   background-color: #1b1b1b; //RealmsColors.BG
+  display: inline-block;
+}
+
+.GameInfo {
+  width: $ui-compass-width;
+  height: calc($ui-height - $ui-row);
+  background-color: #1b1b1b; //RealmsColors.BG
+  display: inline-block;
+}
+
+.CompassUI {
+  width: $ui-compass-width;
+  height: $ui-row;
 }
 
 .RowUI{
   width: 100%;
-  height: $ui-column;
-  max-height: $ui-column;
+  height: $ui-row;
+  max-height: $ui-row;
 }
 .ColUI{
   width: $ui-column;
@@ -224,6 +243,7 @@ canvas {
 }
 
 
+/* TO BE REMOVED... */
 
 .ProofView {
   position: absolute;

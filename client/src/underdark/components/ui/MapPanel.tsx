@@ -34,7 +34,7 @@ function MapPanel() {
         newLoaders.push(chamberId)
       }
     });
-    if(newLoaders.length > 0) {
+    if (newLoaders.length > 0) {
       setLoaders([...loaders, ...newLoaders])
     }
   }
@@ -67,15 +67,12 @@ function MapPanel() {
   }, [currentChamberId, chambers])
 
   return (
-    <div className='FillParent'>
+    <div className='MapView'>
       {loaders.map((coord: bigint) => {
         return <MapLoader key={`loader_${coord.toString()}`} coord={coord} addChamber={_addChamber} />
       })}
-      <div className='MapView'>
-        <MapView targetChamber={targetChamber} chambers={Object.values(chambers)} tileSize={tileSize} />
-      </div>
 
-      <LevelSelector />
+      <MapView targetChamber={targetChamber} chambers={Object.values(chambers)} tileSize={tileSize} />
 
       {/* <div className='RowUI AlignBottom'>
         {[2, 3, 4, 5, 6].map((value: number) => {

@@ -41,8 +41,11 @@ function NextGameButton({
     }
   }
 
+  const _label = enabled ? label : ''
+  const _className = enabled ? 'Unlocked' : 'Locked'
+
   return (
-    <button className={`DirectionButton ${enabled ? 'Unlocked' : 'Locked'}`} disabled={!enabled} onClick={() => _setSelectedGame()}>{enabled ? label : ''}</button>
+    <button className={`DirectionButton ${_className}`} disabled={!enabled} onClick={() => _setSelectedGame()}>{_label}</button>
   )
 }
 

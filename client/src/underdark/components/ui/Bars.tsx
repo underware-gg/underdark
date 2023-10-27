@@ -26,7 +26,19 @@ function HealthBar() {
   )
 }
 
+function CompassBar() {
+  const { playerPosition } = useGameplayContext()
+  return (
+    <div className='CompassUI'>
+      <h3>
+        compass: {playerPosition?.facing ?? '?'}
+      </h3>
+    </div>
+  )
+}
+
 export {
   LightBar,
   HealthBar,
+  CompassBar,
 }

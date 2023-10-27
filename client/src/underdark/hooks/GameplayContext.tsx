@@ -38,7 +38,6 @@ export const initialState = {
   playerPosition: null,
   light: 0,
   health: 0,
-  stepCount: 0,
   message: null,
   steps: [],
 }
@@ -49,7 +48,6 @@ type GameplayStateType = {
   playerPosition: Position
   light: number     // 0..100
   health: number    // 0..100
-  stepCount: number // 0..64
   message: string
   steps: Step[]
 }
@@ -114,7 +112,6 @@ const GameplayProvider = ({
         newState.playerPosition = position
         newState.light = 100
         newState.health = 100
-        newState.stepCount = 0
         newState.steps = []
         console.log(`>>> GAME START!`)
         break
@@ -146,7 +143,7 @@ const GameplayProvider = ({
         const dx = (movement.dir == Dir.West && x > 0) ? -1 : (movement.dir == Dir.East && x < 15) ? 1 : 0
         const dy = (movement.dir == Dir.North && y > 0) ? -1 : (movement.dir == Dir.South && y < 15) ? 1 : 0
         const tile = currentTile + dx + (16 * dy)
-        if (state.stepCount < 64 && tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
+        if (state.steps.length < 64 && tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
           newState.light = Math.max(0, state.light - _lightDrop)
           newState.playerPosition = {
             ...state.playerPosition,
@@ -164,8 +161,7 @@ const GameplayProvider = ({
             }
             newState.steps = [...state.steps, step]
           }
-          newState.stepCount = newState.steps.length
-          // console.log(`steps:`, newState.stepCount, newState.steps)
+          // console.log(`steps:`, newState.steps.length, newState.steps)
         }
         break
       }
@@ -202,6 +198,8 @@ export const useGameplayContext = () => {
   const { state, dispatch } = useContext(GameplayContext)
   return {
     ...state,
+    isPlaying: state.gameState == GameState.Playing,
+    stepCount: state.steps.length, // 0..64
     dispatch,
     GameplayActions,
   }

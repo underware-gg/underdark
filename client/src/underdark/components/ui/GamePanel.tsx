@@ -62,7 +62,7 @@ function GamePanel() {
   const _mintFirst = () => {
     if (canMintFirst && gameId) {
       // const coord = makeEntryChamberId()
-      const _level = levels[Math.floor(Math.random()*levels.length)]
+      const _level = levels[Math.floor(Math.random() * levels.length)]
       // console.log(_level)
       // start_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
       start_level(account, gameId, 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
@@ -70,35 +70,30 @@ function GamePanel() {
   }
 
   return (
-    <div className='AlignTop'>
-      <div className='MapView'>
-        <h2>
-          Game #{gameId.toString()}
-          {' '}
-          <span className='Anchor' onClick={() => _setSelectedGame(Math.floor(Math.random() * 10000) + 1)}>🔄</span>
-        </h2>
+    <div className='MapView'>
+      <h2>
+        Game #{gameId.toString()}
+        {' '}
+        <span className='Anchor' onClick={() => _setSelectedGame(Math.floor(Math.random() * 10000) + 1)}>🔄</span>
+      </h2>
 
-        {!chamberExists && <>
-          <div>
-            <button disabled={!canMintFirst} onClick={() => _mintFirst()}>Start New Game</button>
-          </div>
-          <br />
-        </>}
+      {!chamberExists && <>
+        <div>
+          <button disabled={!canMintFirst} onClick={() => _mintFirst()}>Start New Game</button>
+        </div>
+        <br />
+      </>}
 
-        {chamberExists && <>
-          {/* <b>{coordToSlug(chamberId, yonder)}</b>
+      {chamberExists && <>
+        {/* <b>{coordToSlug(chamberId, yonder)}</b>
           <br /> */}
-          {bigintToHex(chamberId)}
-          <br />
-          Level: <b>{yonder}</b>
+        {bigintToHex(chamberId)}
+        <br />
+        Level: <b>{yonder}</b>
 
-          <ScoreBoard />
+        <ScoreBoard />
 
-        </>}
-      </div>
-
-      <GameSelector />
-
+      </>}
     </div>
   )
 }
