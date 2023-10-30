@@ -41,6 +41,7 @@ const GameView = () => {
   const { gameImpl, playerPosition, dispatchReset, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
 
   useEffect(() => {
+    console.log(` >>>>>>> gameTilemap`, gameTilemap)
     if (gameTilemap) {
       dispatchReset(gameTilemap.playerStart, true)
     }
@@ -63,8 +64,17 @@ const GameView = () => {
   }
 
   const _rotate = (signal) => {
-    const dir = signal < 0 ? { [Dir.North]: Dir.West, [Dir.West]: Dir.South, [Dir.South]: Dir.East, [Dir.East]: Dir.North }[playerPosition.facing]
-      : { [Dir.North]: Dir.East, [Dir.East]: Dir.South, [Dir.South]: Dir.West, [Dir.West]: Dir.North }[playerPosition.facing]
+    const dir = (signal < 0 ? {
+      [Dir.North]: Dir.West,
+      [Dir.West]: Dir.South,
+      [Dir.South]: Dir.East,
+      [Dir.East]: Dir.North
+    } : {
+      [Dir.North]: Dir.East,
+      [Dir.East]: Dir.South,
+      [Dir.South]: Dir.West,
+      [Dir.West]: Dir.North
+    })[playerPosition.facing]
     dispatchTurnTo(dir)
   }
 
@@ -73,6 +83,15 @@ const GameView = () => {
     const params = (level === null ? null : level.renderParams)
     gameImpl?.resetGameParams(params)
   }
+
+  useEffect(() => {
+    gameImpl?.setupMap(gameTilemap ?? null, true)
+  }, [gameImpl, gameTilemap])
+
+  useEffect(() => {
+    gameImpl?.movePlayer(playerPosition)
+  }, [gameImpl, playerPosition])
+
 
   return (
     <>

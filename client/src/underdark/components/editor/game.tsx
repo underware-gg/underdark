@@ -288,7 +288,7 @@ export function movePlayer(position: Point) {
     y: position.y,
   }, 100).start()
   // _cameraRig.position.set(x, y, 0);
-  // console.log(`movePlayer()`, position)
+  console.log(`movePlayer()`, position)
 }
 
 
