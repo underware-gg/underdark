@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect } from 'react'
 import ReactAudioPlayer from 'react-audio-player'
 import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
-import { useGameplayContext, GameplayActions, GameState } from '../hooks/GameplayContext'
+import { useGameplayContext, GameState } from '../hooks/GameplayContext'
 import { useChamberMap } from '../hooks/useChamber'
 import { useKeyDown } from '../hooks/useKeyDown'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
@@ -9,6 +9,7 @@ import { Dir, FlippedDir, TileType } from '../utils/underdark'
 import { bigintToHex, map } from '../utils/utils'
 import { levels } from '../data/levels'
 import GameCanvas from './GameCanvas'
+import { useEffectOnce } from '../hooks/useEffectOnce'
 
 
 const GameView = ({
@@ -164,13 +165,7 @@ const GameProof = () => {
   //   })
   // }
 
-  const dataFetch = useRef(false)
-
-  useEffect(() => {
-    // avoid calling effect twice
-    if (dataFetch.current) return
-    dataFetch.current = true
-
+  useEffectOnce(() => {
     if(gameState == GameState.Verifying) {
       let proof = 0n
       steps.map((step, index) => {
