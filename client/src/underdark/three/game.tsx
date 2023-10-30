@@ -62,6 +62,8 @@ let _renderer: THREE.WebGLRenderer;
 let _camera: THREE.PerspectiveCamera;
 let _cameraRig: THREE.Object3D;
 let _scene: THREE.Scene
+let _material: THREE.Material;
+let _tile_geometry: THREE.BoxGeometry;
 let _map: THREE.Object3D;
 let _target, _postScene, _postCamera, _postMaterial;
 let _supportsExtension: boolean = true;
@@ -69,8 +71,7 @@ let _gui
 let _stats;
 // let _controls;
 
-let _material: THREE.Material;
-let _tile_geometry;
+let _defaultPosition: Position = { tile: 135, facing: Dir.South }
 
 const defaultParams = {
   fov: CAM_FOV,
@@ -325,19 +326,22 @@ function setupScene() {
 }
 
 export function movePlayer(position: Position) {
-  const x = (position.tile % 16) * SIZE
-  const y = Math.floor(position.tile / 16) * SIZE
+  const tile = position?.tile ?? _defaultPosition.tile
+  const facing = position?.facing ?? _defaultPosition.facing
+
+  const x = (tile % 16) * SIZE
+  const y = Math.floor(tile / 16) * SIZE
   new TWEEN.Tween(_cameraRig.position).to({ x, y }, _animSecs).start()
   // _cameraRig.position.set(x, y, 0);
 
   // Rotate player
   let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
-  let rotX = (position.facing == Dir.East || position.facing == Dir.West) ? tilt : 0
-  let rotY = (position.facing == Dir.North || position.facing == Dir.South) ? tilt : 0
+  let rotX = (facing == Dir.East || facing == Dir.West) ? tilt : 0
+  let rotY = (facing == Dir.North || facing == Dir.South) ? tilt : 0
   let rotZ =
-    position.facing == Dir.East ? HALF_PI
-      : position.facing == Dir.South ? PI
-        : position.facing == Dir.West ? ONE_HALF_PI
+    facing == Dir.East ? HALF_PI
+      : facing == Dir.South ? PI
+        : facing == Dir.West ? ONE_HALF_PI
           : 0
   if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
   if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
@@ -354,7 +358,7 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
   _gameTilemap = gameTilemap ?? {
     gridSize: 20,
     gridOrigin: { x: 0, y: 0 },
-    playerStart: { tile: 135, facing: Dir.North },
+    playerStart: _defaultPosition,
     tilemap: [],
   }
 
