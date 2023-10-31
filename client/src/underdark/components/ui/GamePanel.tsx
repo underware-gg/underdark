@@ -1,13 +1,9 @@
 import { useEffect } from 'react'
-import { useDojoSystemCalls, useDojoAccount } from '../../../DojoContext'
 import { useChamber, useGameChamberIds } from '../../hooks/useChamber'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { Dir } from '../../utils/underdark'
 import { bigintToHex } from '../../utils/utils'
-import { levels } from '../../data/levels'
 import { MAX_GAMES } from './GameSelector'
 import ScoreBoard from './ScoreBoard'
-// import { Account } from 'starknet'
 
 function GamePanel() {
   const { gameId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -31,7 +27,7 @@ function GamePanel() {
   }
 
   return (
-    <div className='GamePanel'>
+    <div className='GamePanel Padded'>
       <h2>
         Game #{gameId.toString()}
         {' '}
@@ -43,8 +39,6 @@ function GamePanel() {
           <br />
           exist yet!
         </div>
-        <br />
-        <GenerateGameButton />
       </>}
 
       {chamberExists && <>
@@ -58,32 +52,6 @@ function GamePanel() {
 
       </>}
     </div>
-  )
-}
-
-//-----------------------------------
-//
-function GenerateGameButton() {
-  const { generate_level } = useDojoSystemCalls()
-  const { account } = useDojoAccount()
-
-  const { gameId, chamberId } = useUnderdarkContext()
-  const { chamberExists } = useChamber(chamberId)
-
-  const canGenerateFirstLevel = (gameId > 0 && !chamberExists)
-
-  const _generateFirstGameLevel = () => {
-    if (canGenerateFirstLevel) {
-      // const coord = makeEntryChamberId()
-      const _level = levels[Math.floor(Math.random() * levels.length)]
-      // console.log(_level)
-      // generate_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
-      generate_level(account, gameId, 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
-    }
-  }
-
-  return (
-    <button disabled={!canGenerateFirstLevel} onClick={() => _generateFirstGameLevel()}>GENERATE</button>
   )
 }
 

@@ -71,7 +71,7 @@ let _gui
 let _stats;
 // let _controls;
 
-let _defaultPosition: Position = { tile: 135, facing: Dir.South }
+let _defaultPosition: Position = { tile: 8, facing: Dir.South }
 
 const defaultParams = {
   fov: CAM_FOV,
@@ -328,6 +328,7 @@ function setupScene() {
 export function movePlayer(position: Position) {
   const tile = position?.tile ?? _defaultPosition.tile
   const facing = position?.facing ?? _defaultPosition.facing
+  // console.log(`movePlayer()`, tile, facing)
 
   const x = (tile % 16) * SIZE
   const y = Math.floor(tile / 16) * SIZE

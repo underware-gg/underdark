@@ -1,8 +1,9 @@
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { useChamber } from '../../hooks/useChamber'
 import { Col, Grid, Row } from '../Grid'
+import { PrevNextButton } from './UIButtons'
 
-export const MAX_GAMES = 1000
+export const MAX_GAMES = 10000
 
 function GameSelector() {
   const { gameId } = useUnderdarkContext()
@@ -11,7 +12,7 @@ function GameSelector() {
     <Grid className='RowUI'>
       <Row stretched>
         <Col width={4} className='UI'>
-          <NextGameButton nextGameId={gameId - 1} label='<' />
+          <NextGameButton nextGameId={gameId - 1} direction={-1} />
         </Col>
         <Col width={8} className='Padded'>
           <h3>
@@ -19,7 +20,7 @@ function GameSelector() {
           </h3>
         </Col>
         <Col width={4} className='UI'>
-          <NextGameButton nextGameId={gameId + 1} label='>' />
+          <NextGameButton nextGameId={gameId + 1} direction={+1} />
         </Col>
       </Row>
     </Grid>
@@ -28,7 +29,7 @@ function GameSelector() {
 
 function NextGameButton({
   nextGameId,
-  label,
+  direction,
 }) {
   const { dispatch, UnderdarkActions } = useUnderdarkContext()
   const enabled = (nextGameId >= 1 && nextGameId <= MAX_GAMES)
@@ -42,12 +43,7 @@ function NextGameButton({
     }
   }
 
-  const _label = enabled ? label : ''
-  const _className = enabled ? 'Unlocked' : 'Locked'
-
-  return (
-    <button className={`DirectionButton ${_className}`} disabled={!enabled} onClick={() => _setSelectedGame()}>{_label}</button>
-  )
+  return <PrevNextButton direction={direction} disabled={!enabled} onClick={() => _setSelectedGame()} />
 }
 
 

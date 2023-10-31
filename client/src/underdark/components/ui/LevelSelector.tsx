@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { useChamber, useChamberMap, useChamberOffset, usePlayerScore } from '../../hooks/useChamber'
-import { Dir } from '../../utils/underdark'
+import { Dir, coordToCompass } from '../../utils/underdark'
 import { Col, Grid, Row } from '../Grid'
 import { useDojoAccount, useDojoSystemCalls } from '../../../DojoContext'
 import { levels } from '../../data/levels'
+import { PrevNextButton } from './UIButtons'
 
 interface Generator {
   name: string
@@ -80,15 +81,15 @@ function LevelSelector() {
     <Grid className='RowUI'>
       <Row stretched>
         <Col width={4} className='UI'>
-          <DirectionButton chamberId={chamberId} gameId={gameId} yonder={yonder} dir={Dir.West} doorTile={doors?.west ?? 0} levelIndex={levelIndex} />
+          <NextLevelButton chamberId={chamberId} gameId={gameId} yonder={yonder} dir={Dir.West} levelIndex={levelIndex} />
         </Col>
         <Col width={8} className='Padded'>
           <h3>
-            Level {yonder}
+            Level {Math.max(yonder, 1)}
           </h3>
         </Col>
         <Col width={4} className='UI'>
-          <DirectionButton chamberId={chamberId} gameId={gameId} yonder={yonder} dir={Dir.East} doorTile={doors?.east ?? 0} levelIndex={levelIndex} />
+          <NextLevelButton chamberId={chamberId} gameId={gameId} yonder={yonder} dir={Dir.East} levelIndex={levelIndex} />
         </Col>
       </Row>
     </Grid>
@@ -102,23 +103,21 @@ function LevelSelector() {
 // Buttons
 //
 
-interface DirectionButtonProps {
+interface NextLevelButtonProps {
   chamberId: bigint
   gameId: number
   yonder: number
   dir: Dir
-  doorTile: number
   levelIndex: number
 }
 
-function DirectionButton({
+function NextLevelButton({
   chamberId,
   gameId,
   yonder,
   dir,
-  // doorTile,
   levelIndex,
-}: DirectionButtonProps) {
+}: NextLevelButtonProps) {
   const { dispatch, UnderdarkActions } = useUnderdarkContext()
   const { generate_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
@@ -142,17 +141,14 @@ function DirectionButton({
     })
   }
 
-  const _label = dir == Dir.West ? '<' : '>'
+  const direction = (dir == Dir.West ? -1 : 1)
+  const isFirst = (direction < 0 && yonder <= 1)
 
   if (exists) {
-    return <button className='DirectionButton Unlocked' onClick={() => _open()}>{_label}</button>
+    return <PrevNextButton direction={direction} onClick={() => _open()} />
   }
-  if (dir == Dir.West) {
-    return <button className='DirectionButton Locked' disabled={true}></button>
-  }
-  return <button className={`DirectionButton ${levelIsCompleted ? 'Unlocked' : 'Locked'}`} disabled={!levelIsCompleted} onClick={() => _mint()}>{_label}</button>
+  return <PrevNextButton direction={direction} disabled={!levelIsCompleted || isFirst}  onClick={() => _mint()} />
 }
-
 
 
 export default LevelSelector

@@ -17,17 +17,16 @@ const GameView = ({
   // height = 350,
 }) => {
 
-  const { chamberId } = useUnderdarkContext()
+  const { gameId, chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
   const { gameImpl, gameState, isLoaded, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
 
   //
   // Start game!
+  
   useEffect(() => {
-    if (gameTilemap) {
-      dispatchReset(gameTilemap.playerStart, false)
-    }
-  }, [gameTilemap])
+    dispatchReset(gameTilemap?.playerStart ?? null, false)
+  }, [gameTilemap, gameId, chamberId])
 
   useEffect(() => {
     gameImpl?.resetGameParams(levels[Number(chamberId % BigInt(levels.length))].renderParams)
@@ -40,12 +39,11 @@ const GameView = ({
     })
   }, [gameImpl, light])
 
-
   useEffect(() => {
     if (isLoaded || isPlaying) {
       gameImpl?.movePlayer(playerPosition)
     }
-  }, [gameImpl, playerPosition, isLoaded, isPlaying])
+  }, [gameImpl, gameId, chamberId, playerPosition, isLoaded, isPlaying])
 
 
   useEffect(() => {

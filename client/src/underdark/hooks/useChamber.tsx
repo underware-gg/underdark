@@ -152,7 +152,7 @@ export const useLevelScores = (chamberId: bigint) => {
 export const useScoreByKey = (scoreKey: Entity) => {
   const { Score } = useDojoComponents()
   const score: any = useComponentValue(Score, scoreKey ?? '0' as Entity)
-  useEffect(() => console.log(`Account score:`, coordToSlug(score?.location_id ?? 0n), score), [score])
+  // useEffect(() => console.log(`Account score:`, coordToSlug(score?.location_id ?? 0n), score), [score])
   return {
     location_id: score?.location_id ?? 0n,
     player: score?.player ?? 0n,
