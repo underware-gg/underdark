@@ -20,12 +20,13 @@ type Movement = {
 }
 
 export enum GameState {
-  Loaded = 0,
-  Playing = 1,
-  Verifying = 10,
-  Won = 11,
-  NoHealth = 20,
-  Slendered = 21,
+  Loaded = 'loaded',
+  Playing = 'playing',
+  Verifying = 'verifying',
+  Verified = 'verified',
+  NotVerified = 'not_verified',
+  NoHealth = 'no_health',
+  Slendered = 'slendered',
 }
 const _lightDrop = 10;
 
@@ -218,6 +219,12 @@ export const useGameplayContext = () => {
       dispatchMessage(MESSAGES.NO_HEALTH)
     } else if (newState == GameState.Slendered) {
       dispatchMessage(MESSAGES.SLENDERED)
+    } else if (newState == GameState.Verifying) {
+      dispatchMessage(MESSAGES.FOUND_EXIT)
+    } else if (newState == GameState.Verified) {
+      dispatchMessage(MESSAGES.VERIFIED)
+    } else if (newState == GameState.NotVerified) {
+      dispatchMessage(MESSAGES.NOT_VERIFIED)
     }
   }
 

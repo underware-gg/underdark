@@ -26,16 +26,18 @@ const ActionButton = ({
 
 type PrevNextButtonProps = {
   direction: number
+  label?: string
   disabled?: boolean
   onClick: () => void
 };
 
 const PrevNextButton = ({
+  label = null,
   disabled = false,
   direction,
   onClick,
 }: PrevNextButtonProps) => {
-  const _label = direction < 0 ? '<' : '>'
+  const _label = label ?? (direction < 0 ? '<' : '>')
   const _className = disabled ? 'Locked' : 'Unlocked'
   return <button className={`DirectionButton ${_className}`} disabled={disabled} onClick={() => onClick()}>{_label}</button>
 }

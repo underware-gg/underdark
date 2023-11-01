@@ -15,22 +15,26 @@ export function createSystemCalls(
   // { Chamber, Map }: ClientComponents,
 ) {
 
-  const generate_level = async (signer: Account, gameId: number, levelNumber: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number) => {
+  const generate_level = async (signer: Account, gameId: number, levelNumber: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number): Promise<boolean> => {
+    let success = false
     try {
       const args = [gameId, levelNumber, from_coord, from_dir, strToFelt252(generator_name), generator_value]
       console.log(args)
       const tx = await execute(signer, 'actions', 'generate_level', args)
       console.log(`generate_level tx:`, tx)
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
-      console.log(`generate_level receipt:`, receipt)
+      success = Object.keys(receipt).length > 0
+      console.log(`generate_level receipt:`, success, receipt)
       processReceipt(receipt, contractComponents);
     } catch (e) {
       console.log(`generate_level exception:`, e)
     } finally {
     }
+    return success
   }
 
-  const finish_level = async (signer: Account, locationId: bigint, proof: bigint, movesCount: number) => {
+  const finish_level = async (signer: Account, locationId: bigint, proof: bigint, movesCount: number): Promise<boolean> => {
+    let success = false
     try {
       const proof_low = proof & BigInt('0xffffffffffffffffffffffffffffffff')
       const proof_high = proof >> 128n
@@ -39,12 +43,14 @@ export function createSystemCalls(
       const tx = await execute(signer, 'actions', 'finish_level', args)
       console.log(`finish_level tx:`, tx)
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
-      console.log(`finish_level receipt:`, receipt)
+      success = Object.keys(receipt).length > 0
+      console.log(`finish_level receipt:`, success, receipt)
       processReceipt(receipt, contractComponents);
     } catch (e) {
       console.log(`finish_level exception:`, e)
     } finally {
     }
+    return success
   }
 
   return {

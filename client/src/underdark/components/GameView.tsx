@@ -2,14 +2,13 @@ import { useEffect } from 'react'
 import ReactAudioPlayer from 'react-audio-player'
 import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
 import { useGameplayContext, GameState } from '../hooks/GameplayContext'
-import { useChamberMap } from '../hooks/useChamber'
+import { useChamber, useChamberMap } from '../hooks/useChamber'
 import { useKeyDown } from '../hooks/useKeyDown'
 import { useUnderdarkContext } from '../hooks/UnderdarkContext'
 import { Dir, FlippedDir, TileType } from '../utils/underdark'
 import { bigintToHex, map } from '../utils/utils'
-import { levels } from '../data/levels'
+import { getLevelParams } from '../data/levels'
 import GameCanvas from './GameCanvas'
-import { useEffectOnce } from '../hooks/useEffectOnce'
 
 
 const GameView = ({
@@ -19,6 +18,7 @@ const GameView = ({
 
   const { gameId, chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
+  const { yonder } = useChamber(chamberId)
   const { gameImpl, gameState, isLoaded, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
 
   //
@@ -29,8 +29,8 @@ const GameView = ({
   }, [gameTilemap, gameId, chamberId])
 
   useEffect(() => {
-    gameImpl?.resetGameParams(levels[Number(chamberId % BigInt(levels.length))].renderParams)
-  }, [gameImpl, chamberId])
+    gameImpl?.resetGameParams(getLevelParams(yonder).renderParams)
+  }, [gameImpl, chamberId, yonder])
 
   useEffect(() => {
     gameImpl?.setGameParams({
@@ -56,7 +56,6 @@ const GameView = ({
     <div className='Relative GameView'>
       <GameControls />
       <GameCanvas guiEnabled={true} />
-      {gameState == GameState.Verifying && <GameProof />}
       {light > 0
         ? <ReactAudioPlayer
           src='/audio/music-ambient.mp3'
@@ -90,7 +89,7 @@ const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
   const {
-    gameState, isPlaying, playerPosition, light, health, stepCount,
+    gameState, isPlaying, playerPosition, light, health, stepCount, steps,
     dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar,
   } = useGameplayContext()
 
@@ -126,62 +125,34 @@ const GameTriggers = () => {
     }
   }, [gameState, health])
 
+  //
   useEffect(() => {
     if (isPlaying && stepCount == 64) {
       dispatchGameState(GameState.Slendered)
     }
   }, [gameState, stepCount])
 
-  return (
-    <>
-    </>
-  )
-}
 
-
-
-//--------------------
-// PROOF!!
-//
-
-const GameProof = () => {
-  const { chamberId } = useUnderdarkContext()
+  //----------------------------------
+  // Verify moves on-chain
+  //
   const { finish_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
-  const { gameState, steps } = useGameplayContext()
-  // const { gameState, steps, dispatch: dispatchGameplay } = useGameplayContext()
-
-  // const { locationId, seed } = useChamberOffset(chamberId, dir)
-  // const exists = useMemo(() => (seed > 0n), [seed, locationId])
-  // const _mint = () => {
-  //   generate_level(account, gameId, yonder + 1, 0n, dir, generator.name, generator.value)
-  // }
-  // const _open = () => {
-  //   dispatch({
-  //     type: UnderdarkActions.SET_CHAMBER,
-  //     payload: locationId,
-  //   })
-  // }
-
-  useEffectOnce(() => {
-    if(gameState == GameState.Verifying) {
+  useEffect(() => {
+    if (gameState == GameState.Verifying) {
       let proof = 0n
       steps.map((step, index) => {
         proof |= (BigInt(step.dir) << BigInt(index * 4))
       });
       console.log(`PROOF:`, bigintToHex(proof))
-      finish_level(account, chamberId, proof, steps.length)
+      const success = finish_level(account, chamberId, proof, steps.length)
+      if (success) {
+        dispatchGameState(success ? GameState.Verified : GameState.NotVerified)
+      }
     }
-  }, [])
+  }, [gameState])
 
-  return (
-    <div className='FillParent'>
-      <br />
-      <h2>You found the exit!</h2>
-      <br />
-      <h2>validating moves on-chain...</h2>
-    </div>
-  )
+  return  <></>
 }
 
 

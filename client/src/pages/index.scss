@@ -255,9 +255,15 @@ canvas {
   font-size: 18px;
 }
 
-.Message {
-  width: 60%;
-  height: calc(($ui-height - $ui-row) / 2);
+.InfoTop {
+  width: 100%;
+  height: $ui-row;
+  padding: 1em 0 0 0;
+  margin: auto;
+}
+.InfoBottom {
+  width: 80%;
+  height: calc($ui-height - $ui-row - $ui-row);
   margin: auto;
 }
 

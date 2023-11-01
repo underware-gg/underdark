@@ -1,10 +1,10 @@
 import { useDojoAccount, useDojoSystemCalls } from '../../../DojoContext'
-import { useGameplayContext } from '../../hooks/GameplayContext'
+import { GameState, useGameplayContext } from '../../hooks/GameplayContext'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { useChamber, useChamberMap } from '../../hooks/useChamber'
+import { useChamber, useChamberMap, useChamberOffset, usePlayerScore } from '../../hooks/useChamber'
 import { ActionButton } from './UIButtons'
 import { Dir } from '../../utils/underdark'
-import { levels } from '../../data/levels'
+import { getLevelParams } from '../../data/levels'
 // import { Account } from 'starknet'
 
 
@@ -14,15 +14,16 @@ function InfoPanel() {
   return (
     <div className='InfoPanel AlignCenter AlignMiddle'>
 
-      <div className='Message'>
-        <div className='CenteredContainer'>
-          <StartButton />
-        </div>
-        {/* {isPlaying && <p>steps: <b>{stepCount}</b></p>} */}
+      <div className='InfoTop'>
+        <StartButton />
       </div>
+      <div className='InfoTop'>
+        <GenerateButton />
+      </div>
+      {/* {isPlaying && <p>steps: <b>{stepCount}</b></p>} */}
 
-      <div className='Message'>
-        <div className='CenteredContainer'>
+      <div className='CenteredContainer '>
+        <div className='CenteredContent InfoBottom'>
           <h2>{message}</h2>
         </div>
       </div>
@@ -42,38 +43,50 @@ const StartButton = () => {
     dispatchReset(gameTilemap.playerStart, true)
   }
 
-  if (!chamberExists) {
-    return <GenerateGameButton />
+  if (chamberExists) {
+    const _label = isLoaded ? 'START' : 'RESTART'
+    return (
+      <ActionButton onClick={() => _startGame()} label={_label} />
+    )
   }
 
-  const _label = isLoaded ? 'START' : 'RESTART'
-
-  return <ActionButton onClick={() => _startGame()} label={_label} />
+  return <></>
 }
 
 
-function GenerateGameButton() {
+function GenerateButton() {
   const { generate_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
 
+  // generate first chamber
   const { gameId, chamberId } = useUnderdarkContext()
-  const { chamberExists } = useChamber(chamberId)
+  const { yonder } = useChamber(chamberId)
+  const canMintFirst = (yonder == 0)
 
-  const canGenerateFirstLevel = (gameId > 0 && !chamberExists)
+  // for new next chambers
+  const { levelIsCompleted } = usePlayerScore(chamberId, account)
+  const { chamberExists: nextChamberExists } = useChamberOffset(chamberId, Dir.East)
+  const canMintNext = (yonder > 0 && levelIsCompleted && !nextChamberExists)
 
-  const _generateFirstGameLevel = () => {
-    if (canGenerateFirstLevel) {
-      // const coord = makeEntryChamberId()
-      const _level = levels[Math.floor(Math.random() * levels.length)]
-      // console.log(_level)
-      // generate_level(account, gameId, 1, 0n, Dir.Under, 'entry', 0)
-      generate_level(account, gameId, 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
+  const { isPlaying } = useGameplayContext()
+
+  const _generate = async () => {
+    const _level = getLevelParams(yonder + 1)
+    const success = await generate_level(account, gameId, yonder + 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
+    if (success) {
+      console.log(`GENERATED... TODO: START GAME`)
     }
   }
 
-  return <ActionButton disabled={!canGenerateFirstLevel} onClick={() => _generateFirstGameLevel()} label='GENERATE GAME' />
-}
+  if ((canMintFirst || canMintNext) && !isPlaying) {
+    const _label = (canMintFirst ? 'GENERATE GAME' : 'GENERATE NEXT LEVEL')
+    return (
+      <ActionButton onClick={() => _generate()} label={_label} />
+    )
+  }
 
+  return <></>
+}
 
 
 export default InfoPanel
