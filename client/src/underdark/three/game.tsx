@@ -1,14 +1,15 @@
 import * as THREE from 'three'
 import TWEEN from '@tweenjs/tween.js'
 
+// event emitter
+// var ee = require('event-emitter');
+import * as ee from 'event-emitter'
+export var emitter = ee()
+
 //@ts-ignore
 import Stats from 'three/addons/libs/stats.module.js'
 //@ts-ignore
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
-//@ts-ignore
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-//@ts-ignore
-import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
 import { DepthPostShader } from './DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
@@ -332,7 +333,12 @@ export function movePlayer(position: Position) {
 
   const x = (tile % 16) * SIZE
   const y = Math.floor(tile / 16) * SIZE
-  new TWEEN.Tween(_cameraRig.position).to({ x, y }, _animSecs).start()
+  new TWEEN.Tween(_cameraRig.position)
+    .to({ x, y }, _animSecs)
+    .onUpdate(() => {
+      emitter.emit('movedTo', { x: _cameraRig.position.x, y: _cameraRig.position.y, z: _cameraRig.position.z })
+    })
+    .start()
   // _cameraRig.position.set(x, y, 0);
 
   // Rotate player
@@ -346,13 +352,23 @@ export function movePlayer(position: Position) {
           : 0
   if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
   if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
-  new TWEEN.Tween(_cameraRig.rotation).to({ x: rotX, y: rotY, z: rotZ }, _animSecs).start().onComplete(() => {
-    if (_cameraRig.rotation.z < 0) _cameraRig.rotation.z += TWO_PI;
-    if (_cameraRig.rotation.z > TWO_PI) _cameraRig.rotation.z -= TWO_PI;
-  })
+  new TWEEN.Tween(_cameraRig.rotation)
+    .to({ x: rotX, y: rotY, z: rotZ }, _animSecs)
+    .onUpdate(() => {
+      emitter.emit('rotatedTo', { x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: _cameraRig.rotation.z })
+    })
+    .start()
+    .onComplete(() => {
+      if (_cameraRig.rotation.z < 0) _cameraRig.rotation.z += TWO_PI;
+      if (_cameraRig.rotation.z > TWO_PI) _cameraRig.rotation.z -= TWO_PI;
+    })
   // _cameraRig.rotation.set(0, 0, rot);
 
 }
+
+// export function getPlayerRotation() {
+//   return _cameraRig.rotation.z
+// }
 
 export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
 
