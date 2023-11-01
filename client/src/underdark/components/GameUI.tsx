@@ -1,10 +1,11 @@
 import { Grid, Row, Col } from './Grid'
-import { CompassBar, HealthBar, LightBar } from './ui/Bars'
+import { HealthBar, LightBar } from './ui/Bars'
 import MapPanel from './ui/MapPanel'
 import GamePanel from './ui/GamePanel'
 import InfoPanel from './ui/InfoPanel'
 import LevelSelector from './ui/LevelSelector'
 import GameSelector from './ui/GameSelector'
+import UICompass from './ui/UICompass'
 
 function GameUI() {
   return (
@@ -20,7 +21,7 @@ function GameUI() {
         </Col>
         <Col width={6} className='UI'>
           <InfoPanel />
-          <CompassBar />
+          <UICompass />
         </Col>
         <Col width={1} className='UI'>
           <HealthBar />
