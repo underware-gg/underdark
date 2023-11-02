@@ -125,7 +125,7 @@ mod tests {
     #[test]
     #[available_gas(60_000_000)]
     fn test_carve() {
-        let seed = make_seed(1234, 5678);
+        let seed = make_seed(1234);
         let bitmap = carve(seed, 0, 5);
         assert(seed != bitmap, '');
     }

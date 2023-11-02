@@ -143,7 +143,7 @@ mod tests {
     #[test]
     #[available_gas(50_000_000)]
     fn test_collapse() {
-        let seed = make_seed(1234, 5678);
+        let seed = make_seed(1234);
         let bitmap = collapse(seed, false);
         assert(seed != bitmap, '');
     }

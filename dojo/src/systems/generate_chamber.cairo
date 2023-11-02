@@ -34,7 +34,7 @@ fn generate_chamber(world: IWorldDispatcher,
     // Chamber
     //
     // create seed, the initial bitmap state that is used to sculpt it
-    let seed: u256 = make_seed(room_id.into(), location_id);
+    let seed: u256 = make_seed(location_id);
     // clone seed for value randomization
     let mut rnd: u256 = seed;
 

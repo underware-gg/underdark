@@ -155,7 +155,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     fn test_flip_door_tile() {
-        let mut rnd = make_seed(777, 888);
+        let mut rnd = make_seed(777);
         let mut dir_u8: u8 = 0;
         loop {
             if (dir_u8 == DIR::COUNT) { break; }

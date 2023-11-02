@@ -149,7 +149,7 @@ impl LocationTraitImpl of LocationTrait {
         result.room_id = room_id;
         result.under = level_number;
         result.over = 0;
-        result
+        (result)
 
     }
 }

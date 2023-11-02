@@ -300,7 +300,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000_000)]
     fn test_monsters_seed() {
-        let mut rnd = make_seed(1234, 1234);
+        let mut rnd = make_seed(1234);
         let bitmap: u256 = binary_tree_pro(rnd, Dir::West);
 
         // randomize_monsters,randomize_slender_duck,randomize_dark_tar

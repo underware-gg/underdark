@@ -229,7 +229,7 @@ mod tests {
     #[test]
     #[available_gas(1000000)]
     fn test_hash_randomize_value() {
-        let mut rnd = make_seed(111, 222);
+        let mut rnd = make_seed(111);
         let rnd0 = rnd;
         let val1 = randomize_value(ref rnd, 0xffffffff);
         let rnd1 = rnd;
@@ -270,7 +270,7 @@ mod tests {
     #[test]
     #[available_gas(10_000_000)]
     fn test_hash_randomize_range() {
-        let mut rnd = make_seed(128, 128);
+        let mut rnd = make_seed(128);
         let mut values: u8 = 0x0;
         let mut i: u128 = 0;
         loop {
@@ -303,7 +303,7 @@ mod tests {
             loop {
                 if (i == 20) { break; }
                 // ---
-                let mut rnd = make_seed(1234, i.into());
+                let mut rnd = make_seed(i.into());
                 let slot: u128 = _randomize_door_slot(ref rnd, dir).into();
                 assert(slot >= RANGE::DOOR::MIN, 'slot >= min');
                 assert(slot <= RANGE::DOOR::MAX, 'slot <= max');
@@ -328,7 +328,7 @@ mod tests {
             loop {
                 if (i == 20) { break; }
                 // ---
-                let mut rnd = make_seed(1234, i.into());
+                let mut rnd = make_seed(i.into());
                 let pos: u8 = randomize_door_tile(ref rnd, dir);
                 let x: u128 = (pos % 16).into();
                 let y: u128 = (pos / 16).into();
@@ -369,7 +369,7 @@ mod tests {
         loop {
             if (i == 10) { break; }
             // ---
-            let mut rnd = make_seed(1234, i.into());
+            let mut rnd = make_seed(i.into());
             let pos: usize = randomize_game_tile(ref rnd, 0, i.into());
             let x: u128 = (pos % 16).into();
             let y: u128 = (pos / 16).into();
