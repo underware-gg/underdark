@@ -23,8 +23,12 @@ fn generate_chamber(world: IWorldDispatcher,
     mut generator_value: u32,
 ) -> u128 {
 
-
     let location_id: u128 = location.to_id();
+
+    // assert chamber is new
+    let chamber: Chamber = get!(world, location_id, (Chamber));
+    assert(chamber.yonder == 0, 'Chamber already exists');
+
 
     //---------------------
     // Chamber
