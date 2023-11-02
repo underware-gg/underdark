@@ -47,7 +47,7 @@ mod actions {
 
             let location: Location = LocationTrait::from_coord(realm_id, room_id, level_number, manor_coord);
 
-            generate_chamber(world, room_id, level_number, location, Dir::West, generator_name, generator_value_u128.try_into().unwrap());
+            generate_chamber(world, room_id, level_number, location, generator_name, generator_value_u128.try_into().unwrap());
 
             return ();
         }

@@ -42,12 +42,18 @@ impl DirTraitImpl of DirTrait {
     }
     fn flip_door_tile(self: Dir, i: u8) -> u8 {
         match self {
-            Dir::North => (i + (15 * 16)),  // flip to South
-            Dir::East  => (i - 15),         // flip to West
-            Dir::West  => (i + 15),         // flip to East
-            Dir::South => (i - (15 * 16)),  // flip to North
-            Dir::Over  => (i),              // same position
-            Dir::Under => (i),              // same position
+            // Dir::North => (i + (15 * 16)),  // flip to South
+            // Dir::East  => (i - 15),         // flip to West
+            // Dir::West  => (i + 15),         // flip to East
+            // Dir::South => (i - (15 * 16)),  // flip to North
+            // Dir::Over  => (i),              // same position
+            // Dir::Under => (i),              // same position
+            Dir::North => (i),
+            Dir::East  => (i),
+            Dir::West  => (i),
+            Dir::South => (i),
+            Dir::Over  => (i + (15 * 16)),  // flip to South
+            Dir::Under => (i - (15 * 16)),  // flip to North
         }
     }
     fn door_tile_from_map(self: Dir, map: Map) -> u8 {

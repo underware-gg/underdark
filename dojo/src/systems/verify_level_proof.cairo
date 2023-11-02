@@ -26,8 +26,9 @@ fn verify_level_proof(world: IWorldDispatcher,
 
     let map: Map = get!(world, location_id, (Map));
     let bitmap: u256 = map.bitmap;
-    let entry: u8 = map.west;
-    let exit: u8 = map.east;
+    
+    let entry: u8 = map.over;
+    let exit: u8 = map.under;
 
     verify_map(bitmap, entry, exit, proof, moves_count);
 

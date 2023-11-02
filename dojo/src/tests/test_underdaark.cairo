@@ -27,16 +27,25 @@ mod tests {
         get_world_Map,
         get_world_Score,
         get_world_Doors_as_Tiles,
+        get_world_Tile_type,
     };
 
     fn assert_doors(prefix: felt252, world: IWorldDispatcher, location_id: u128) {
         let tiles: Doors = get_world_Doors_as_Tiles(world, location_id);
         assert(tiles.north == 0, String::join(prefix, 'north'));
-        assert(tiles.east == TILE::EXIT, String::join(prefix, 'east'));
-        assert(tiles.west == TILE::ENTRY, String::join(prefix, 'west'));
+        assert(tiles.east == 0, String::join(prefix, 'east'));
+        assert(tiles.west == 0, String::join(prefix, 'west'));
         assert(tiles.south == 0, String::join(prefix, 'south'));
-        assert(tiles.over == 0, String::join(prefix, 'over'));
-        assert(tiles.under == 0, String::join(prefix, 'under'));
+        assert(tiles.over == TILE::ENTRY, String::join(prefix, 'over'));
+        assert(tiles.under == TILE::EXIT, String::join(prefix, 'under'));
+
+        let map: Map = get_world_Map(world, location_id);
+        let (x1, y1) = Bitmap::tile_to_xy(map.over.into());
+        let (x2, y2) = Bitmap::tile_to_xy(map.under.into());
+        assert(y1 == 0, String::join(prefix, 'entry_y'));
+        assert(y2 == 15, String::join(prefix, 'exit_y'));
+        assert(x1 > 0 && x1 < 15, String::join(prefix, 'entry_x'));
+        assert(x2 > 0 && x2 < 15, String::join(prefix, 'exit_x'));
     }
 
     #[test]
@@ -66,44 +75,6 @@ mod tests {
     //
     // Proof packing
     //
-    #[test]
-    #[available_gas(100_000_000)]
-    fn test_bitmap_move_tile() {
-        assert(Bitmap::move_tile(0, Dir::North) == 0, '0_North');
-        assert(Bitmap::move_tile(0, Dir::East) == 1, '0_East');
-        assert(Bitmap::move_tile(0, Dir::West) == 0, '0_West');
-        assert(Bitmap::move_tile(0, Dir::South) == 16, '0_South');
-        assert(Bitmap::move_tile(0, Dir::Over) == 0, '0_Over');
-        assert(Bitmap::move_tile(0, Dir::Under) == 0, '0_Under');
-
-        assert(Bitmap::move_tile(15, Dir::North) == 15, '15_North');
-        assert(Bitmap::move_tile(15, Dir::East) == 15, '15_East');
-        assert(Bitmap::move_tile(15, Dir::West) == 14, '15_West');
-        assert(Bitmap::move_tile(15, Dir::South) == 31, '15_South');
-        assert(Bitmap::move_tile(15, Dir::Over) == 15, '15_Over');
-        assert(Bitmap::move_tile(15, Dir::Under) == 15, '15_Under');
-
-        assert(Bitmap::move_tile(240, Dir::North) == 224, '240_North');
-        assert(Bitmap::move_tile(240, Dir::East) == 241, '240_East');
-        assert(Bitmap::move_tile(240, Dir::West) == 240, '240_West');
-        assert(Bitmap::move_tile(240, Dir::South) == 240, '240_South');
-        assert(Bitmap::move_tile(240, Dir::Over) == 240, '240_Over');
-        assert(Bitmap::move_tile(240, Dir::Under) == 240, '240_Under');
-
-        assert(Bitmap::move_tile(255, Dir::North) == 239, '255_North');
-        assert(Bitmap::move_tile(255, Dir::East) == 255, '255_East');
-        assert(Bitmap::move_tile(255, Dir::West) == 254, '255_West');
-        assert(Bitmap::move_tile(255, Dir::South) == 255, '255_South');
-        assert(Bitmap::move_tile(255, Dir::Over) == 255, '255_Over');
-        assert(Bitmap::move_tile(255, Dir::Under) == 255, '255_Under');
-
-        assert(Bitmap::move_tile(100, Dir::North) == 84, '100_North');
-        assert(Bitmap::move_tile(100, Dir::East) == 101, '100_East');
-        assert(Bitmap::move_tile(100, Dir::West) == 99, '100_West');
-        assert(Bitmap::move_tile(100, Dir::South) == 116, '100_South');
-        assert(Bitmap::move_tile(100, Dir::Over) == 100, '100_Over');
-        assert(Bitmap::move_tile(100, Dir::Under) == 100, '100_Under');
-    }
 
     #[test]
     #[available_gas(1_000_000_000_000)]
@@ -242,31 +213,33 @@ mod tests {
         
         // check test if chamber is correct
         let map: Map = get_world_Map(world, chamber2.location_id);
-        assert(map.west == 80, 'bad_entry');
-        assert(map.east == 95, 'bad_exit');
-
+        assert(map.over == 8, 'bad_over');
+        assert(map.under == 248, 'bad_under');
+        assert(get_world_Tile_type(world, chamber2.location_id, map.over) == TILE::ENTRY, 'bad_entry');
+        assert(get_world_Tile_type(world, chamber2.location_id, map.under) == TILE::EXIT, 'bad_exit');
+        
         let mut score: Score = get_world_Score(world, chamber2.location_id, player);
         assert(score.moves == 0, 'moves=0');
 
         let proof_best = array![
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
         ];
         let proof_mid = array![
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
-            DIR::SOUTH, DIR::NORTH,
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::WEST, DIR::EAST,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
         ];
         let proof_low = array![
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
-            DIR::SOUTH, DIR::SOUTH, DIR::NORTH, DIR::NORTH,
-            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::WEST, DIR::WEST, DIR::EAST, DIR::EAST,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
         ];
         let proof_low_packed: u256 = pack_proof_moves(proof_low.clone());
-        let mut win: bool = verify_map(map.bitmap, map.west, map.east, proof_low_packed, proof_low.len());
+        let mut win: bool = verify_map(map.bitmap, map.over, map.under, proof_low_packed, proof_low.len());
         assert(win == true, 'proof_low');
         // execute
         execute_finish_level(world, system, chamber2.location_id, proof_low_packed, proof_low.len());
@@ -276,7 +249,7 @@ mod tests {
         assert(score.moves == proof_low.len(), 'moves=proof_low');
 
         let proof_best_packed: u256 = pack_proof_moves(proof_best.clone());
-        win = verify_map(map.bitmap, map.west, map.east, proof_best_packed, proof_best.len());
+        win = verify_map(map.bitmap, map.over, map.under, proof_best_packed, proof_best.len());
         assert(win == true, 'proof_best');
         // execute
         execute_finish_level(world, system, chamber2.location_id, proof_best_packed, proof_best.len());
@@ -284,7 +257,7 @@ mod tests {
         assert(score.moves == proof_best.len(), 'moves=proof_best');
 
         let proof_mid_packed: u256 = pack_proof_moves(proof_mid.clone());
-        win = verify_map(map.bitmap, map.west, map.east, proof_mid_packed, proof_mid.len());
+        win = verify_map(map.bitmap, map.over, map.under, proof_mid_packed, proof_mid.len());
         assert(win == true, 'proof_mid');
         // execute
         execute_finish_level(world, system, chamber2.location_id, proof_mid_packed, proof_mid.len());
@@ -301,7 +274,7 @@ mod tests {
     #[available_gas(1_000_000_000_000)]
     fn test_monsters_seed() {
         let mut rnd = make_seed(1234);
-        let bitmap: u256 = binary_tree_pro(rnd, Dir::West);
+        let bitmap: u256 = binary_tree_pro(rnd);
 
         // randomize_monsters,randomize_slender_duck,randomize_dark_tar
         let mut i: u16 = 0;

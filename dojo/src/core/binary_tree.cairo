@@ -17,7 +17,7 @@ use underdark::types::dir::{Dir, DirTrait};
 // * it contains 2 full corridors (top row, left column)
 // * it contains 2 paths that cross ONLY at the start (top left corner)
 // * last row and colunm are not set
-fn binary_tree_classic(seed: u256, entry_dir: Dir) -> u256 {
+fn binary_tree_classic(seed: u256) -> u256 {
     let mut result: u256 = 0;
     let mut i: usize = 0;
     loop {
@@ -35,13 +35,14 @@ fn binary_tree_classic(seed: u256, entry_dir: Dir) -> u256 {
         i += 1;
     };
     // rotate to keep the long row always on the entry
-    Bitmap::rotate_north_to(result, entry_dir)
+    // Bitmap::rotate_north_to(result, entry_dir)
+    (result)
 }
 //
 // our version tries to fix those problems by...
 // * eliminating one empty side (let's keep the entry row for fun)
 // * adding some random path tiles
-fn binary_tree_pro(seed: u256, entry_dir: Dir) -> u256 {
+fn binary_tree_pro(seed: u256) -> u256 {
     let mut underseed: u256 = make_underseed(seed);
     let mut result: u256 = 0;
     let mut i: usize = 0;
@@ -68,7 +69,8 @@ fn binary_tree_pro(seed: u256, entry_dir: Dir) -> u256 {
         i += 1;
     };
     // rotate to keep the long row always on the entry
-    Bitmap::rotate_north_to(result, entry_dir)
+    // Bitmap::rotate_north_to(result, entry_dir)
+    (result)
 }
 
 //

@@ -18,7 +18,6 @@ fn generate_chamber(world: IWorldDispatcher,
     room_id: u16,
     level_number: u16,
     location: Location,
-    entry_dir: Dir,
     mut generator_name: felt252,
     mut generator_value: u32,
 ) -> u128 {
@@ -45,15 +44,13 @@ fn generate_chamber(world: IWorldDispatcher,
     //---------------------
     // Doors
     //
-    // let entry_dir: Dir = from_dir.flip();
-    // let permissions: u8 = randomize_door_permissions(ref rnd, chamber_location, entry_dir, yonder, generator_name);
     let permissions: u8 = 0b000100;
     let (doors, protected): (Doors, u256) = generate_doors(world, location, location_id, ref rnd, permissions, generator_name);
 
     //---------------------
     // Generate Bitmap
     //
-    let bitmap: u256= generate(seed, protected, entry_dir, generator_name, generator_value);
+    let bitmap: u256= generate(seed, protected, generator_name, generator_value);
     assert(bitmap != 0, 'Chamber is empty');
 
     let (monsters, slender_duck, dark_tar): (u256,u256,u256) = randomize_monsters(ref rnd, bitmap, protected, level_number);

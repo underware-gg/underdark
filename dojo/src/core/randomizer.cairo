@@ -9,10 +9,10 @@ use underdark::types::dir::{Dir, DIR};
 // tile ranges
 mod RANGE {
     mod DOOR {
-        // ....xxxxxxxx....
-        const MIN: u128 = 4;
-        const MAX: u128 = 11;
-        const SIZE: u128 = 8;
+        // ..xxxxxxxxxxxx..
+        const MIN: u128 = 2;
+        const MAX: u128 = 13;
+        const SIZE: u128 = 12;
     }
     mod TILE {
         // ..xxxxxxxxxxxx..
@@ -85,12 +85,18 @@ fn _randomize_door_slot(ref rnd: u256, dir: Dir) -> usize {
 // randomize a door position as a tile (Over, Under)
 fn randomize_door_tile(ref rnd: u256, dir: Dir) -> u8 {
     match dir {
-        Dir::North => Bitmap::xy_to_tile(_randomize_door_slot(ref rnd, dir), 0),
-        Dir::East => Bitmap::xy_to_tile(15, _randomize_door_slot(ref rnd, dir)),
-        Dir::West => Bitmap::xy_to_tile(0, _randomize_door_slot(ref rnd, dir)),
-        Dir::South => Bitmap::xy_to_tile(_randomize_door_slot(ref rnd, dir), 15),
-        Dir::Over => randomize_game_tile(ref rnd, 0x0, 0x0),
-        Dir::Under => randomize_game_tile(ref rnd, 0x0, 0x0),
+        // Dir::North => Bitmap::xy_to_tile(_randomize_door_slot(ref rnd, dir), 0),
+        // Dir::East =>  Bitmap::xy_to_tile(15, _randomize_door_slot(ref rnd, dir)),
+        // Dir::West =>  Bitmap::xy_to_tile(0, _randomize_door_slot(ref rnd, dir)),
+        // Dir::South => Bitmap::xy_to_tile(_randomize_door_slot(ref rnd, dir), 15),
+        // Dir::Over =>  randomize_game_tile(ref rnd, 0x0, 0x0),
+        // Dir::Under => randomize_game_tile(ref rnd, 0x0, 0x0),
+        Dir::North => randomize_game_tile(ref rnd, 0x0, 0x0),
+        Dir::East =>  randomize_game_tile(ref rnd, 0x0, 0x0),
+        Dir::West =>  randomize_game_tile(ref rnd, 0x0, 0x0),
+        Dir::South => randomize_game_tile(ref rnd, 0x0, 0x0),
+        Dir::Over =>  Bitmap::xy_to_tile(_randomize_door_slot(ref rnd, dir), 0),
+        Dir::Under => Bitmap::xy_to_tile(_randomize_door_slot(ref rnd, dir), 15),
     }.try_into().unwrap()
 }
 
@@ -332,27 +338,36 @@ mod tests {
                 let pos: u8 = randomize_door_tile(ref rnd, dir);
                 let x: u128 = (pos % 16).into();
                 let y: u128 = (pos / 16).into();
-                if(dir_u8 == DIR::NORTH) {
+                // if(dir_u8 == DIR::NORTH) {
+                //     assert(y == 0, 'north: y');
+                //     assert(x >= RANGE::DOOR::MIN, 'north: x >= min');
+                //     assert(x <= RANGE::DOOR::MAX, 'north: x <= max');
+                // } else if(dir_u8 == DIR::EAST) {
+                //     assert(x == 15, 'east: x');
+                //     assert(y >= RANGE::DOOR::MIN, 'east: y >= min');
+                //     assert(y <= RANGE::DOOR::MAX, 'east: y <= max');
+                // } else if(dir_u8 == DIR::WEST) {
+                //     assert(x == 0, 'west: x');
+                //     assert(y >= RANGE::DOOR::MIN, 'west: y >= min');
+                //     assert(y <= RANGE::DOOR::MAX, 'west: y <= max');
+                // } else if(dir_u8 == DIR::SOUTH) {
+                //     assert(y == 15, 'south: y');
+                //     assert(x >= RANGE::DOOR::MIN, 'south: x >= min');
+                //     assert(x <= RANGE::DOOR::MAX, 'south: x <= max');
+                // } else {
+                //     assert(x >= RANGE::TILE::MIN, 'x >= min');
+                //     assert(x <= RANGE::TILE::MAX, 'x <= max');
+                //     assert(y >= RANGE::TILE::MIN, 'y >= min');
+                //     assert(y <= RANGE::TILE::MAX, 'y <= max');
+                // }
+                if(dir_u8 == DIR::OVER) {
                     assert(y == 0, 'north: y');
                     assert(x >= RANGE::DOOR::MIN, 'north: x >= min');
                     assert(x <= RANGE::DOOR::MAX, 'north: x <= max');
-                } else if(dir_u8 == DIR::EAST) {
-                    assert(x == 15, 'east: x');
-                    assert(y >= RANGE::DOOR::MIN, 'east: y >= min');
-                    assert(y <= RANGE::DOOR::MAX, 'east: y <= max');
-                } else if(dir_u8 == DIR::WEST) {
-                    assert(x == 0, 'west: x');
-                    assert(y >= RANGE::DOOR::MIN, 'west: y >= min');
-                    assert(y <= RANGE::DOOR::MAX, 'west: y <= max');
-                } else if(dir_u8 == DIR::SOUTH) {
+                } else if(dir_u8 == DIR::UNDER) {
                     assert(y == 15, 'south: y');
                     assert(x >= RANGE::DOOR::MIN, 'south: x >= min');
                     assert(x <= RANGE::DOOR::MAX, 'south: x <= max');
-                } else {
-                    assert(x >= RANGE::TILE::MIN, 'x >= min');
-                    assert(x <= RANGE::TILE::MAX, 'x <= max');
-                    assert(y >= RANGE::TILE::MIN, 'y >= min');
-                    assert(y <= RANGE::TILE::MAX, 'y <= max');
                 }
                 // ---
                 i += 1;
