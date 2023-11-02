@@ -11,13 +11,13 @@ import LevelSelector from './LevelSelector'
 //
 function MapPanel() {
   const [tileSize, seTtileSize] = useState(7)
-  const { gameId, chamberId: currentChamberId } = useUnderdarkContext()
+  const { roomId, chamberId: currentChamberId } = useUnderdarkContext()
   const { yonder } = useChamber(currentChamberId)
 
   useEffect(() => {
     setLoaders([])
     setChambers({})
-  }, [gameId])
+  }, [roomId])
 
   useEffect(() => {
     if (currentChamberId > 0) {

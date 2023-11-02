@@ -9,7 +9,7 @@ export function defineContractComponents(world: World) {
       return defineComponent(
         world,
         {
-          game_id: RecsType.Number,
+          room_id: RecsType.Number,
           level_number: RecsType.Number,
           seed: RecsType.BigInt,
           yonder: RecsType.Number,

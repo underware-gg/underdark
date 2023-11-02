@@ -43,7 +43,7 @@
 //         let (world, system) = setup_world();
 
 //         // 1st chamber: entry from above, all other locked
-//         let loc1: Location = Location { game_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
+//         let loc1: Location = Location { room_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
 //         assert(loc1.validate_entry() == true, 'entry');
 //         let chamber1: Chamber = generate_level_get_chamber(world, system, loc1, Dir::Under, 'seed', 0);
 //         assert_doors('entry', world, chamber1.location_id, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::ENTRY, 0);
@@ -104,8 +104,8 @@
 //     #[available_gas(1_000_000_000)]
 //     fn test_entry_connect_do_under_sides() {
 //         let (world, system) = setup_world();
-//         let loc1: Location = Location { game_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
-//         let loc2: Location = Location { game_id:1, over:0, under:0, north:2, east:2, west:0, south:0 };
+//         let loc1: Location = Location { room_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
+//         let loc2: Location = Location { room_id:1, over:0, under:0, north:2, east:2, west:0, south:0 };
 //         let chamber1: Chamber = generate_level_get_chamber(world, system, loc1, Dir::Under, 'seed', 0);
 //         let chamber_N: Chamber = generate_level_get_chamber(world, system, LocationTrait::from_id(chamber1.location_id), Dir::North, 'seed', 0);
 //         let chamber_E: Chamber = generate_level_get_chamber(world, system, LocationTrait::from_id(chamber1.location_id), Dir::East, 'seed', 0);
@@ -124,7 +124,7 @@
 //     #[available_gas(1_000_000_000)]
 //     fn test_from_door_does_not_exist() {
 //         let (world, system) = setup_world();
-//         let loc1: Location = Location { game_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
+//         let loc1: Location = Location { room_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
 //         let chamber1: Chamber = generate_level_get_chamber(world, system, loc1, Dir::Under, 'connection', 0);
 //         let chamber2: Chamber = generate_level_get_chamber(world, system, LocationTrait::from_id(chamber1.location_id), Dir::West, 'connection', 0);
 //         let map: Map = get_world_Map(world, chamber2.location_id);

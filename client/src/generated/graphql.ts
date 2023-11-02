@@ -32,9 +32,9 @@ export type Scalars = {
 export type Chamber = {
   __typename?: 'Chamber';
   entity?: Maybe<Entity>;
-  game_id?: Maybe<Scalars['u32']['output']>;
   level_number?: Maybe<Scalars['u32']['output']>;
   location_id?: Maybe<Scalars['u128']['output']>;
+  room_id?: Maybe<Scalars['u32']['output']>;
   seed?: Maybe<Scalars['u256']['output']>;
   yonder?: Maybe<Scalars['u16']['output']>;
 };
@@ -57,21 +57,14 @@ export type ChamberOrder = {
 };
 
 export enum ChamberOrderField {
-  GameId = 'GAME_ID',
   LevelNumber = 'LEVEL_NUMBER',
   LocationId = 'LOCATION_ID',
+  RoomId = 'ROOM_ID',
   Seed = 'SEED',
   Yonder = 'YONDER'
 }
 
 export type ChamberWhereInput = {
-  game_id?: InputMaybe<Scalars['u32']['input']>;
-  game_idEQ?: InputMaybe<Scalars['u32']['input']>;
-  game_idGT?: InputMaybe<Scalars['u32']['input']>;
-  game_idGTE?: InputMaybe<Scalars['u32']['input']>;
-  game_idLT?: InputMaybe<Scalars['u32']['input']>;
-  game_idLTE?: InputMaybe<Scalars['u32']['input']>;
-  game_idNEQ?: InputMaybe<Scalars['u32']['input']>;
   level_number?: InputMaybe<Scalars['u32']['input']>;
   level_numberEQ?: InputMaybe<Scalars['u32']['input']>;
   level_numberGT?: InputMaybe<Scalars['u32']['input']>;
@@ -86,6 +79,13 @@ export type ChamberWhereInput = {
   location_idLT?: InputMaybe<Scalars['u128']['input']>;
   location_idLTE?: InputMaybe<Scalars['u128']['input']>;
   location_idNEQ?: InputMaybe<Scalars['u128']['input']>;
+  room_id?: InputMaybe<Scalars['u32']['input']>;
+  room_idEQ?: InputMaybe<Scalars['u32']['input']>;
+  room_idGT?: InputMaybe<Scalars['u32']['input']>;
+  room_idGTE?: InputMaybe<Scalars['u32']['input']>;
+  room_idLT?: InputMaybe<Scalars['u32']['input']>;
+  room_idLTE?: InputMaybe<Scalars['u32']['input']>;
+  room_idNEQ?: InputMaybe<Scalars['u32']['input']>;
   seed?: InputMaybe<Scalars['u256']['input']>;
   seedEQ?: InputMaybe<Scalars['u256']['input']>;
   seedGT?: InputMaybe<Scalars['u256']['input']>;

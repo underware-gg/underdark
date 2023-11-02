@@ -16,7 +16,7 @@ const GameView = ({
   // height = 350,
 }) => {
 
-  const { gameId, chamberId } = useUnderdarkContext()
+  const { roomId, chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
   const { yonder } = useChamber(chamberId)
   const { gameImpl, gameState, isLoaded, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
@@ -26,7 +26,7 @@ const GameView = ({
   
   useEffect(() => {
     dispatchReset(gameTilemap?.playerStart ?? null, false)
-  }, [gameTilemap, gameId, chamberId])
+  }, [gameTilemap, roomId, chamberId])
 
   useEffect(() => {
     gameImpl?.resetGameParams(getLevelParams(yonder).renderParams)
@@ -43,7 +43,7 @@ const GameView = ({
     if (isLoaded || isPlaying) {
       gameImpl?.movePlayer(playerPosition)
     }
-  }, [gameImpl, gameId, chamberId, playerPosition, isLoaded, isPlaying])
+  }, [gameImpl, roomId, chamberId, playerPosition, isLoaded, isPlaying])
 
 
   useEffect(() => {

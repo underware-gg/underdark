@@ -31,7 +31,7 @@ function ScoreBoard({
 
   return (
     <div className=''>
-      {/* <h2>Game #{gameId.toString()}</h2> */}
+      {/* <h2>Game #{roomId.toString()}</h2> */}
       <hr />
       <b>Scores</b>
       {scores.length > 0 ? scores : <li>'-'</li>}

@@ -25,7 +25,7 @@ mod tests {
         execute_generate_level(world, system, 1, 1, 'entry', 0);
 
         // check Chamber component
-        let location: Location = Location { game_id:1, over:0, under:1, north:0, east:1, west:0, south:1 };
+        let location: Location = Location { room_id:1, over:0, under:1, north:0, east:1, west:0, south:1 };
         let chamber = get_world_Chamber(world, location.to_id());
         assert(chamber.seed != 0, 'Chamber: bad seed');
         assert(chamber.seed.low != chamber.seed.high, 'Chamber: seed.low != seed.high');

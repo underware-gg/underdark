@@ -42,23 +42,23 @@ mod tests {
     #[available_gas(1_000_000_000_000)]
     fn test_doors_connections() {
         let (world, system) = setup_world();
-        let game_id: u32 = 1;
+        let room_id: u32 = 1;
 
         // 1st chamber: entry from above, all other locked
-        let chamber1: Chamber = generate_level_get_chamber(world, system, game_id, 1, 'seed', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, room_id, 1, 'seed', 0);
         // assert_doors('entry', world, chamber1.location_id, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::ENTRY, 0);
         assert_doors('entry', world, chamber1.location_id);
 
         // move WEST
-        let chamber2 = generate_level_get_chamber(world, system, game_id, 2, 'binary_tree_classic', 0);
+        let chamber2 = generate_level_get_chamber(world, system, room_id, 2, 'binary_tree_classic', 0);
         assert_doors('level_2', world, chamber2.location_id);
 
         // move NORTH
-        let chamber3 = generate_level_get_chamber(world, system, game_id, 3, 'seed', 0);
+        let chamber3 = generate_level_get_chamber(world, system, room_id, 3, 'seed', 0);
         assert_doors('level_3', world, chamber3.location_id);
 
         // move EAST
-        let chamber4 = generate_level_get_chamber(world, system, game_id, 4, 'seed', 0);
+        let chamber4 = generate_level_get_chamber(world, system, room_id, 4, 'seed', 0);
         assert_doors('level_4', world, chamber4.location_id);
     }
 
@@ -234,10 +234,10 @@ mod tests {
     fn test_score() {
         let (world, system) = setup_world();
         let player = starknet::get_caller_address();
-        let game_id: u32 = 1;
+        let room_id: u32 = 1;
 
-        let chamber1: Chamber = generate_level_get_chamber(world, system, game_id, 1, 'empty', 0);
-        let chamber2 = generate_level_get_chamber(world, system, game_id, 2, 'empty', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, room_id, 1, 'empty', 0);
+        let chamber2 = generate_level_get_chamber(world, system, room_id, 2, 'empty', 0);
         
         // check test if chamber is correct
         let map: Map = get_world_Map(world, chamber2.location_id);
@@ -319,14 +319,14 @@ mod tests {
     #[available_gas(1_000_000_000_000)]
     fn test_monsters_in_walls() {
         let (world, system) = setup_world();
-        let game_id: u32 = 1;
+        let room_id: u32 = 1;
 
         let mut i: usize = 0;
         loop {
             if (i >= 10) { break; }
             // 1st chamber: entry from above, all other locked
             let level_number: u32 = i + 1;
-            let chamber1: Chamber = generate_level_get_chamber(world, system, game_id, level_number, 'binary_tree_classic', 0);
+            let chamber1: Chamber = generate_level_get_chamber(world, system, room_id, level_number, 'binary_tree_classic', 0);
             let map1: Map = get_world_Map(world, chamber1.location_id);
             // no monsters wall overlaps
             assert((map1.bitmap & map1.monsters) == map1.monsters, 'monsters_in_wall');

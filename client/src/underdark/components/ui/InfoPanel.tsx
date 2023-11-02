@@ -59,7 +59,7 @@ function GenerateButton() {
   const { account } = useDojoAccount()
 
   // generate first chamber
-  const { gameId, chamberId } = useUnderdarkContext()
+  const { roomId, chamberId } = useUnderdarkContext()
   const { yonder } = useChamber(chamberId)
   const canMintFirst = (yonder == 0)
 
@@ -72,14 +72,14 @@ function GenerateButton() {
 
   const _generate = async () => {
     const _level = getLevelParams(yonder + 1)
-    const success = await generate_level(account, gameId, yonder + 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
+    const success = await generate_level(account, roomId, yonder + 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
     if (success) {
       console.log(`GENERATED... TODO: START GAME`)
     }
   }
 
   if ((canMintFirst || canMintNext) && !isPlaying) {
-    const _label = (canMintFirst ? 'GENERATE GAME' : 'GENERATE NEXT LEVEL')
+    const _label = (canMintFirst ? 'GENERATE ROOM' : 'GENERATE NEXT LEVEL')
     return (
       <ActionButton onClick={() => _generate()} label={_label} />
     )

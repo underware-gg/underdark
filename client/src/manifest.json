@@ -858,7 +858,7 @@
     {
       "name": "actions",
       "address": "0x281c6928d199cbf7235c2d6840402336021003ecbdaa4e2e6396c96142bcd31",
-      "class_hash": "0x3f9a394a79fd539d6da80508c64c8a81a852eb3a21184c17bf40fb86e991830",
+      "class_hash": "0x519f05570bf2b91d56b11f8e5d9dc7e762503d9a1937b5561f2ec9e76eb1e38",
       "abi": [
         {
           "type": "impl",
@@ -897,7 +897,7 @@
               "name": "generate_level",
               "inputs": [
                 {
-                  "name": "game_id",
+                  "name": "room_id",
                   "type": "core::integer::u32"
                 },
                 {
@@ -980,7 +980,7 @@
           "key": true
         },
         {
-          "name": "game_id",
+          "name": "room_id",
           "type": "u32",
           "key": false
         },
@@ -1000,7 +1000,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x7b1bc77cd91f2b0abe40dda70c648d811aed81e874e62f0624c1632f2c0e4d0",
+      "class_hash": "0x2238af18e99c01a3f49326eb06198d22d2758285adaa74993a46ce58cfdc87e",
       "abi": [
         {
           "type": "function",

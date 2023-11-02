@@ -22,17 +22,17 @@ mod utils {
         (world, IActionsDispatcher { contract_address })
     }
 
-    fn execute_generate_level(world: IWorldDispatcher, system: IActionsDispatcher, game_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) {
-        system.generate_level(game_id, level_number, 0x0, 0, generator_name, generator_value.into());
+    fn execute_generate_level(world: IWorldDispatcher, system: IActionsDispatcher, room_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) {
+        system.generate_level(room_id, level_number, 0x0, 0, generator_name, generator_value.into());
     }
 
     fn execute_finish_level(world: IWorldDispatcher, system: IActionsDispatcher, location_id: u128, proof: u256, moves_count: usize) {
         system.finish_level(location_id, proof.low, proof.high, moves_count);
     }
 
-    fn generate_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, game_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) -> Chamber {
-        execute_generate_level(world, system, game_id, level_number, generator_name, generator_value);
-        let location: Location = Location { game_id, over:0, under:1, north:0, east: level_number.try_into().unwrap(), west:0, south:1 };
+    fn generate_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, room_id: u32, level_number: u32, generator_name: felt252, generator_value: u32) -> Chamber {
+        execute_generate_level(world, system, room_id, level_number, generator_name, generator_value);
+        let location: Location = Location { room_id, over:0, under:1, north:0, east: level_number.try_into().unwrap(), west:0, south:1 };
         get_world_Chamber(world, location.to_id())
     }
 
@@ -76,7 +76,7 @@ mod utils {
     }
 
     fn make_from_location() -> (Location, Dir, u128) {
-        let location: Location = Location{ game_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
+        let location: Location = Location{ room_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
         let location_id: u128 = location.to_id();
         let dir: Dir = Dir::Under;
         let to_location: Location = location.offset(dir);

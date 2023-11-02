@@ -8,8 +8,8 @@ mod tests {
     #[test]
     #[available_gas(10_000_000)]
     fn test_location_equality() {
-        let ok1 = Location{ game_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
-        let ok2 = Location{ game_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
+        let ok1 = Location{ room_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
+        let ok2 = Location{ room_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
         assert(ok1 == ok1, 'ok1 == ok1');
         assert(ok2 == ok2, 'ok2 == ok2');
         assert(ok1 != ok2, 'ok1 != ok2');
@@ -36,17 +36,17 @@ mod tests {
     #[available_gas(10_000_000)]
     fn test_location_validate() {
         // fails
-        assert(Location{ game_id:1, over:0, under:0, north:0, east:0, west:0, south:0 }.validate() == false, 'zeros');
+        assert(Location{ room_id:1, over:0, under:0, north:0, east:0, west:0, south:0 }.validate() == false, 'zeros');
         // oks
         let mut oks = ArrayTrait::new();
-        oks.append(Location{ game_id:1, over:0, under:1, north:1, east:1, west:0, south:0 });
-        oks.append(Location{ game_id:1, over:0, under:1, north:1, east:0, west:1, south:0 });
-        oks.append(Location{ game_id:1, over:0, under:1, north:0, east:1, west:0, south:1 });
-        oks.append(Location{ game_id:1, over:0, under:1, north:0, east:0, west:1, south:1 });
-        oks.append(Location{ game_id:1, over:1, under:0, north:1, east:1, west:0, south:0 });
-        oks.append(Location{ game_id:1, over:1, under:0, north:1, east:0, west:1, south:0 });
-        oks.append(Location{ game_id:1, over:1, under:0, north:0, east:1, west:0, south:1 });
-        oks.append(Location{ game_id:1, over:1, under:0, north:0, east:0, west:1, south:1 });        
+        oks.append(Location{ room_id:1, over:0, under:1, north:1, east:1, west:0, south:0 });
+        oks.append(Location{ room_id:1, over:0, under:1, north:1, east:0, west:1, south:0 });
+        oks.append(Location{ room_id:1, over:0, under:1, north:0, east:1, west:0, south:1 });
+        oks.append(Location{ room_id:1, over:0, under:1, north:0, east:0, west:1, south:1 });
+        oks.append(Location{ room_id:1, over:1, under:0, north:1, east:1, west:0, south:0 });
+        oks.append(Location{ room_id:1, over:1, under:0, north:1, east:0, west:1, south:0 });
+        oks.append(Location{ room_id:1, over:1, under:0, north:0, east:1, west:0, south:1 });
+        oks.append(Location{ room_id:1, over:1, under:0, north:0, east:0, west:1, south:1 });        
         let mut i: usize = 0;
         loop {
             if(i == oks.len()) { break; }
@@ -92,7 +92,7 @@ mod tests {
     #[available_gas(10_000_000)]
     fn test_location_id() {
         let base = Location {
-            game_id: 1,
+            room_id: 1,
             over: 0x8333,
             under: 0x8444,
             north: 0x8555,
@@ -121,7 +121,7 @@ mod tests {
     #[available_gas(10_000_000)]
     fn test_location_coord() {
         let base = Location {
-            game_id: 1,
+            room_id: 1,
             over: 0x8333,
             under: 0x8444,
             north: 0x8555,
@@ -131,7 +131,7 @@ mod tests {
         };
         let coord: u128 = base.to_id();
         let loc: Location = LocationTrait::from_coord(1, coord);
-        assert(loc.game_id == base.game_id, 'loc.game_id');
+        assert(loc.room_id == base.room_id, 'loc.room_id');
         assert(loc.over == base.over, 'loc.over');
         assert(loc.under == base.under, 'loc.under');
         assert(loc.north == base.north, 'loc.north');
@@ -144,8 +144,8 @@ mod tests {
     #[test]
     #[available_gas(10_000_000)]
     fn test_location_offset() {
-        let ok1 = Location{ game_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
-        let ok2 = Location{ game_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
+        let ok1 = Location{ room_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
+        let ok2 = Location{ room_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
         assert(ok1.validate() == true, 'ok1 is ok');
         assert(ok2.validate() == true, 'ok2 is ok');
         // up to ok2

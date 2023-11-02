@@ -1,10 +1,10 @@
 import { Grid, Row, Col } from './Grid'
 import { HealthBar, LightBar } from './ui/Bars'
 import MapPanel from './ui/MapPanel'
-import GamePanel from './ui/GamePanel'
+import RoomPanel from './ui/RoomPanel'
 import InfoPanel from './ui/InfoPanel'
 import LevelSelector from './ui/LevelSelector'
-import GameSelector from './ui/GameSelector'
+import RoomSelector from './ui/RoomSelector'
 import UICompass from './ui/UICompass'
 
 function GameUI() {
@@ -12,8 +12,8 @@ function GameUI() {
     <Grid className='GameUI'>
       <Row>
         <Col width={4} className='NoPadding'>
-          <GamePanel />
-          <GameSelector />
+          <RoomPanel />
+          <RoomSelector />
           <LevelSelector />
         </Col>
         <Col width={1} className='UI'>

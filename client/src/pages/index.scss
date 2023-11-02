@@ -222,7 +222,7 @@ canvas {
   background-color: #1b1b1b; //RealmsColors.BG
 }
 
-.GamePanel {
+.RoomPanel {
   @extend .MapView;
   height: calc($ui-height - $ui-row - $ui-row);
 }
