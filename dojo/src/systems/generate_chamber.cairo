@@ -15,8 +15,8 @@ use underdark::core::generator::{generate};
 
 #[inline(always)]
 fn generate_chamber(world: IWorldDispatcher,
-    room_id: u32,
-    level_number: u32,
+    room_id: u16,
+    level_number: u16,
     location: Location,
     entry_dir: Dir,
     mut generator_name: felt252,

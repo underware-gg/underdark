@@ -9,6 +9,8 @@ import React, { ReactNode, createContext, useReducer, useContext } from 'react'
 // Constants
 //
 export const initialState = {
+  realmId: 5962,                        // Sissisnorsis
+  manorCoord: BigInt('0x39400000385'),  // Kurnkunor, S901,E916
   roomId: 1,
   chamberId: 0n,
   // constants
@@ -24,10 +26,12 @@ const UnderdarkActions = {
 // Types
 //
 type UnderdarkStateType = {
-  roomId: number,
-  chamberId: bigint,
+  realmId: number
+  manorCoord: bigint
+  roomId: number
+  chamberId: bigint
   // constants
-  logo: string,
+  logo: string
 }
 
 type ActionType =

@@ -15,10 +15,10 @@ export function createSystemCalls(
   // { Chamber, Map }: ClientComponents,
 ) {
 
-  const generate_level = async (signer: Account, roomId: number, levelNumber: number, from_coord: bigint, from_dir: number, generator_name: string, generator_value: number): Promise<boolean> => {
+  const generate_level = async (signer: Account, realmId: number, coord: bigint, roomId: number, levelNumber: number, generator_name: string, generator_value: number): Promise<boolean> => {
     let success = false
     try {
-      const args = [roomId, levelNumber, from_coord, from_dir, strToFelt252(generator_name), generator_value]
+      const args = [realmId, coord, roomId, levelNumber, strToFelt252(generator_name), generator_value]
       console.log(args)
       const tx = await execute(signer, 'actions', 'generate_level', args)
       console.log(`generate_level tx:`, tx)

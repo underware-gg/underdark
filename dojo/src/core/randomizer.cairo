@@ -182,7 +182,7 @@ fn _reduce_monsters(priority1: u256, ref priority2: u256, ref priority3: u256) {
 
 }
 
-fn randomize_monsters(ref rnd: u256, bitmap: u256, protected: u256, level_number: u32) -> (u256, u256, u256) {
+fn randomize_monsters(ref rnd: u256, bitmap: u256, protected: u256, level_number: u16) -> (u256, u256, u256) {
     let mut result: u256 = 0;
 
     let allowed_area = bitmap & ~protected;

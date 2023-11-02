@@ -15,6 +15,7 @@ mod tests {
     use underdark::types::dir::{Dir, DirTrait, DIR};
     use underdark::types::doors::{Doors};
     use underdark::types::tile_type::{TileType, TILE};
+    use underdark::types::constants::{REALM_ID, MANOR_COORD};
     use underdark::utils::bitwise::{U256Bitwise};
     use underdark::utils::bitmap::{Bitmap};
     use underdark::utils::string::{String};
@@ -42,23 +43,23 @@ mod tests {
     #[available_gas(1_000_000_000_000)]
     fn test_doors_connections() {
         let (world, system) = setup_world();
-        let room_id: u32 = 1;
+        let room_id: u16 = 1;
 
         // 1st chamber: entry from above, all other locked
-        let chamber1: Chamber = generate_level_get_chamber(world, system, room_id, 1, 'seed', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 1, 'seed', 0);
         // assert_doors('entry', world, chamber1.location_id, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::ENTRY, 0);
         assert_doors('entry', world, chamber1.location_id);
 
         // move WEST
-        let chamber2 = generate_level_get_chamber(world, system, room_id, 2, 'binary_tree_classic', 0);
+        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 2, 'binary_tree_classic', 0);
         assert_doors('level_2', world, chamber2.location_id);
 
         // move NORTH
-        let chamber3 = generate_level_get_chamber(world, system, room_id, 3, 'seed', 0);
+        let chamber3 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 3, 'seed', 0);
         assert_doors('level_3', world, chamber3.location_id);
 
         // move EAST
-        let chamber4 = generate_level_get_chamber(world, system, room_id, 4, 'seed', 0);
+        let chamber4 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 4, 'seed', 0);
         assert_doors('level_4', world, chamber4.location_id);
     }
 
@@ -234,10 +235,10 @@ mod tests {
     fn test_score() {
         let (world, system) = setup_world();
         let player = starknet::get_caller_address();
-        let room_id: u32 = 1;
+        let room_id: u16 = 1;
 
-        let chamber1: Chamber = generate_level_get_chamber(world, system, room_id, 1, 'empty', 0);
-        let chamber2 = generate_level_get_chamber(world, system, room_id, 2, 'empty', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 1, 'empty', 0);
+        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 2, 'empty', 0);
         
         // check test if chamber is correct
         let map: Map = get_world_Map(world, chamber2.location_id);
@@ -303,10 +304,10 @@ mod tests {
         let bitmap: u256 = binary_tree_pro(rnd, Dir::West);
 
         // randomize_monsters,randomize_slender_duck,randomize_dark_tar
-        let mut i: usize = 0;
+        let mut i: u16 = 0;
         loop {
             if (i >= 10) { break; }
-            let level_number: u32 = i + 1;
+            let level_number: u16 = i + 1;
             let (monsters, slender_duck, dark_tar): (u256, u256, u256) = randomize_monsters(ref rnd, bitmap, 0x0, level_number);
             let monster_count: usize = U256Bitwise::count_bits(monsters);
             assert(monster_count != 0, 'monster_count');
@@ -319,14 +320,14 @@ mod tests {
     #[available_gas(1_000_000_000_000)]
     fn test_monsters_in_walls() {
         let (world, system) = setup_world();
-        let room_id: u32 = 1;
+        let room_id: u16 = 1;
 
-        let mut i: usize = 0;
+        let mut i: u16 = 0;
         loop {
             if (i >= 10) { break; }
             // 1st chamber: entry from above, all other locked
-            let level_number: u32 = i + 1;
-            let chamber1: Chamber = generate_level_get_chamber(world, system, room_id, level_number, 'binary_tree_classic', 0);
+            let level_number: u16 = i + 1;
+            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, level_number, 'binary_tree_classic', 0);
             let map1: Map = get_world_Map(world, chamber1.location_id);
             // no monsters wall overlaps
             assert((map1.bitmap & map1.monsters) == map1.monsters, 'monsters_in_wall');

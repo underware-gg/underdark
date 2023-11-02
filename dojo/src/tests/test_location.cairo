@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests {
     use underdark::types::location::{Location, LocationTrait, CONSTANTS};
+    use underdark::types::constants::{REALM_ID, MANOR_COORD};
     use underdark::utils::bitwise::{U128Bitwise};
     use underdark::types::dir::{Dir};
     use debug::PrintTrait;
@@ -8,8 +9,8 @@ mod tests {
     #[test]
     #[available_gas(10_000_000)]
     fn test_location_equality() {
-        let ok1 = Location{ room_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
-        let ok2 = Location{ room_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
+        let ok1 = Location{ realm_id:REALM_ID, room_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
+        let ok2 = Location{ realm_id:REALM_ID, room_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
         assert(ok1 == ok1, 'ok1 == ok1');
         assert(ok2 == ok2, 'ok2 == ok2');
         assert(ok1 != ok2, 'ok1 != ok2');
@@ -18,12 +19,16 @@ mod tests {
     #[test]
     #[available_gas(1_000_000)]
     fn test_location_constants() {
+        assert(CONSTANTS::OFFSET::ROOM_ID == (16 * 7), 'CONSTANTS::OFFSET::ROOM_ID');
+        assert(CONSTANTS::OFFSET::REALM_ID == (16 * 6), 'CONSTANTS::OFFSET::REALM_ID');
         assert(CONSTANTS::OFFSET::OVER == (16 * 5), 'CONSTANTS::OFFSET::OVER');
         assert(CONSTANTS::OFFSET::UNDER == (16 * 4), 'CONSTANTS::OFFSET::UNDER');
         assert(CONSTANTS::OFFSET::NORTH == (16 * 3), 'CONSTANTS::OFFSET::NORTH');
         assert(CONSTANTS::OFFSET::EAST == (16 * 2), 'CONSTANTS::OFFSET::EAST');
         assert(CONSTANTS::OFFSET::WEST == (16 * 1), 'CONSTANTS::OFFSET::WEST');
         assert(CONSTANTS::OFFSET::SOUTH == (16 * 0), 'CONSTANTS::OFFSET::SOUTH');
+        assert(CONSTANTS::MASK::ROOM_ID == U128Bitwise::shl(0xffff, 16 * 7), 'CONSTANTS::MASK::ROOM_ID');
+        assert(CONSTANTS::MASK::REALM_ID == U128Bitwise::shl(0xffff, 16 * 6), 'CONSTANTS::MASK::REALM_ID');
         assert(CONSTANTS::MASK::OVER == U128Bitwise::shl(0xffff, 16 * 5), 'CONSTANTS::MASK::OVER');
         assert(CONSTANTS::MASK::UNDER == U128Bitwise::shl(0xffff, 16 * 4), 'CONSTANTS::MASK::UNDER');
         assert(CONSTANTS::MASK::NORTH == U128Bitwise::shl(0xffff, 16 * 3), 'CONSTANTS::MASK::NORTH');
@@ -36,17 +41,17 @@ mod tests {
     #[available_gas(10_000_000)]
     fn test_location_validate() {
         // fails
-        assert(Location{ room_id:1, over:0, under:0, north:0, east:0, west:0, south:0 }.validate() == false, 'zeros');
+        assert(Location{ realm_id:REALM_ID, room_id:1, over:0, under:0, north:0, east:0, west:0, south:0 }.validate() == false, 'zeros');
         // oks
         let mut oks = ArrayTrait::new();
-        oks.append(Location{ room_id:1, over:0, under:1, north:1, east:1, west:0, south:0 });
-        oks.append(Location{ room_id:1, over:0, under:1, north:1, east:0, west:1, south:0 });
-        oks.append(Location{ room_id:1, over:0, under:1, north:0, east:1, west:0, south:1 });
-        oks.append(Location{ room_id:1, over:0, under:1, north:0, east:0, west:1, south:1 });
-        oks.append(Location{ room_id:1, over:1, under:0, north:1, east:1, west:0, south:0 });
-        oks.append(Location{ room_id:1, over:1, under:0, north:1, east:0, west:1, south:0 });
-        oks.append(Location{ room_id:1, over:1, under:0, north:0, east:1, west:0, south:1 });
-        oks.append(Location{ room_id:1, over:1, under:0, north:0, east:0, west:1, south:1 });        
+        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:1, east:1, west:0, south:0 });
+        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:1, east:0, west:1, south:0 });
+        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:0, east:1, west:0, south:1 });
+        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:0, east:0, west:1, south:1 });
+        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:1, east:1, west:0, south:0 });
+        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:1, east:0, west:1, south:0 });
+        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:0, east:1, west:0, south:1 });
+        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:0, east:0, west:1, south:1 });        
         let mut i: usize = 0;
         loop {
             if(i == oks.len()) { break; }
@@ -92,6 +97,7 @@ mod tests {
     #[available_gas(10_000_000)]
     fn test_location_id() {
         let base = Location {
+            realm_id: REALM_ID,
             room_id: 1,
             over: 0x8333,
             under: 0x8444,
@@ -102,6 +108,8 @@ mod tests {
         };
         assert(base.validate() == false, 'validate');
         let id: u128 = base.to_id();
+        assert(id & CONSTANTS::MASK::ROOM_ID == U128Bitwise::shl(base.room_id.into(), CONSTANTS::OFFSET::ROOM_ID), 'id.room_id');
+        assert(id & CONSTANTS::MASK::REALM_ID == U128Bitwise::shl(base.realm_id.into(), CONSTANTS::OFFSET::REALM_ID), 'id.realm_id');
         assert(id & CONSTANTS::MASK::OVER == U128Bitwise::shl(base.over.into(), CONSTANTS::OFFSET::OVER), 'id.over');
         assert(id & CONSTANTS::MASK::UNDER == U128Bitwise::shl(base.under.into(), CONSTANTS::OFFSET::UNDER), 'id.under');
         assert(id & CONSTANTS::MASK::NORTH == U128Bitwise::shl(base.north.into(), CONSTANTS::OFFSET::NORTH), 'id.north');
@@ -109,6 +117,8 @@ mod tests {
         assert(id & CONSTANTS::MASK::WEST == U128Bitwise::shl(base.west.into(), CONSTANTS::OFFSET::WEST), 'id.west');
         assert(id & CONSTANTS::MASK::SOUTH == U128Bitwise::shl(base.south.into(), CONSTANTS::OFFSET::SOUTH), 'id.south');
         let loc: Location = LocationTrait::from_id(id);
+        assert(loc.room_id == base.room_id, 'loc.room_id');
+        assert(loc.realm_id == base.realm_id, 'loc.realm_id');
         assert(loc.over == base.over, 'loc.over');
         assert(loc.under == base.under, 'loc.under');
         assert(loc.north == base.north, 'loc.north');
@@ -119,9 +129,10 @@ mod tests {
 
     #[test]
     #[available_gas(10_000_000)]
-    fn test_location_coord() {
+    fn test_location_from_coord() {
         let base = Location {
-            room_id: 1,
+            realm_id: 111,
+            room_id: 222,
             over: 0x8333,
             under: 0x8444,
             north: 0x8555,
@@ -130,22 +141,23 @@ mod tests {
             south: 0x8fff,
         };
         let coord: u128 = base.to_id();
-        let loc: Location = LocationTrait::from_coord(1, coord);
-        assert(loc.room_id == base.room_id, 'loc.room_id');
-        assert(loc.over == base.over, 'loc.over');
-        assert(loc.under == base.under, 'loc.under');
+        let loc: Location = LocationTrait::from_coord(REALM_ID, 1, 2, coord);
+        assert(loc.realm_id == REALM_ID, 'loc.realm_id');
+        assert(loc.room_id == 1, 'loc.room_id');
+        assert(loc.over == 0, 'loc.over');
+        assert(loc.under == 2, 'loc.under');
         assert(loc.north == base.north, 'loc.north');
         assert(loc.east == base.east, 'loc.east');
         assert(loc.west == base.west, 'loc.west');
         assert(loc.south == base.south, 'loc.south');
-        assert(loc == base, 'loc != base');
+        // assert(loc == base, 'loc != base');
     }
 
     #[test]
     #[available_gas(10_000_000)]
     fn test_location_offset() {
-        let ok1 = Location{ room_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
-        let ok2 = Location{ room_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
+        let ok1 = Location{ realm_id:REALM_ID, room_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
+        let ok2 = Location{ realm_id:REALM_ID, room_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
         assert(ok1.validate() == true, 'ok1 is ok');
         assert(ok2.validate() == true, 'ok2 is ok');
         // up to ok2

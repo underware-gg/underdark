@@ -59,7 +59,7 @@ function GenerateButton() {
   const { account } = useDojoAccount()
 
   // generate first chamber
-  const { roomId, chamberId } = useUnderdarkContext()
+  const { realmId, manorCoord, roomId, chamberId } = useUnderdarkContext()
   const { yonder } = useChamber(chamberId)
   const canMintFirst = (yonder == 0)
 
@@ -72,7 +72,7 @@ function GenerateButton() {
 
   const _generate = async () => {
     const _level = getLevelParams(yonder + 1)
-    const success = await generate_level(account, roomId, yonder + 1, 0n, Dir.Under, _level.generatorName, _level.generatorValue)
+    const success = await generate_level(account, realmId, manorCoord, roomId, yonder + 1, _level.generatorName, _level.generatorValue)
     if (success) {
       console.log(`GENERATED... TODO: START GAME`)
     }

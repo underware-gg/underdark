@@ -9,8 +9,8 @@ use dojo::database::schema::{
 struct Chamber {
     #[key]
     location_id: u128,
-    room_id: u32,
-    level_number: u32,
+    room_id: u16,
+    level_number: u16,
     seed: u256,
     yonder: u16,
 }
