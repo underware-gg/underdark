@@ -11,6 +11,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 import { DepthPostShader } from '../../three/DepthPostShader'
 import { Point } from '../ui/MapView'
 import { MODELS_ASSETS, loadAssets } from '../../data/assets'
+import { toRadians } from '../../utils/utils'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5
@@ -199,6 +200,7 @@ function paramsUpdated() {
   _camera.updateProjectionMatrix();
   _postMaterial.uniforms.uCameraNear.value = _camera.near;
   _postMaterial.uniforms.uCameraFar.value = _camera.far;
+  _postMaterial.uniforms.uCameraFov.value = toRadians(_camera.fov);
   // Shader
   _postMaterial.uniforms.uGamma.value = params.gamma;
   _postMaterial.uniforms.uColorCount.value = params.colorCount;

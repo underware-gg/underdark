@@ -14,6 +14,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 import { DepthPostShader } from './DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
 import { loadAssets, MODELS_ASSETS } from '../data/assets'
+import { toRadians } from '../utils/utils'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5
@@ -210,6 +211,7 @@ function paramsUpdated() {
   _camera.updateProjectionMatrix();
   _postMaterial.uniforms.uCameraNear.value = _camera.near;
   _postMaterial.uniforms.uCameraFar.value = _camera.far;
+  _postMaterial.uniforms.uCameraFov.value = toRadians(_camera.fov);
   // Shader
   _postMaterial.uniforms.uGamma.value = params.gamma;
   _postMaterial.uniforms.uColorCount.value = params.colorCount;
@@ -246,6 +248,7 @@ function setupPost() {
     uniforms: {
       uCameraNear: { value: _camera.near },
       uCameraFar: { value: _camera.far },
+      uCameraFov: { value: _camera.fov },
       uGamma: { value: GAMMA },
       uColorCount: { value: COLOR_COUNT },
       uDither: { value: DITHER },

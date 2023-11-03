@@ -13,3 +13,7 @@ export const lerp = (min: number, max: number, f: number): number => (min + (max
 export const map = (v: number, inMin: number, inMax: number, outMin: number, outMax: number) => (outMin + (outMax - outMin) * ((v - inMin) / (inMax - inMin)))
 export const modf = (v: number, m: number): number => (v - m * Math.floor(v / m))
 export const fmod = (a: number, b: number): number => Number((a - (Math.floor(a / b) * b)).toPrecision(8)) // TODO: TEST THIS!!!
+
+const DEGREES_PER_RADIANS = (180 / Math.PI);
+export const toDegrees = (r) => (r * DEGREES_PER_RADIANS)
+export const toRadians = (d) => (d / DEGREES_PER_RADIANS)
