@@ -32,9 +32,9 @@ export type Scalars = {
 export type Chamber = {
   __typename?: 'Chamber';
   entity?: Maybe<Entity>;
-  level_number?: Maybe<Scalars['u32']['output']>;
+  level_number?: Maybe<Scalars['u16']['output']>;
   location_id?: Maybe<Scalars['u128']['output']>;
-  room_id?: Maybe<Scalars['u32']['output']>;
+  room_id?: Maybe<Scalars['u16']['output']>;
   seed?: Maybe<Scalars['u256']['output']>;
   yonder?: Maybe<Scalars['u16']['output']>;
 };
@@ -65,13 +65,13 @@ export enum ChamberOrderField {
 }
 
 export type ChamberWhereInput = {
-  level_number?: InputMaybe<Scalars['u32']['input']>;
-  level_numberEQ?: InputMaybe<Scalars['u32']['input']>;
-  level_numberGT?: InputMaybe<Scalars['u32']['input']>;
-  level_numberGTE?: InputMaybe<Scalars['u32']['input']>;
-  level_numberLT?: InputMaybe<Scalars['u32']['input']>;
-  level_numberLTE?: InputMaybe<Scalars['u32']['input']>;
-  level_numberNEQ?: InputMaybe<Scalars['u32']['input']>;
+  level_number?: InputMaybe<Scalars['u16']['input']>;
+  level_numberEQ?: InputMaybe<Scalars['u16']['input']>;
+  level_numberGT?: InputMaybe<Scalars['u16']['input']>;
+  level_numberGTE?: InputMaybe<Scalars['u16']['input']>;
+  level_numberLT?: InputMaybe<Scalars['u16']['input']>;
+  level_numberLTE?: InputMaybe<Scalars['u16']['input']>;
+  level_numberNEQ?: InputMaybe<Scalars['u16']['input']>;
   location_id?: InputMaybe<Scalars['u128']['input']>;
   location_idEQ?: InputMaybe<Scalars['u128']['input']>;
   location_idGT?: InputMaybe<Scalars['u128']['input']>;
@@ -79,13 +79,13 @@ export type ChamberWhereInput = {
   location_idLT?: InputMaybe<Scalars['u128']['input']>;
   location_idLTE?: InputMaybe<Scalars['u128']['input']>;
   location_idNEQ?: InputMaybe<Scalars['u128']['input']>;
-  room_id?: InputMaybe<Scalars['u32']['input']>;
-  room_idEQ?: InputMaybe<Scalars['u32']['input']>;
-  room_idGT?: InputMaybe<Scalars['u32']['input']>;
-  room_idGTE?: InputMaybe<Scalars['u32']['input']>;
-  room_idLT?: InputMaybe<Scalars['u32']['input']>;
-  room_idLTE?: InputMaybe<Scalars['u32']['input']>;
-  room_idNEQ?: InputMaybe<Scalars['u32']['input']>;
+  room_id?: InputMaybe<Scalars['u16']['input']>;
+  room_idEQ?: InputMaybe<Scalars['u16']['input']>;
+  room_idGT?: InputMaybe<Scalars['u16']['input']>;
+  room_idGTE?: InputMaybe<Scalars['u16']['input']>;
+  room_idLT?: InputMaybe<Scalars['u16']['input']>;
+  room_idLTE?: InputMaybe<Scalars['u16']['input']>;
+  room_idNEQ?: InputMaybe<Scalars['u16']['input']>;
   seed?: InputMaybe<Scalars['u256']['input']>;
   seedEQ?: InputMaybe<Scalars['u256']['input']>;
   seedGT?: InputMaybe<Scalars['u256']['input']>;

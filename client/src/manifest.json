@@ -858,7 +858,7 @@
     {
       "name": "actions",
       "address": "0x281c6928d199cbf7235c2d6840402336021003ecbdaa4e2e6396c96142bcd31",
-      "class_hash": "0x519f05570bf2b91d56b11f8e5d9dc7e762503d9a1937b5561f2ec9e76eb1e38",
+      "class_hash": "0x7c5329b2295a93069903f6be0167cdc102c2205736a15dceed91b893ca60df",
       "abi": [
         {
           "type": "impl",
@@ -897,20 +897,20 @@
               "name": "generate_level",
               "inputs": [
                 {
+                  "name": "realm_id",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "manor_coord",
+                  "type": "core::integer::u128"
+                },
+                {
                   "name": "room_id",
-                  "type": "core::integer::u32"
+                  "type": "core::integer::u16"
                 },
                 {
                   "name": "level_number",
-                  "type": "core::integer::u32"
-                },
-                {
-                  "name": "from_coord",
-                  "type": "core::integer::u128"
-                },
-                {
-                  "name": "from_dir_u128",
-                  "type": "core::integer::u128"
+                  "type": "core::integer::u16"
                 },
                 {
                   "name": "generator_name",
@@ -981,12 +981,12 @@
         },
         {
           "name": "room_id",
-          "type": "u32",
+          "type": "u16",
           "key": false
         },
         {
           "name": "level_number",
-          "type": "u32",
+          "type": "u16",
           "key": false
         },
         {
@@ -1000,7 +1000,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x2238af18e99c01a3f49326eb06198d22d2758285adaa74993a46ce58cfdc87e",
+      "class_hash": "0x11aeb2286cf3ff612faabdafc0005c52fcd102476b0b5186802f17d946e3f67",
       "abi": [
         {
           "type": "function",

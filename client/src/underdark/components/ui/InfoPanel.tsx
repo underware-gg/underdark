@@ -65,7 +65,7 @@ function GenerateButton() {
 
   // for new next chambers
   const { levelIsCompleted } = usePlayerScore(chamberId, account)
-  const { chamberExists: nextChamberExists } = useChamberOffset(chamberId, Dir.East)
+  const { chamberExists: nextChamberExists } = useChamberOffset(chamberId, Dir.Under)
   const canMintNext = (yonder > 0 && levelIsCompleted && !nextChamberExists)
 
   const { isPlaying } = useGameplayContext()

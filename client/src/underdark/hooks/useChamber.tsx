@@ -74,7 +74,7 @@ export const useChamberMap = (locationId: bigint) => {
   // Parse tiles
   const tileIds: Entity[] = useEntityQuery([HasValue(Tile, { location_id: locationId ?? 0n })])
   const tiles: any[] = useMemo(() => tileIds.map((tileId) => getComponentValue(Tile, tileId)), [tileIds])
-  // useEffect(() => console.log(`tileIds:`, coordToSlug(locationId), tileIds), [tileIds])
+  // useEffect(() => console.log(`/tiles:`, coordToSlug(locationId), tileIds, tiles), [tileIds, tiles])
 
   //
   // Parse tilemap

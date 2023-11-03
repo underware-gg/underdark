@@ -12,7 +12,7 @@ function LevelSelector() {
     <Grid className='RowUI'>
       <Row stretched>
         <Col width={4} className='UI'>
-          <NextLevelButton chamberId={chamberId} dir={Dir.West} />
+          <NextLevelButton chamberId={chamberId} dir={Dir.Over} />
         </Col>
         <Col width={8} className='Padded'>
           <h3>
@@ -20,7 +20,7 @@ function LevelSelector() {
           </h3>
         </Col>
         <Col width={4} className='UI'>
-          <NextLevelButton chamberId={chamberId} dir={Dir.East} />
+          <NextLevelButton chamberId={chamberId} dir={Dir.Under} />
         </Col>
       </Row>
     </Grid>
@@ -51,7 +51,7 @@ function NextLevelButton({
     })
   }
 
-  const direction = (dir == Dir.West ? -1 : 1)
+  const direction = (dir == Dir.Over ? -1 : 1)
 
   return <PrevNextButton disabled={!chamberExists} direction={direction} onClick={() => _open()} />
 }

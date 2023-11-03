@@ -99,7 +99,7 @@ const GameTriggers = () => {
     // console.log(`Player at:`, tile, tilemap[tile])
     //
     // Reached door
-    if (tilemap[tile] == TileType.Exit && facing == Dir.East) {
+    if (tilemap[tile] == TileType.Exit && facing == Dir.South) {
       dispatchGameState(GameState.Verifying)
     } else {
       if (tilemap[tile] == TileType.DarkTar) {
