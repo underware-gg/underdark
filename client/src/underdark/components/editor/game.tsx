@@ -10,7 +10,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 
 import { DepthPostShader } from '../../three/DepthPostShader'
 import { Point } from '../ui/MapView'
-import { MODELS_ASSETS, loadAssets } from '../../data/assets'
+import { MODELS_ASSETS, ModelName, loadAssets } from '../../data/assets'
 import { toRadians } from '../../utils/utils'
 
 const PI = Math.PI
@@ -119,8 +119,6 @@ export async function init(canvas, width, height, guiEnabled) {
 
   if (_scene) return
 
-  await loadAssets()
-
   _width = width;
   _height = height;
   _aspect = (width / height);
@@ -157,6 +155,8 @@ export async function init(canvas, width, height, guiEnabled) {
   _camera.up.set(0, 0, 1);
   _camera.position.set(0, 0, _eyeZ)
   _camera.lookAt(0, SIZE, _eyeZ);
+
+  await loadAssets(_cameraRig);
 
   // _controls = new OrbitControls(camera, renderer.domElement);
   // _controls.enableDamping = true;
@@ -323,12 +323,12 @@ function setupScene() {
   addTile(1, 0)
   addTile(0, 1)
 
-  // loadModel('MONSTER', _scene, 0, 0)
-  // loadModel('SLENDER_DUCK', _scene, 0, 0)
-  // loadModel('DARK_TAR', _scene, 0, 0)
-  loadModel('DOOR', _scene, 0, 0)
-  // loadModel('STAIRS', _scene, 0, 0)
-  // loadModel('CHEST', _scene, 0, 0)
+  // loadModel(ModelName.MONSTER, _scene, 0, 0)
+  // loadModel(ModelName.SLENDER_DUCK, _scene, 0, 0)
+  // loadModel(ModelName.DARK_TAR, _scene, 0, 0)
+  loadModel(ModelName.DOOR, _scene, 0, 0)
+  // loadModel(ModelName.STAIRS, _scene, 0, 0)
+  // loadModel(ModelName.CHEST, _scene, 0, 0)
 
 }
 

@@ -13,7 +13,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 
 import { DepthPostShader } from './DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
-import { loadAssets, MODELS_ASSETS } from '../data/assets'
+import { loadAssets, ModelName, MODELS_ASSETS } from '../data/assets'
 import { toRadians } from '../utils/utils'
 
 const PI = Math.PI
@@ -129,8 +129,6 @@ export async function init(canvas, width, height, guiEnabled) {
 
   if (_scene) return;
 
-  await loadAssets()
-
   _width = width;
   _height = height;
   _aspect = (width / height);
@@ -167,6 +165,8 @@ export async function init(canvas, width, height, guiEnabled) {
   _camera.up.set(0, 0, 1);
   _camera.position.set(0, 0, _eyeZ)
   _camera.lookAt(0, -SIZE, _eyeZ);
+
+  await loadAssets(_cameraRig);
 
   // _controls = new OrbitControls(camera, renderer.domElement);
   // _controls.enableDamping = true;
@@ -423,20 +423,20 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
       z = SIZE * 0.5
     } else if (isPlaying) {
       if (tileType == TileType.Entry) {
-        meshes.push(loadModel('DOOR'))
+        meshes.push(loadModel(ModelName.DOOR))
         meshes.push(new THREE.Mesh(_tile_floor_geometry, _material))
       } else if (tileType == TileType.Exit) {
-        meshes.push(loadModel('STAIRS'))
+        meshes.push(loadModel(ModelName.STAIRS))
       } else if (tileType == TileType.LockedExit) {
       } else if (tileType == TileType.Monster) {
-        meshes.push(loadModel('MONSTER'))
+        meshes.push(loadModel(ModelName.MONSTER))
         _randomRotate(meshes[0])
         // } else if (tileType == TileType.SlenderDuck) {
         //   mesh = new THREE.Mesh(_slender_geometry, _material);
         //   mesh.rotateX(HALF_PI)
-        //   loadModel('SLENDER_DUCK')
+        //   loadModel(ModelName.SLENDER_DUCK)
       } else if (tileType == TileType.DarkTar) {
-        meshes.push(loadModel('DARK_TAR'))
+        meshes.push(loadModel(ModelName.DARK_TAR))
         _randomRotate(meshes[0])
       }
     }

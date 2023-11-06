@@ -27,7 +27,6 @@
     "proxy-deep": "^3.1.1",
     "react": "^18.2.0",
     "react-ascii-text": "^0.0.3",
-    "react-audio-player": "^0.17.0",
     "react-dom": "^18.2.0",
     "rxjs": "^7.8.1",
     "sass": "^1.69.5",
