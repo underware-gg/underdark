@@ -115,6 +115,10 @@ yarn
 ```console
 cd dojo
 katana --disable-fee --invoke-max-steps 10000000
+
+# or just...
+cd dojo
+./run_katana
 ```
 
 #### Terminal 2: Torii (indexer)
@@ -123,7 +127,11 @@ Uncomment the `world_address` parameter in `dojo/Scarb.toml` then:
 
 ```console
 cd dojo
-torii --world 0x6d8b7e2306efa1e02bdb4d92c2c76d2bf1c5ba08544f6f5221e1030092312b8
+torii --world 0x7006ea4fd2de52944def100605e48ba82b8c4d15a6bd5ef04fbc579d8b00076
+
+# or just...
+cd dojo
+./run_torii
 ```
 
 #### Terminal 3: Client
@@ -131,15 +139,21 @@ torii --world 0x6d8b7e2306efa1e02bdb4d92c2c76d2bf1c5ba08544f6f5221e1030092312b8
 ```console
 cd client
 yarn && yarn dev
+
+# or just...
+cd dojo
+./run_client
 ```
 
 #### Terminal 4: Sozo commands
 
 ```console
+# build world and systems
 cd dojo
 sozo build
 
 # migrate to local Katana
+cd dojo
 ./migrate
 ```
 
