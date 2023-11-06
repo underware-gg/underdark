@@ -66,6 +66,7 @@ let _cameraRig: THREE.Object3D;
 let _scene: THREE.Scene
 let _material: THREE.Material;
 let _tile_geometry: THREE.BoxGeometry;
+let _tile_floor_geometry: THREE.PlaneGeometry;
 let _map: THREE.Object3D;
 let _target, _postScene, _postCamera, _postMaterial;
 let _supportsExtension: boolean = true;
@@ -330,6 +331,7 @@ function setupScene() {
 
   _material = new THREE.MeshBasicMaterial({ color: 'blue' });
   _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
+  _tile_floor_geometry = new THREE.PlaneGeometry(SIZE, SIZE);
 
   const floor_geometry = new THREE.PlaneGeometry(16 * SIZE, 16 * SIZE);
   const ceiling_geometry = new THREE.PlaneGeometry(20 * SIZE, 20 * SIZE);
@@ -415,32 +417,33 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
     const x = ((i % gridSize) + gridOrigin.x) * SIZE
     const y = (Math.floor(i / gridSize) + gridOrigin.y) * SIZE
     let z = 0
-    let mesh = null
+    let meshes = []
     if (tileType == TileType.Void) {
-      mesh = new THREE.Mesh(_tile_geometry, _material)
+      meshes.push(new THREE.Mesh(_tile_geometry, _material))
       z = SIZE * 0.5
     } else if (isPlaying) {
       if (tileType == TileType.Entry) {
-        mesh = loadModel('DOOR')
+        meshes.push(loadModel('DOOR'))
+        meshes.push(new THREE.Mesh(_tile_floor_geometry, _material))
       } else if (tileType == TileType.Exit) {
-        mesh = loadModel('STAIRS')
+        meshes.push(loadModel('STAIRS'))
       } else if (tileType == TileType.LockedExit) {
       } else if (tileType == TileType.Monster) {
-        mesh = loadModel('MONSTER')
-        _randomRotate(mesh)
+        meshes.push(loadModel('MONSTER'))
+        _randomRotate(meshes[0])
         // } else if (tileType == TileType.SlenderDuck) {
         //   mesh = new THREE.Mesh(_slender_geometry, _material);
         //   mesh.rotateX(HALF_PI)
         //   loadModel('SLENDER_DUCK')
       } else if (tileType == TileType.DarkTar) {
-        mesh = loadModel('DARK_TAR')
-        _randomRotate(mesh)
+        meshes.push(loadModel('DARK_TAR'))
+        _randomRotate(meshes[0])
       }
     }
-    if (mesh) {
+    meshes.forEach((mesh) => {
       mesh.position.set(x, y, z)
-     _map.add(mesh)
-    }
+      _map.add(mesh)
+    })
   }
 
   _scene.add(_map)
