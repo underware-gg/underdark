@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Compass, Dir, GameTilemap, TileType } from '../../utils/underdark'
+import { Compass, Dir, GameTilemap, TileType, offsetCompass } from '../../utils/underdark'
 import { MapColors } from '../../data/colors'
 import { useGameplayContext } from '../../hooks/GameplayContext'
 
@@ -9,6 +9,10 @@ export interface Point {
 }
 
 export const compassToMapViewPos = (compass: Compass | null): Point => {
+  // UNDERDARK SHIFT UNDER AS SOUTH
+  for (let i = 0; i < compass.under - 1; ++i) {
+    compass = offsetCompass(compass, Dir.South)
+  }
   const north = (compass?.north ?? 0)
   const east = (compass?.east ?? 0)
   const west = (compass?.west ?? 0)
