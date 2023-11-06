@@ -28,7 +28,8 @@ const DepthPostShader = {
 
   fragmentShader: /* glsl */`
 
-			#include <packing>
+      #include <common>
+      #include <packing>
 
 			varying vec2 vUv;
 			uniform sampler2D tDiffuse;
@@ -36,6 +37,8 @@ const DepthPostShader = {
 			uniform sampler2D tPalette;
       uniform float uPalette;
       uniform bool uLightness;
+      uniform float uNoise;
+      uniform float uTime;
 			uniform float uCameraNear;
 			uniform float uCameraFar;
 			uniform float uCameraFov;
@@ -92,19 +95,52 @@ const DepthPostShader = {
         return 1.0 - vec3(d < 0.5);
       }
 
+      // from:
+      // https://github.com/mrdoob/three.js/blob/dev/examples/jsm/postprocessing/FilmPass.js
+      // https://github.com/mrdoob/three.js/blob/dev/examples/jsm/shaders/FilmShader.js
+      float apply_noise(float value) {
+        float noise = rand( fract( vUv + uTime * 1.0 ) );
+        // float result = value + value * clamp( 0.1 + noise, 0.0, 1.0 );
+        float result = value * clamp( 0.1 + noise, 0.6, 1.0 );
+        result = mix( value, result, uNoise );
+        if ( true ) { // grayscale
+          result = vec3( luminance( vec3(result) ) ).r; // assuming linear-srgb
+        }
+        return result;
+      }
+
+      vec3 apply_palette(vec3 color, float intensity) {
+        if (uPalette > 0.0) {
+          vec3 albedo = texture2D(tPalette, vec2(intensity, 0.0) ).rgb;
+          if (uLightness) {
+            vec3 back = texture2D(tPalette, vec2(0.0, 0.0) ).rgb;
+            return (albedo * color) + (back * (1.0- color));
+          } else {
+            return color * albedo;
+          }
+        } else if (uLightness) {
+          return 1.0 - color;
+        }
+        return color;
+      }
+
 
 			void main() {
 				//vec3 diffuse = texture2D( tDiffuse, vUv ).rgb;
 				float depth = readDepth( tDepth, vUv );
         depth = apply_gamma(depth, uGamma);
         depth = 1.0 - depth;
-        float depth0 = depth;
 
-        // invert
+        // save depth value
+        float intensity = depth;
+
+        // noise
+        if (uNoise > 0.0) {
+          depth = apply_noise(depth);
+        }
+
+        // result
         vec3 color = vec3( depth );
-
-        // save intensity
-        float d = color.x;
 
         // color reduction + dither
         if(uColorCount > 0.0) {
@@ -117,17 +153,7 @@ const DepthPostShader = {
         }
 
         // palette
-        if (uPalette > 0.0) {
-          vec3 albedo = texture2D(tPalette, vec2(d, 0.0) ).rgb;
-          if (uLightness) {
-            vec3 back = texture2D(tPalette, vec2(0.0, 0.0) ).rgb;
-            color = (albedo * color) + (back * (1.0- color));
-          } else {
-            color *= albedo;
-          }
-        } else if (uLightness) {
-          color = 1.0 - color;
-        }
+        color = apply_palette(color, intensity);
 
 				gl_FragColor.rgb = color;
 				gl_FragColor.a = 1.0;

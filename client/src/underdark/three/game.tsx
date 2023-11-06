@@ -86,6 +86,7 @@ const defaultParams = {
   bayer: BAYER,
   palette: PALETTE,
   lightness: false,
+  noise: 0.0,
 };
 let params = { ...defaultParams };
 
@@ -193,6 +194,7 @@ export async function init(canvas, width, height, guiEnabled) {
     _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
     _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
     _gui.add(params, 'lightness', true).onChange(guiUpdated);
+    _gui.add(params, 'noise', 0, 1, 0.01).onChange(guiUpdated);
     _gui.close();
     // framerate
     _stats = new Stats();
@@ -221,6 +223,7 @@ function paramsUpdated() {
   _postMaterial.uniforms.uPalette.value = params.palette;
   _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette - 1] : null;
   _postMaterial.uniforms.uLightness.value = params.lightness;
+  _postMaterial.uniforms.uNoise.value = params.noise;
 }
 
 // Create a render target with depth texture
@@ -256,6 +259,8 @@ function setupPost() {
       uBayer: { value: BAYER },
       uPalette: { value: params.palette },
       uLightness: { value: params.lightness },
+      uNoise: { value: params.noise },
+      uTime: { value: 0.0 },
       tPalette: { value: null },
       tDiffuse: { value: null },
       tDepth: { value: null }
@@ -283,11 +288,13 @@ function onWindowResize() {
 // Game Loop
 //
 
-export function animate() {
+export function animate(time) {
   if (!_supportsExtension || !_scene || !_renderer) return;
 
   _animationRequest = requestAnimationFrame(animate);
 
+  _postMaterial.uniforms.uTime.value = time;
+  
   TWEEN.update();
 
   // render scene into target
