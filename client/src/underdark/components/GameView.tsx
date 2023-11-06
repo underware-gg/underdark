@@ -55,7 +55,7 @@ const GameView = ({
   return (
     <div className='Relative GameView'>
       <GameControls />
-      <GameCanvas guiEnabled={true} />
+      <GameCanvas guiEnabled={false} />
       {light > 0
         ? <ReactAudioPlayer
           src='/audio/music-ambient.mp3'

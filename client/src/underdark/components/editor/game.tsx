@@ -79,6 +79,7 @@ const defaultParams = {
   bayer: BAYER,
   palette: PALETTE,
   lightness: false,
+  noise: 0.0,
 };
 let params = { ...defaultParams };
 
@@ -244,6 +245,8 @@ function setupPost() {
       uBayer: { value: BAYER },
       uPalette: { value: params.palette },
       uLightness: { value: params.lightness },
+      uNoise: { value: params.noise },
+      uTime: { value: 0.0 },
       tPalette: { value: null },
       tDiffuse: { value: null },
       tDepth: { value: null }
@@ -261,10 +264,12 @@ function setupPost() {
 // Game Loop
 //
 
-export function animate() {
+export function animate(time) {
   if (!_supportsExtension || !_scene || !_renderer) return;
 
   _animationRequest = requestAnimationFrame(animate);
+
+  _postMaterial.uniforms.uTime.value = time / 1000.0;
 
   TWEEN.update();
 

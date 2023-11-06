@@ -19,8 +19,12 @@ const DepthPostShader = {
   },
 
   vertexShader: /* glsl */`
+			uniform sampler2D tDiffuse;
+			varying float vAspect;
 			varying vec2 vUv;
 			void main() {
+        vec2 texSize = vec2(textureSize(tDiffuse, 0));
+        vAspect = texSize.x / texSize.y;
 				vUv = uv;
 				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 			}
@@ -32,12 +36,15 @@ const DepthPostShader = {
       #include <packing>
 
 			varying vec2 vUv;
+			varying float vAspect;
+
 			uniform sampler2D tDiffuse;
 			uniform sampler2D tDepth;
 			uniform sampler2D tPalette;
       uniform float uPalette;
       uniform bool uLightness;
-      uniform float uNoise;
+      uniform float uNoiseAmount;
+      uniform float uNoiseSize;
       uniform float uTime;
 			uniform float uCameraNear;
 			uniform float uCameraFar;
@@ -96,17 +103,24 @@ const DepthPostShader = {
       }
 
       // from:
-      // https://github.com/mrdoob/three.js/blob/dev/examples/jsm/postprocessing/FilmPass.js
-      // https://github.com/mrdoob/three.js/blob/dev/examples/jsm/shaders/FilmShader.js
-      float apply_noise(float value) {
-        float noise = rand( fract( vUv + uTime * 1.0 ) );
-        // float result = value + value * clamp( 0.1 + noise, 0.0, 1.0 );
-        float result = value * clamp( 0.1 + noise, 0.6, 1.0 );
-        result = mix( value, result, uNoise );
-        if ( true ) { // grayscale
-          result = vec3( luminance( vec3(result) ) ).r; // assuming linear-srgb
-        }
-        return result;
+      // https://thebookofshaders.com/11/
+      // 2D Noise based on Morgan McGuire @morgan3d
+      // https://www.shadertoy.com/view/4dS3Wd
+      float random (in vec2 st) { return fract(sin(dot(st.xy,vec2(12.9898,78.233)))* 43758.5453123); }
+      float apply_noise (float value) {
+        vec2 st = vUv * uNoiseSize + mod(uTime * 300.0, 1000.0);
+        st.x *= vAspect;
+        vec2 i = floor(st);
+        vec2 f = fract(st);
+        float a = random(i);
+        float b = random(i + vec2(1.0, 0.0));
+        float c = random(i + vec2(0.0, 1.0));
+        float d = random(i + vec2(1.0, 1.0));
+        vec2 u = f*f*(3.0-2.0*f);
+        // u = smoothstep(0.,1.,f);
+        float n = mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+        n = 1.0 - n * uNoiseAmount;
+        return value * n;
       }
 
       vec3 apply_palette(vec3 color, float intensity) {
@@ -124,7 +138,6 @@ const DepthPostShader = {
         return color;
       }
 
-
 			void main() {
 				//vec3 diffuse = texture2D( tDiffuse, vUv ).rgb;
 				float depth = readDepth( tDepth, vUv );
@@ -134,8 +147,8 @@ const DepthPostShader = {
         // save depth value
         float intensity = depth;
 
-        // noise
-        if (uNoise > 0.0) {
+        // apply noise
+        if (uNoiseAmount > 0.0) {
           depth = apply_noise(depth);
         }
 

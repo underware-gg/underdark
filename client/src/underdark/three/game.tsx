@@ -86,7 +86,8 @@ const defaultParams = {
   bayer: BAYER,
   palette: PALETTE,
   lightness: false,
-  noise: 0.0,
+  noiseAmount: 0.01,
+  noiseSize: 10.0,
 };
 let params = { ...defaultParams };
 
@@ -94,7 +95,7 @@ let params = { ...defaultParams };
 export function resetGameParams(newParams: any = {}) {
   // console.log(`resetGameParams() + `, newParams)
   Object.keys(defaultParams).forEach(key => {
-    params[key] = newParams[key] ?? defaultParams[key]
+    params[key] = newParams?.[key] ?? defaultParams[key]
   })
   _gui?.controllersRecursive().forEach(c => c.updateDisplay())
   paramsUpdated()
@@ -182,7 +183,7 @@ export async function init(canvas, width, height, guiEnabled) {
   onWindowResize();
   window.addEventListener('resize', onWindowResize);
 
-  if (guiEnabled) {
+  if (guiEnabled !== null) {
     _gui = new GUI({ width: 300 });
     _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
     _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
@@ -194,8 +195,13 @@ export async function init(canvas, width, height, guiEnabled) {
     _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
     _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
     _gui.add(params, 'lightness', true).onChange(guiUpdated);
-    _gui.add(params, 'noise', 0, 1, 0.01).onChange(guiUpdated);
-    _gui.close();
+    _gui.add(params, 'noiseAmount', 0, 1, 0.01).onChange(guiUpdated);
+    _gui.add(params, 'noiseSize', 1, 100, 1).onChange(guiUpdated);
+    if (guiEnabled) {
+      _gui.open();
+    } else {
+      _gui.close();
+    }
     // framerate
     _stats = new Stats();
     document.body.appendChild(_stats.dom);
@@ -223,7 +229,8 @@ function paramsUpdated() {
   _postMaterial.uniforms.uPalette.value = params.palette;
   _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette - 1] : null;
   _postMaterial.uniforms.uLightness.value = params.lightness;
-  _postMaterial.uniforms.uNoise.value = params.noise;
+  _postMaterial.uniforms.uNoiseAmount.value = params.noiseAmount;
+  _postMaterial.uniforms.uNoiseSize.value = params.noiseSize;
 }
 
 // Create a render target with depth texture
@@ -259,7 +266,8 @@ function setupPost() {
       uBayer: { value: BAYER },
       uPalette: { value: params.palette },
       uLightness: { value: params.lightness },
-      uNoise: { value: params.noise },
+      uNoiseAmount: { value: params.noiseAmount },
+      uNoiseSize: { value: params.noiseSize },
       uTime: { value: 0.0 },
       tPalette: { value: null },
       tDiffuse: { value: null },
@@ -293,7 +301,7 @@ export function animate(time) {
 
   _animationRequest = requestAnimationFrame(animate);
 
-  _postMaterial.uniforms.uTime.value = time;
+  _postMaterial.uniforms.uTime.value = time / 1000.0;
   
   TWEEN.update();
 
