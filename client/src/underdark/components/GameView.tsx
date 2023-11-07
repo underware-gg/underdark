@@ -95,7 +95,7 @@ const GameTriggers = () => {
   const { sfxEnabled } = useSettingsContext()
   const {
     gameImpl, gameState, isPlaying, playerPosition, hasLight, health, stepCount, steps,
-    dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar,
+    dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar, dispatchSlendered,
   } = useGameplayContext()
 
   useEffect(() => {
@@ -107,13 +107,15 @@ const GameTriggers = () => {
     if (tilemap[tile] == TileType.DarkTar) {
       dispatchDarkTar(100)
       gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
-    } else if (tilemap[tile] == TileType.Monster) {
+    } else if (hasLight && tilemap[tile] == TileType.Monster) {
       dispatchHitDamage()
       gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
-    }
-    else if (_isAround(tilemap, tile, TileType.Monster)) {
+    } else if (hasLight && _isAround(tilemap, tile, TileType.Monster)) {
       dispatchNearDamage()
       gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
+    } else if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || _isAround(tilemap, tile, TileType.SlenderDuck))) {
+      dispatchSlendered()
+      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
     }
   }, [gameState, playerPosition?.tile])
 

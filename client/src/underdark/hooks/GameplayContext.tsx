@@ -244,6 +244,11 @@ export const useGameplayContext = () => {
     dispatch({ type: GameplayActions.TURN_TO, payload: dir })
   }
 
+  const dispatchDarkTar = (value: number = 100) => {
+    dispatch({ type: GameplayActions.REFILL_LIGHT, payload: value })
+    dispatchMessage(MESSAGES.DARK_TAR)
+  }
+
   const dispatchNearDamage = () => {
     dispatch({ type: GameplayActions.DAMAGE, payload: 2 })
     dispatchMessage(MESSAGES.MONSTER_DAMAGE)
@@ -254,9 +259,9 @@ export const useGameplayContext = () => {
     dispatchMessage(MESSAGES.MONSTER_HIT)
   }
 
-  const dispatchDarkTar = (value: number = 100) => {
-    dispatch({ type: GameplayActions.REFILL_LIGHT, payload: value })
-    dispatchMessage(MESSAGES.DARK_TAR)
+  const dispatchSlendered = () => {
+    dispatchGameState(GameState.Slendered)
+    dispatchMessage(MESSAGES.SLENDERED)
   }
 
   return {
@@ -274,9 +279,10 @@ export const useGameplayContext = () => {
     dispatchGameState,
     dispatchMoveTo,
     dispatchTurnTo,
+    dispatchDarkTar,
     dispatchNearDamage,
     dispatchHitDamage,
-    dispatchDarkTar,
+    dispatchSlendered,
   }
 }
 
