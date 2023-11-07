@@ -20,7 +20,7 @@ const GameView = ({
   const { roomId, chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
   const { yonder } = useChamber(chamberId)
-  const { gameImpl, isLoaded, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
+  const { gameImpl, isLoaded, isPlaying, hasLight, light, playerPosition, dispatchReset } = useGameplayContext()
 
   //
   // Start game!
@@ -46,12 +46,28 @@ const GameView = ({
     }
   }, [gameImpl, roomId, chamberId, playerPosition, isLoaded, isPlaying])
 
+  useEffect(() => {
+    if (isLoaded) {
+      gameImpl?.setupMap(gameTilemap ?? null, false)
+    }
+  }, [gameImpl, gameTilemap, isLoaded])
+
+  // game Start
+  useEffect(() => {
+    if (isPlaying) {
+      gameImpl?.enableTilesByType(TileType.DarkTar, true)
+    }
+  }, [gameImpl, isPlaying])
 
   useEffect(() => {
-    if (isLoaded || isPlaying) {
-      gameImpl?.setupMap(gameTilemap ?? null, isPlaying)
+    if (hasLight) {
+      gameImpl?.enableTilesByType(TileType.Monster, isPlaying)
+      gameImpl?.enableTilesByType(TileType.SlenderDuck, false)
+    } else {
+      gameImpl?.enableTilesByType(TileType.Monster, false)
+      gameImpl?.enableTilesByType(TileType.SlenderDuck, isPlaying)
     }
-  }, [gameImpl, gameTilemap, isLoaded, isPlaying])
+  }, [gameImpl, isPlaying, hasLight])
 
   return (
     <div className='Relative GameView'>
@@ -110,7 +126,7 @@ const GameTriggers = () => {
   }, [gameState, playerPosition])
 
   useEffect(() => {
-    if (isPlaying && hasLight) {
+    if (isPlaying && !hasLight) {
       dispatchMessage('No light! Beware the Slender Duck!')
     }
   }, [gameState, hasLight])

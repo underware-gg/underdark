@@ -412,35 +412,40 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
 
   const _randomRotate = (mesh) => (mesh.rotation.set(0, 0, [0, 1, 2, 3][Math.floor(Math.random() * 4)] * HALF_PI))
 
-  for (let i = 0; i < tilemap.length; ++i) {
-    const tileType = tilemap[i]
-    const x = ((i % gridSize) + gridOrigin.x) * SIZE
-    const y = (Math.floor(i / gridSize) + gridOrigin.y) * SIZE
+  // console.log(gameTilemap)
+  for (let tile = 0; tile < tilemap.length; ++tile) {
+    const tileType = tilemap[tile]
+    const x = ((tile % gridSize) + gridOrigin.x) * SIZE
+    const y = (Math.floor(tile / gridSize) + gridOrigin.y) * SIZE
     let z = 0
     let meshes = []
     if (tileType == TileType.Void) {
       meshes.push(new THREE.Mesh(_tile_geometry, _material))
       z = SIZE * 0.5
-    } else if (isPlaying) {
-      if (tileType == TileType.Entry) {
-        meshes.push(loadModel(ModelName.DOOR))
-        meshes.push(new THREE.Mesh(_tile_floor_geometry, _material))
-      } else if (tileType == TileType.Exit) {
-        meshes.push(loadModel(ModelName.STAIRS))
-      } else if (tileType == TileType.LockedExit) {
-      } else if (tileType == TileType.Monster) {
-        meshes.push(loadModel(ModelName.MONSTER))
-        _randomRotate(meshes[0])
-        // } else if (tileType == TileType.SlenderDuck) {
-        //   mesh = new THREE.Mesh(_slender_geometry, _material);
-        //   mesh.rotateX(HALF_PI)
-        //   loadModel(ModelName.SLENDER_DUCK)
-      } else if (tileType == TileType.DarkTar) {
-        meshes.push(loadModel(ModelName.DARK_TAR))
-        _randomRotate(meshes[0])
-      }
+    } else if (tileType == TileType.Entry) {
+      meshes.push(loadModel(ModelName.DOOR))
+      meshes.push(new THREE.Mesh(_tile_floor_geometry, _material))
+    } else if (tileType == TileType.Exit) {
+      meshes.push(loadModel(ModelName.STAIRS))
+    } else if (tileType == TileType.LockedExit) {
+    } else if (tileType == TileType.Monster) {
+      meshes.push(loadModel(ModelName.MONSTER))
+      _randomRotate(meshes[0])
+      meshes[0].visible = isPlaying
+    } else if (tileType == TileType.SlenderDuck) {
+      meshes.push(loadModel(ModelName.SLENDER_DUCK))
+      _randomRotate(meshes[0])
+      meshes[0].visible = isPlaying
+    } else if (tileType == TileType.DarkTar) {
+      meshes.push(loadModel(ModelName.DARK_TAR))
+      _randomRotate(meshes[0])
+      meshes[0].visible = isPlaying
     }
     meshes.forEach((mesh) => {
+      mesh.underData = {
+        tile,
+        tileType,
+      }
       mesh.position.set(x, y, z)
       _map.add(mesh)
     })
@@ -457,6 +462,18 @@ function loadModel(name:ModelName) {
   obj.add(asset.object.clone())
   return obj
 }
+
+export function enableTilesByType(tileType: TileType, enabled: boolean) {
+  _map.children.forEach((object) => {
+    //@ts-ignore
+    if(object.underData?.tileType === tileType) {
+      object.visible = enabled
+    }
+  })
+}
+
+
+
 
 //-------------------------------
 // Audio
