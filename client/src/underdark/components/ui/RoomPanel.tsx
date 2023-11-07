@@ -36,20 +36,23 @@ function RoomPanel() {
       </h2>
 
       {!chamberExists && <>
-        <div>This Room has not been
+        <div>
+          This Room has not been
           <br />
           explored yet!
         </div>
       </>}
 
       {chamberExists && <>
-        {/* <b>{coordToSlug(chamberId, yonder)}</b>
-          <br /> */}
-        {bigintToHex(chamberId)}
-        <br />
-        Level: <b>{yonder}</b>
+        {/* <b>{coordToSlug(chamberId, yonder)}</b> */}
+        {/* <br /> */}
 
-        <p>doors: {JSON.stringify(Object.values(doors??{}))}</p>
+        {bigintToHex(chamberId)}
+        
+        {/* <br /> */}
+        {/* Level: <b>{yonder}</b> */}
+
+        {/* <p>doors: {JSON.stringify(Object.values(doors??{}))}</p> */}
 
         <ScoreBoard />
 

@@ -193,7 +193,7 @@ const _loadAudios = async (listener) => {
     loader.load(asset.path, function (buffer) {
       // load asset...
       let audio = null
-      console.log(`CACHED AUDIO [${name}]:`, buffer)
+      // console.log(`CACHED AUDIO [${name}]:`, buffer)
       if (buffer) {
         audio = new THREE.Audio(listener).setBuffer(buffer)
         audio.setLoop(asset.loop ?? false)

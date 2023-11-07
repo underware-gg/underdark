@@ -6,6 +6,7 @@ import InfoPanel from './ui/InfoPanel'
 import LevelSelector from './ui/LevelSelector'
 import RoomSelector from './ui/RoomSelector'
 import UICompass from './ui/UICompass'
+import SettingsPanel from './ui/SettingsPanel'
 
 function GameUI() {
   return (
@@ -28,6 +29,7 @@ function GameUI() {
         </Col>
         <Col width={4} className='UI'>
           <MapPanel />
+          <SettingsPanel />
         </Col>
       </Row>
     </Grid>

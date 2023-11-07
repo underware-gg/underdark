@@ -9,6 +9,7 @@ import { bigintToHex, map } from '../utils/utils'
 import { getLevelParams } from '../data/levels'
 import GameCanvas from './GameCanvas'
 import { AudioName } from '../data/assets'
+import { useSettingsContext } from '../hooks/SettingsContext'
 
 
 const GameView = ({
@@ -75,6 +76,7 @@ const _isAround = (tilemap, tile, type) => {
 const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
+  const { sfxEnabled } = useSettingsContext()
   const {
     gameImpl, gameState, isPlaying, playerPosition, hasLight, health, stepCount, steps,
     dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar,
@@ -88,14 +90,14 @@ const GameTriggers = () => {
     // Reached door
     if (tilemap[tile] == TileType.DarkTar) {
       dispatchDarkTar(100)
-      gameImpl?.playAudio(AudioName.DARK_TAR)
+      if (sfxEnabled) gameImpl?.playAudio(AudioName.DARK_TAR)
     } else if (tilemap[tile] == TileType.Monster) {
       dispatchHitDamage()
-      gameImpl?.playAudio(AudioName.MONSTER_HIT)
+      if (sfxEnabled) gameImpl?.playAudio(AudioName.MONSTER_HIT)
     }
     else if (_isAround(tilemap, tile, TileType.Monster)) {
       dispatchNearDamage()
-      gameImpl?.playAudio(AudioName.MONSTER_TOUCH)
+      if (sfxEnabled) gameImpl?.playAudio(AudioName.MONSTER_TOUCH)
     }
   }, [gameState, playerPosition?.tile])
 
@@ -150,32 +152,43 @@ const GameTriggers = () => {
 
 
 const GameAudios = () => {
+  const { musicEnabled, sfxEnabled} = useSettingsContext()
   const { gameImpl, gameState, isPlaying, hasLight, playerPosition } = useGameplayContext()
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && musicEnabled) {
       if (hasLight) {
         gameImpl?.playAudio(AudioName.AMBIENT)
-        gameImpl?.playAudio(AudioName.TORCH)
-      } else {
-        gameImpl?.playAudio(AudioName.EXTINGUISH)
-        gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
       }
     } else {
       gameImpl?.stopAudio(AudioName.AMBIENT)
+    }
+  }, [isPlaying, hasLight, musicEnabled])
+
+  useEffect(() => {
+    if (isPlaying && sfxEnabled) {
+      if (hasLight) {
+        gameImpl?.playAudio(AudioName.TORCH)
+        gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
+      } else {
+        gameImpl?.stopAudio(AudioName.TORCH)
+        gameImpl?.playAudio(AudioName.EXTINGUISH)
+        gameImpl?.playAudio(AudioName.SLENDER_DUCK)
+      }
+    } else {
       gameImpl?.stopAudio(AudioName.TORCH)
       gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
     }
-  }, [isPlaying, hasLight])
+  }, [isPlaying, hasLight, sfxEnabled])
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && sfxEnabled) {
       gameImpl?.playFootstep()
     }
   }, [playerPosition?.tile])
 
   useEffect(() => {
-    if (gameState == GameState.Verifying) {
+    if (gameState == GameState.Verifying && sfxEnabled) {
       gameImpl?.playAudio(AudioName.STAIRS)
     }
   }, [gameState])

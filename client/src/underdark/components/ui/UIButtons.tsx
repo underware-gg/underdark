@@ -3,6 +3,8 @@ type ActionButtonProps = {
   label: string
   disabled?: boolean
   large?: boolean
+  fill?: boolean
+  dimmed?: boolean
   onClick: () => void
 };
 
@@ -10,10 +12,12 @@ const ActionButton = ({
   label,
   disabled = false,
   large = false,
+  fill = false,
+  dimmed = false,
   onClick,
 }: ActionButtonProps) => {
-  const _className = disabled ? 'Locked' : 'Unlocked'
-  const _button = <button className={_className} disabled={disabled} onClick={() => onClick()}>{label}</button>
+  const _className = (disabled || dimmed) ? 'Locked' : 'Unlocked'
+  const _button = <button className={`${_className} ${fill ? 'FillParent' : ''}`} disabled={disabled} onClick={() => onClick()}>{label}</button>
   if (large) {
     return <h3>{_button}</h3>
   }

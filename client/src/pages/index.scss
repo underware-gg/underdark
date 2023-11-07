@@ -218,7 +218,7 @@ canvas {
 
 .MapView {
   width: $ui-height;
-  height: $ui-height;
+  height: calc($ui-height - $ui-row);
   background-color: #1b1b1b; //RealmsColors.BG
 }
 
