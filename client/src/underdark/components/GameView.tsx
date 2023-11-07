@@ -106,14 +106,14 @@ const GameTriggers = () => {
     // Reached door
     if (tilemap[tile] == TileType.DarkTar) {
       dispatchDarkTar(100)
-      if (sfxEnabled) gameImpl?.playAudio(AudioName.DARK_TAR)
+      gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
     } else if (tilemap[tile] == TileType.Monster) {
       dispatchHitDamage()
-      if (sfxEnabled) gameImpl?.playAudio(AudioName.MONSTER_HIT)
+      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
     }
     else if (_isAround(tilemap, tile, TileType.Monster)) {
       dispatchNearDamage()
-      if (sfxEnabled) gameImpl?.playAudio(AudioName.MONSTER_TOUCH)
+      gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
     }
   }, [gameState, playerPosition?.tile])
 
@@ -172,28 +172,19 @@ const GameAudios = () => {
   const { gameImpl, gameState, isPlaying, hasLight, playerPosition } = useGameplayContext()
 
   useEffect(() => {
-    if (isPlaying && musicEnabled) {
-      if (hasLight) {
-        gameImpl?.playAudio(AudioName.AMBIENT)
-      }
-    } else {
-      gameImpl?.stopAudio(AudioName.AMBIENT)
-    }
+    const _play = (isPlaying && hasLight && musicEnabled)
+    gameImpl?.playAudio(AudioName.AMBIENT, _play)
   }, [isPlaying, hasLight, musicEnabled])
 
   useEffect(() => {
-    if (isPlaying && sfxEnabled) {
-      if (hasLight) {
-        gameImpl?.playAudio(AudioName.TORCH)
-        gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
-      } else {
-        gameImpl?.stopAudio(AudioName.TORCH)
-        gameImpl?.playAudio(AudioName.EXTINGUISH)
-        gameImpl?.playAudio(AudioName.SLENDER_DUCK)
-      }
+    const _play = (isPlaying && sfxEnabled)
+    if (hasLight) {
+      gameImpl?.playAudio(AudioName.TORCH, _play)
+      gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
     } else {
       gameImpl?.stopAudio(AudioName.TORCH)
-      gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
+      gameImpl?.playAudio(AudioName.EXTINGUISH, _play)
+      gameImpl?.playAudio(AudioName.SLENDER_DUCK, _play)
     }
   }, [isPlaying, hasLight, sfxEnabled])
 
@@ -204,8 +195,8 @@ const GameAudios = () => {
   }, [playerPosition?.tile])
 
   useEffect(() => {
-    if (gameState == GameState.Verifying && sfxEnabled) {
-      gameImpl?.playAudio(AudioName.STAIRS)
+    if (gameState == GameState.Verifying) {
+      gameImpl?.playAudio(AudioName.STAIRS, sfxEnabled)
     }
   }, [gameState])
 

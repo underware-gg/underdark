@@ -478,13 +478,15 @@ export function enableTilesByType(tileType: TileType, enabled: boolean) {
 //-------------------------------
 // Audio
 //
-export function playAudio(name: AudioName) {
+export function playAudio(name: AudioName, enabled: boolean = true) {
   const asset = AUDIO_ASSETS[name]
   if (asset?.object) {
     if (asset.object.isPlaying) {
       asset.object.stop()
     }
-    asset.object.play()
+    if (enabled) {
+      asset.object.play()
+    }
   }
 }
 
