@@ -8,7 +8,7 @@ const HALF_PI = Math.PI * 0.5
 //----------------------------
 // Model Assets
 //
-export enum ModelName {
+enum ModelName {
   MONSTER = 'MONSTER',
   SLENDER_DUCK = 'SLENDER_DUCK',
   DARK_TAR = 'DARK_TAR',
@@ -16,7 +16,18 @@ export enum ModelName {
   STAIRS = 'STAIRS',
 }
 
-let MODELS_ASSETS = {
+interface ModelAsset {
+  path: string
+  scale: number
+  rotation: number[]
+  object?: any
+  loaded?: boolean
+}
+type ModelAssets = {
+  [key in ModelName]: ModelAsset
+}
+
+let MODELS_ASSETS: ModelAssets = {
   [ModelName.MONSTER]: {
     path: '/models/duck3.ok.fbx',
     scale: 0.005,
@@ -53,12 +64,23 @@ let MODELS_ASSETS = {
 //----------------------------
 // Audio Assets
 //
-export enum AudioName {
+enum AudioName {
   AMBIENT = 'AMBIENT',
   SLENDER_DUCK = 'SLENDER_DUCK',
 }
 
-let AUDIO_ASSETS = {
+interface AudioAsset {
+  path: string
+  loop?: boolean
+  object?: any
+  loaded?: boolean
+}
+type AudioAssets = {
+  [key in AudioName]: AudioAsset
+}
+
+
+let AUDIO_ASSETS: AudioAssets = {
   AMBIENT: {
     path: '/audio/music-ambient.mp3',
     loop: true,
@@ -75,7 +97,7 @@ let AUDIO_ASSETS = {
 // Loaders
 //
 // Generic loader
-export const _loader = async (ASSETS, onLoading) => {
+const _loader = async (ASSETS, onLoading) => {
   return new Promise<void>((resolve, reject) => {
     let assetsToLoad = Object.keys(ASSETS).length
     Object.keys(ASSETS).forEach((name) => {
@@ -93,7 +115,7 @@ export const _loader = async (ASSETS, onLoading) => {
 //-----------------
 // Models
 //
-export const _loadModels = async () => {
+const _loadModels = async () => {
   const loader = new FBXLoader()
   return _loader(MODELS_ASSETS, (name, resolve) => {
     const asset = MODELS_ASSETS[name]
@@ -112,7 +134,7 @@ export const _loadModels = async () => {
 //-----------------
 // Audios
 //
-export const _loadAudios = async (listener) => {
+const _loadAudios = async (listener) => {
   const loader = new THREE.AudioLoader()
   return _loader(AUDIO_ASSETS, (name, resolve) => {
     const asset = AUDIO_ASSETS[name]
@@ -154,5 +176,8 @@ const loadAssets = async (cameraRig) => {
 
 export {
   loadAssets,
+  ModelName,
+  AudioName,
   MODELS_ASSETS,
+  AUDIO_ASSETS
 }

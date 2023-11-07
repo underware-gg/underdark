@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import ReactAudioPlayer from 'react-audio-player'
 import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
 import { useGameplayContext, GameState } from '../hooks/GameplayContext'
 import { useChamber, useChamberMap } from '../hooks/useChamber'
@@ -9,6 +8,7 @@ import { Dir, FlippedDir, TileType } from '../utils/underdark'
 import { bigintToHex, map } from '../utils/utils'
 import { getLevelParams } from '../data/levels'
 import GameCanvas from './GameCanvas'
+import { AudioName } from '../data/assets'
 
 
 const GameView = ({
@@ -52,11 +52,29 @@ const GameView = ({
     }
   }, [gameImpl, gameTilemap, isLoaded, isPlaying])
 
+  // audios
+  useEffect(() => {
+    if (isPlaying) {
+      gameImpl?.playAudio(AudioName.AMBIENT)
+    } else {
+      gameImpl?.stopAudio(AudioName.AMBIENT)
+    }
+  }, [gameImpl, isPlaying])
+
+  useEffect(() => {
+    if (light > 0 || !isPlaying) {
+      gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
+    } else {
+      gameImpl?.playAudio(AudioName.SLENDER_DUCK)
+    }
+  }, [gameImpl, light])
+
+
   return (
     <div className='Relative GameView'>
       <GameControls />
       <GameCanvas guiEnabled={false} />
-      {light > 0
+      {/* {light > 0
         ? <ReactAudioPlayer
           src='/audio/music-ambient.mp3'
           autoPlay={true}
@@ -69,7 +87,7 @@ const GameView = ({
           loop={true}
         // volume={1}
         />
-      }
+      } */}
       <GameTriggers />
     </div>
   )

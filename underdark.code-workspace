@@ -16,7 +16,8 @@
       // "**/.env*": true,
     },
     "search.exclude": {
-      "**/package-lock.json": true,
+      "**/*-lock.json": true,
+      "**/*.lock": true,
       "**/artifacts/**/*.json": true,
       "**/contracts/**/*.json": true,
       "**/yarn*.json": true,

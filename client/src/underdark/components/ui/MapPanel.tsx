@@ -3,7 +3,6 @@ import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { useChamber, useChamberMap } from '../../hooks/useChamber'
 import { MapChamber, MapView, compassToMapViewPos } from './MapView'
 import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../../utils/underdark'
-import LevelSelector from './LevelSelector'
 
 
 //-----------------------------

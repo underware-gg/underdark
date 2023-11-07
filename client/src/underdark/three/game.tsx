@@ -13,7 +13,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 
 import { DepthPostShader } from './DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
-import { loadAssets, ModelName, MODELS_ASSETS } from '../data/assets'
+import { loadAssets, ModelName, AudioName, MODELS_ASSETS, AUDIO_ASSETS } from '../data/assets'
 import { toRadians } from '../utils/utils'
 
 const PI = Math.PI
@@ -449,11 +449,30 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
   _scene.add(_map)
 }
 
-function loadModel(modelName) {
-  const model = MODELS_ASSETS[modelName]
-  if (!model?.object ) return null
-  // console.log(`___MODEL_instance`, modelName, model.object)
+function loadModel(name:ModelName) {
+  const asset = MODELS_ASSETS[name]
+  if (!asset?.object ) return null
+  // console.log(`___MODEL_instance`, name, model.object)
   const obj = new THREE.Object3D();
-  obj.add(model.object.clone())
+  obj.add(asset.object.clone())
   return obj
 }
+
+//-------------------------------
+// Audio
+//
+export function playAudio(name: AudioName) {
+  const asset = AUDIO_ASSETS[name]
+  asset?.object?.play()
+}
+
+export function pauseAudio(name: AudioName) {
+  const asset = AUDIO_ASSETS[name]
+  asset?.object?.pause()
+}
+
+export function stopAudio(name: AudioName) {
+  const asset = AUDIO_ASSETS[name]
+  asset?.object?.stop()
+}
+
