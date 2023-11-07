@@ -19,7 +19,7 @@ const GameView = ({
   const { roomId, chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
   const { yonder } = useChamber(chamberId)
-  const { gameImpl, gameState, isLoaded, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
+  const { gameImpl, isLoaded, isPlaying, light, playerPosition, dispatchReset } = useGameplayContext()
 
   //
   // Start game!
@@ -52,43 +52,12 @@ const GameView = ({
     }
   }, [gameImpl, gameTilemap, isLoaded, isPlaying])
 
-  // audios
-  useEffect(() => {
-    if (isPlaying) {
-      gameImpl?.playAudio(AudioName.AMBIENT)
-    } else {
-      gameImpl?.stopAudio(AudioName.AMBIENT)
-    }
-  }, [gameImpl, isPlaying])
-
-  useEffect(() => {
-    if (light > 0 || !isPlaying) {
-      gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
-    } else {
-      gameImpl?.playAudio(AudioName.SLENDER_DUCK)
-    }
-  }, [gameImpl, light])
-
-
   return (
     <div className='Relative GameView'>
-      <GameControls />
       <GameCanvas guiEnabled={false} />
-      {/* {light > 0
-        ? <ReactAudioPlayer
-          src='/audio/music-ambient.mp3'
-          autoPlay={true}
-          loop={true}
-        // volume={1}
-        />
-        : <ReactAudioPlayer
-          src='/audio/sfx/slenderduck.mp3'
-          autoPlay={true}
-          loop={true}
-        // volume={1}
-        />
-      } */}
       <GameTriggers />
+      <GameAudios />
+      <GameControls />
     </div>
   )
 }
@@ -107,35 +76,42 @@ const GameTriggers = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
   const {
-    gameState, isPlaying, playerPosition, light, health, stepCount, steps,
+    gameImpl, gameState, isPlaying, playerPosition, hasLight, health, stepCount, steps,
     dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar,
   } = useGameplayContext()
 
   useEffect(() => {
-    if (!playerPosition || gameState != GameState.Playing) return
-    const { tile, facing } = playerPosition
+    if (!playerPosition || !isPlaying) return
+    const { tile } = playerPosition
     // console.log(`Player at:`, tile, tilemap[tile])
     //
     // Reached door
+    if (tilemap[tile] == TileType.DarkTar) {
+      dispatchDarkTar(100)
+      gameImpl?.playAudio(AudioName.DARK_TAR)
+    } else if (tilemap[tile] == TileType.Monster) {
+      dispatchHitDamage()
+      gameImpl?.playAudio(AudioName.MONSTER_HIT)
+    }
+    else if (_isAround(tilemap, tile, TileType.Monster)) {
+      dispatchNearDamage()
+      gameImpl?.playAudio(AudioName.MONSTER_TOUCH)
+    }
+  }, [gameState, playerPosition?.tile])
+
+  useEffect(() => {
+    if (!playerPosition || !isPlaying) return
+    const { tile, facing } = playerPosition
     if (tilemap[tile] == TileType.Exit && facing == Dir.South) {
       dispatchGameState(GameState.Verifying)
-    } else {
-      if (tilemap[tile] == TileType.DarkTar) {
-        dispatchDarkTar(100)
-      } else if (tilemap[tile] == TileType.Monster) {
-        dispatchHitDamage()
-      }
-      else if (_isAround(tilemap, tile, TileType.Monster)) {
-        dispatchNearDamage()
-      }
     }
   }, [gameState, playerPosition])
 
   useEffect(() => {
-    if (isPlaying && light == 0) {
+    if (isPlaying && hasLight) {
       dispatchMessage('No light! Beware the Slender Duck!')
     }
-  }, [gameState, light])
+  }, [gameState, hasLight])
 
   useEffect(() => {
     if (isPlaying && health == 0) {
@@ -143,7 +119,6 @@ const GameTriggers = () => {
     }
   }, [gameState, health])
 
-  //
   useEffect(() => {
     if (isPlaying && stepCount == 64) {
       dispatchGameState(GameState.Slendered)
@@ -174,7 +149,39 @@ const GameTriggers = () => {
 }
 
 
+const GameAudios = () => {
+  const { gameImpl, gameState, isPlaying, hasLight, playerPosition } = useGameplayContext()
 
+  useEffect(() => {
+    if (isPlaying) {
+      if (hasLight) {
+        gameImpl?.playAudio(AudioName.AMBIENT)
+        gameImpl?.playAudio(AudioName.TORCH)
+      } else {
+        gameImpl?.playAudio(AudioName.EXTINGUISH)
+        gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
+      }
+    } else {
+      gameImpl?.stopAudio(AudioName.AMBIENT)
+      gameImpl?.stopAudio(AudioName.TORCH)
+      gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
+    }
+  }, [isPlaying, hasLight])
+
+  useEffect(() => {
+    if (isPlaying) {
+      gameImpl?.playFootstep()
+    }
+  }, [playerPosition?.tile])
+
+  useEffect(() => {
+    if (gameState == GameState.Verifying) {
+      gameImpl?.playAudio(AudioName.STAIRS)
+    }
+  }, [gameState])
+
+  return <></>
+}
 
 //--------------------
 // Keyboard controller
@@ -182,7 +189,7 @@ const GameTriggers = () => {
 const GameControls = () => {
   const { chamberId } = useUnderdarkContext()
   const { tilemap } = useChamberMap(chamberId)
-  const { gameState, playerPosition, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
+  const { isPlaying, playerPosition, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
 
   const directional = false
   useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight', 'd'])
@@ -191,19 +198,19 @@ const GameControls = () => {
   useKeyDown(() => (directional ? _moveToDirection(Dir.South) : _move(-1)), ['ArrowDown', 's'])
 
   const _moveToDirection = (dir) => {
-    if (gameState != GameState.Playing) return;
+    if (!isPlaying) return;
     dispatchMoveTo({ dir, tilemap })
     dispatchTurnTo(dir)
   }
 
   const _move = (signal) => {
-    if (gameState != GameState.Playing) return;
+    if (!isPlaying) return;
     const dir = signal < 0 ? FlippedDir[playerPosition.facing] : playerPosition.facing
     dispatchMoveTo({ dir, tilemap })
   }
 
   const _rotate = (signal) => {
-    if (gameState != GameState.Playing) return;
+    if (!isPlaying) return;
     const dir = (signal < 0 ? {
       [Dir.North]: Dir.West,
       [Dir.West]: Dir.South,

@@ -28,32 +28,32 @@ type ModelAssets = {
 }
 
 let MODELS_ASSETS: ModelAssets = {
-  [ModelName.MONSTER]: {
+  MONSTER: {
     path: '/models/duck3.ok.fbx',
     scale: 0.005,
     rotation: [HALF_PI, 0, 0],
   },
-  [ModelName.SLENDER_DUCK]: {
+  SLENDER_DUCK: {
     path: '/models/slendie.ok.fbx',
     scale: 0.005,
     rotation: [HALF_PI, 0, 0],
   },
-  [ModelName.DARK_TAR]: {
+  DARK_TAR: {
     path: '/models/tar.ok.fbx',
     scale: 0.005,
     rotation: [HALF_PI, 0, 0],
   },
-  [ModelName.DOOR]: {
+  DOOR: {
     path: '/models/door.fbx',
     scale: 0.005,
     rotation: [HALF_PI, HALF_PI, 0],
   },
-  [ModelName.STAIRS]: {
+  STAIRS: {
     path: '/models/stairs.ok.fbx',
     scale: 0.005,
     rotation: [HALF_PI, HALF_PI, 0],
   },
-  // [ModelName.CHEST]: {
+  // CHEST: {
   //   path: '/models/chest.ok.fbx',
   //   scale: 0.005,
   //   rotation: [HALF_PI, 0, 0],
@@ -67,11 +67,22 @@ let MODELS_ASSETS: ModelAssets = {
 enum AudioName {
   AMBIENT = 'AMBIENT',
   SLENDER_DUCK = 'SLENDER_DUCK',
+  TORCH = 'TORCH',
+  EXTINGUISH = 'EXTINGUISH',
+  DARK_TAR = 'DARK_TAR',
+  STAIRS = 'STAIRS',
+  CHEST = 'CHEST',
+  FOOT1 = 'FOOT1',
+  FOOT2 = 'FOOT2',
+  MONSTER_NEAR = 'MONSTER_NEAR',
+  MONSTER_TOUCH = 'MONSTER_TOUCH',
+  MONSTER_HIT = 'MONSTER_HIT',
 }
 
 interface AudioAsset {
   path: string
   loop?: boolean
+  volume?: number
   object?: any
   loaded?: boolean
 }
@@ -83,11 +94,52 @@ type AudioAssets = {
 let AUDIO_ASSETS: AudioAssets = {
   AMBIENT: {
     path: '/audio/music-ambient.mp3',
+    volume: 0.5,
     loop: true,
   },
   SLENDER_DUCK: {
     path: '/audio/sfx/slenderduck.mp3',
     loop: true,
+  },
+  TORCH: {
+    path: '/audio/sfx/torch.mp3',
+    loop: true,
+  },
+  EXTINGUISH: {
+    path: '/audio/sfx/extinguish.mp3',
+    loop: false,
+  },
+  DARK_TAR: {
+    path: '/audio/sfx/darktar.mp3',
+    loop: false,
+  },
+  STAIRS: {
+    path: '/audio/sfx/stairs.mp3',
+    loop: false,
+  },
+  CHEST: {
+    path: '/audio/sfx/chest.mp3',
+    loop: false,
+  },
+  FOOT1: {
+    path: '/audio/sfx/foot1.mp3',
+    loop: false,
+  },
+  FOOT2: {
+    path: '/audio/sfx/foot2.mp3',
+    loop: false,
+  },
+  MONSTER_NEAR: {
+    path: '/audio/sfx/monster_near.mp3',
+    loop: false,
+  },
+  MONSTER_TOUCH: {
+    path: '/audio/sfx/monster_touch.mp3',
+    loop: false,
+  },
+  MONSTER_HIT: {
+    path: '/audio/sfx/monster_hit.mp3',
+    loop: false,
   },
 }
 
@@ -145,7 +197,7 @@ const _loadAudios = async (listener) => {
       if (buffer) {
         audio = new THREE.Audio(listener).setBuffer(buffer)
         audio.setLoop(asset.loop ?? false)
-        audio.setVolume(1.0)
+        audio.setVolume(asset.volume ?? 1.0)
         audio.autoplay = false
       }
       resolve(audio)

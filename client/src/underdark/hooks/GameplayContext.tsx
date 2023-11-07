@@ -264,6 +264,7 @@ export const useGameplayContext = () => {
     ...state,
     isLoaded: (state.gameState == GameState.Loaded),
     isPlaying: (state.gameState == GameState.Playing),
+    hasLight: (state.light > 0),
     stepCount: state.steps.length, // 0..64
     // GameplayActions,
     // dispatch,

@@ -463,7 +463,12 @@ function loadModel(name:ModelName) {
 //
 export function playAudio(name: AudioName) {
   const asset = AUDIO_ASSETS[name]
-  asset?.object?.play()
+  if (asset?.object) {
+    if (asset.object.isPlaying) {
+      asset.object.stop()
+    }
+    asset.object.play()
+  }
 }
 
 export function pauseAudio(name: AudioName) {
@@ -476,3 +481,7 @@ export function stopAudio(name: AudioName) {
   asset?.object?.stop()
 }
 
+export function playFootstep() {
+  const assetName =_stepCounter % 2 == 0 ? AudioName.FOOT1 : AudioName.FOOT2
+  playAudio(assetName)
+}
