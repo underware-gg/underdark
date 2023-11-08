@@ -58,6 +58,7 @@ let _palettes = [];
 let _gameTilemap: GameTilemap | null = null
 let _stepCounter = 0
 let _animSecs = 200;
+let _animSecsDamage = 500;
 
 let _animationRequest = null
 let _renderer: THREE.WebGLRenderer;
@@ -67,6 +68,7 @@ let _scene: THREE.Scene
 let _material: THREE.Material;
 let _tile_geometry: THREE.BoxGeometry;
 let _tile_floor_geometry: THREE.PlaneGeometry;
+let _damage: THREE.Object3D;
 let _map: THREE.Object3D;
 let _target, _postScene, _postCamera, _postMaterial;
 let _supportsExtension: boolean = true;
@@ -342,8 +344,17 @@ function setupScene() {
   ceiling.position.set(8 * SIZE, 8 * SIZE, SIZE);
   ceiling.scale.set(1, 1, -1);
 
-  _scene.add(floor);
-  _scene.add(ceiling);
+  _damage = new THREE.Object3D();
+  _damage.scale.set(0, 0, 0);
+  const damage_geometry = new THREE.TorusKnotGeometry(10, 3, 64, 8)
+  const damage_mesh = new THREE.Mesh(damage_geometry, _material)
+  damage_mesh.scale.set(0.05, 0.05, 0.05)
+  damage_mesh.position.set(0, 0, SIZE * 0.5)
+  _damage.add(damage_mesh)
+
+  _scene.add(floor)
+  _scene.add(ceiling)
+  _scene.add(_damage)
 }
 
 export function movePlayer(position: Position) {
@@ -381,6 +392,7 @@ export function movePlayer(position: Position) {
     .onComplete(() => {
       if (_cameraRig.rotation.z < 0) _cameraRig.rotation.z += TWO_PI;
       if (_cameraRig.rotation.z > TWO_PI) _cameraRig.rotation.z -= TWO_PI;
+      emitter.emit('rotatedTo', { x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: _cameraRig.rotation.z })
     })
   // _cameraRig.rotation.set(0, 0, rot);
 
@@ -474,25 +486,40 @@ export function enableTilesByType(tileType: TileType, enabled: boolean) {
   })
 }
 
-export function disableTile(tile: number) {
-  _map.children.forEach((object) => {
+function _findTile(tile: number): THREE.Object3D | null {
+  for (let i = 0; i < _map.children.length; ++i) {
+    const object = _map.children[i]
     //@ts-ignore
-    if (object.underData?.tile === tile) {
-      object.visible = false
-    }
-  })
+    if (object.underData?.tile === tile) return object
+  }
+  return null
+}
+
+export function disableTile(tile: number) {
+  const object = _findTile(tile)
+  if (object) {
+    object.visible = false
+  }
 }
 
 export function isTileEnaled(tile: number): boolean {
-  let result = false
-  _map.children.forEach((object) => {
-    //@ts-ignore
-    result ||= (object.underData?.tile === tile)
-  })
-  return result
+  const object = _findTile(tile)
+  return object?.visible ?? false
 }
 
-
+export function damageFromTile(tile: number) {
+  const object = _findTile(tile)
+  if (!object) return
+  _damage.position.set(object.position.x, object.position.y, 0)
+  _damage.rotation.set(0, 0, 0)
+  new TWEEN.Tween(_damage.scale)
+    .to({ x: 1.5, y: 1.5, z: 1.5 }, _animSecsDamage)
+    .start()
+    .onComplete(() => _damage.scale.set(0, 0, 0))
+  new TWEEN.Tween(_damage.rotation)
+    .to({ x: 0, y: 0, z: PI * 4 }, _animSecsDamage)
+    .start()
+}
 
 
 //-------------------------------

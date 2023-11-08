@@ -79,14 +79,26 @@ const GameView = ({
   )
 }
 
-const _isAround = (tilemap, tile, type) => {
+const _isAround = (tilemap, tile, type): number | undefined => {
   const x = tile % 16
   const y = Math.floor(tile / 16)
-  if (x > 0 && tilemap[(x - 1) + (y) * 16] == type) return true
-  if (x < 15 && tilemap[(x + 1) + (y) * 16] == type) return true
-  if (y > 0 && tilemap[(x) + (y - 1) * 16] == type) return true
-  if (y < 15 && tilemap[(x) + (y + 1) * 16] == type) return true
-  return false
+  if (x > 0) {
+    const i = (x - 1) + y * 16
+    if (tilemap[i] == type) return i
+  }
+  if (x < 15) {
+    const i = (x + 1) + y * 16
+    if (tilemap[i] == type) return i
+  }
+  if (y > 0) {
+    const i = x + (y - 1) * 16
+    if (tilemap[i] == type) return i
+  }
+  if (y < 15) {
+    const i = x + (y + 1) * 16
+    if (tilemap[i] == type) return i
+  }
+  return undefined
 }
 
 const GameTriggers = () => {
@@ -101,23 +113,28 @@ const GameTriggers = () => {
   useEffect(() => {
     if (!playerPosition || !isPlaying) return
     const { tile } = playerPosition
-    //
-    // Reached door
-    if (tilemap[tile] == TileType.DarkTar) {
+    const monsterAround = _isAround(tilemap, tile, TileType.Monster)
+    const slenderAround = _isAround(tilemap, tile, TileType.SlenderDuck)
+    if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
+      gameImpl?.damageFromTile(slenderAround ?? tile)
+      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
+      dispatchSlendered()
+    } else if (hasLight && tilemap[tile] == TileType.Monster) {
+      gameImpl?.damageFromTile(tile)
+      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
+      dispatchHitDamage()
+    } else if (hasLight && monsterAround != null) {
+      gameImpl?.damageFromTile(monsterAround)
+      gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
+      dispatchNearDamage()
+    } else if (tilemap[tile] == TileType.DarkTar) {
       if (gameImpl?.isTileEnaled(tile)) {
-        dispatchDarkTar(100)
         gameImpl?.disableTile(tile)
         gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
+        dispatchDarkTar(100)
       }
-    } else if (hasLight && tilemap[tile] == TileType.Monster) {
-      dispatchHitDamage()
-      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
-    } else if (hasLight && _isAround(tilemap, tile, TileType.Monster)) {
-      dispatchNearDamage()
-      gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
-    } else if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || _isAround(tilemap, tile, TileType.SlenderDuck))) {
-      dispatchSlendered()
-      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
+    } else if (!hasLight) {
+      dispatchMessage('No light! Beware the Slender Duck!')
     }
   }, [gameState, playerPosition?.tile])
 
@@ -128,12 +145,6 @@ const GameTriggers = () => {
       dispatchGameState(GameState.Verifying)
     }
   }, [gameState, playerPosition])
-
-  useEffect(() => {
-    if (isPlaying && !hasLight) {
-      dispatchMessage('No light! Beware the Slender Duck!')
-    }
-  }, [gameState, hasLight])
 
   useEffect(() => {
     if (isPlaying && health == 0) {
