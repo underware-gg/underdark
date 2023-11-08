@@ -2,12 +2,15 @@ import React, { ReactNode, createContext, useReducer, useContext } from 'react'
 import { Dir, Position, TileType } from '../utils/underdark'
 import { MESSAGES } from '../data/messages'
 import { clamp } from 'three/src/math/MathUtils'
-// import { ThreeJsGame } from '../components/GameCanvas'
 
-//
-// React + Typescript + Context
-// https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/context
-//
+
+//--------------------------------------
+// Must be in sync with constants.cairo
+const STEP_LIGHT_DROP = 10;
+const MONSTER_NEAR_DAMAGE = 2;
+const MONSTER_HIT_DAMAGE = 8;
+//--------------------------------------
+
 
 type Step = {
   tile: number
@@ -28,7 +31,6 @@ export enum GameState {
   NoHealth = 'no_health',
   Slendered = 'slendered',
 }
-const _lightDrop = 10;
 
 type ThreeJsGame = any;
 
@@ -85,6 +87,10 @@ type ActionType =
 //--------------------------------
 // Context
 //
+// React + Typescript + Context
+// https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/context
+//
+
 const GameplayContext = createContext<{
   state: GameplayStateType
   dispatch: React.Dispatch<any>
@@ -148,7 +154,7 @@ const GameplayProvider = ({
         const dy = (movement.dir == Dir.North && y > 0) ? -1 : (movement.dir == Dir.South && y < 15) ? 1 : 0
         const tile = currentTile + dx + (16 * dy)
         if (state.steps.length < 64 && tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
-          newState.light = clamp(state.light - _lightDrop, 0, 100)
+          newState.light = clamp(state.light - STEP_LIGHT_DROP, 0, 100)
           newState.playerPosition = {
             ...state.playerPosition,
             tile,
@@ -250,12 +256,12 @@ export const useGameplayContext = () => {
   }
 
   const dispatchNearDamage = () => {
-    dispatch({ type: GameplayActions.DAMAGE, payload: 2 })
+    dispatch({ type: GameplayActions.DAMAGE, payload: MONSTER_NEAR_DAMAGE })
     dispatchMessage(MESSAGES.MONSTER_DAMAGE)
   }
 
   const dispatchHitDamage = () => {
-    dispatch({ type: GameplayActions.DAMAGE, payload: 6 })
+    dispatch({ type: GameplayActions.DAMAGE, payload: MONSTER_HIT_DAMAGE })
     dispatchMessage(MESSAGES.MONSTER_HIT)
   }
 
