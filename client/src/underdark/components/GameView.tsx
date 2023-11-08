@@ -42,18 +42,6 @@ const GameView = ({
   }, [gameImpl, light])
 
   useEffect(() => {
-    if (isLoaded || isPlaying) {
-      gameImpl?.movePlayer(playerPosition.tile)
-    }
-  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.tile])
-
-  useEffect(() => {
-    if (isLoaded || isPlaying) {
-      gameImpl?.rotatePlayer(playerPosition.facing)
-    }
-  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.facing])
-
-  useEffect(() => {
     if (isLoaded) {
       gameImpl?.setupMap(gameTilemap ?? null, false)
     }
@@ -80,6 +68,7 @@ const GameView = ({
 
   return (
     <div className='Relative GameView'>
+      <MovePlayer />
       <GameCanvas guiEnabled={false} />
       <GameTriggers />
       <GameAudios />
@@ -87,6 +76,27 @@ const GameView = ({
     </div>
   )
 }
+
+
+const MovePlayer = () => {
+  const { roomId, chamberId } = useUnderdarkContext()
+  const { gameImpl, isLoaded, isPlaying, playerPosition } = useGameplayContext()
+
+  useEffect(() => {
+    if (isLoaded || isPlaying) {
+      gameImpl?.movePlayer(playerPosition.tile)
+    }
+  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.tile])
+
+  useEffect(() => {
+    if (isLoaded || isPlaying) {
+      gameImpl?.rotatePlayer(playerPosition.facing)
+    }
+  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.facing])
+
+  return <></>
+}
+
 
 const _isAround = (tilemap, tile, type): number | undefined => {
   const x = tile % 16
