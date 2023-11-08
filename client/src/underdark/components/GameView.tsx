@@ -101,12 +101,14 @@ const GameTriggers = () => {
   useEffect(() => {
     if (!playerPosition || !isPlaying) return
     const { tile } = playerPosition
-    // console.log(`Player at:`, tile, tilemap[tile])
     //
     // Reached door
     if (tilemap[tile] == TileType.DarkTar) {
-      dispatchDarkTar(100)
-      gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
+      if (gameImpl?.isTileEnaled(tile)) {
+        dispatchDarkTar(100)
+        gameImpl?.disableTile(tile)
+        gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
+      }
     } else if (hasLight && tilemap[tile] == TileType.Monster) {
       dispatchHitDamage()
       gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)

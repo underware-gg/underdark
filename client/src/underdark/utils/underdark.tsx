@@ -202,16 +202,15 @@ export type Position = {
 
 export type GameTilemap = {
   gridSize: TilemapGridSize
-  gridOrigin: Point,
-  playerStart: Position,
+  gridOrigin: Point
+  playerStart: Position
   tilemap: TileType[]
+  tiles: (number | null)[]
 }
 
 export const tilemapToGameTilemap = (tilemap: TileType[], gridSize: TilemapGridSize): GameTilemap | null => {
   if (tilemap.length != 256) return null
-  return gridSize == 18 ? expandTilemap_18(tilemap)
-    : gridSize == 20 ? expandTilemap_20(tilemap)
-      : null
+  return expandTilemap(tilemap, gridSize)
 }
 
 const _makePlayerStart = (tile: number) => {
@@ -228,99 +227,53 @@ const _makePlayerStart = (tile: number) => {
   }
 }
 
-const expandTilemap_18 = (tilemap: TileType[]): GameTilemap => {
-  const gridSize: TilemapGridSize = 18
+const expandTilemap = (tilemap: TileType[], gridSize: TilemapGridSize): GameTilemap => {
+  const gap = (gridSize - 16) / 2
+  const gridOrigin = { x: -gap, y: -gap }
+  const tilemapSize = gridSize * gridSize
+  let result = Array(tilemapSize).fill(TileType.Void)
+  let tiles = Array(tilemapSize).fill(null)
   let playerStart: Position | null = null
-  let result = Array(gridSize * gridSize).fill(tilemap.length > 0 ? TileType.Void : TileType.Path)
-  const _set = (x: number, y: number, tileType: number) => { result[y * gridSize + x] = tileType }
+  const _set = (x: number, y: number, tileType: TileType, tile: number | null = null) => {
+    const i = y * gridSize + x
+    result[i] = tileType
+    tiles[i] = tile
+  }
   for (let i = 0; i < tilemap.length; ++i) {
     const tileType = tilemap[i]
     const x = i % 16
     const y = Math.floor(i / 16)
-    let xx = x + 1
-    let yy = y + 1
-    if (tileType == TileType.Entry) {
-      playerStart = _makePlayerStart(i)
-    }
-    if ([TileType.Entry, TileType.Exit, TileType.LockedExit].includes(tileType)) {
-      if (x == 0) {
-        _set(xx, yy, TileType.Path)
-        _set(xx - 1, yy, tileType)
-      } else if (x == 15) {
-        _set(xx, yy, TileType.Path)
-        _set(xx + 1, yy, tileType)
-      } else if (y == 0) {
-        _set(xx, yy, TileType.Path)
-        _set(xx, yy - 1, tileType)
-      } else if (y == 15) {
-        _set(xx, yy, TileType.Path)
-        _set(xx, yy + 1, tileType)
-      } else {
-        _set(xx, yy, tileType)
-      }
-    } else {
-      _set(xx, yy, tileType)
-    }
-  }
-  return {
-    gridSize,
-    gridOrigin: { x: -1, y: -1 },
-    playerStart,
-    tilemap: result,
-  }
-}
-
-const expandTilemap_20 = (tilemap: TileType[]): GameTilemap => {
-  const gridSize: TilemapGridSize = 20
-  let playerStart: Position | null = null
-  let result = Array(gridSize * gridSize).fill(tilemap.length > 0 ? TileType.Void : TileType.Path)
-  const _set = (x: number, y: number, tileType: number) => { result[y * gridSize + x] = tileType }
-  for (let i = 0; i < tilemap.length; ++i) {
-    const tileType = tilemap[i]
-    const x = i % 16
-    const y = Math.floor(i / 16)
-    let xx = x + 2
-    let yy = y + 2
+    let xx = x + gap
+    let yy = y + gap
     if(tileType == TileType.Entry) {
       playerStart = _makePlayerStart(i)
     }
     if ([TileType.Entry, TileType.Exit, TileType.LockedExit].includes(tileType)) {
-      if (x == 0) {
-        _set(xx, yy, TileType.Path)
+      if (x == 0) { // West door
+        _set(xx, yy, TileType.Path, i)
         _set(xx - 1, yy, tileType)
-        _set(xx - 2, yy, TileType.Void)
-        // _set(xx - 1, yy, TileType.Path)
-        // _set(xx - 2, yy, tileType)
-      } else if (x == 15) {
-        _set(xx, yy, TileType.Path)
+      } else if (x == 15) { // East door
+        _set(xx, yy, TileType.Path, i)
         _set(xx + 1, yy, tileType)
-        _set(xx + 2, yy, TileType.Void)
-        // _set(xx + 1, yy, TileType.Path)
-        // _set(xx + 2, yy, tileType)
-      } else if (y == 0) {
-        _set(xx, yy, TileType.Path)
+      } else if (y == 0) { // North door
+        _set(xx, yy, TileType.Path, i)
         _set(xx, yy - 1, tileType)
-        _set(xx, yy - 2, TileType.Void)
-        // _set(xx, yy - 1, TileType.Path)
-        // _set(xx, yy - 2, tileType)
-      } else if (y == 15) {
-        _set(xx, yy, TileType.Path)
+      } else if (y == 15) { // South door
+        _set(xx, yy, TileType.Path, i)
         _set(xx, yy + 1, tileType)
-        _set(xx, yy + 2, TileType.Void)
-        // _set(xx, yy + 1, TileType.Path)
-        // _set(xx, yy + 2, tileType)
-      } else {
-        _set(xx, yy, tileType)
+      } else { // Under/Over doors
+        _set(xx, yy, tileType, i)
       }
     } else {
-      _set(xx, yy, tileType)
+      _set(xx, yy, tileType, i)
     }
   }
   return {
     gridSize,
-    gridOrigin: { x: -2, y: -2 },
+    gridOrigin,
     playerStart,
     tilemap: result,
+    tiles,
   }
 }
 

@@ -397,11 +397,13 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
     gridOrigin: { x: 0, y: 0 },
     playerStart: _defaultPosition,
     tilemap: [],
+    tiles: [],
   }
 
   const gridSize = _gameTilemap.gridSize
   const gridOrigin = _gameTilemap.gridOrigin
   const tilemap = _gameTilemap.tilemap
+  const tiles = _gameTilemap.tiles
 
   if (_map) {
     _scene.remove(_map)
@@ -412,11 +414,11 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
 
   const _randomRotate = (mesh) => (mesh.rotation.set(0, 0, [0, 1, 2, 3][Math.floor(Math.random() * 4)] * HALF_PI))
 
-  // console.log(gameTilemap)
-  for (let tile = 0; tile < tilemap.length; ++tile) {
-    const tileType = tilemap[tile]
-    const x = ((tile % gridSize) + gridOrigin.x) * SIZE
-    const y = (Math.floor(tile / gridSize) + gridOrigin.y) * SIZE
+  console.log(gameTilemap)
+  for (let i = 0; i < tilemap.length; ++i) {
+    const tileType = tilemap[i]
+    const x = ((i % gridSize) + gridOrigin.x) * SIZE
+    const y = (Math.floor(i / gridSize) + gridOrigin.y) * SIZE
     let z = 0
     let meshes = []
     if (tileType == TileType.Void) {
@@ -443,7 +445,7 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
     }
     meshes.forEach((mesh) => {
       mesh.underData = {
-        tile,
+        tile: tiles[i],
         tileType,
       }
       mesh.position.set(x, y, z)
@@ -470,6 +472,24 @@ export function enableTilesByType(tileType: TileType, enabled: boolean) {
       object.visible = enabled
     }
   })
+}
+
+export function disableTile(tile: number) {
+  _map.children.forEach((object) => {
+    //@ts-ignore
+    if (object.underData?.tile === tile) {
+      object.visible = false
+    }
+  })
+}
+
+export function isTileEnaled(tile: number): boolean {
+  let result = false
+  _map.children.forEach((object) => {
+    //@ts-ignore
+    result ||= (object.underData?.tile === tile)
+  })
+  return result
 }
 
 
