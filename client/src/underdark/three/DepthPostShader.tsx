@@ -60,8 +60,10 @@ const DepthPostShader = {
 				float viewZ = perspectiveDepthToViewZ( fragCoordZ, uCameraNear, uCameraFar );
 				float depth = viewZToOrthographicDepth( viewZ, uCameraNear, uCameraFar );
 				// warp depth from frustum to camera position
-				float a = (coord.x - 0.5) * uCameraFov;
-				depth = 1.0 - ((1.0 - depth) * cos(a));
+				float a1 = (coord.x - 0.5) * uCameraFov;
+				// float a2 = (coord.y - 0.5) * uCameraFov * vAspect;
+				depth = 1.0 - ((1.0 - depth) * cos(a1));
+				// depth = 1.0 - ((1.0 - depth) * cos(a2));
 				return depth;
 			}
 

@@ -15,7 +15,6 @@ import { DepthPostShader } from './DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
 import { loadAssets, ModelName, AudioName, MODELS_ASSETS, AUDIO_ASSETS } from '../data/assets'
 import { toRadians } from '../utils/utils'
-import { radToDeg } from 'three/src/math/MathUtils'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5
@@ -93,6 +92,7 @@ const defaultParams = {
   lightness: false,
   noiseAmount: 0.01,
   noiseSize: 10.0,
+  ceilingHeight: 1.0,
 };
 let params = { ...defaultParams };
 
@@ -202,6 +202,7 @@ export async function init(canvas, width, height, guiEnabled) {
     _gui.add(params, 'lightness', true).onChange(guiUpdated);
     _gui.add(params, 'noiseAmount', 0, 1, 0.001).onChange(guiUpdated);
     _gui.add(params, 'noiseSize', 1, 100, 1).onChange(guiUpdated);
+    // _gui.add(params, 'ceilingHeight', 1, 5, 0.25).onChange(guiUpdated);
     if (guiEnabled) {
       _gui.open();
     } else {
@@ -334,7 +335,7 @@ function setupScene() {
   _scene = new THREE.Scene();
 
   _material = new THREE.MeshBasicMaterial({ color: 'blue' });
-  _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
+  _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE * params.ceilingHeight);
   _tile_floor_geometry = new THREE.PlaneGeometry(SIZE, SIZE);
 
   const floor_geometry = new THREE.PlaneGeometry(16 * SIZE, 16 * SIZE);
@@ -343,7 +344,7 @@ function setupScene() {
   const floor = new THREE.Mesh(floor_geometry, floor_material);
   const ceiling = new THREE.Mesh(ceiling_geometry, floor_material);
   floor.position.set(7.5 * SIZE, 7.5 * SIZE, 0);
-  ceiling.position.set(8 * SIZE, 8 * SIZE, SIZE);
+  ceiling.position.set(8 * SIZE, 8 * SIZE, SIZE * params.ceilingHeight);
   ceiling.scale.set(1, 1, -1);
 
   _damage = new THREE.Object3D();
@@ -435,7 +436,7 @@ export function setupMap(gameTilemap: GameTilemap | null, isPlaying: boolean) {
     let meshes = []
     if (tileType == TileType.Void) {
       meshes.push(new THREE.Mesh(_tile_geometry, _material))
-      z = SIZE * 0.5
+      z = SIZE * params.ceilingHeight * 0.5
     } else if (tileType == TileType.Entry) {
       meshes.push(loadModel(ModelName.DOOR))
       meshes.push(new THREE.Mesh(_tile_floor_geometry, _material))
@@ -453,6 +454,7 @@ export function setupMap(gameTilemap: GameTilemap | null, isPlaying: boolean) {
     } else if (tileType == TileType.DarkTar) {
       meshes.push(loadModel(ModelName.DARK_TAR))
       _randomRotate(meshes[0])
+      meshes[0].scale.set(1, 1, params.ceilingHeight)
       meshes[0].visible = isPlaying
     }
     meshes.forEach((mesh) => {
