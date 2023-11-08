@@ -15,6 +15,7 @@ import { DepthPostShader } from './DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
 import { loadAssets, ModelName, AudioName, MODELS_ASSETS, AUDIO_ASSETS } from '../data/assets'
 import { toRadians } from '../utils/utils'
+import { radToDeg } from 'three/src/math/MathUtils'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5
@@ -71,6 +72,7 @@ let _tile_floor_geometry: THREE.PlaneGeometry;
 let _damage: THREE.Object3D;
 let _map: THREE.Object3D;
 let _target, _postScene, _postCamera, _postMaterial;
+let _playerPosition = { x: 0, y: 0, z: 0 };
 let _supportsExtension: boolean = true;
 let _gui
 let _stats;
@@ -198,7 +200,7 @@ export async function init(canvas, width, height, guiEnabled) {
     _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
     _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
     _gui.add(params, 'lightness', true).onChange(guiUpdated);
-    _gui.add(params, 'noiseAmount', 0, 1, 0.01).onChange(guiUpdated);
+    _gui.add(params, 'noiseAmount', 0, 1, 0.001).onChange(guiUpdated);
     _gui.add(params, 'noiseSize', 1, 100, 1).onChange(guiUpdated);
     if (guiEnabled) {
       _gui.open();
@@ -282,7 +284,7 @@ function setupPost() {
   const postQuad = new THREE.Mesh(postPlane, _postMaterial);
   _postScene = new THREE.Scene();
   _postScene.add(postQuad);
-  postQuad.scale.set(-1,1,1);
+  postQuad.scale.set(-1, 1, 1);
 }
 
 function onWindowResize() {
@@ -305,7 +307,7 @@ export function animate(time) {
   _animationRequest = requestAnimationFrame(animate);
 
   _postMaterial.uniforms.uTime.value = time / 1000.0;
-  
+
   TWEEN.update();
 
   // render scene into target
@@ -357,13 +359,10 @@ function setupScene() {
   _scene.add(_damage)
 }
 
-export function movePlayer(position: Position) {
-  const tile = position?.tile ?? _defaultPosition.tile
-  const facing = position?.facing ?? _defaultPosition.facing
-  // console.log(`movePlayer()`, tile, facing)
-
+export function movePlayer(tile: number) {
   const x = (tile % 16) * SIZE
   const y = Math.floor(tile / 16) * SIZE
+  _playerPosition = { x, y, z: 0 }
   new TWEEN.Tween(_cameraRig.position)
     .to({ x, y }, _animSecs)
     .onUpdate(() => {
@@ -371,8 +370,9 @@ export function movePlayer(position: Position) {
     })
     .start()
   // _cameraRig.position.set(x, y, 0);
+}
 
-  // Rotate player
+export function rotatePlayer(facing: Dir) {
   let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
   let rotX = (facing == Dir.East || facing == Dir.West) ? tilt : 0
   let rotY = (facing == Dir.North || facing == Dir.South) ? tilt : 0
@@ -402,7 +402,7 @@ export function movePlayer(position: Position) {
 //   return _cameraRig.rotation.z
 // }
 
-export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
+export function setupMap(gameTilemap: GameTilemap | null, isPlaying: boolean) {
 
   _gameTilemap = gameTilemap ?? {
     gridSize: 20,
@@ -468,9 +468,9 @@ export function setupMap(gameTilemap: GameTilemap|null, isPlaying: boolean) {
   _scene.add(_map)
 }
 
-function loadModel(name:ModelName) {
+function loadModel(name: ModelName) {
   const asset = MODELS_ASSETS[name]
-  if (!asset?.object ) return null
+  if (!asset?.object) return null
   // console.log(`___MODEL_instance`, name, model.object)
   const obj = new THREE.Object3D();
   obj.add(asset.object.clone())
@@ -480,7 +480,7 @@ function loadModel(name:ModelName) {
 export function enableTilesByType(tileType: TileType, enabled: boolean) {
   _map.children.forEach((object) => {
     //@ts-ignore
-    if(object.underData?.tileType === tileType) {
+    if (object.underData?.tileType === tileType) {
       object.visible = enabled
     }
   })
@@ -521,6 +521,25 @@ export function damageFromTile(tile: number) {
     .start()
 }
 
+export function rotateToPlayer(tile: number): boolean {
+  const object = _findTile(tile)
+  if (!object) return
+  const a = -HALF_PI + Math.atan2(object.position.y - _playerPosition.y, object.position.x - _playerPosition.x)
+  new TWEEN.Tween(object.rotation)
+    .to({ x: 0, y: 0, z: a }, _animSecs)
+    .start()
+}
+
+export function rotatePlayerTo(tile: number): boolean {
+  const object = _findTile(tile)
+  if (!object) return
+  if (_playerPosition.y == object.position.y && _playerPosition.x == object.position.x) return
+  const a = -HALF_PI + Math.atan2(_playerPosition.y - object.position.y, _playerPosition.x - object.position.x)
+  new TWEEN.Tween(_cameraRig.rotation)
+    .to({ x: 0, y: 0, z: a }, _animSecs)
+    .start()
+}
+
 
 //-------------------------------
 // Audio
@@ -548,6 +567,6 @@ export function stopAudio(name: AudioName) {
 }
 
 export function playFootstep() {
-  const assetName =_stepCounter % 2 == 0 ? AudioName.FOOT1 : AudioName.FOOT2
+  const assetName = _stepCounter % 2 == 0 ? AudioName.FOOT1 : AudioName.FOOT2
   playAudio(assetName)
 }

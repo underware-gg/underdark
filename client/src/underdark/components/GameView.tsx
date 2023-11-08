@@ -37,14 +37,21 @@ const GameView = ({
     gameImpl?.setGameParams({
       far: map(light, 0.0, 100.0, 1.6, 5.0),
       gamma: map(light, 0.0, 100.0, 2.0, 1.25),
+      noiseAmount: map(light, 0.0, 100.0, 0.0, 0.02),
     })
   }, [gameImpl, light])
 
   useEffect(() => {
     if (isLoaded || isPlaying) {
-      gameImpl?.movePlayer(playerPosition)
+      gameImpl?.movePlayer(playerPosition.tile)
     }
-  }, [gameImpl, roomId, chamberId, playerPosition, isLoaded, isPlaying])
+  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.tile])
+
+  useEffect(() => {
+    if (isLoaded || isPlaying) {
+      gameImpl?.rotatePlayer(playerPosition.facing)
+    }
+  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.facing])
 
   useEffect(() => {
     if (isLoaded) {
@@ -60,12 +67,14 @@ const GameView = ({
   }, [gameImpl, isPlaying])
 
   useEffect(() => {
-    if (hasLight) {
-      gameImpl?.enableTilesByType(TileType.Monster, isPlaying)
-      gameImpl?.enableTilesByType(TileType.SlenderDuck, false)
-    } else {
-      gameImpl?.enableTilesByType(TileType.Monster, false)
-      gameImpl?.enableTilesByType(TileType.SlenderDuck, isPlaying)
+    if (isPlaying) {
+      if (hasLight) {
+        gameImpl?.enableTilesByType(TileType.Monster, true)
+        gameImpl?.enableTilesByType(TileType.SlenderDuck, false)
+      } else {
+        gameImpl?.enableTilesByType(TileType.Monster, false)
+        gameImpl?.enableTilesByType(TileType.SlenderDuck, true)
+      }
     }
   }, [gameImpl, isPlaying, hasLight])
 
@@ -117,6 +126,8 @@ const GameTriggers = () => {
     const slenderAround = _isAround(tilemap, tile, TileType.SlenderDuck)
     if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
       gameImpl?.damageFromTile(slenderAround ?? tile)
+      gameImpl?.rotateToPlayer(slenderAround ?? tile)
+      gameImpl?.rotatePlayerTo(slenderAround ?? tile)
       gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
       dispatchSlendered()
     } else if (hasLight && tilemap[tile] == TileType.Monster) {
@@ -125,6 +136,7 @@ const GameTriggers = () => {
       dispatchHitDamage()
     } else if (hasLight && monsterAround != null) {
       gameImpl?.damageFromTile(monsterAround)
+      gameImpl?.rotateToPlayer(monsterAround)
       gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
       dispatchNearDamage()
     } else if (tilemap[tile] == TileType.DarkTar) {
