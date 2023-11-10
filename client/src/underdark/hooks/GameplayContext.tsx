@@ -6,7 +6,9 @@ import { clamp } from 'three/src/math/MathUtils'
 
 //--------------------------------------
 // Must be in sync with constants.cairo
-const STEP_LIGHT_DROP = 10;
+const LIGHT_MAX = 100;
+const LIGHT_STEP_DROP = 10;
+const SANITY_MAX = 100;
 const MONSTER_NEAR_DAMAGE = 2;
 const MONSTER_HIT_DAMAGE = 8;
 //--------------------------------------
@@ -119,8 +121,8 @@ const GameplayProvider = ({
         const position = action.payload as Position
         newState.gameState = GameState.Loaded
         newState.playerPosition = position
-        newState.light = 100
-        newState.health = 100
+        newState.light = LIGHT_MAX
+        newState.health = SANITY_MAX
         newState.steps = []
         newState.message = ''
         console.log(`>>> GAME RESET!`)
@@ -128,12 +130,12 @@ const GameplayProvider = ({
       }
       case GameplayActions.REFILL_LIGHT: {
         const amount = action.payload as number
-        newState.light = clamp(newState.light + amount, 0, 100)
+        newState.light = clamp(newState.light + amount, 0, LIGHT_MAX)
         break
       }
       case GameplayActions.DAMAGE: {
         const damage = action.payload as number
-        newState.health = clamp(newState.health - damage, 0, 100)
+        newState.health = clamp(newState.health - damage, 0, SANITY_MAX)
         break
       }
       case GameplayActions.SET_STATE: {
@@ -154,7 +156,7 @@ const GameplayProvider = ({
         const dy = (movement.dir == Dir.North && y > 0) ? -1 : (movement.dir == Dir.South && y < 15) ? 1 : 0
         const tile = currentTile + dx + (16 * dy)
         if (state.steps.length < 64 && tile != currentTile && tile >= 0 && tile <= 255 && movement.tilemap[tile] != TileType.Void) {
-          newState.light = clamp(state.light - STEP_LIGHT_DROP, 0, 100)
+          newState.light = clamp(state.light - LIGHT_STEP_DROP, 0, LIGHT_MAX)
           newState.playerPosition = {
             ...state.playerPosition,
             tile,
@@ -250,7 +252,7 @@ export const useGameplayContext = () => {
     dispatch({ type: GameplayActions.TURN_TO, payload: dir })
   }
 
-  const dispatchDarkTar = (value: number = 100) => {
+  const dispatchDarkTar = (value: number = LIGHT_MAX) => {
     dispatch({ type: GameplayActions.REFILL_LIGHT, payload: value })
     dispatchMessage(MESSAGES.DARK_TAR)
   }

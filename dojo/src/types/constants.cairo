@@ -12,6 +12,8 @@
 const REALM_ID: u16 = 5962;
 const MANOR_COORD: u128 = 0x39400000385;
 
-const STEP_LIGHT_DROP: u8 = 10;
+const LIGHT_MAX: u8 = 100;
+const LIGHT_STEP_DROP: u8 = 10;
+const SANITY_MAX: u8 = 100;
 const MONSTER_NEAR_DAMAGE: u8 = 2;
 const MONSTER_HIT_DAMAGE: u8 = 8;

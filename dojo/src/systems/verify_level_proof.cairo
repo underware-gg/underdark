@@ -8,11 +8,11 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use underdark::models::chamber::{Map, State, Score};
 use underdark::models::tile::{Tile};
-// use underdark::types::location::{Location, LocationTrait};
 use underdark::types::dir::{Dir, DirTrait};
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::utils::bitmap::{Bitmap};
-
+use underdark::utils::math::{Math8};
+use underdark::types::constants::{LIGHT_MAX, LIGHT_STEP_DROP};
 
 
 fn verify_level_proof(world: IWorldDispatcher,
@@ -65,7 +65,10 @@ fn verify_map(
     // get all the moves from the proof big number
     let mut moves: Array<u8> = unpack_proof_moves(proof, moves_count);
 
+    let mut dark_tar: u256 = map.dark_tar;
+
     // reproduce moves step by step
+    let mut light: u8 = LIGHT_MAX;
     let mut pos: u8 = entry;
     let mut i = 0;
     loop {
@@ -80,6 +83,8 @@ fn verify_map(
                 break; // win!!
             }
             assert(Bitmap::is_set_tile(map.bitmap, pos_tile) == true, 'Hit a wall!');
+            // drop light at every step
+            light = light - Math8::min(LIGHT_STEP_DROP, light);
         }
         i += 1;
     };
