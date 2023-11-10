@@ -64,11 +64,30 @@ mod tests {
     const VERIFY_ENTRY: u8 = 144;
     const VERIFY_EXIT :u8 = 127;
 
+    fn _make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> Map {
+        Map {
+            entity_id: 1,
+            bitmap,
+            generator_name: 0,
+            generator_value: 0,
+            north: 0,
+            east: 0,
+            west: 0,
+            south: 0,
+            over: 0,
+            under: 0,
+            monsters,
+            slender_duck,
+            dark_tar,
+        }
+    }
+
     #[test]
     #[available_gas(1_000_000_000_000)]
     fn test_verify_map_wins() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = _make_map(bitmap, 0, 0, 0);
 
         // good proof
         {
@@ -79,7 +98,7 @@ mod tests {
                 DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
                 DIR::EAST
             ];
-            verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+            verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
         }
 
         // ignore edges
@@ -92,7 +111,7 @@ mod tests {
                 DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
                 DIR::EAST
             ];
-            verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+            verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
         }
 
         // run in circles
@@ -106,7 +125,7 @@ mod tests {
                 DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
                 DIR::EAST
             ];
-            verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+            verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
         }
     }
 
@@ -116,8 +135,9 @@ mod tests {
     fn test_verify_map_no_proof() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = _make_map(bitmap, 0, 0, 0);
         let proof = array![];
-        verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -126,8 +146,9 @@ mod tests {
     fn test_verify_map_short_proof() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = _make_map(bitmap, 0, 0, 0);
         let proof = array![DIR::EAST, DIR::EAST];
-        verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -136,8 +157,9 @@ mod tests {
     fn test_verify_map_wall() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = _make_map(bitmap, 0, 0, 0);
         let proof = array![DIR::NORTH];
-        verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
     
     #[test]
@@ -146,6 +168,7 @@ mod tests {
     fn test_verify_map_hit_a_wall() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = _make_map(bitmap, 0, 0, 0);
         let proof = array![
             DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
             DIR::SOUTH, DIR::SOUTH,
@@ -154,7 +177,7 @@ mod tests {
             DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH,
             DIR::EAST
         ];
-        verify_map(bitmap, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
 
@@ -199,7 +222,7 @@ mod tests {
             DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
         ];
         let proof_low_packed: u256 = pack_proof_moves(proof_low.clone());
-        let mut win: bool = verify_map(map.bitmap, map.over, map.under, proof_low_packed, proof_low.len());
+        let mut win: bool = verify_map(map, map.over, map.under, proof_low_packed, proof_low.len());
         assert(win == true, 'proof_low');
         // execute
         execute_finish_level(world, system, chamber2.location_id, proof_low_packed, proof_low.len());
@@ -209,7 +232,7 @@ mod tests {
         assert(score.moves == proof_low.len(), 'moves=proof_low');
 
         let proof_best_packed: u256 = pack_proof_moves(proof_best.clone());
-        win = verify_map(map.bitmap, map.over, map.under, proof_best_packed, proof_best.len());
+        win = verify_map(map, map.over, map.under, proof_best_packed, proof_best.len());
         assert(win == true, 'proof_best');
         // execute
         execute_finish_level(world, system, chamber2.location_id, proof_best_packed, proof_best.len());
@@ -217,7 +240,7 @@ mod tests {
         assert(score.moves == proof_best.len(), 'moves=proof_best');
 
         let proof_mid_packed: u256 = pack_proof_moves(proof_mid.clone());
-        win = verify_map(map.bitmap, map.over, map.under, proof_mid_packed, proof_mid.len());
+        win = verify_map(map, map.over, map.under, proof_mid_packed, proof_mid.len());
         assert(win == true, 'proof_mid');
         // execute
         execute_finish_level(world, system, chamber2.location_id, proof_mid_packed, proof_mid.len());

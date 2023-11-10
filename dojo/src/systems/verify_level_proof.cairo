@@ -30,7 +30,7 @@ fn verify_level_proof(world: IWorldDispatcher,
     let entry: u8 = map.over;
     let exit: u8 = map.under;
 
-    verify_map(bitmap, entry, exit, proof, moves_count);
+    verify_map(map, entry, exit, proof, moves_count);
 
     //---------------------
     // Save map state
@@ -55,7 +55,7 @@ fn verify_level_proof(world: IWorldDispatcher,
 }
 
 fn verify_map(
-    bitmap: u256,
+    map: Map,
     entry: u8,
     exit: u8,
     proof: u256,
@@ -79,7 +79,7 @@ fn verify_map(
             if (pos == exit) {
                 break; // win!!
             }
-            assert(Bitmap::is_set_tile(bitmap, pos_tile) == true, 'Hit a wall!');
+            assert(Bitmap::is_set_tile(map.bitmap, pos_tile) == true, 'Hit a wall!');
         }
         i += 1;
     };
