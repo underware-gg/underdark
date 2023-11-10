@@ -32,8 +32,17 @@ mod tests {
     //
 
     const VERIFY_BITMAP: u256 = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff; // MASK::ALL
-    const VERIFY_ENTRY: u8 = 8;     // (8, 0)
-    const VERIFY_EXIT :u8 = 248;    // (8, 15)
+    const VERIFY_ENTRY: u8 = 8;     // (8, 0)  / 0x8
+    const VERIFY_EXIT :u8 = 248;    // (8, 15) / 0xf8
+
+    fn _proof_best() -> Array<u8> {
+        array![
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+        ]
+        // runs out of light ar tile (8, 10) / 168 / 0xa8
+    }
 
     #[test]
     #[available_gas(1_000_000_000)]
@@ -41,26 +50,95 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0, 0);
-        let proof_best: Array<u8> = array![
-            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
-            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
-            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
-        ];
+        let proof_best = _proof_best();
         verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
     }
 
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_slendered() {
+    fn test_no_light_slendered_all() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, MASK::ALL, 0);
-        let proof_best: Array<u8> = array![
-            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
-            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
-            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
-        ];
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
+    fn test_no_light_slendered_target() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, 0x8000000000000000000000, 0);
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
+    fn test_no_light_slendered_top() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, 0x80000000000000000000000000, 0);
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
+    fn test_no_light_slendered_left() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, 0x10000000000000000000000, 0);
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
+    fn test_no_light_slendered_right() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, 0x4000000000000000000000, 0);
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
+    fn test_no_light_slendered_down() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, 0x800000000000000000, 0);
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    // #[should_panic(expected:('Slendered!',))]
+    fn test_no_light_slendered_missed() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, 0x800000000000000000000000000000, 0);
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    // #[should_panic(expected:('Slendered!',))]
+    fn test_no_light_saved_with_slender_at_doorstep() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, 0x140, 0);
+        let proof_best = _proof_best();
         verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
     }
 

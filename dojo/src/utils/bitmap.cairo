@@ -1,3 +1,4 @@
+use debug::PrintTrait;
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::types::dir::{Dir, DirTrait};
 
@@ -76,6 +77,9 @@ trait BitmapTrait {
     fn Rotate_90_cw(bitmap: u256) -> u256;
     fn Rotate_90_ccw(bitmap: u256) -> u256;
     fn Rotate_180(bitmap: u256) -> u256;
+
+    fn is_near_or_at_tile(bitmap: u256, i: usize) -> bool;
+    fn is_near_or_at_xy(bitmap: u256, x: usize, y: usize) -> bool;
 }
 
 impl Bitmap of BitmapTrait {
@@ -280,6 +284,27 @@ impl Bitmap of BitmapTrait {
         };
         result
     }
+
+    // check if bitmap is set at a tile or its surroundings
+    #[inline(always)]
+    fn is_near_or_at_tile(bitmap: u256, i: usize) -> bool {
+        Bitmap::is_near_or_at_xy(bitmap, i % 16, i / 16)
+    }
+    fn is_near_or_at_xy(bitmap: u256, x: usize, y: usize) -> bool {
+        let mask: u256 =
+            if (x > 15 || y > 15) { 0 }  // invalid
+            else if (x == 0 && y == 0) { 0xc000800000000000000000000000000000000000000000000000000000000000 }   // top-left
+            else if (x == 15 && y == 0) { 0x3000100000000000000000000000000000000000000000000000000000000 }     // top-right
+            else if (x == 0 && y == 15) { 0x8000c000 }  // bottom-left
+            else if (x == 15 && y == 15) { 0x10003 }    // bottom-right
+            else if (x == 0) { Bitmap::shift_down(0x8000c00080000000000000000000000000000000000000000000000000000000, y-1) }    // left column
+            else if (x == 15) { Bitmap::shift_down(0x1000300010000000000000000000000000000000000000000000000000000, y-1) }      // right column
+            else if (y == 0) { Bitmap::shift_right(0xe000400000000000000000000000000000000000000000000000000000000000, x-1) }   // top row
+            else if (y == 15) { Bitmap::shift_right(0x4000e000, x-1) }  // bottom row
+            else { Bitmap::shift_right(Bitmap::shift_down(0x4000e00040000000000000000000000000000000000000000000000000000000, y-1), x-1) } // middle
+            ;
+        (bitmap & mask > 0)
+    }
 }
 
 
@@ -291,6 +316,7 @@ mod tests {
     use debug::PrintTrait;
     use underdark::utils::bitmap::{Bitmap, MASK};
     use underdark::types::dir::{Dir, DirTrait};
+    use underdark::utils::string::{String};
 
     #[test]
     #[available_gas(100_000_000)]
@@ -429,5 +455,113 @@ mod tests {
         assert(Bitmap::move_tile(100, Dir::South) == 116, '100_South');
         assert(Bitmap::move_tile(100, Dir::Over) == 100, '100_Over');
         assert(Bitmap::move_tile(100, Dir::Under) == 100, '100_Under');
+    }
+
+    fn _test_near(prefix: felt252, bitmap: u256, oks: Array<(usize,usize)>, noks: Array<(usize,usize)>) {
+        let mut n: usize = 0;
+        loop {
+            if (n == oks.len()) { break; }
+            let (x, y): (usize, usize) = *oks[n];
+            assert(Bitmap::is_near_or_at_xy(bitmap, x, y) == true, String::join(prefix, String::join('oks', (n+65).into())));
+            n += 1;
+        };
+        let mut n: usize = 0;
+        loop {
+            if (n == noks.len()) { break; }
+            let (x, y): (usize, usize) = *noks[n];
+            assert(Bitmap::is_near_or_at_xy(bitmap, x, y) == false, String::join(prefix, String::join('noks', (n+65).into())));
+            n += 1;
+        };
+    }    
+
+    #[test]
+    #[available_gas(100_000_000_000)]
+    fn test_bitmap_is_near() {
+        // top left
+        let bitmap_0_0: u256 = Bitmap::set_xy(0, 0, 0);
+        _test_near('bitmap_0_0', bitmap_0_0,
+            array![(0,0), (1,0), (0,1)],
+            array![(1,1), (2,1), (1,2), (15,15)],
+        );
+        // top center
+        let bitmap_1_0: u256 = Bitmap::set_xy(0, 1, 0);
+        _test_near('bitmap_1_0', bitmap_1_0,
+            array![(0,0), (1,0), (2,0), (1,1)],
+            array![(0,1), (0,2), (1,2), (2,1), (2,2), (3,0)],
+        );
+        let bitmap_10_0: u256 = Bitmap::set_xy(0, 10, 0);
+        _test_near('bitmap_10_0', bitmap_10_0,
+            array![(9,0), (10,0), (11,0), (10,1)],
+            array![(9,1), (9,2), (10,2), (11,1), (11,2), (12,0), (0, 0)],
+        );
+        // top right
+        let bitmap_15_0: u256 = Bitmap::set_xy(0, 15, 0);
+        _test_near('bitmap_15_0', bitmap_15_0,
+            array![(14,0), (15,0), (15,1)],
+            array![(13,0), (14,1), (15,2), (0, 0)],
+        );
+
+        // bottom left
+        let bitmap_0_15: u256 = Bitmap::set_xy(0, 0, 15);
+        _test_near('bitmap_0_15', bitmap_0_15,
+            array![(0,15), (1,15), (0,14)],
+            array![(0,13), (1,14), (2,15), (0,0), (15,15)],
+        );
+        // bottom center
+        let bitmap_1_15: u256 = Bitmap::set_xy(0, 1, 15);
+        _test_near('bitmap_1_15', bitmap_1_15,
+            array![(0,15), (1,15), (2,15), (1,14)],
+            array![(0,13), (0,14), (1,13), (2,14), (3,15), (0,0), (15,15)],
+        );
+        let bitmap_11_15: u256 = Bitmap::set_xy(0, 11, 15);
+        _test_near('bitmap_11_15', bitmap_11_15,
+            array![(10,15), (11,15), (12,15), (11,14)],
+            array![(10,13), (10,14), (11,13), (12,14), (13,15), (0,0), (15,15)],
+        );
+        // bottom right
+        let bitmap_15_15: u256 = Bitmap::set_xy(0, 15, 15);
+        _test_near('bitmap_15_15', bitmap_15_15,
+            array![(14,15), (15,14), (15,15)],
+            array![(13,14), (14,13), (15,13), (13,15), (0, 0)],
+        );
+
+        // left top
+        let bitmap_0_1: u256 = Bitmap::set_xy(0, 0, 1);
+        _test_near('bitmap_0_1', bitmap_0_1,
+            array![(0,0), (0,1), (0,2), (1,1)],
+            array![(1,0), (2,1), (1,2), (0,3), (15,15)],
+        );
+        // left center
+        let bitmap_0_11: u256 = Bitmap::set_xy(0, 0, 11);
+        _test_near('bitmap_0_11', bitmap_0_11,
+            array![(0,10), (0,11), (0,12), (1,11)],
+            array![(1,10), (2,11), (1,12), (0,13), (15,15)],
+        );
+
+        // right top
+        let bitmap_15_1: u256 = Bitmap::set_xy(0, 15, 1);
+        _test_near('bitmap_15_1', bitmap_15_1,
+            array![(15,0), (15,1), (15,2), (14,1)],
+            array![(14,0), (13,1), (14,2), (15,3), (15,15)],
+        );
+        // right center
+        let bitmap_15_11: u256 = Bitmap::set_xy(0, 15, 11);
+        _test_near('bitmap_15_11', bitmap_15_11,
+            array![(15,10), (15,11), (15,12), (14,11)],
+            array![(14,10), (13,11), (14,12), (15,13), (15,15)],
+        );
+
+        // middle top-left
+        let bitmap_1_1: u256 = Bitmap::set_xy(0, 1, 1);
+        _test_near('bitmap_1_1', bitmap_1_1,
+            array![(1,0), (0,1), (1,1), (2,1), (1,2)],
+            array![(0,0), (2,0), (0,2), (2,2), (1,3), (3,1), (15,15)],
+        );
+        // middle
+        let bitmap_11_11: u256 = Bitmap::set_xy(0, 11, 11);
+        _test_near('bitmap_11_11', bitmap_11_11,
+            array![(11,10), (10,11), (11,11), (12,11), (11,12)],
+            array![(10,10), (12,10), (10,12), (12,12), (11,13), (13,11), (9,11), (11,9), (15,15)],
+        );
     }
 }
