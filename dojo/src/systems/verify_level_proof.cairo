@@ -63,17 +63,23 @@ fn verify_map(
 ) -> bool {
 
     // get all the moves from the proof big number
-    let mut moves: Array<u8> = unpack_proof_moves(proof, moves_count);
-
-    let mut dark_tar: u256 = map.dark_tar;
+    let moves: Array<u8> = unpack_proof_moves(proof, moves_count);
 
     // reproduce moves step by step
-    let mut light: u8 = LIGHT_MAX;
     let mut pos: usize = entry.into();
+    let mut light: u8 = LIGHT_MAX;
+    let mut dark_tar: u256 = map.dark_tar;
     let mut i = 0;
 // 'proofing......'.print();
     loop {
         assert(i < moves.len(), 'Didnt find the exit!');
+
+        // Recharge light with dark tar
+        // unset pos bit to use only once
+        if (Bitmap::is_set_tile(dark_tar, pos)) {
+            light = LIGHT_MAX;
+            dark_tar = Bitmap::unset_tile(dark_tar, pos);
+        }
 
 // pos.print();
         // Monsters Hit

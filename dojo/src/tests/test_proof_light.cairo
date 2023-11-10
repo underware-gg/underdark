@@ -57,7 +57,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_slendered_all() {
+    fn test_slendered_all() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, MASK::ALL, 0);
@@ -68,10 +68,10 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_slendered_target() {
+    fn test_slendered_target() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let map = make_map(bitmap, 0, 0x8000000000000000000000, 0);
+        let map = make_map(bitmap, 0, 0x8000000000000000000000, 0); // 0xa8 where light ends
         let proof_best = _proof_best();
         verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
     }
@@ -79,7 +79,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_slendered_top() {
+    fn test_slendered_top() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x80000000000000000000000000, 0);
@@ -90,7 +90,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_slendered_left() {
+    fn test_slendered_left() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x10000000000000000000000, 0);
@@ -101,7 +101,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_slendered_right() {
+    fn test_slendered_right() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x4000000000000000000000, 0);
@@ -112,7 +112,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_slendered_down() {
+    fn test_slendered_down() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x800000000000000000, 0);
@@ -123,7 +123,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     // #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_slendered_missed() {
+    fn test_slendered_missed() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x800000000000000000000000000000, 0);
@@ -134,12 +134,63 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     // #[should_panic(expected:('Slendered!',))]
-    fn test_no_light_saved_with_slender_at_doorstep() {
+    fn test_not_slendered_at_doorstep() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x140, 0);
         let proof_best = _proof_best();
         verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
     }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    // #[should_panic(expected:('Slendered!',))]
+    fn test_dark_tar_at_target() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, MASK::ALL, 0x8000000000000000000000); // 0xa8 where light ends
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    // #[should_panic(expected:('Slendered!',))]
+    fn test_dark_tar_refill_ends_at_door() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, MASK::ALL, 0x800000000000000000000000000000000000000000);
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
+    fn test_dark_tar_down_almost() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, MASK::ALL, 0x800000000000000000);
+        let proof_best = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
+    fn test_dark_tar_at_target_only_once() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, MASK::ALL, 0x8000000000000000000000); // 0xa8 where light ends
+        let proof_best = array![
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::WEST, DIR::WEST, DIR::WEST, // run around
+            DIR::EAST, DIR::EAST, DIR::EAST, // go back, will not get dark tar again
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+        ];
+        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+    }
+
 
 }
