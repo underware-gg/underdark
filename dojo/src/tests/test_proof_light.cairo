@@ -50,9 +50,57 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0, 0);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
+
+    //
+    // Monsters
+    //
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Lost sanity!',))]
+    fn test_monsters_all_over() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (MASK::ALL, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, MASK::ALL, 0, MASK::ALL); // all monsters, all dark tar
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    // #[should_panic(expected:('Lost sanity!',))]
+    fn test_monsters_on_the_side_ok() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (MASK::ALL, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0x140014001400140014001400140014001400140014001400140014001400140, 0, MASK::ALL); // monsters column, all dark tar
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Lost sanity!',))]
+    fn test_monsters_on_the_side_too_many() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (MASK::ALL, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0x140014001400140014001400140014001400140014001400140014001400140, 0, MASK::ALL); // monsters column, all dark tar
+        let proof = array![
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, // 5
+            DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, // 11 + dark tar
+            DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, // 11 + dark tar
+            DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, // 11 + dark tar
+            DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, // 11 + dark tar
+            DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::NORTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, // 11 + dark tar
+        ];
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+
+    //
+    // Slenderduck
+    //
 
     #[test]
     #[available_gas(1_000_000_000)]
@@ -61,8 +109,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, MASK::ALL, 0);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -72,8 +120,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x8000000000000000000000, 0); // 0xa8 where light ends
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -83,8 +131,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x80000000000000000000000000, 0);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -94,8 +142,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x10000000000000000000000, 0);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -105,8 +153,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x4000000000000000000000, 0);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -116,8 +164,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x800000000000000000, 0);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -127,8 +175,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x800000000000000000000000000000, 0);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -138,8 +186,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x140, 0);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -149,8 +197,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, MASK::ALL, 0x8000000000000000000000); // 0xa8 where light ends
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -160,8 +208,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, MASK::ALL, 0x800000000000000000000000000000000000000000);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -171,8 +219,8 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, MASK::ALL, 0x800000000000000000);
-        let proof_best = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
     #[test]
@@ -182,14 +230,14 @@ mod tests {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, MASK::ALL, 0x8000000000000000000000); // 0xa8 where light ends
-        let proof_best = array![
+        let proof = array![
             DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
             DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
             DIR::WEST, DIR::WEST, DIR::WEST, // run around
             DIR::EAST, DIR::EAST, DIR::EAST, // go back, will not get dark tar again
             DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
         ];
-        verify_map(map, entry, exit, pack_proof_moves(proof_best.clone()), proof_best.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
 

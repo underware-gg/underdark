@@ -12,7 +12,7 @@ use underdark::types::dir::{Dir, DirTrait};
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::utils::bitmap::{Bitmap};
 use underdark::utils::math::{Math8};
-use underdark::types::constants::{LIGHT_MAX, LIGHT_STEP_DROP};
+use underdark::types::constants::{LIGHT_MAX, LIGHT_STEP_DROP, SANITY_MAX, MONSTER_NEAR_DAMAGE, MONSTER_HIT_DAMAGE};
 
 
 fn verify_level_proof(world: IWorldDispatcher,
@@ -67,6 +67,7 @@ fn verify_map(
 
     // reproduce moves step by step
     let mut pos: usize = entry.into();
+    let mut sanity: u8 = SANITY_MAX;
     let mut light: u8 = LIGHT_MAX;
     let mut dark_tar: u256 = map.dark_tar;
     let mut i = 0;
@@ -86,11 +87,16 @@ fn verify_map(
         }
 
 // pos.print();
-        // Monsters Hit
         if (light > 0) {
-            // TODO: Monster hit
-            // TODO: Monster near
+            // when lights are on, monsters take your sanity
+            if(Bitmap::is_set_tile(map.monsters, pos)) {
+                sanity = sanity - Math8::min(MONSTER_HIT_DAMAGE, sanity);
+            } else if (Bitmap::is_near_or_at_tile(map.monsters, pos)) {
+                sanity = sanity - Math8::min(MONSTER_NEAR_DAMAGE, sanity);
+            }
+            assert(sanity > 0, 'Lost sanity!');
         } else {
+            // when lights are off, Slenderduck kills instantly
             assert(Bitmap::is_near_or_at_tile(map.slender_duck, pos) == false, 'Slendered!');
         }
 
