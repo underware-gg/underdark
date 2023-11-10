@@ -360,9 +360,10 @@ function setupScene() {
   _scene.add(_damage)
 }
 
-export function movePlayer(tile: number) {
-  const x = (tile % 16) * SIZE
-  const y = Math.floor(tile / 16) * SIZE
+export function movePlayer(tile: number | null) {
+  const _tile = tile ?? _defaultPosition.tile
+  const x = (_tile % 16) * SIZE
+  const y = Math.floor(_tile / 16) * SIZE
   _playerPosition = { x, y, z: 0 }
   new TWEEN.Tween(_cameraRig.position)
     .to({ x, y }, _animSecs)
@@ -373,14 +374,15 @@ export function movePlayer(tile: number) {
   // _cameraRig.position.set(x, y, 0);
 }
 
-export function rotatePlayer(facing: Dir) {
+export function rotatePlayer(facing: Dir | null) {
+  const _facing = facing ?? _defaultPosition.facing
   let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
-  let rotX = (facing == Dir.East || facing == Dir.West) ? tilt : 0
-  let rotY = (facing == Dir.North || facing == Dir.South) ? tilt : 0
+  let rotX = (_facing == Dir.East || _facing == Dir.West) ? tilt : 0
+  let rotY = (_facing == Dir.North || _facing == Dir.South) ? tilt : 0
   let rotZ =
-    facing == Dir.East ? HALF_PI
-      : facing == Dir.South ? PI
-        : facing == Dir.West ? ONE_HALF_PI
+    _facing == Dir.East ? HALF_PI
+      : _facing == Dir.South ? PI
+        : _facing == Dir.West ? ONE_HALF_PI
           : 0
   if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
   if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
@@ -427,7 +429,7 @@ export function setupMap(gameTilemap: GameTilemap | null, isPlaying: boolean) {
 
   const _randomRotate = (mesh) => (mesh.rotation.set(0, 0, [0, 1, 2, 3][Math.floor(Math.random() * 4)] * HALF_PI))
 
-  console.log(gameTilemap)
+  // console.log(gameTilemap)
   for (let i = 0; i < tilemap.length; ++i) {
     const tileType = tilemap[i]
     const x = ((i % gridSize) + gridOrigin.x) * SIZE

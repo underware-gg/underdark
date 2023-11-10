@@ -84,13 +84,13 @@ const MovePlayer = () => {
 
   useEffect(() => {
     if (isLoaded || isPlaying) {
-      gameImpl?.movePlayer(playerPosition.tile)
+      gameImpl?.movePlayer(playerPosition?.tile ?? null)
     }
   }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.tile])
 
   useEffect(() => {
     if (isLoaded || isPlaying) {
-      gameImpl?.rotatePlayer(playerPosition.facing)
+      gameImpl?.rotatePlayer(playerPosition?.facing ?? null)
     }
   }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.facing])
 
