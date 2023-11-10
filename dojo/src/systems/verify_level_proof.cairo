@@ -72,6 +72,10 @@ fn verify_map(
     let mut i = 0;
 // 'proofing......'.print();
     loop {
+        // this proof method has a hard limit of 64 moves
+        assert(i < 64, 'The Slenderduck found you!');
+
+        // player ran out of moves before reaching the exit
         assert(i < moves.len(), 'Didnt find the exit!');
 
         // Recharge light with dark tar

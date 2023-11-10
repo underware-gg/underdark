@@ -13,7 +13,7 @@ mod tests {
     use underdark::types::tile_type::{TileType, TILE};
     use underdark::types::constants::{REALM_ID, MANOR_COORD};
     use underdark::utils::bitwise::{U256Bitwise};
-    use underdark::utils::bitmap::{Bitmap};
+    use underdark::utils::bitmap::{Bitmap, MASK};
     use underdark::utils::string::{String};
     use underdark::tests::utils::utils::{
         setup_world,
@@ -126,6 +126,26 @@ mod tests {
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0, 0);
         let proof = array![DIR::EAST, DIR::EAST];
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('The Slenderduck found you!',))]
+    fn test_verify_map_no_more_moves() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (MASK::ALL, 0, 240);
+        let map = make_map(bitmap, 0, 0, 0);
+        let proof = array![
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST,
+            DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
+            DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST,
+        ];
         verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
