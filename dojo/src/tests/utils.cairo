@@ -85,6 +85,24 @@ mod utils {
         (location, dir, to_location_id)
     }
 
+    fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> Map {
+        Map {
+            entity_id: 1,
+            bitmap,
+            generator_name: 0,
+            generator_value: 0,
+            north: 0,
+            east: 0,
+            west: 0,
+            south: 0,
+            over: 0,
+            under: 0,
+            monsters,
+            slender_duck,
+            dark_tar,
+        }
+    }
+
     #[test]
     #[available_gas(10_000)]
     fn test_utils() {

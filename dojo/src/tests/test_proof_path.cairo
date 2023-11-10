@@ -6,14 +6,10 @@ mod tests {
 
     use dojo::world::{IWorldDispatcherTrait, IWorldDispatcher};
 
-    use underdark::core::seeder::{make_seed, make_underseed};
     use underdark::systems::verify_level_proof::{verify_map, pack_proof_moves, unpack_proof_moves};
-    use underdark::core::randomizer::{randomize_monsters};
-    use underdark::core::binary_tree::{binary_tree_pro};
     use underdark::models::chamber::{Chamber, Map, Score};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DirTrait, DIR};
-    use underdark::types::doors::{Doors};
     use underdark::types::tile_type::{TileType, TILE};
     use underdark::types::constants::{REALM_ID, MANOR_COORD};
     use underdark::utils::bitwise::{U256Bitwise};
@@ -21,12 +17,12 @@ mod tests {
     use underdark::utils::string::{String};
     use underdark::tests::utils::utils::{
         setup_world,
+        make_map,
         generate_level_get_chamber,
         execute_finish_level,
         get_world_Chamber,
         get_world_Map,
         get_world_Score,
-        get_world_Doors_as_Tiles,
         get_world_Tile_type,
     };
 
@@ -64,30 +60,12 @@ mod tests {
     const VERIFY_ENTRY: u8 = 144;
     const VERIFY_EXIT :u8 = 127;
 
-    fn _make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> Map {
-        Map {
-            entity_id: 1,
-            bitmap,
-            generator_name: 0,
-            generator_value: 0,
-            north: 0,
-            east: 0,
-            west: 0,
-            south: 0,
-            over: 0,
-            under: 0,
-            monsters,
-            slender_duck,
-            dark_tar,
-        }
-    }
-
     #[test]
     #[available_gas(1_000_000_000_000)]
     fn test_verify_map_wins() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let map = _make_map(bitmap, 0, 0, 0);
+        let map = make_map(bitmap, 0, 0, 0);
 
         // good proof
         {
@@ -135,7 +113,7 @@ mod tests {
     fn test_verify_map_no_proof() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let map = _make_map(bitmap, 0, 0, 0);
+        let map = make_map(bitmap, 0, 0, 0);
         let proof = array![];
         verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
@@ -146,7 +124,7 @@ mod tests {
     fn test_verify_map_short_proof() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let map = _make_map(bitmap, 0, 0, 0);
+        let map = make_map(bitmap, 0, 0, 0);
         let proof = array![DIR::EAST, DIR::EAST];
         verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
@@ -157,7 +135,7 @@ mod tests {
     fn test_verify_map_wall() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let map = _make_map(bitmap, 0, 0, 0);
+        let map = make_map(bitmap, 0, 0, 0);
         let proof = array![DIR::NORTH];
         verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
@@ -168,7 +146,7 @@ mod tests {
     fn test_verify_map_hit_a_wall() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let map = _make_map(bitmap, 0, 0, 0);
+        let map = make_map(bitmap, 0, 0, 0);
         let proof = array![
             DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
             DIR::SOUTH, DIR::SOUTH,

@@ -71,14 +71,26 @@ fn verify_map(
     let mut light: u8 = LIGHT_MAX;
     let mut pos: u8 = entry;
     let mut i = 0;
+// 'proofing......'.print();
     loop {
         assert(i < moves.len(), 'Didnt find the exit!');
         let move: u8 = *moves[i];
+
+        // Monsters Hit
+        if (light > 0) {
+            // TODO: Monster hit
+            // TODO: Monster near
+        } else {
+            assert(Bitmap::is_set_tile(map.slender_duck, pos.into()) == false, 'Slendered!');
+            // TODO: Slender near
+        }
+
         // Moves in four directions, mapping Dir::North .. Dir::South
         if (move < 4) {
             let dir: Option<Dir> = move.try_into();
             let pos_tile: usize = Bitmap::move_tile(pos.into(), dir.unwrap());
             pos = pos_tile.try_into().unwrap();
+// pos.print();
             if (pos == exit) {
                 break; // win!!
             }
@@ -86,9 +98,12 @@ fn verify_map(
             // drop light at every step
             light = light - Math8::min(LIGHT_STEP_DROP, light);
         }
+
+        // ok, go on
         i += 1;
     };
 
+    // found the exit!
     (true)
 }
 
