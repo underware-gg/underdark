@@ -80,9 +80,9 @@ Install Rust + Cargo + others
 ```
 # Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# open new terminal to update PATH
 rustup override set stable
 rustup update
-cargo test
 
 # Install Cargo
 curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh
@@ -96,14 +96,20 @@ Install the [Cairo 1.0](https://marketplace.visualstudio.com/items?itemName=star
 
 ### Install Dojo [🔗](https://book.dojoengine.org/getting-started/quick-start.html)
 
-Using Dojo 0.3.0!
+Using Dojo 0.3.5!
 
 ```console
 curl -L https://install.dojoengine.org | bash
-dojoup -v 0.3.0
+# open new terminal to update PATH
+dojoup -v 0.3.5
+
+# test dojo
+cd dojo
+sozo build
+sozo test
 
 # install packages
-cd client
+cd ../client
 yarn
 ```
 
