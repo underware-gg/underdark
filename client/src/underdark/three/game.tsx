@@ -3,7 +3,7 @@ import TWEEN from '@tweenjs/tween.js'
 
 // event emitter
 // var ee = require('event-emitter');
-import * as ee from 'event-emitter'
+import ee from 'event-emitter'
 export var emitter = ee()
 
 //@ts-ignore
