@@ -12,7 +12,7 @@ MODELS=("Chamber" "Map" "State" "Tile" "Score" )
 for model in ${MODELS[@]}; do
     sozo auth writer --world $WORLD_ADDRESS $model $CONTRACT_ADDRESS
     # SLOT
-    # sozo auth writer --world $WORLD_ADDRESS $model $CONTRACT_ADDRESS --rpc-url https://api.cartridge.gg/x/underdark/katana --account-address 0x1ea3a2c42fa9e202e503d44323506745def44b87ad78742a8ce009b31c9ee84
+    # sozo auth writer --world $WORLD_ADDRESS $model $CONTRACT_ADDRESS --rpc-url https://api.cartridge.gg/x/underdark/katana --account-address 0x4e9c35bb113eaf274457edb2473437b02fe636f14c477aa110ba8d3626d3282
 done
 
 
