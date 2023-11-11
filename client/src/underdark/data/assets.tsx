@@ -220,7 +220,7 @@ const loadAssets = async (cameraRig) => {
     // load all assets...
     _loadingAssets = true
     await _loadModels()
-    await _loadAudios(listener)
+    // await _loadAudios(listener)
     _loadingAssets = false
   }
   return _loadingAssets

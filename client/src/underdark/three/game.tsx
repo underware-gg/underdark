@@ -170,8 +170,6 @@ export async function init(canvas, width, height, guiEnabled) {
   _camera.position.set(0, 0, _eyeZ)
   _camera.lookAt(0, -SIZE, _eyeZ);
 
-  await loadAssets(_cameraRig);
-
   // _controls = new OrbitControls(camera, renderer.domElement);
   // _controls.enableDamping = true;
 
@@ -212,6 +210,8 @@ export async function init(canvas, width, height, guiEnabled) {
     _stats = new Stats();
     document.body.appendChild(_stats.dom);
   }
+
+  await loadAssets(_cameraRig);
 }
 
 function guiUpdated() {
