@@ -125,7 +125,7 @@ const GameplayProvider = ({
         newState.health = SANITY_MAX
         newState.steps = []
         newState.message = ''
-        console.log(`>>> GAME RESET!`)
+        // console.log(`>>> GAME RESET!`)
         break
       }
       case GameplayActions.REFILL_LIGHT: {
@@ -161,7 +161,7 @@ const GameplayProvider = ({
             ...state.playerPosition,
             tile,
           }
-          const stepIndex = state.steps.findIndex((v) => v.tile == tile)
+          const stepIndex = -1 //state.steps.findIndex((v) => v.tile == tile)
           if (stepIndex != -1) {
             // step back
             newState.steps = [...state.steps.slice(0, stepIndex + 1)]

@@ -73,12 +73,6 @@ fn verify_map(
     let mut i = 0;
 // 'proofing......'.print();
     loop {
-        // this proof method has a hard limit of 64 moves
-        assert(i < 64, 'The Slenderduck found you!');
-
-        // player ran out of moves before reaching the exit
-        assert(i < moves.len(), 'Didnt find the exit!');
-
         // Recharge light with dark tar
         // unset pos bit to use only once
         if (Bitmap::is_set_tile(dark_tar, pos)) {
@@ -100,6 +94,13 @@ fn verify_map(
             assert(Bitmap::is_near_or_at_tile(map.slender_duck, pos) == false, 'Slendered!');
         }
 
+        // this proof method has a hard limit of 64 moves
+        assert(i < 64, 'The Slenderduck found you!');
+
+        // player ran out of moves before reaching the exit
+        assert(i < moves.len(), 'Didnt find the exit!');
+
+        // get next move
         let move: u8 = *moves[i];
 
         // Moves in four directions, mapping Dir::North .. Dir::South

@@ -862,7 +862,7 @@
     {
       "name": "actions",
       "address": "0x32361a725c7fba5d9265db4569942ce845145da695f54c05bea24eda993b1b3",
-      "class_hash": "0x4cc6e6eb1e42639400b5391b285253a7eef6e0fd3f4e8dafc5feb9c2691034b",
+      "class_hash": "0x9915e27cf2a48360619c26167857453d7ff7f3b0d1dd833de65bc7405aec48",
       "abi": [
         {
           "type": "impl",

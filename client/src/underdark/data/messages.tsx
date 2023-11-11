@@ -5,7 +5,7 @@ export const MESSAGES: any = {
   MONSTER_DAMAGE: 'Monster damage!!!!',
   MONSTER_HIT: 'Monster hit!!!',
   NO_LIGHT: 'No light! Beware the Slender Duck!',
-  NO_HEALTH: 'You died!!!',
+  NO_HEALTH: 'Lost sanity!!!',
   SLENDERED: 'You\'ve been Slendered by the Slender Duck!!!',
   FOUND_EXIT: 'You found the exit!\n(verifying on-chain...)',
   VERIFIED: 'You found the exit!\n(verified)',

@@ -132,6 +132,17 @@ const GameTriggers = () => {
   useEffect(() => {
     if (!playerPosition || !isPlaying) return
     const { tile } = playerPosition
+
+    if (tilemap[tile] == TileType.DarkTar) {
+      if (gameImpl?.isTileEnaled(tile)) {
+        gameImpl?.disableTile(tile)
+        gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
+        dispatchDarkTar(100)
+      }
+    } else if (!hasLight) {
+      dispatchMessage('No light! Beware the Slender Duck!')
+    }
+
     const monsterAround = _isAround(tilemap, tile, TileType.Monster)
     const slenderAround = _isAround(tilemap, tile, TileType.SlenderDuck)
     if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
@@ -149,14 +160,6 @@ const GameTriggers = () => {
       gameImpl?.rotateToPlayer(monsterAround)
       gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
       dispatchNearDamage()
-    } else if (tilemap[tile] == TileType.DarkTar) {
-      if (gameImpl?.isTileEnaled(tile)) {
-        gameImpl?.disableTile(tile)
-        gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
-        dispatchDarkTar(100)
-      }
-    } else if (!hasLight) {
-      dispatchMessage('No light! Beware the Slender Duck!')
     }
   }, [gameState, playerPosition?.tile])
 
@@ -187,14 +190,15 @@ const GameTriggers = () => {
   const { finish_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
   useEffect(() => {
-    if (gameState == GameState.Verifying) {
+    // if (gameState == GameState.Verifying) {
+    if (gameState == GameState.Verifying || gameState == GameState.NoHealth || gameState == GameState.Slendered) {
       let proof = 0n
       steps.map((step, index) => {
         proof |= (BigInt(step.dir) << BigInt(index * 4))
       });
       console.log(`PROOF:`, bigintToHex(proof))
       const success = finish_level(account, chamberId, proof, steps.length)
-      if (success) {
+      if (success && gameState == GameState.Verifying) {
         dispatchGameState(success ? GameState.Verified : GameState.NotVerified)
       }
     }

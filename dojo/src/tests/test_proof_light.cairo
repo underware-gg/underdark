@@ -116,7 +116,7 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
-    fn test_slendered_target() {
+    fn test_slendered_target_longer() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x8000000000000000000000, 0); // 0xa8 where light ends
@@ -127,12 +127,23 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
+    fn test_slendered_target() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let map = make_map(bitmap, 0, 0x8000000000000000000000, 0); // 0xa8 where light ends
+        let proof = _proof_best();
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), 10);
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
     fn test_slendered_top() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x80000000000000000000000000, 0);
         let proof = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()),  10);
     }
 
     #[test]
@@ -143,7 +154,7 @@ mod tests {
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x10000000000000000000000, 0);
         let proof = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()),  10);
     }
 
     #[test]
@@ -154,7 +165,7 @@ mod tests {
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x4000000000000000000000, 0);
         let proof = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()),  10);
     }
 
     #[test]
@@ -165,7 +176,7 @@ mod tests {
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
         let map = make_map(bitmap, 0, 0x800000000000000000, 0);
         let proof = _proof_best();
-        verify_map(map, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        verify_map(map, entry, exit, pack_proof_moves(proof.clone()),  10);
     }
 
     #[test]
