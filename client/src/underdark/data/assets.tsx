@@ -92,52 +92,52 @@ type AudioAssets = {
 
 let AUDIO_ASSETS: AudioAssets = {
   AMBIENT: {
-    path: '/audio/music-ambient.mp3',
+    path: '/audio/music-ambient.m4a',
     volume: 0.5,
     loop: true,
   },
   SLENDER_DUCK: {
-    path: '/audio/sfx/slenderduck.mp3',
+    path: '/audio/sfx/slenderduck.m4a',
     loop: true,
   },
   TORCH: {
-    path: '/audio/sfx/torch.mp3',
+    path: '/audio/sfx/torch.m4a',
     loop: true,
   },
   EXTINGUISH: {
-    path: '/audio/sfx/extinguish.mp3',
+    path: '/audio/sfx/extinguish.m4a',
     loop: false,
   },
   DARK_TAR: {
-    path: '/audio/sfx/darktar.mp3',
+    path: '/audio/sfx/darktar.m4a',
     loop: false,
   },
   STAIRS: {
-    path: '/audio/sfx/stairs.mp3',
+    path: '/audio/sfx/stairs.m4a',
     loop: false,
   },
   CHEST: {
-    path: '/audio/sfx/chest.mp3',
+    path: '/audio/sfx/chest.m4a',
     loop: false,
   },
   FOOT1: {
-    path: '/audio/sfx/foot1.mp3',
+    path: '/audio/sfx/foot1.m4a',
     loop: false,
   },
   FOOT2: {
-    path: '/audio/sfx/foot2.mp3',
+    path: '/audio/sfx/foot2.m4a',
     loop: false,
   },
   MONSTER_NEAR: {
-    path: '/audio/sfx/monster_near.mp3',
+    path: '/audio/sfx/monster_near.m4a',
     loop: false,
   },
   MONSTER_TOUCH: {
-    path: '/audio/sfx/monster_touch.mp3',
+    path: '/audio/sfx/monster_touch.m4a',
     loop: false,
   },
   MONSTER_HIT: {
-    path: '/audio/sfx/monster_hit.mp3',
+    path: '/audio/sfx/monster_hit.m4a',
     loop: false,
   },
 }
