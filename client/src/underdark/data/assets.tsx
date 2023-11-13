@@ -21,7 +21,6 @@ interface ModelAsset {
   scale: number
   rotation: number[]
   object?: any
-  loaded?: boolean
 }
 type ModelAssets = {
   [key in ModelName]: ModelAsset
@@ -155,7 +154,6 @@ const _loader = async (ASSETS, onLoading) => {
     Object.keys(ASSETS).forEach((name) => {
       onLoading(name, (object) => {
         ASSETS[name].object = object
-        ASSETS[name].loaded = (object != null)
         if (--assetsToLoad == 0) {
           resolve()
         }
@@ -193,7 +191,7 @@ const _loadAudios = async (listener) => {
     loader.load(asset.path, function (buffer) {
       // load asset...
       let audio = null
-      // console.log(`CACHED AUDIO [${name}]:`, buffer)
+      console.log(`CACHED AUDIO [${name}]:`, buffer)
       if (buffer) {
         audio = new THREE.Audio(listener).setBuffer(buffer)
         audio.setLoop(asset.loop ?? false)
@@ -210,24 +208,34 @@ const _loadAudios = async (listener) => {
 //----------------------------
 // Main Asset Loader
 //
-let _loadingAssets
-const loadAssets = async (cameraRig) => {
-  // create / return loading promise
+// assets that can be loaded when the page loads
+let _loadingAssets: boolean
+const loadAssets = async () => {
   if (_loadingAssets === undefined) {
-    // create audio listener
-    const listener = new THREE.AudioListener()
-    cameraRig.add(listener)
-    // load all assets...
     _loadingAssets = true
     await _loadModels()
-    // await _loadAudios(listener)
     _loadingAssets = false
   }
   return _loadingAssets
 }
+//
+// Audios need to be loaded after user interaction
+// call this from some button
+let _loadingAudioAssets: boolean
+const loadAudioAssets = async (cameraRig: any) => {
+  if (_loadingAudioAssets === undefined) {
+    _loadingAudioAssets = true
+    const listener = new THREE.AudioListener()
+    cameraRig.add(listener)
+    await _loadAudios(listener)
+    _loadingAudioAssets = false
+  }
+  return _loadingAudioAssets
+}
 
 export {
   loadAssets,
+  loadAudioAssets,
   ModelName,
   AudioName,
   MODELS_ASSETS,

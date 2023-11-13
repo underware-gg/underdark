@@ -211,7 +211,11 @@ export async function init(canvas, width, height, guiEnabled) {
     document.body.appendChild(_stats.dom);
   }
 
-  await loadAssets(_cameraRig);
+  await loadAssets();
+}
+
+export function getCameraRig() {
+  return _cameraRig
 }
 
 function guiUpdated() {

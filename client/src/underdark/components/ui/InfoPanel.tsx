@@ -1,10 +1,11 @@
 import { useDojoAccount, useDojoSystemCalls } from '../../../DojoContext'
-import { GameState, useGameplayContext } from '../../hooks/GameplayContext'
+import { useGameplayContext } from '../../hooks/GameplayContext'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { useChamber, useChamberMap, useChamberOffset, usePlayerScore } from '../../hooks/useChamber'
 import { ActionButton } from './UIButtons'
 import { Dir } from '../../utils/underdark'
 import { getLevelParams } from '../../data/levels'
+import { loadAudioAssets } from '../../data/assets'
 // import { Account } from 'starknet'
 
 
@@ -37,9 +38,10 @@ const StartButton = () => {
   const { chamberId } = useUnderdarkContext()
   const { chamberExists } = useChamber(chamberId)
   const { gameTilemap } = useChamberMap(chamberId)
-  const { isLoaded, dispatchReset } = useGameplayContext()
+  const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
 
-  const _startGame = () => {
+  const _startGame = async () => {
+    await loadAudioAssets(gameImpl?.getCameraRig())
     dispatchReset(gameTilemap.playerStart, true)
   }
 
