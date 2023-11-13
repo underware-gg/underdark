@@ -188,18 +188,22 @@ const _loadAudios = async (listener) => {
   const loader = new THREE.AudioLoader()
   return _loader(AUDIO_ASSETS, (name, resolve) => {
     const asset = AUDIO_ASSETS[name]
-    loader.load(asset.path, function (buffer) {
-      // load asset...
-      let audio = null
-      console.log(`CACHED AUDIO [${name}]:`, buffer)
-      if (buffer) {
-        audio = new THREE.Audio(listener).setBuffer(buffer)
-        audio.setLoop(asset.loop ?? false)
-        audio.setVolume(asset.volume ?? 1.0)
-        audio.autoplay = false
-      }
-      resolve(audio)
-    })
+    try {
+      loader.load(asset.path, function (buffer) {
+        // load asset...
+        let audio = null
+        console.log(`CACHED AUDIO [${name}]:`, buffer)
+        if (buffer) {
+          audio = new THREE.Audio(listener).setBuffer(buffer)
+          audio.setLoop(asset.loop ?? false)
+          audio.setVolume(asset.volume ?? 1.0)
+          audio.autoplay = false
+        }
+        resolve(audio)
+      })
+      } catch(e) {
+        console.error(`CACHED AUDIO [${name}] FAILED!`, e)
+    }
   })
 }
 
