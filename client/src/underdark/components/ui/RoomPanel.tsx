@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useChamber, useChamberMap, useGameChamberIds } from '../../hooks/useChamber'
+import { useChamber, useGameChamberIds } from '../../hooks/useChamber'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { bigintToHex } from '../../utils/utils'
 import { MAX_GAMES } from './RoomSelector'
@@ -9,7 +9,6 @@ import { coordToSlug } from '../../utils/underdark'
 function RoomPanel() {
   const { roomId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
   const { chamberExists, yonder } = useChamber(chamberId)
-  const { doors } = useChamberMap(chamberId)
 
   const { chamberIds } = useGameChamberIds(roomId)
   useEffect(() => {
@@ -36,8 +35,8 @@ function RoomPanel() {
         <span className='Anchor' onClick={() => _randomizeGame()}>🔄</span>
       </h2>
 
-      <b>({coordToSlug(chamberId, yonder)})</b><br />
       {bigintToHex(chamberId)}
+      {chamberId && <><br /><b>({coordToSlug(chamberId, yonder)})</b></>}
 
       {!chamberExists && <>
         <div>
@@ -48,11 +47,9 @@ function RoomPanel() {
       </>}
 
       {chamberExists && <>
-        
+
         {/* <br /> */}
         {/* Level: <b>{yonder}</b> */}
-
-        {/* <p>doors: {JSON.stringify(Object.values(doors??{}))}</p> */}
 
         <ScoreBoard />
 

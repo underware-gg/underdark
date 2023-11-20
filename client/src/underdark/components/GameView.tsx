@@ -18,7 +18,7 @@ const GameView = ({
 }) => {
 
   const { roomId, chamberId } = useUnderdarkContext()
-  const { gameTilemap } = useChamberMap(chamberId)
+  const { tilemap, gameTilemap } = useChamberMap(chamberId)
   const { yonder } = useChamber(chamberId)
   const { gameImpl, isLoaded, isPlaying, hasLight, light, playerPosition, dispatchReset } = useGameplayContext()
 
@@ -70,9 +70,9 @@ const GameView = ({
     <div className='Relative GameView'>
       <MovePlayer />
       <GameCanvas guiEnabled={false} />
-      <GameTriggers />
+      <GameTriggers tilemap={tilemap} />
+      <GameControls tilemap={tilemap} />
       <GameAudios />
-      <GameControls />
     </div>
   )
 }
@@ -120,9 +120,10 @@ const _isAround = (tilemap, tile, type): number | undefined => {
   return undefined
 }
 
-const GameTriggers = () => {
+const GameTriggers = ({
+  tilemap,
+}) => {
   const { chamberId } = useUnderdarkContext()
-  const { tilemap } = useChamberMap(chamberId)
   const { sfxEnabled } = useSettingsContext()
   const {
     gameImpl, gameState, isPlaying, playerPosition, hasLight, health, stepCount, steps,
@@ -247,9 +248,9 @@ const GameAudios = () => {
 //--------------------
 // Keyboard controller
 //
-const GameControls = () => {
-  const { chamberId } = useUnderdarkContext()
-  const { tilemap } = useChamberMap(chamberId)
+const GameControls = ({
+  tilemap,
+}) => {
   const { isPlaying, playerPosition, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
 
   const directional = false

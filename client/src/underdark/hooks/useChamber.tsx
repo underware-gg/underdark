@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react"
 import { Entity, HasValue, Has, getComponentValue } from '@latticexyz/recs'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react"
 import { useDojoComponents, useDojoSystemCalls } from '../../DojoContext'
-import { bigintToEntity, bigintToHex } from "../utils/utils"
-import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToSlug } from "../utils/underdark"
-import { Account, BigNumberish } from "starknet"
+import { bigintToEntity } from "../utils/utils"
+import { Dir, TileType, tilemapToGameTilemap, offsetCoord } from "../utils/underdark"
+import { Account } from "starknet"
 import { getEntityIdFromKeys } from "../../utils/utils"
 
 
