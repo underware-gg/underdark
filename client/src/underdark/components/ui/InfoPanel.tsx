@@ -23,7 +23,7 @@ function InfoPanel() {
       </div>
       {/* {isPlaying && <p>steps: <b>{stepCount}</b></p>} */}
 
-      <div className='CenteredContainer '>
+      <div className='CenteredContainer'>
         <div className='CenteredContent InfoBottom'>
           <h2>{message}</h2>
         </div>

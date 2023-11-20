@@ -11,7 +11,7 @@ import { getEntityIdFromKeys, strToFelt252 } from '../utils/utils';
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
 export function createSystemCalls(
-  { execute, provider, contractComponents }: SetupNetworkResult,
+  { execute, call, provider, contractComponents }: SetupNetworkResult,
   // { Chamber, Map }: ClientComponents,
 ) {
 
@@ -19,7 +19,7 @@ export function createSystemCalls(
     let success = false
     try {
       const args = [realmId, coord, roomId, levelNumber, strToFelt252(generator_name), generator_value]
-      console.log(args)
+      // console.log(args)
       const tx = await execute(signer, 'actions', 'generate_level', args)
       console.log(`generate_level tx:`, tx)
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
@@ -33,13 +33,31 @@ export function createSystemCalls(
     return success
   }
 
+  const generate_map_data = async (coord: bigint): Promise<any> => {
+    let result = {}
+    try {
+      const args = [coord]
+      result = await call('actions', 'generate_map_data', args)
+
+      // TODO: set struct instead of Components
+      // const data = await call('actions', 'generate_map_data', args)
+      // setComponentFromEvent(contractComponents, data.result);
+
+      console.log(`generate_map_data=`, result)
+    } catch (e) {
+      console.log(`generate_level exception:`, e)
+    } finally {
+    }
+    return result
+  }
+
   const finish_level = async (signer: Account, locationId: bigint, proof: bigint, movesCount: number): Promise<boolean> => {
     let success = false
     try {
       const proof_low = proof & BigInt('0xffffffffffffffffffffffffffffffff')
       const proof_high = proof >> 128n
       const args = [locationId, proof_low, proof_high, movesCount]
-      console.log(args)
+      // console.log(args)
       const tx = await execute(signer, 'actions', 'finish_level', args)
       console.log(`finish_level tx:`, tx)
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
@@ -55,6 +73,7 @@ export function createSystemCalls(
 
   return {
     generate_level,
+    generate_map_data,
     finish_level,
   }
 }

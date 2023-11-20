@@ -4,6 +4,7 @@ import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { bigintToHex } from '../../utils/utils'
 import { MAX_GAMES } from './RoomSelector'
 import ScoreBoard from './ScoreBoard'
+import { coordToSlug } from '../../utils/underdark'
 
 function RoomPanel() {
   const { roomId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
@@ -35,6 +36,9 @@ function RoomPanel() {
         <span className='Anchor' onClick={() => _randomizeGame()}>🔄</span>
       </h2>
 
+      <b>({coordToSlug(chamberId, yonder)})</b><br />
+      {bigintToHex(chamberId)}
+
       {!chamberExists && <>
         <div>
           This Room has not been
@@ -44,10 +48,6 @@ function RoomPanel() {
       </>}
 
       {chamberExists && <>
-        {/* <b>{coordToSlug(chamberId, yonder)}</b> */}
-        {/* <br /> */}
-
-        {bigintToHex(chamberId)}
         
         {/* <br /> */}
         {/* Level: <b>{yonder}</b> */}

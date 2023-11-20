@@ -1,10 +1,10 @@
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Entity, HasValue, Has, getComponentValue } from '@latticexyz/recs'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react"
-import { useDojoComponents } from '../../DojoContext'
+import { useDojoComponents, useDojoSystemCalls } from '../../DojoContext'
 import { bigintToEntity, bigintToHex } from "../utils/utils"
 import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToSlug } from "../utils/underdark"
-import { Account } from "starknet"
+import { Account, BigNumberish } from "starknet"
 import { getEntityIdFromKeys } from "../../utils/utils"
 
 
@@ -61,13 +61,37 @@ export const useChamberOffset = (chamberId: bigint, dir: Dir) => {
   }
 }
 
+export const useChamberMapData = (locationId: bigint) => {
+  const { generate_map_data } = useDojoSystemCalls()
+  const [mapData, setMapData] = useState(null)
+  useEffect(() => {
+    let _mounted = true
+    const _fetch = async () => {
+      const map_data = await generate_map_data(locationId);
+      if (_mounted) {
+        setMapData(map_data)
+      }
+    }
+    setMapData(null)
+    if (locationId) {
+      _fetch()
+    }
+    return () => {
+      _mounted = false
+    }
+  }, [locationId])
+  return mapData
+}
+
 export const useChamberMap = (locationId: bigint) => {
   const { Map, Tile } = useDojoComponents()
   const map: any = useComponentValue(Map, bigintToEntity(locationId))
-  const bitmap: bigint = useMemo(() => BigInt(map?.bitmap ?? 0), [map])
-  const monsters: bigint = useMemo(() => BigInt(map?.monsters ?? 0), [map])
-  const slender_duck: bigint = useMemo(() => BigInt(map?.slender_duck ?? 0), [map])
-  const dark_tar: bigint = useMemo(() => BigInt(map?.dark_tar ?? 0), [map])
+  const bitmap = useMemo<bigint>(() => BigInt(map?.bitmap ?? 0n), [map])
+
+  const map_data = useChamberMapData(locationId)
+  const monsters = useMemo<bigint>(() => BigInt(map_data?.monsters ?? 0n), [map])
+  const slender_duck = useMemo<bigint>(() => BigInt(map_data?.slender_duck ?? 0n), [map])
+  const dark_tar = useMemo<bigint>(() => BigInt(map_data?.dark_tar ?? 0n), [map])
   // useEffect(() => console.log(`map:`, map, typeof map?.bitmap, bitmap), [bitmap])
 
   //
@@ -80,7 +104,7 @@ export const useChamberMap = (locationId: bigint) => {
   // Parse tilemap
   const tilemap = useMemo(() => {
     let result: number[] = []
-    if (bitmap && tiles.length > 0) {
+    if (bitmap && tiles.length > 0 && map_data) {
       for (let i = 0; i < 256; ++i) {
         const bit = BigInt(255 - i)
         const isPath = (bitmap & (1n << bit)) != 0n
@@ -108,7 +132,7 @@ export const useChamberMap = (locationId: bigint) => {
       })
     }
     return result
-  }, [bitmap, tiles])
+  }, [bitmap, tiles, map_data])
   // useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
@@ -127,12 +151,6 @@ export const useChamberMap = (locationId: bigint) => {
       under: map?.under ?? 0,
     }
   }
-}
-
-export const useChamberState = (chamberId: bigint) => {
-  const { State } = useDojoComponents()
-  const state: any = useComponentValue(State, bigintToEntity(chamberId))
-  return state ?? {}
 }
 
 
