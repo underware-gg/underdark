@@ -9,7 +9,7 @@ mod utils {
     use dojo::test_utils::{spawn_test_world, deploy_contract};
 
     use underdark::systems::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
-    use underdark::models::chamber::{Chamber, chamber, Map, map, State, state, Score, score};
+    use underdark::models::chamber::{Chamber, chamber, Map, map, MapData, map_data, Score, score};
     use underdark::models::tile::{Tile, tile};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DirTrait};
@@ -17,7 +17,7 @@ mod utils {
     use underdark::types::constants::{REALM_ID};
 
     fn setup_world() -> (IWorldDispatcher, IActionsDispatcher) {
-        let mut models = array![chamber::TEST_CLASS_HASH, map::TEST_CLASS_HASH, tile::TEST_CLASS_HASH, state::TEST_CLASS_HASH, score::TEST_CLASS_HASH];
+        let mut models = array![chamber::TEST_CLASS_HASH, map::TEST_CLASS_HASH, map_data::TEST_CLASS_HASH, tile::TEST_CLASS_HASH, score::TEST_CLASS_HASH];
         let world: IWorldDispatcher = spawn_test_world(models);
         let contract_address = world.deploy_contract('salt', actions::TEST_CLASS_HASH.try_into().unwrap());
         (world, IActionsDispatcher { contract_address })
@@ -47,9 +47,8 @@ mod utils {
         (result)
     }
 
-    fn get_world_State(world: IWorldDispatcher, location_id: u128) -> State {
-        let result: State = get!(world, location_id, State);
-        (result)
+    fn get_world_MapData(world: IWorldDispatcher, system: IActionsDispatcher, location_id: u128) -> MapData {
+        system.generate_map_data(location_id)
     }
 
     fn get_world_Score(world: IWorldDispatcher, key_location_id: u128, key_caller: ContractAddress) -> Score {
@@ -85,10 +84,12 @@ mod utils {
         (location, dir, to_location_id)
     }
 
-    fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> Map {
-        Map {
-            entity_id: 1,
+    fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> (Map, MapData) {
+        let location_id: u128 = 1;
+        (Map {
+            entity_id: location_id,
             bitmap,
+            protected: 0,
             generator_name: 0,
             generator_value: 0,
             north: 0,
@@ -97,10 +98,13 @@ mod utils {
             south: 0,
             over: 0,
             under: 0,
+        }, MapData {
+            location_id,
             monsters,
             slender_duck,
             dark_tar,
-        }
+            chest: 0,
+        })
     }
 
     #[test]

@@ -5,8 +5,8 @@ use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use underdark::systems::generate_doors::{generate_doors};
-use underdark::models::chamber::{Chamber, Map, State};
-use underdark::core::randomizer::{randomize_door_permissions,randomize_monsters};
+use underdark::models::chamber::{Chamber, Map};
+use underdark::core::randomizer::{randomize_door_permissions};
 use underdark::types::location::{Location, LocationTrait};
 use underdark::types::dir::{Dir, DirTrait};
 use underdark::types::doors::{Doors};
@@ -53,8 +53,6 @@ fn generate_chamber(world: IWorldDispatcher,
     let bitmap: u256= generate(seed, protected, generator_name, generator_value);
     assert(bitmap != 0, 'Chamber is empty');
 
-    let (monsters, slender_duck, dark_tar): (u256,u256,u256) = randomize_monsters(ref rnd, bitmap, protected, level_number);
-
     //---------------------
     // Map Component
     //
@@ -69,6 +67,7 @@ fn generate_chamber(world: IWorldDispatcher,
         Map {
             entity_id: location_id,
             bitmap,
+            protected,
             generator_name,
             generator_value,
             north: doors.north,
@@ -77,16 +76,6 @@ fn generate_chamber(world: IWorldDispatcher,
             south: doors.south,
             over: doors.over,
             under: doors.under,
-            monsters,
-            slender_duck,
-            dark_tar,
-        },
-        State {
-            location_id,
-            light: 0,
-            threat: 0,
-            wealth: 0,
-            wins: 0,
         },
     ) );
 

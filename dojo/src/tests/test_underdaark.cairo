@@ -9,7 +9,7 @@ mod tests {
     use underdark::core::seeder::{make_seed, make_underseed};
     use underdark::core::randomizer::{randomize_monsters};
     use underdark::core::binary_tree::{binary_tree_pro};
-    use underdark::models::chamber::{Chamber, Map, Score};
+    use underdark::models::chamber::{Chamber, Map, MapData, Score};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DirTrait, DIR};
     use underdark::types::doors::{Doors};
@@ -23,6 +23,7 @@ mod tests {
         generate_level_get_chamber,
         get_world_Chamber,
         get_world_Map,
+        get_world_MapData,
         get_world_Score,
         get_world_Doors_as_Tiles,
         get_world_Tile_type,
@@ -106,15 +107,16 @@ mod tests {
             // 1st chamber: entry from above, all other locked
             let level_number: u16 = i + 1;
             let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, level_number, 'binary_tree_classic', 0);
-            let map1: Map = get_world_Map(world, chamber1.location_id);
+            let map: Map = get_world_Map(world, chamber1.location_id);
+            let map_data: MapData = get_world_MapData(world, system, chamber1.location_id);
             // no monsters wall overlaps
-            assert((map1.bitmap & map1.monsters) == map1.monsters, 'monsters_in_wall');
-            assert((map1.bitmap & map1.slender_duck) == map1.slender_duck, 'slender_duck_in_wall');
-            assert((map1.bitmap & map1.dark_tar) == map1.dark_tar, 'dark_tar_in_wall');
+            assert((map.bitmap & map_data.monsters) == map_data.monsters, 'monsters_in_wall');
+            assert((map.bitmap & map_data.slender_duck) == map_data.slender_duck, 'slender_duck_in_wall');
+            assert((map.bitmap & map_data.dark_tar) == map_data.dark_tar, 'dark_tar_in_wall');
             // no monsters overlap
-            assert((map1.monsters & map1.slender_duck) == 0, 'monsters & slender_duck');
-            assert((map1.monsters & map1.dark_tar) == 0, 'monsters & dark_tar');
-            assert((map1.dark_tar & map1.slender_duck) == 0, 'dark_tar & slender_duck');
+            assert((map_data.monsters & map_data.slender_duck) == 0, 'monsters & slender_duck');
+            assert((map_data.monsters & map_data.dark_tar) == 0, 'monsters & dark_tar');
+            assert((map_data.dark_tar & map_data.slender_duck) == 0, 'dark_tar & slender_duck');
             i += 1;
         };
     }
