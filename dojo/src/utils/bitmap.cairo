@@ -65,6 +65,9 @@ trait BitmapTrait {
     fn shift_right(bitmap: u256, n: usize) -> u256;
     fn shift_up(bitmap: u256, n: usize) -> u256;
     fn shift_down(bitmap: u256, n: usize) -> u256;
+    fn shift_down_self(self: u256, n: usize) -> u256;
+    fn shift_down_ref(ref bitmap: u256, n: usize) -> u256;
+    fn shift_down_ref_self(ref self: u256, n: usize) -> u256;
 
     fn get_range_x(bitmap: u256) -> (usize, usize);
     fn get_range_y(bitmap: u256) -> (usize, usize);
@@ -173,6 +176,28 @@ impl Bitmap of BitmapTrait {
         if(n == 0) { return bitmap; }
         if(n > 15) { return 0; }
         U256Bitwise::shr(bitmap, n * 16)
+    }
+    #[inline(always)]
+    fn shift_down_self(self: u256, n: usize) -> u256 {
+        if(n == 0) { return self; }
+        if(n > 15) { return 0; }
+        U256Bitwise::shr(self, n * 16)
+    }
+    #[inline(always)]
+    fn shift_down_ref(ref bitmap: u256, n: usize) -> u256 {
+        bitmap = 
+            if(n > 15) { 0 }
+            else if(n > 0) { U256Bitwise::shr(bitmap, n * 16) }
+            else { bitmap };
+        bitmap
+    }
+    #[inline(always)]
+    fn shift_down_ref_self(ref self: u256, n: usize) -> u256 {
+        self = 
+            if(n > 15) { 0 }
+            else if(n > 0) { U256Bitwise::shr(self, n * 16) }
+            else { self };
+        self
     }
 
     #[inline(always)]
@@ -406,7 +431,7 @@ mod tests {
 
     #[test]
     #[available_gas(1_000_000_000)]
-    fn test_shift_up_fown() {
+    fn test_shift_up_down() {
         let mut bmp = MASK::TOP_ROW;
         assert(Bitmap::shift_down(bmp, 0) == bmp, 'shift_down_zero');
         assert(Bitmap::shift_down(bmp, 16) == 0, 'shift_down_16');
@@ -416,6 +441,42 @@ mod tests {
         assert(Bitmap::shift_up(bmp, 16) == 0, 'shift_up_16');
         bmp = Bitmap::shift_up(bmp, 15);
         assert(bmp == MASK::TOP_ROW, 'shift_up_15');
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_shift_down_current() {
+        let mut bmp = MASK::TOP_ROW;
+        assert(Bitmap::shift_down(bmp, 0) == bmp, 'shift_down_zero');
+        assert(Bitmap::shift_down(bmp, 16) == 0, 'shift_down_16');
+        assert(Bitmap::shift_down(bmp, 15) == MASK::BOTTOM_ROW, 'shift_down_15');
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_shift_down_self() {
+        let mut bmp = MASK::TOP_ROW;
+        assert(bmp.shift_down_self(0) == bmp, 'shift_down_zero');
+        assert(bmp.shift_down_self(16) == 0, 'shift_down_16');
+        assert(bmp.shift_down_self(15) == MASK::BOTTOM_ROW, 'shift_down_15');
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_shift_down_ref() {
+        let mut bmp = MASK::TOP_ROW;
+        assert(Bitmap::shift_down_ref(ref bmp, 0) == bmp, 'shift_down_zero');
+        assert(Bitmap::shift_down_ref(ref bmp, 15) == MASK::BOTTOM_ROW, 'shift_down_15');
+        assert(Bitmap::shift_down_ref(ref bmp, 16) == 0, 'shift_down_16');
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_shift_down_ref_self() {
+        let mut bmp = MASK::TOP_ROW;
+        assert(bmp.shift_down_ref_self(0) == bmp, 'shift_down_zero');
+        assert(bmp.shift_down_ref_self(15) == MASK::BOTTOM_ROW, 'shift_down_15');
+        assert(bmp.shift_down_ref_self(16) == 0, 'shift_down_16');
     }
 
     #[test]
