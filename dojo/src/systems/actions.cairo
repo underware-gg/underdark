@@ -59,7 +59,11 @@ mod actions {
             location_id: u128,
         ) -> MapData {
             let world: IWorldDispatcher = self.world_dispatcher.read();
+
+            // assert chamber exists
             let chamber: Chamber = get!(world, location_id, (Chamber));
+            assert(chamber.yonder > 0, 'Chamber does not exist!');
+
             let map: Map = get!(world, location_id, (Map));
             let mut rnd = chamber.seed;
             let (monsters, slender_duck, dark_tar): (u256, u256, u256) =

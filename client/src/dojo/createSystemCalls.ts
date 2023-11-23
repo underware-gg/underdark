@@ -7,6 +7,7 @@ import {
 import { Account } from 'starknet';
 import { SetupNetworkResult } from './setupNetwork';
 import { getEntityIdFromKeys, strToFelt252 } from '../utils/utils';
+import { bigintToHex } from '../underdark/utils/utils';
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
@@ -41,9 +42,10 @@ export function createSystemCalls(
 
       result = getComponentValuesFromEventData(contractComponents, 'MapData', eventData.result)
 
-      console.log(`generate_map_data=`, result)
+      //@ts-ignore
+      console.log(`generate_map_data(${bigintToHex(coord)}) >>>`, eventData, result, bigintToHex(result?.location_id ?? 0n), bigintToHex(result?.monsters ?? 0n))
     } catch (e) {
-      console.log(`generate_level exception:`, e)
+      console.warn(`generate_level(${bigintToHex(coord) }) exception:`, e)
     } finally {
     }
     return result
@@ -138,7 +140,7 @@ export function getComponentValuesFromEventData(components: Components, componen
   
   let dataIndex = 0
 
-  console.log(`SCHEMA [${componentName}]`, component.schema)
+  // console.log(`SCHEMA [${componentName}]`, component.schema)
 
   const componentValues = Object.keys(component.schema).reduce((acc: Schema, key, index) => {
     let value: any;

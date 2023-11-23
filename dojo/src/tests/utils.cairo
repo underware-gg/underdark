@@ -75,15 +75,6 @@ mod utils {
         }
     }
 
-    fn make_from_location() -> (Location, Dir, u128) {
-        let location: Location = Location{ realm_id:REALM_ID, room_id:1, over:0, under:0, north:1, east:1, west:0, south:0 };
-        let location_id: u128 = location.to_id();
-        let dir: Dir = Dir::Under;
-        let to_location: Location = location.offset(dir);
-        let to_location_id : u128 = to_location.to_id();
-        (location, dir, to_location_id)
-    }
-
     fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> (Map, MapData) {
         let location_id: u128 = 1;
         (Map {

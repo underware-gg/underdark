@@ -96,6 +96,15 @@ mod tests {
    }
 
     #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Chamber does not exist!','ENTRYPOINT_FAILED'))]
+    fn test_generate_invalid_chamber() {
+        let (world, system) = setup_world();
+        let location: Location = LocationTrait::from_coord(REALM_ID, 1, 1, MANOR_COORD);
+        let map_data: MapData = get_world_MapData(world, system, location.to_id());
+    }
+
+    #[test]
     #[available_gas(1_000_000_000_000)]
     fn test_monsters_in_walls() {
         let (world, system) = setup_world();
