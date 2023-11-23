@@ -11,7 +11,7 @@ export function defineContractComponents(world: World) {
 	      {
 	        metadata: {
 	          name: "Chamber",
-	          types: [],
+	          types: ["u128","u16","u16","u256","u16"],
 	        },
 	      }
 	    );
@@ -23,7 +23,7 @@ export function defineContractComponents(world: World) {
 	      {
 	        metadata: {
 	          name: "Map",
-	          types: [],
+	          types: ["u128","u256","u256","felt252","u32","u8","u8","u8","u8","u8","u8"],
 	        },
 	      }
 	    );
@@ -35,7 +35,7 @@ export function defineContractComponents(world: World) {
 	      {
 	        metadata: {
 	          name: "MapData",
-	          types: [],
+	          types: ["u128","u256","u256","u256","u256"],
 	        },
 	      }
 	    );
@@ -43,11 +43,11 @@ export function defineContractComponents(world: World) {
 	  Score: (() => {
 	    return defineComponent(
 	      world,
-	      { key_location_id: RecsType.BigInt, key_player: RecsType.String, location_id: RecsType.BigInt, player: RecsType.String, moves: RecsType.Number },
+	      { key_location_id: RecsType.BigInt, key_player: RecsType.BigInt, location_id: RecsType.BigInt, player: RecsType.BigInt, moves: RecsType.Number },
 	      {
 	        metadata: {
 	          name: "Score",
-	          types: [],
+	          types: ["u128","contractaddress","u128","contractaddress","usize"],
 	        },
 	      }
 	    );
@@ -59,7 +59,7 @@ export function defineContractComponents(world: World) {
 	      {
 	        metadata: {
 	          name: "Tile",
-	          types: [],
+	          types: ["u128","u8","u128","u8","u8"],
 	        },
 	      }
 	    );
