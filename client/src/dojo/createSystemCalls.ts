@@ -37,11 +37,9 @@ export function createSystemCalls(
     let result = {}
     try {
       const args = [coord]
-      result = await call('actions', 'generate_map_data', args)
+      const eventData = await call('actions', 'generate_map_data', args)
 
-      // TODO: set struct instead of Components
-      // const data = await call('actions', 'generate_map_data', args)
-      // setComponentFromEvent(contractComponents, data.result);
+      result = getComponentValuesFromEventData(contractComponents, 'MapData', eventData.result)
 
       console.log(`generate_map_data=`, result)
     } catch (e) {
@@ -127,6 +125,21 @@ export function setComponentFromEvent(components: Components, eventData: string[
   // console.log(`EVENT schema`, component)
 
   // create component object from values with schema
+  const componentValues = getComponentValuesFromEventData(components, componentName, eventData.slice(dataIndex));
+  // console.log(`VALUES:`, componentValues, entity)
+  // console.log(`component:`, component)
+
+  // set component
+  setComponent(component, entity, componentValues);
+}
+
+export function getComponentValuesFromEventData(components: Components, componentName: string, eventData: string[]) {
+  const component = components[componentName];
+  
+  let dataIndex = 0
+
+  console.log(`SCHEMA [${componentName}]`, component.schema)
+
   const componentValues = Object.keys(component.schema).reduce((acc: Schema, key, index) => {
     let value: any;
     if (component.schema[key] == RecsType.Boolean) {
@@ -147,12 +160,10 @@ export function setComponentFromEvent(components: Components, eventData: string[
     acc[key] = value;
     return acc;
   }, {});
-  // console.log(`VALUES:`, componentValues, entity)
-  // console.log(`component:`, component)
 
-  // set component
-  setComponent(component, entity, componentValues);
+  return componentValues
 }
+
 
 function hexToAscii(hex: string) {
   var str = '';
