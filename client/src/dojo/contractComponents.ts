@@ -7,7 +7,7 @@ export function defineContractComponents(world: World) {
 	  Chamber: (() => {
 	    return defineComponent(
 	      world,
-	      { location_id: RecsType.Number, room_id: RecsType.Number, level_number: RecsType.Number, seed: RecsType.NumberArray, yonder: RecsType.Number },
+	      { location_id: RecsType.BigInt, room_id: RecsType.Number, level_number: RecsType.Number, seed: RecsType.BigInt, yonder: RecsType.Number },
 	      {
 	        metadata: {
 	          name: "Chamber",
@@ -19,7 +19,7 @@ export function defineContractComponents(world: World) {
 	  Map: (() => {
 	    return defineComponent(
 	      world,
-	      { entity_id: RecsType.Number, bitmap: RecsType.NumberArray, protected: RecsType.NumberArray, generator_name: RecsType.Number, generator_value: RecsType.Number, north: RecsType.Number, east: RecsType.Number, west: RecsType.Number, south: RecsType.Number, over: RecsType.Number, under: RecsType.Number },
+	      { entity_id: RecsType.BigInt, bitmap: RecsType.BigInt, protected: RecsType.BigInt, generator_name: RecsType.BigInt, generator_value: RecsType.Number, north: RecsType.Number, east: RecsType.Number, west: RecsType.Number, south: RecsType.Number, over: RecsType.Number, under: RecsType.Number },
 	      {
 	        metadata: {
 	          name: "Map",
@@ -31,7 +31,7 @@ export function defineContractComponents(world: World) {
 	  MapData: (() => {
 	    return defineComponent(
 	      world,
-	      { location_id: RecsType.Number, monsters: RecsType.NumberArray, slender_duck: RecsType.NumberArray, dark_tar: RecsType.NumberArray, chest: RecsType.NumberArray },
+	      { location_id: RecsType.BigInt, monsters: RecsType.BigInt, slender_duck: RecsType.BigInt, dark_tar: RecsType.BigInt, chest: RecsType.BigInt },
 	      {
 	        metadata: {
 	          name: "MapData",
@@ -43,7 +43,7 @@ export function defineContractComponents(world: World) {
 	  Score: (() => {
 	    return defineComponent(
 	      world,
-	      { key_location_id: RecsType.Number, key_player: RecsType.String, location_id: RecsType.Number, player: RecsType.String, moves: RecsType.Number },
+	      { key_location_id: RecsType.BigInt, key_player: RecsType.String, location_id: RecsType.BigInt, player: RecsType.String, moves: RecsType.Number },
 	      {
 	        metadata: {
 	          name: "Score",
@@ -55,7 +55,7 @@ export function defineContractComponents(world: World) {
 	  Tile: (() => {
 	    return defineComponent(
 	      world,
-	      { key_location_id: RecsType.Number, key_pos: RecsType.Number, location_id: RecsType.Number, pos: RecsType.Number, tile_type: RecsType.Number },
+	      { key_location_id: RecsType.BigInt, key_pos: RecsType.Number, location_id: RecsType.BigInt, pos: RecsType.Number, tile_type: RecsType.Number },
 	      {
 	        metadata: {
 	          name: "Tile",
