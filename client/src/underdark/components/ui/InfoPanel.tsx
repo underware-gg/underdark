@@ -10,13 +10,17 @@ import { loadAudioAssets } from '../../data/assets'
 
 
 function InfoPanel() {
+  const { chamberId } = useUnderdarkContext()
+  const { chamberExists } = useChamber(chamberId)
   const { message } = useGameplayContext()
 
   return (
     <div className='InfoPanel AlignCenter AlignMiddle'>
 
       <div className='InfoTop'>
-        <StartButton />
+        {chamberExists &&
+          <StartButton />
+        }
       </div>
       <div className='InfoTop'>
         <GenerateButton />
@@ -36,7 +40,6 @@ function InfoPanel() {
 
 const StartButton = () => {
   const { chamberId } = useUnderdarkContext()
-  const { chamberExists } = useChamber(chamberId)
   const { gameTilemap } = useChamberMap(chamberId)
   const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
 
@@ -45,14 +48,10 @@ const StartButton = () => {
     dispatchReset(gameTilemap.playerStart, true)
   }
 
-  if (chamberExists) {
-    const _label = isLoaded ? 'START' : 'RESTART'
-    return (
-      <ActionButton onClick={() => _startGame()} label={_label} />
-    )
-  }
-
-  return <></>
+  const _label = isLoaded ? 'START' : 'RESTART'
+  return (
+    <ActionButton onClick={() => _startGame()} label={_label} />
+  )
 }
 
 

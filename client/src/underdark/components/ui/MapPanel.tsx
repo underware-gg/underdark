@@ -68,7 +68,7 @@ function MapPanel() {
   return (
     <div className='MapView'>
       {loaders.map((coord: bigint) => {
-        return <MapLoader key={`loader_${coord.toString()}`} coord={coord} addChamber={_addChamber} />
+        return <MapPreLoader key={`loader_${coord.toString()}`} coord={coord} addChamber={_addChamber} />
       })}
 
       <MapView targetChamber={targetChamber} chambers={Object.values(chambers)} tileSize={tileSize} />
@@ -82,14 +82,21 @@ function MapPanel() {
   )
 }
 
-interface MapLoaderProps {
-  coord: bigint,
-  addChamber: (chamber: MapChamber) => void,
+function MapPreLoader({
+  coord,
+  addChamber,
+}) {
+  const { chamberExists } = useChamber(coord)
+  if(chamberExists) {
+    return <MapLoader coord={coord} addChamber={addChamber} />
+  }
+  return <></>
 }
+
 function MapLoader({
   coord,
   addChamber,
-}: MapLoaderProps) {
+}) {
   const { gameTilemap } = useChamberMap(coord)
   useEffect(() => {
     if (gameTilemap) {
