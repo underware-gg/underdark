@@ -87,11 +87,7 @@ export const useChamberMap = (locationId: bigint) => {
   const { Map, Tile } = useDojoComponents()
   const map: any = useComponentValue(Map, bigintToEntity(locationId))
   const bitmap = useMemo<bigint>(() => BigInt(map?.bitmap ?? 0n), [map])
-
   const map_data = useChamberMapData(locationId)
-  const monsters = useMemo<bigint>(() => BigInt(map_data?.monsters ?? 0n), [map])
-  const slender_duck = useMemo<bigint>(() => BigInt(map_data?.slender_duck ?? 0n), [map])
-  const dark_tar = useMemo<bigint>(() => BigInt(map_data?.dark_tar ?? 0n), [map])
   // useEffect(() => console.log(`map:`, map, typeof map?.bitmap, bitmap), [bitmap])
 
   //
@@ -108,9 +104,9 @@ export const useChamberMap = (locationId: bigint) => {
       for (let i = 0; i < 256; ++i) {
         const bit = BigInt(255 - i)
         const isPath = (bitmap & (1n << bit)) != 0n
-        const isMonster = (monsters & (1n << bit)) != 0n
-        const isSlenderDuck = (slender_duck & (1n << bit)) != 0n
-        const isDarkTar = (dark_tar & (1n << bit)) != 0n
+        const isMonster = (map_data.monsters & (1n << bit)) != 0n
+        const isSlenderDuck = (map_data.slender_duck & (1n << bit)) != 0n
+        const isDarkTar = (map_data.dark_tar & (1n << bit)) != 0n
         // console.log(`GAMETILEMAP`, i, isPath, isMonster, isSlenderDuck, isDarkTar)
         if (isDarkTar) {
           result.push(TileType.DarkTar)
