@@ -1,4 +1,4 @@
-import { useSyncWorld } from '../hooks/useGraphQLQueries'
+import { useSyncWorld } from '../hooks/useSyncWorld'
 import { UnderdarkProvider } from '../hooks/UnderdarkContext'
 import { GameplayProvider } from '../hooks/GameplayContext'
 import { SettingsProvider } from '../hooks/SettingsContext'
@@ -9,7 +9,7 @@ function Underdark() {
   const { loading } = useSyncWorld()
 
   if (loading) {
-    return <h1>loading...</h1>
+    return <h1>syncing...</h1>
   }
 
   return (
