@@ -1,4 +1,4 @@
-import { Components, Entity, Schema, setComponent } from "@latticexyz/recs";
+import { Components, Entity, Schema, setComponent } from "@dojoengine/recs";
 import { poseidonHashMany } from "micro-starknet";
 
 export function isValidArray(input: any): input is any[] {

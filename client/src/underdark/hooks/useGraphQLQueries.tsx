@@ -3,7 +3,7 @@ import { GraphQLClient } from "graphql-request";
 // import { getSdk } from "../../generated/graphql";
 import { useDojo } from "../../DojoContext";
 import { setComponentFromEntity } from "../../utils/utils";
-import { Components } from "@latticexyz/recs";
+import { Components } from "@dojoengine/recs";
 
 export enum FetchStatus {
   Idle = "idle",

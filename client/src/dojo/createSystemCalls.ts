@@ -3,7 +3,7 @@ import {
   Components,
   setComponent,
   Type as RecsType,
-} from '@latticexyz/recs';
+} from '@dojoengine/recs';
 import { Account } from 'starknet';
 import { SetupNetworkResult } from './setupNetwork';
 import { getEntityIdFromKeys, strToFelt252 } from '../utils/utils';

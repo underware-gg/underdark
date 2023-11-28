@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
-import { Entity, HasValue, Has, getComponentValue } from '@latticexyz/recs'
-import { useComponentValue, useEntityQuery } from "@latticexyz/react"
+import { Entity, HasValue, Has, getComponentValue } from '@dojoengine/recs'
+import { useComponentValue, useEntityQuery } from "@dojoengine/react"
 import { useDojoComponents, useDojoSystemCalls } from '../../DojoContext'
 import { bigintToEntity } from "../utils/utils"
 import { Dir, TileType, tilemapToGameTilemap, offsetCoord } from "../utils/underdark"
