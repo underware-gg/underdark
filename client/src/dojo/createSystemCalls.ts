@@ -1,13 +1,14 @@
 import {
   Schema,
   Components,
-  setComponent,
   Type as RecsType,
 } from '@dojoengine/recs';
+import { getEvents, setComponentsFromEvents } from "@dojoengine/utils";
+import { convertValues } from "@dojoengine/react";
 import { Account } from 'starknet';
 import { SetupNetworkResult } from './setupNetwork';
-import { getEntityIdFromKeys, strToFelt252 } from '../utils/utils';
 import { bigintToHex } from '../underdark/utils/utils';
+import { shortString } from "starknet";
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
@@ -19,14 +20,16 @@ export function createSystemCalls(
   const generate_level = async (signer: Account, realmId: number, coord: bigint, roomId: number, levelNumber: number, generator_name: string, generator_value: number): Promise<boolean> => {
     let success = false
     try {
-      const args = [realmId, coord, roomId, levelNumber, strToFelt252(generator_name), generator_value]
-      // console.log(args)
+      const args = [realmId, coord, roomId, levelNumber, shortString.encodeShortString(generator_name), generator_value]
+
       const tx = await execute(signer, 'actions', 'generate_level', args)
       console.log(`generate_level tx:`, tx)
+
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
       success = Object.keys(receipt).length > 0
       console.log(`generate_level receipt:`, success, receipt)
-      processReceipt(receipt, contractComponents);
+
+      setComponentsFromEvents(contractComponents, getEvents(receipt));
     } catch (e) {
       console.log(`generate_level exception:`, e)
     } finally {
@@ -41,6 +44,7 @@ export function createSystemCalls(
       const eventData = await call('actions', 'generate_map_data', args)
 
       result = getComponentValuesFromEventData(contractComponents, 'MapData', eventData.result)
+      // result = convertValues(contractComponents['MapData'].schema, eventData.result)
 
       //@ts-ignore
       console.log(`generate_map_data(${bigintToHex(coord)}) >>>`, eventData, result, bigintToHex(result?.location_id ?? 0n), bigintToHex(result?.monsters ?? 0n))
@@ -58,12 +62,15 @@ export function createSystemCalls(
       const proof_high = proof >> 128n
       const args = [locationId, proof_low, proof_high, movesCount]
       // console.log(args)
+
       const tx = await execute(signer, 'actions', 'finish_level', args)
       console.log(`finish_level tx:`, tx)
+
       const receipt = await signer.waitForTransaction(tx.transaction_hash, { retryInterval: 200 })
       success = Object.keys(receipt).length > 0
       console.log(`finish_level receipt:`, success, receipt)
-      processReceipt(receipt, contractComponents);
+
+      setComponentsFromEvents(contractComponents, getEvents(receipt));
     } catch (e) {
       console.log(`finish_level exception:`, e)
     } finally {
@@ -78,69 +85,63 @@ export function createSystemCalls(
   }
 }
 
-export function processReceipt(receipt: any, components: any): any {
-  if (receipt.execution_status == 'REVERTED') {
-    console.error(`Transaction reverted:`, receipt.revert_reason)
-    return {}
-  } else if (receipt.execution_status != 'SUCCEEDED') {
-    console.error(`Transaction error [${receipt.execution_status}]:`, receipt)
-    return {}
-  }
+// export function processReceipt(receipt: any, components: any): any {
+//   if (receipt.execution_status == 'REVERTED') {
+//     console.error(`Transaction reverted:`, receipt.revert_reason)
+//     return {}
+//   } else if (receipt.execution_status != 'SUCCEEDED') {
+//     console.error(`Transaction error [${receipt.execution_status}]:`, receipt)
+//     return {}
+//   }
 
-  const events = getEvents(receipt);
-  // console.log(`receipt events:`, events)
-  events.forEach((event) => setComponentFromEvent(components, event.data));
+//   const events = getEvents(receipt);
+//   // console.log(`receipt events:`, events)
+//   events.forEach((event) => setComponentFromEvent(components, event.data));
 
-  return {
-    events,
-  }
-}
+//   return {
+//     events,
+//   }
+// }
 
 
-export function getEvents(receipt: any): any[] {
-  return receipt.events.filter((event: any) => {
-    return event.keys.length === 1 && event.keys[0] === import.meta.env.VITE_EVENT_KEY;
-  });
-}
+// export function setComponentFromEvent(components: Components, eventData: string[]) {
+//   // retrieve the component
+//   const componentName = hexToAscii(eventData[0]);
+//   const component = components[componentName];
 
-export function setComponentFromEvent(components: Components, eventData: string[]) {
-  // retrieve the component
-  const componentName = hexToAscii(eventData[0]);
-  const component = components[componentName];
+//   // get keys
+//   const keysCount = parseInt(eventData[1]);
+//   const keys = eventData.slice(2, 2 + keysCount).map((key) => BigInt(key));
+//   const entity = getEntityIdFromKeys(keys);
+//   // console.log(`EVENT [${componentName}] keys [${keysCount}]:`, keys, `Entity:`, entity)
 
-  // get keys
-  const keysCount = parseInt(eventData[1]);
-  const keys = eventData.slice(2, 2 + keysCount).map((key) => BigInt(key));
-  const entity = getEntityIdFromKeys(keys);
-  // console.log(`EVENT [${componentName}] keys [${keysCount}]:`, keys, `Entity:`, entity)
+//   // shift to values
+//   let dataIndex =
+//     1 +   // component name
+//     1 +   // keys count
+//     keysCount + // the keys
+//     + 1   // 0x0 (?!)
+//     + 1;  // values count
 
-  // shift to values
-  let dataIndex =
-    1 +   // component name
-    1 +   // keys count
-    keysCount + // the keys
-    + 1   // 0x0 (?!)
-    + 1;  // values count
+//   // const valuesCount = parseInt(eventData[dataIndex]);
+//   // console.log(`EVENT [${componentName}] values [${valuesCount}]`, eventData.slice(dataIndex))
+//   // console.log(`EVENT schema`, component)
 
-  // const valuesCount = parseInt(eventData[dataIndex]);
-  // console.log(`EVENT [${componentName}] values [${valuesCount}]`, eventData.slice(dataIndex))
-  // console.log(`EVENT schema`, component)
+//   // create component object from values with schema
+//   const componentValues = getComponentValuesFromEventData(components, componentName, eventData.slice(dataIndex));
+//   // console.log(`VALUES:`, componentValues, entity)
+//   // console.log(`component:`, component)
 
-  // create component object from values with schema
-  const componentValues = getComponentValuesFromEventData(components, componentName, eventData.slice(dataIndex));
-  // console.log(`VALUES:`, componentValues, entity)
-  // console.log(`component:`, component)
+//   // set component
+//   setComponent(component, entity, componentValues);
+// }
 
-  // set component
-  setComponent(component, entity, componentValues);
-}
-
-export function getComponentValuesFromEventData(components: Components, componentName: string, eventData: string[]) {
+function getComponentValuesFromEventData(components: Components, componentName: string, eventData: string[]) {
   const component = components[componentName];
   
   let dataIndex = 0
 
-  // console.log(`SCHEMA [${componentName}]`, component.schema)
+  console.log(`SCHEMA [${componentName}]`, component)
 
   const componentValues = Object.keys(component.schema).reduce((acc: Schema, key, index) => {
     let value: any;
@@ -167,13 +168,13 @@ export function getComponentValuesFromEventData(components: Components, componen
 }
 
 
-function hexToAscii(hex: string) {
-  var str = '';
-  for (var n = 2; n < hex.length; n += 2) {
-    str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
-  }
-  return str;
-}
+// function hexToAscii(hex: string) {
+//   var str = '';
+//   for (var n = 2; n < hex.length; n += 2) {
+//     str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+//   }
+//   return str;
+// }
 
 // function asciiToHex(ascii: string) {
 //   var hex = '';
