@@ -1,7 +1,7 @@
 {
-  "name": "react-example",
+  "name": "underdark",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,9 +15,9 @@
   "dependencies": {
     "@dojoengine/core": "link:../../dojo.js/packages/core",
     "@dojoengine/create-burner": "^0.1.29",
-    "@dojoengine/react": "^0.1.44",
+    "@dojoengine/react": "link:../../dojo.js/packages/react",
     "@dojoengine/recs": "^0.1.35",
-    "@dojoengine/utils": "^0.1.55",
+    "@dojoengine/utils": "link:../../dojo.js/packages/utils",
     "@tweenjs/tween.js": "^21.0.0",
     "ethers": "^6.8.0",
     "event-emitter": "^0.3.5",

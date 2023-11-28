@@ -547,18 +547,9 @@
     get-starknet-core "^3.2.0"
     js-cookie "^3.0.5"
 
-"@dojoengine/react@^0.1.44":
-  version "0.1.44"
-  resolved "https://registry.yarnpkg.com/@dojoengine/react/-/react-0.1.44.tgz#eda80481bd99838f75e29b3335b484ae12d537cb"
-  integrity sha512-VgZG8Lgouse/KGmrEb21NNsrkYJwYbb3aDZGrKw9YC5Yc6oYknTOCLfl6F5s3S9O4lCgw1e2atZFMG026uLpzw==
-  dependencies:
-    "@dojoengine/recs" "0.1.35"
-    "@latticexyz/utils" "^2.0.0-next.11"
-    encoding "^0.1.13"
-    fast-deep-equal "^3.1.3"
-    get-starknet-core "^3.2.0"
-    js-cookie "^3.0.5"
-    rxjs "7.5.5"
+"@dojoengine/react@link:../../dojo.js/packages/react":
+  version "0.0.0"
+  uid ""
 
 "@dojoengine/recs@0.1.35", "@dojoengine/recs@^0.1.35":
   version "0.1.35"
@@ -570,16 +561,9 @@
     mobx "^6.7.0"
     rxjs "7.5.5"
 
-"@dojoengine/utils@^0.1.55":
-  version "0.1.55"
-  resolved "https://registry.yarnpkg.com/@dojoengine/utils/-/utils-0.1.55.tgz#161ceca5309fcb8038f4b5995e5d64d7e564d190"
-  integrity sha512-uyonkCiwx1gcoafwZ5Y/ZAzjcO3F0LfYQri7o4LTej8/HCJcd1w3xOSqct4nu7fqjhH1T5ZMwEFJWL7rmQ6ifA==
-  dependencies:
-    "@dojoengine/recs" "0.1.35"
-    "@latticexyz/utils" "^2.0.0-next.11"
-    mathjs "^12.0.0"
-    micro-starknet "^0.2.3"
-    starknet "^5.19.5"
+"@dojoengine/utils@link:../../dojo.js/packages/utils":
+  version "0.0.0"
+  uid ""
 
 "@esbuild/android-arm64@0.18.20":
   version "0.18.20"
