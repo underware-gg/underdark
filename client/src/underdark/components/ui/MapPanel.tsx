@@ -9,7 +9,7 @@ import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../../utils/under
 // Entry Point
 //
 function MapPanel() {
-  const [tileSize, seTtileSize] = useState(7)
+  const [tileSize, seTtileSize] = useState(10)
   const { roomId, chamberId: currentChamberId } = useUnderdarkContext()
   const { yonder } = useChamber(currentChamberId)
 

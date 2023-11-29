@@ -1,18 +1,20 @@
 
 $font-family: Menlo, monospace, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-$important: #fa0;
+$color-important: #b3ff00;
 // $ui-bg: #000a;
 $color-ui: #ddd;
 $color-bg: #030303;
-$color-text: rgba(#faffcb, 0.87);
-$color-active: rgb(206, 223, 145);
+$color-panel: #1b201b80; //RealmsColors.BG
+$color-text: rgba(#faffcb, 0.9);
+$color-active: #cedf91;
 $color-inactive: #417154;
 // $ui-border: 5px ridge $color-ui;
-$ui-border: 0.5px solid #444;
+$ui-border: 0.5px solid #444444;
+$text-shadow: 0.05em 0.05em 1px rgba($color-panel, 0.5);
 
 $game-width: 960px;
-$game-height: 480px;
-$ui-height: 240px;
+$game-height: 540px;
+$ui-height: 180px;
 $ui-compass-width: 360px;
 $ui-column: 60px;
 $ui-row: 40px;
@@ -34,8 +36,9 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  color: $color-text;
   background-color: $color-bg;
+  color: $color-text;
+  text-shadow: $text-shadow;
 }
 
 body {
@@ -79,6 +82,8 @@ hr {
 }
 
 button {
+  background-color: $color-active;
+  color: $color-panel;
   border-radius: 2px;
   border: 1px solid transparent;
   padding: 0.5em 1.0em;
@@ -87,6 +92,7 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
+  text-shadow: $text-shadow;
 }
 
 button:hover {
@@ -187,10 +193,18 @@ canvas {
 
 /* GAME CANVAS */
 
-.GameView {
+.GameContainer {
   width: $game-width;
   height: $game-height;
-  outline: 0.5px solid #444;
+  position: relative;
+}
+
+.GameView {
+  @extend .GameContainer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  // outline: 0.5px solid #444;
 }
 
 .GameCanvas {
@@ -204,7 +218,7 @@ canvas {
 /* GAME UI */
 
 .UI {
-  outline: $ui-border;
+  // outline: $ui-border;
   vertical-align: middle;
   margin: auto;
   padding: 0;
@@ -213,17 +227,20 @@ canvas {
 
 .GameUI {
   @extend .UI;
-  display: block;
+  // display: block;
   width: $game-width;
   height: $ui-height;
-  outline: 0.5px solid #444;
+  position: absolute;
+  bottom: 0;
+  left: 0;
   border: 0;
+  // outline: 0.5px solid #444;
 }
 
 .MapView {
-  width: $ui-height;
+  width: 100%;
   height: calc($ui-height - $ui-row);
-  background-color: #1b1b1b; //RealmsColors.BG
+  // background-color: $color-panel;
 }
 
 .RoomPanel {
@@ -234,10 +251,11 @@ canvas {
 .InfoPanel {
   width: $ui-compass-width;
   height: calc($ui-height - $ui-row);
-  background-color: #1b1b1b; //RealmsColors.BG
+  // background-color: $color-panel;
 }
 
 .CompassUI {
+  background-color: $color-inactive;
   width: $ui-compass-width;
   height: $ui-row;
   font-size: 2.25em;
@@ -255,6 +273,19 @@ canvas {
   height: 100%;
   vertical-align: bottom;
   margin: auto;
+  position: relative;
+}
+.ColUIContents {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.ColUISlider {
+  background-color: rgba($color-important, 0.5);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .ButtonUI{
@@ -269,7 +300,7 @@ canvas {
 }
 .InfoBottom {
   width: 80%;
-  height: calc($ui-height - $ui-row - $ui-row);
+  height: calc($ui-height);
   margin: auto;
 }
 

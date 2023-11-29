@@ -75,22 +75,22 @@ export const levels: LevelParams[] = [
   {
     generatorName: 'entry',
     generatorValue: 0,
+    // Game Boy
+    renderParams: {
+      colorCount: 16,
+      palette: 1,
+      bayer: 4,
+    }
+  },
+  {
+    generatorName: 'binary_tree_classic',
+    generatorValue: 0,
     // BW Dither Band
     renderParams: {
       colorCount: 16,
       palette: 0,
       dither: 0.5,
       ditherSize: 4,
-    }
-  },
-  {
-    generatorName: 'binary_tree_classic',
-    generatorValue: 0,
-    // Game Boy
-    renderParams: {
-      colorCount: 16,
-      palette: 1,
-      bayer: 4,
     }
   },
   {

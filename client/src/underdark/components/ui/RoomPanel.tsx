@@ -51,7 +51,7 @@ function RoomPanel() {
         {/* <br /> */}
         {/* Level: <b>{yonder}</b> */}
 
-        <ScoreBoard />
+        {/* <ScoreBoard /> */}
 
       </>}
     </div>

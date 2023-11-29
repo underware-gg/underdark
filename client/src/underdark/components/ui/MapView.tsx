@@ -69,7 +69,7 @@ export function MapView({
 
   return (
     <svg width={'100%'} height={'100%'} viewBox={`${viewboxOrigin.x} ${viewboxOrigin.y} ${viewboxWidth} ${viewboxHeight}`}>
-      <style>{`svg{background-color:${MapColors.BG1}}`}</style>
+      {/* <style>{`svg{background-color:${MapColors.BG1}}`}</style> */}
       {chambers.map((chamber: MapChamber) => {
         const isTarget = (chamber.coord == targetChamber.coord && chamber.exists)
         return (
@@ -121,8 +121,8 @@ export function Map({
       } else {
         // TileType.Path
       }
-      if (!tile && !tileColor && (x + y) % 2 == 0) {
-        tileColor = MapColors.BG2
+      if (!tile && !tileColor) {
+        tileColor = ((x + y) % 2 == 0) ? MapColors.BG1 : MapColors.BG2
       }
       if (!tile && tileColor) {
         tile = <rect
@@ -175,7 +175,9 @@ export function Map({
         <rect
           x={gridOrigin.x} y={gridOrigin.y}
           width={gridSize} height={gridSize}
-          fill='none' stroke={MapColors.CURRENT} strokeWidth={strokeWidth * 2}
+          fill='none'
+          // stroke={MapColors.CURRENT}
+          // strokeWidth={strokeWidth * 2}
         />
       }
     </svg>

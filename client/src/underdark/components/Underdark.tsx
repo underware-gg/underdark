@@ -16,10 +16,9 @@ function Underdark() {
     <UnderdarkProvider>
       <SettingsProvider>
         <GameplayProvider>
-          <div>
-            <GameUI />
-            {/* <br /> */}
+          <div className='GameContainer'>
             <GameView />
+            <GameUI />
           </div>
         </GameplayProvider>
       </SettingsProvider>
