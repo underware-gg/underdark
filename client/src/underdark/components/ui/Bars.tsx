@@ -20,7 +20,7 @@ function HealthBar() {
       <h2>
         {health}%
         <br />
-        🩸
+        🐤
       </h2>
     </div>
   )

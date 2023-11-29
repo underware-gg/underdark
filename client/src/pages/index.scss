@@ -2,8 +2,12 @@
 $font-family: Menlo, monospace, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 $important: #fa0;
 // $ui-bg: #000a;
-$ui-color: #ddd;
-// $ui-border: 5px ridge $ui-color;
+$color-ui: #ddd;
+$color-bg: #030303;
+$color-text: rgba(#faffcb, 0.87);
+$color-active: rgb(206, 223, 145);
+$color-inactive: #417154;
+// $ui-border: 5px ridge $color-ui;
 $ui-border: 0.5px solid #444;
 
 $game-width: 960px;
@@ -30,8 +34,8 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: $color-text;
+  background-color: $color-bg;
 }
 
 body {
@@ -175,10 +179,10 @@ canvas {
 }
 
 .Locked {
-  background-color: #94631f;
+  background-color: $color-inactive;
 }
 .Unlocked {
-  background-color: #fbf6c0;
+  background-color: $color-active;
 }
 
 /* GAME CANVAS */
@@ -278,6 +282,6 @@ canvas {
   left: calc(100vh - 100px);
   width: 500px;
   height: 200px;
-  background-color: #242424;
+  background-color: $color-bg;
 }
 
