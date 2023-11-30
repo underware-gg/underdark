@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { setComponentsFromGraphQLEntities } from "@dojoengine/utils";
 import { GraphQLClient } from "graphql-request";
-import { useDojo } from "../../DojoContext";
+import { useDojo } from "../../dojo/DojoContext";
 import { useEffectOnce } from "./useEffectOnce";
 
 export enum FetchStatus {
@@ -11,7 +11,7 @@ export enum FetchStatus {
   Error = "error",
 }
 
-const client = new GraphQLClient(import.meta.env.VITE_PUBLIC_TORII!);
+const client = new GraphQLClient(process.env.NEXT_PUBLIC_TORII!);
 
 type Entity = {
   __typename?: "Entity";

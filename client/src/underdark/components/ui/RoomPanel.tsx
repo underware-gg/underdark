@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useChamber, useGameChamberIds } from '../../hooks/useChamber'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { bigintToHex } from '../../utils/utils'
 import { MAX_GAMES } from './RoomSelector'
-import ScoreBoard from './ScoreBoard'
 import { coordToSlug } from '../../utils/underdark'
+// import ScoreBoard from './ScoreBoard'
 
 function RoomPanel() {
   const { roomId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()

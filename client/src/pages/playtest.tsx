@@ -14,7 +14,7 @@ async function init() {
     <React.StrictMode>
       <UnderdarkProvider>
         <GameplayProvider>
-      <PlaytestPage />
+          <PlaytestPage />
         </GameplayProvider>
       </UnderdarkProvider>
     </React.StrictMode>

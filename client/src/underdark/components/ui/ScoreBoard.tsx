@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useLevelScores, usePlayerScore, useScoreByKey } from '../../hooks/useChamber'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { useDojoAccount } from '../../../DojoContext'
+import { useDojoAccount } from '@/dojo/DojoContext'
 
 function Score({
   scoreKey,

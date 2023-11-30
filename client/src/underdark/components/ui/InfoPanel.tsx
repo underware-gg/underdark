@@ -1,4 +1,5 @@
-import { useDojoAccount, useDojoSystemCalls } from '../../../DojoContext'
+import React from 'react'
+import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { useGameplayContext } from '../../hooks/GameplayContext'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { useChamber, useChamberMap, useChamberOffset, usePlayerScore } from '../../hooks/useChamber'

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
 import { useChamber, useChamberMap } from '../../hooks/useChamber'
 import { MapChamber, MapView, compassToMapViewPos } from './MapView'

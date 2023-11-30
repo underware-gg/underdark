@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
+import React, { useEffect } from 'react'
+import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { useGameplayContext, GameState } from '../hooks/GameplayContext'
 import { useChamber, useChamberMap } from '../hooks/useChamber'
 import { useKeyDown } from '../hooks/useKeyDown'

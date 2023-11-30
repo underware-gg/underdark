@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Compass, Dir, GameTilemap, TileType, offsetCompass } from '../../utils/underdark'
 import { MapColors } from '../../data/colors'
 import { useGameplayContext } from '../../hooks/GameplayContext'

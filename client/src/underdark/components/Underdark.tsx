@@ -1,28 +1,13 @@
-import { useSyncWorld } from '../hooks/useSyncWorld'
-import { UnderdarkProvider } from '../hooks/UnderdarkContext'
-import { GameplayProvider } from '../hooks/GameplayContext'
-import { SettingsProvider } from '../hooks/SettingsContext'
-import GameView from './GameView'
-import GameUI from './GameUI'
+import React from 'react'
+import GameView from '@/underdark/components/GameView'
+import GameUI from '@/underdark/components/GameUI'
 
 function Underdark() {
-  const { loading } = useSyncWorld()
-
-  if (loading) {
-    return <h1>syncing...</h1>
-  }
-
   return (
-    <UnderdarkProvider>
-      <SettingsProvider>
-        <GameplayProvider>
-          <div className='GameContainer'>
-            <GameView />
-            <GameUI />
-          </div>
-        </GameplayProvider>
-      </SettingsProvider>
-    </UnderdarkProvider>
+    <div className='GameContainer'>
+      <GameView />
+      <GameUI />
+    </div>
   )
 }
 

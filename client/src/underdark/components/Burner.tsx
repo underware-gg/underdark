@@ -1,4 +1,4 @@
-import { useDojo } from '../../DojoContext';
+import { useDojo } from '@/dojo/DojoContext';
 
 function Burner() {
   const {

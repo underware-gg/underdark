@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Entity, HasValue, Has, getComponentValue } from '@dojoengine/recs'
 import { useComponentValue, useEntityQuery } from "@dojoengine/react"
 import { getEntityIdFromKeys } from "@dojoengine/utils"
-import { useDojoComponents, useDojoSystemCalls } from '../../DojoContext'
+import { useDojoComponents, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { Dir, TileType, tilemapToGameTilemap, offsetCoord } from "../utils/underdark"
 import { bigintToEntity } from "../utils/utils"
 import { Account } from "starknet"
