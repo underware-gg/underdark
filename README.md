@@ -110,7 +110,7 @@ sozo test
 
 # install packages
 cd ../client
-yarn
+npm install
 ```
 
 
@@ -144,7 +144,7 @@ cd dojo
 
 ```console
 cd client
-yarn && yarn dev
+npm install && npm dev
 
 # or just...
 cd dojo

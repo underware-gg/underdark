@@ -9,7 +9,7 @@ scripts/default_auth.sh
 # cp target/dev/manifest.json ../client/src/
 
 # cd ../client
-# yarn run codegen
-# yarn run create-components
+# npm run codegen
+# npm run create-components
 
 echo "--- DONE!"

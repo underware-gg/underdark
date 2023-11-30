@@ -13,7 +13,7 @@ scripts/default_auth.sh
 cp target/dev/manifest.json ../client/src/
 
 cd ../client
-yarn run codegen
-yarn run create-components $RPC_URL $WORLD_ADDRESS
+npm run codegen
+npm run create-components $RPC_URL $WORLD_ADDRESS
 
 echo "--- DONE!"
