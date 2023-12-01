@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useEffectOnce } from '@/underdark/hooks/useEffectOnce'
-import { DojoProvider } from '@/dojo/DojoContext.tsx'
+import { DojoProvider } from '@/dojo/DojoContext'
 import { setup } from '@/dojo/setup.ts'
 import { UnderdarkProvider } from '@/underdark/hooks/UnderdarkContext'
 import { GameplayProvider } from '@/underdark/hooks/GameplayContext'

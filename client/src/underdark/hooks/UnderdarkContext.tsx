@@ -18,7 +18,7 @@ export const initialState = {
 }
 
 const UnderdarkActions = {
-  SET_GAME: 'SET_GAME',
+  SET_ROOM: 'SET_ROOM',
   SET_CHAMBER: 'SET_CHAMBER',
 }
 
@@ -35,7 +35,7 @@ type UnderdarkStateType = {
 }
 
 type ActionType =
-  | { type: 'SET_GAME', payload: number }
+  | { type: 'SET_ROOM', payload: number }
   | { type: 'SET_CHAMBER', payload: bigint }
 
 
@@ -63,7 +63,7 @@ const UnderdarkProvider = ({
   const [state, dispatch] = useReducer((state: UnderdarkStateType, action: ActionType) => {
     let newState = { ...state }
     switch (action.type) {
-      case UnderdarkActions.SET_GAME: {
+      case UnderdarkActions.SET_ROOM: {
         newState.roomId = action.payload as number
         newState.chamberId = 0n
         break

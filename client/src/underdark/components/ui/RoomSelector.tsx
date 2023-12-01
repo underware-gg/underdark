@@ -11,7 +11,7 @@ function RoomSelector() {
     <Grid className='RowUI'>
       <Row stretched>
         <Col width={4} className='UI'>
-          <NextGameButton nextRoomId={roomId - 1} direction={-1} />
+          <NextRoomButton nextRoomId={roomId - 1} direction={-1} />
         </Col>
         <Col width={8} className='Padded'>
           <h3>
@@ -19,30 +19,30 @@ function RoomSelector() {
           </h3>
         </Col>
         <Col width={4} className='UI'>
-          <NextGameButton nextRoomId={roomId + 1} direction={+1} />
+          <NextRoomButton nextRoomId={roomId + 1} direction={+1} />
         </Col>
       </Row>
     </Grid>
   )
 }
 
-function NextGameButton({
+function NextRoomButton({
   nextRoomId,
   direction,
 }) {
   const { dispatch, UnderdarkActions } = useUnderdarkContext()
   const enabled = (nextRoomId >= 1 && nextRoomId <= MAX_GAMES)
 
-  const _setSelectedGame = () => {
+  const _setSelectedRoom = () => {
     if (enabled) {
       dispatch({
-        type: UnderdarkActions.SET_GAME,
+        type: UnderdarkActions.SET_ROOM,
         payload: nextRoomId,
       })
     }
   }
 
-  return <PrevNextButton direction={direction} disabled={!enabled} onClick={() => _setSelectedGame()} />
+  return <PrevNextButton direction={direction} disabled={!enabled} onClick={() => _setSelectedRoom()} />
 }
 
 

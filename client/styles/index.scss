@@ -69,11 +69,12 @@ a:hover {
 
 h1 {
   font-size: 2.2em;
-  line-height: 0.5em;
 }
 
 h1, h2, h3, h4, h5 {
   font-family: $font-family;
+  line-height: 1.2em;
+  margin: 0.2em 0;
 }
 
 hr {
@@ -180,6 +181,17 @@ canvas {
 }
 
 /* UNDERDARK  GENERIC */
+
+.Logo {
+  width: 440px;
+  height: 440px;
+}
+
+.ManorImage {
+  width: 256px;
+  height: 256px;
+  display: inline-block !important; // center
+}
 
 .DirectionButton {
   /* margin: 0.25em; */

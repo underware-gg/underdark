@@ -22,7 +22,7 @@ function RoomPanel() {
   const _randomizeGame = () => {
     const newRoomId = Math.floor(Math.random() * MAX_GAMES) + 1
     dispatch({
-      type: UnderdarkActions.SET_GAME,
+      type: UnderdarkActions.SET_ROOM,
       payload: newRoomId,
     })
   }
