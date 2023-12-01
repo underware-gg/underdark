@@ -1,7 +1,8 @@
 
 export enum MapColors {
   BG1 = '#000',
-  BG2 = '#000',
+  BG2 = '#111',
+  BG3 = '#222',
   WALL = '#faffcb00',
   ENTRY = 'rgb(255, 234, 0)',
   LOCKED = 'rgb(209, 49, 0)',

@@ -25,8 +25,8 @@ export default function IndexPage() {
       <div className='Spacer20' />
       <h2><button onClick={() => { location.href = '/underdark/' }}>ENTER THE DARKNESS</button></h2>
 
-      {/* <div className='Spacer20' /> */}
-      {/* <h2><button onClick={() => { location.href = '/editor/' }}>BITMAP EDITOR</button></h2> */}
+      <div className='Spacer20' />
+      <h2><button onClick={() => { location.href = '/editor/' }}>BITMAP EDITOR</button></h2>
 
     </App>
   );

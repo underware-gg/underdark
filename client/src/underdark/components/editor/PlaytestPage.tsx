@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '../../utils/underdark'
 import { useGameplayContext } from '../../hooks/GameplayContext'
 import { useKeyDown } from '../../hooks/useKeyDown'
@@ -6,37 +7,36 @@ import { LevelParams, levels } from '../../data/levels'
 import { bigintToHex } from '../../utils/utils'
 import GameCanvas from '../GameCanvas'
 
-// set index.html
-//@ts-ignore
-const _bitmap = BigInt(playtest_bitmap)
-
 function PlaytestPage() {
+  const searchParams = useSearchParams()
+  const bitmap = searchParams.get('bitmap')
 
   return (
     <div>
-      <GameView />
+      <GameView bitmap={BigInt(bitmap ?? '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')} />
     </div>
   )
 }
 
 
-
-const GameView = () => {
+const GameView = ({
+  bitmap
+}) => {
 
   const tilemap = useMemo(() => {
     let result: TileType[] = []
-    if (_bitmap) {
+    if (bitmap) {
       for (let i = 0; i < 256; ++i) {
-        const bit = _bitmap & (1n << BigInt(255 - i))
+        const bit = bitmap & (1n << BigInt(255 - i))
         result.push(i == 0 ? TileType.Entry : bit ? TileType.Path : TileType.Void)
       }
     }
     return result
-  }, [_bitmap])
-  // useEffect(() => console.log(`tilemap:`, bigintToHex(_bitmap), tilemap), [tilemap])
+  }, [bitmap])
+  // useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
-  useEffect(() => console.log(`gameTilemap:`, bigintToHex(_bitmap), gameTilemap), [gameTilemap])
+  useEffect(() => console.log(`gameTilemap:`, bigintToHex(bitmap), gameTilemap), [gameTilemap])
 
   const { gameImpl, playerPosition, dispatchReset, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
 

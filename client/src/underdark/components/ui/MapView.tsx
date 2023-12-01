@@ -122,7 +122,8 @@ export function Map({
         // TileType.Path
       }
       if (!tile && !tileColor) {
-        tileColor = ((x + y) % 2 == 0) ? MapColors.BG1 : MapColors.BG2
+        // tileColor = ((x + y) % 2 == 0) ? MapColors.BG1 : MapColors.BG2
+        tileColor = MapColors.BG1
       }
       if (!tile && tileColor) {
         tile = <rect
