@@ -1,7 +1,10 @@
+
+// const withTM = require('next-transpile-modules')(['somemodule', 'and-another']) // pass the modules you would like to see transpiled
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    SERVER_URL: process.env.SERVER_URL,
+    SERVER_URL: process.env.SERVER_URL ?? '',
   },
   reactStrictMode: true,
   transpilePackages: [
@@ -23,6 +26,6 @@ const nextConfig = {
       },
     ]
   },
-};
+}
 
-module.exports = nextConfig;
+export default nextConfig
