@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useGameplayContext } from '../../hooks/GameplayContext'
-import { useKeyDown } from '../../hooks/useKeyDown'
-import { Point } from '../ui/MapView'
-import ThreeJsCanvas from '../../three/ThreeJsCanvas'
+import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
+import { useKeyDown } from '@/underdark/hooks/useKeyDown'
+import { Point } from '@/underdark/components/ui/MapView'
+import ThreeJsCanvas from '@/underdark/three/ThreeJsCanvas'
 import * as game from './game'
 
 function ModelsPage() {

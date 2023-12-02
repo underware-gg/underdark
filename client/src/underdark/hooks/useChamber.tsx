@@ -3,7 +3,7 @@ import { Entity, HasValue, Has, getComponentValue } from '@dojoengine/recs'
 import { useComponentValue, useEntityQuery } from "@dojoengine/react"
 import { getEntityIdFromKeys } from "@dojoengine/utils"
 import { useDojoComponents, useDojoSystemCalls } from '@/dojo/DojoContext'
-import { Dir, TileType, tilemapToGameTilemap, offsetCoord } from "../utils/underdark"
+import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToCompass } from "../utils/underdark"
 import { bigintToEntity } from "../utils/utils"
 import { Account } from "starknet"
 
@@ -21,7 +21,22 @@ export const useAllChamberIds = () => {
   }
 }
 
-export const useGameChamberIds = (roomId: number) => {
+export const useAllRoomIds = () => {
+  const { chamberIds } = useAllChamberIds()
+  const roomIds = useMemo(() =>
+    chamberIds.reduce<number[]>((acc, value) => {
+      const { roomId } = coordToCompass(value)
+      if (!acc.includes(roomId)) {
+        acc.push(roomId)
+      }
+      return acc
+    }, []).sort((a, b) => (a - b)), [chamberIds])
+  return {
+    roomIds,
+  }
+}
+
+export const useRoomChamberIds = (roomId: number) => {
   const { Chamber } = useDojoComponents()
   const entityIds = useEntityQuery([HasValue(Chamber, { room_id: roomId })])
   const chamberIds: bigint[] = useMemo(() => (entityIds ?? []).map((entityId) => BigInt(entityId)), [entityIds])

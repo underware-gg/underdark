@@ -1,5 +1,5 @@
-import ThreeJsCanvas from '../three/ThreeJsCanvas'
-import * as game from '../three/game'
+import ThreeJsCanvas from '@/underdark/three/ThreeJsCanvas'
+import * as game from '@/underdark/three/game'
 
 const GameCanvas = ({
   width = 960,

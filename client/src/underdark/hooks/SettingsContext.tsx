@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useReducer, useContext, useState } from 'react'
 import { useCookies } from 'react-cookie'
-import { useEffectOnce } from './useEffectOnce'
+import { useEffectOnce } from '@/underdark/hooks/useEffectOnce'
 
 //--------------------------------
 // Constants

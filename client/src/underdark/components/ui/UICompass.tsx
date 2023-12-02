@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useGameEvent } from '../../hooks/useGameEvent'
-import { map } from '../../utils/utils'
+import { useGameEvent } from '@/underdark/hooks/useGameEvent'
+import { map } from '@/underdark/utils/utils'
 
 const _strip = '···E······S······W······N······E······S······W······N······E······S······W······N···'
 const _stripStep = 7

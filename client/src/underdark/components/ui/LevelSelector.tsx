@@ -1,8 +1,8 @@
-import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { useChamber, useChamberOffset } from '../../hooks/useChamber'
-import { Dir } from '../../utils/underdark'
-import { Col, Grid, Row } from '../Grid'
-import { PrevNextButton } from './UIButtons'
+import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
+import { useChamber, useChamberOffset } from '@/underdark/hooks/useChamber'
+import { Dir } from '@/underdark/utils/underdark'
+import { Col, Grid, Row } from '@/underdark/components/Grid'
+import { PrevNextButton } from '@/underdark/components/ui/UIButtons'
 
 function LevelSelector() {
   const { chamberId } = useUnderdarkContext()

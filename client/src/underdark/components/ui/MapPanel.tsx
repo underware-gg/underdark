@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { useChamber, useChamberMap } from '../../hooks/useChamber'
-import { MapChamber, MapView, compassToMapViewPos } from './MapView'
-import { Dir, coordToCompass, coordToSlug, offsetCoord } from '../../utils/underdark'
+import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
+import { useChamber, useChamberMap } from '@/underdark/hooks/useChamber'
+import { MapChamber, MapView, compassToMapViewPos } from '@/underdark/components/ui/MapView'
+import { Dir, coordToCompass, coordToSlug, offsetCoord } from '@/underdark/utils/underdark'
 
 
 //-----------------------------

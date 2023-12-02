@@ -1,14 +1,8 @@
 import React from 'react'
-import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
-import { useGameplayContext } from '../../hooks/GameplayContext'
-import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { useChamber, useChamberMap, useChamberOffset, usePlayerScore } from '../../hooks/useChamber'
-import { ActionButton } from './UIButtons'
-import { Dir } from '../../utils/underdark'
-import { getLevelParams } from '../../data/levels'
-import { loadAudioAssets } from '../../data/assets'
-// import { Account } from 'starknet'
-
+import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
+import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
+import { useChamber } from '@/underdark/hooks/useChamber'
+import { GenerateButton, StartButton } from '@/underdark/components/Buttons'
 
 function InfoPanel() {
   const { chamberId } = useUnderdarkContext()
@@ -37,58 +31,5 @@ function InfoPanel() {
     </div>
   )
 }
-
-
-const StartButton = () => {
-  const { chamberId } = useUnderdarkContext()
-  const { gameTilemap } = useChamberMap(chamberId)
-  const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
-
-  const _startGame = async () => {
-    await loadAudioAssets(gameImpl?.getCameraRig())
-    dispatchReset(gameTilemap.playerStart, true)
-  }
-
-  const _label = isLoaded ? 'START' : 'RESTART'
-  return (
-    <ActionButton onClick={() => _startGame()} label={_label} />
-  )
-}
-
-
-function GenerateButton() {
-  const { generate_level } = useDojoSystemCalls()
-  const { account } = useDojoAccount()
-
-  // generate first chamber
-  const { realmId, manorCoord, roomId, chamberId } = useUnderdarkContext()
-  const { yonder } = useChamber(chamberId)
-  const canMintFirst = (yonder == 0)
-
-  // for new next chambers
-  const { levelIsCompleted } = usePlayerScore(chamberId, account)
-  const { chamberExists: nextChamberExists } = useChamberOffset(chamberId, Dir.Under)
-  const canMintNext = (yonder > 0 && levelIsCompleted && !nextChamberExists)
-
-  const { isPlaying } = useGameplayContext()
-
-  const _generate = async () => {
-    const _level = getLevelParams(yonder + 1)
-    const success = await generate_level(account, realmId, manorCoord, roomId, yonder + 1, _level.generatorName, _level.generatorValue)
-    if (success) {
-      console.log(`GENERATED... TODO: START GAME`)
-    }
-  }
-
-  if ((canMintFirst || canMintNext) && !isPlaying) {
-    const _label = (canMintFirst ? 'GENERATE ROOM' : 'GENERATE NEXT LEVEL')
-    return (
-      <ActionButton onClick={() => _generate()} label={_label} />
-    )
-  }
-
-  return <></>
-}
-
 
 export default InfoPanel

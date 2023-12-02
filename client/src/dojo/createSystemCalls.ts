@@ -1,7 +1,7 @@
 import { getEvents, setComponentsFromEvents, decodeComponent } from "@dojoengine/utils";
 import { Account } from 'starknet';
 import { SetupNetworkResult } from './setupNetwork';
-import { bigintToHex } from '../underdark/utils/utils';
+import { bigintToHex } from '@/underdark/utils/utils';
 import { shortString } from "starknet";
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;

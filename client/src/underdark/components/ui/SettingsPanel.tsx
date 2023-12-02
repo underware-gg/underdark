@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { useSettingsContext } from '../../hooks/SettingsContext'
-import { Col, Grid, Row } from '../Grid'
-import { ActionButton } from './UIButtons'
+import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
+import { Col, Grid, Row } from '@/underdark/components/Grid'
+import { ActionButton } from '@/underdark/components/ui/UIButtons'
 
 function SettingsPanel() {
   const { settings, SettingsActions } = useSettingsContext()

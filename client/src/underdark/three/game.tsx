@@ -11,10 +11,10 @@ import Stats from 'three/addons/libs/stats.module.js'
 //@ts-ignore
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 
-import { DepthPostShader } from './DepthPostShader'
-import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
-import { loadAssets, ModelName, AudioName, MODELS_ASSETS, AUDIO_ASSETS } from '../data/assets'
-import { toRadians } from '../utils/utils'
+import { DepthPostShader } from '@/underdark/three/DepthPostShader'
+import { Dir, GameTilemap, Position, TileType } from '@/underdark/utils/underdark'
+import { loadAssets, ModelName, AudioName, MODELS_ASSETS, AUDIO_ASSETS } from '@/underdark/data/assets'
+import { toRadians } from '@/underdark/utils/utils'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5

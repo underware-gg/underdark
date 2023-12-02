@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useEffectOnce } from './useEffectOnce'
-import { emitter } from '../three/game'
+import { useEffectOnce } from '@/underdark/hooks/useEffectOnce'
+import { emitter } from '@/underdark/three/game'
 
 export const useGameEvent = (eventName) => {
   const [value, setValue] = useState(null)

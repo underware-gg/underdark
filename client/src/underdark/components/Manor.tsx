@@ -10,9 +10,9 @@ function Manor() {
     <Container>
       <div className='AlignCenter'>
         <Image className='ManorImage' src='/images/manor.jpg' />
-        <h3>you are at</h3>
+        {/* <h3>you are at</h3> */}
         <h1>The Manor at Kurnkunor</h1>
-        <h2>The lair of the Slender Duck!</h2>
+        <h2>The Lair of the Slender Duck!</h2>
       </div>
 
       <hr />
@@ -39,6 +39,8 @@ function Manor() {
       <hr />
 
       <ManorRoomSelector />
+
+      <hr />
 
     </Container>
   )

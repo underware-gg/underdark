@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import { useEffectOnce } from '@/underdark/hooks/useEffectOnce'
 import { DojoProvider } from '@/dojo/DojoContext'
 import { setup } from '@/dojo/setup.ts'
-import { UnderdarkProvider } from '@/underdark/hooks/UnderdarkContext'
 import { GameplayProvider } from '@/underdark/hooks/GameplayContext'
-import { SettingsProvider } from '@/underdark/hooks/SettingsContext'
 import { useSyncWorld } from '@/underdark/hooks/useSyncWorld'
 import App from '@/underdark/components/App'
 
@@ -58,12 +56,8 @@ function DojoSync({ children }) {
   }
 
   return (
-    <UnderdarkProvider>
-      <SettingsProvider>
-        <GameplayProvider>
-          {children}
-        </GameplayProvider>
-      </SettingsProvider>
-    </UnderdarkProvider>
+    <GameplayProvider>
+      {children}
+    </GameplayProvider>
   )
 }

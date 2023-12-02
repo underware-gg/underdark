@@ -1,6 +1,6 @@
-import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { Col, Grid, Row } from '../Grid'
-import { PrevNextButton } from './UIButtons'
+import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
+import { Col, Grid, Row } from '@/underdark/components/Grid'
+import { PrevNextButton } from '@/underdark/components/ui/UIButtons'
 
 export const MAX_GAMES = 10000
 

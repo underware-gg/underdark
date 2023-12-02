@@ -1,12 +1,12 @@
-import { Grid, Row, Col } from './Grid'
-import { HealthBar, LightBar } from './ui/Bars'
-import MapPanel from './ui/MapPanel'
-import RoomPanel from './ui/RoomPanel'
-import InfoPanel from './ui/InfoPanel'
-import LevelSelector from './ui/LevelSelector'
-import RoomSelector from './ui/RoomSelector'
-import UICompass from './ui/UICompass'
-import SettingsPanel from './ui/SettingsPanel'
+import { Grid, Row, Col } from '@/underdark/components/Grid'
+import { HealthBar, LightBar } from '@/underdark/components/ui/Bars'
+import MapPanel from '@/underdark/components/ui/MapPanel'
+import RoomPanel from '@/underdark/components/ui/RoomPanel'
+import InfoPanel from '@/underdark/components/ui/InfoPanel'
+import LevelSelector from '@/underdark/components/ui/LevelSelector'
+import RoomSelector from '@/underdark/components/ui/RoomSelector'
+import UICompass from '@/underdark/components/ui/UICompass'
+import SettingsPanel from '@/underdark/components/ui/SettingsPanel'
 
 function GameUI() {
   return (

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '../../utils/underdark'
-import { useGameplayContext } from '../../hooks/GameplayContext'
-import { useKeyDown } from '../../hooks/useKeyDown'
-import { LevelParams, levels } from '../../data/levels'
-import { bigintToHex } from '../../utils/utils'
-import GameCanvas from '../GameCanvas'
+import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '@/underdark/utils/underdark'
+import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
+import { useKeyDown } from '@/underdark/hooks/useKeyDown'
+import { LevelParams, levels } from '@/underdark/data/levels'
+import { bigintToHex } from '@/underdark/utils/utils'
+import GameCanvas from '@/underdark/components/GameCanvas'
 
 function PlaytestPage() {
   const searchParams = useSearchParams()

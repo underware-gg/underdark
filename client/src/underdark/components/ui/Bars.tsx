@@ -1,4 +1,4 @@
-import { useGameplayContext } from '../../hooks/GameplayContext'
+import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
 
 function LightBar() {
   const { light } = useGameplayContext()

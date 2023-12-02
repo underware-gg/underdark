@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
-import { MapColors } from '../../data/colors'
-import { bigintToHex } from '../../utils/utils'
+import { MapColors } from '@/underdark/data/colors'
+import { bigintToHex } from '@/underdark/utils/utils'
 
 function EditorPage() {
   return (

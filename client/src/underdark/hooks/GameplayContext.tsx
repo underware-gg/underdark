@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useReducer, useContext } from 'react'
-import { Dir, Position, TileType } from '../utils/underdark'
-import { MESSAGES } from '../data/messages'
+import { Dir, Position, TileType } from '@/underdark/utils/underdark'
+import { MESSAGES } from '@/underdark/data/messages'
 import { clamp } from 'three/src/math/MathUtils'
 
 

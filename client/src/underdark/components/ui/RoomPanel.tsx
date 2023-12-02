@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react'
-import { useChamber, useGameChamberIds } from '../../hooks/useChamber'
-import { useUnderdarkContext } from '../../hooks/UnderdarkContext'
-import { bigintToHex } from '../../utils/utils'
-import { MAX_GAMES } from './RoomSelector'
-import { coordToSlug } from '../../utils/underdark'
-// import ScoreBoard from './ScoreBoard'
+import Link from 'next/link'
+import { useChamber, useRoomChamberIds } from '@/underdark/hooks/useChamber'
+import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
+import { bigintToHex } from '@/underdark/utils/utils'
+import { MAX_GAMES } from '@/underdark/components/ui/RoomSelector'
+import { coordToSlug } from '@/underdark/utils/underdark'
 
 function RoomPanel() {
   const { roomId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
   const { chamberExists, yonder } = useChamber(chamberId)
 
-  const { chamberIds } = useGameChamberIds(roomId)
+  const { chamberIds } = useRoomChamberIds(roomId)
   useEffect(() => {
     const coord = chamberIds.length > 0 ? chamberIds[chamberIds.length - 1] : 0n
     dispatch({
@@ -38,6 +38,9 @@ function RoomPanel() {
       {bigintToHex(chamberId)}
       {chamberId && <><br /><b>({coordToSlug(chamberId, yonder)})</b></>}
 
+      <br />
+      <Link href='/manor'>Manor</Link>
+
       {!chamberExists && <>
         <div>
           This Room has not been
@@ -50,8 +53,6 @@ function RoomPanel() {
 
         {/* <br /> */}
         {/* Level: <b>{yonder}</b> */}
-
-        {/* <ScoreBoard /> */}
 
       </>}
     </div>

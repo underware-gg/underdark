@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
-import { useEffectOnce } from '../hooks/useEffectOnce'
-import { useGameplayContext } from '../hooks/GameplayContext'
+import { useEffectOnce } from '@/underdark/hooks/useEffectOnce'
+import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
 
 export const ThreeJsCanvas = ({
   width = 200,
