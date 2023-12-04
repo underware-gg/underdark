@@ -41,14 +41,11 @@ function NextLevelButton({
   chamberId,
   dir,
 }: NextLevelButtonProps) {
-  const { dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { dispatchSetChamber } = useUnderdarkContext()
   const { locationId, chamberExists } = useChamberOffset(chamberId, dir)
 
   const _open = () => {
-    dispatch({
-      type: UnderdarkActions.SET_CHAMBER,
-      payload: locationId,
-    })
+    dispatchSetChamber(locationId)
   }
 
   const direction = (dir == Dir.Over ? -1 : 1)

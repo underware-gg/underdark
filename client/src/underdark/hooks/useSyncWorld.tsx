@@ -105,7 +105,7 @@ ${modelsQueryBuilder}
           }
         }
       } catch (error) {
-        console.log({ syncError: error });
+        console.error({ syncError: error });
       } finally {
         setLoading(false);
       }

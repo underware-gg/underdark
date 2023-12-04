@@ -30,15 +30,12 @@ function NextRoomButton({
   nextRoomId,
   direction,
 }) {
-  const { dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { dispatchSetRoom } = useUnderdarkContext()
   const enabled = (nextRoomId >= 1 && nextRoomId <= MAX_GAMES)
 
   const _setSelectedRoom = () => {
     if (enabled) {
-      dispatch({
-        type: UnderdarkActions.SET_ROOM,
-        payload: nextRoomId,
-      })
+      dispatchSetRoom(nextRoomId)
     }
   }
 

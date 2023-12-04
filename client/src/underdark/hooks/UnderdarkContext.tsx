@@ -1,4 +1,5 @@
 import React, { ReactNode, createContext, useReducer, useContext } from 'react'
+import { makeRoomChamberId } from '../utils/underdark'
 
 //
 // React + Typescript + Context
@@ -95,10 +96,28 @@ export { UnderdarkProvider, UnderdarkContext, UnderdarkActions }
 
 export const useUnderdarkContext = () => {
   const { state, dispatch } = useContext(UnderdarkContext)
+  const dispatchSetRoom = (roomId) => {
+    dispatch({
+      type: UnderdarkActions.SET_ROOM,
+      payload: roomId,
+    })
+    dispatch({
+      type: UnderdarkActions.SET_CHAMBER,
+      payload: makeRoomChamberId(roomId, 1),
+    })
+  }
+  const dispatchSetChamber = (chamberId) => {
+    dispatch({
+      type: UnderdarkActions.SET_CHAMBER,
+      payload: chamberId,
+    })
+  }
   return {
     ...state,
     dispatch,
     UnderdarkActions,
+    dispatchSetRoom,
+    dispatchSetChamber,
   }
 }
 

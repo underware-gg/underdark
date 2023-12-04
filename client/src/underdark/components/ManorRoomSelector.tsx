@@ -9,6 +9,7 @@ import { bigintToHex } from '@/underdark/utils/utils'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { GenerateRoomButton } from '@/underdark/components/Buttons'
 import ScoreBoard from '@/underdark/components/ui/ScoreBoard'
+import { MAX_GAMES } from './ui/RoomSelector'
 
 const Row = Grid.Row
 const Col = Grid.Column
@@ -32,16 +33,17 @@ function Rooms() {
 
   const listedRoomIds = useMemo(() => {
     let result = []
-    let lastId = null
-    for (let i = 0; i < roomIds.length; ++i) {
-      const id = roomIds[i]
-      if (lastId && id != lastId + 1) {
-        result.push(lastId + 1)
+    const ids = roomIds.length > 0 ? roomIds : [1]
+    for (let i = 0; i < ids.length; ++i) {
+      const id = ids[i]
+      result.push(id)
+      const isLast = (i == ids.length - 1)
+      if (isLast || ids[i + 1] != id + 1) {
+        result.push(id + 1)
         result.push(null)
       }
-      result.push(id)
-      lastId = id
     }
+    // insert next and spaces
     return result
   }, [roomIds])
 
@@ -59,6 +61,15 @@ function Rooms() {
         )
       }
     })
+    // random
+    const newRoomId = Math.floor(Math.random() * MAX_GAMES) + 1
+    result.push(
+      <RoomRow key={`row_random`}
+        roomId={-1}
+        isSelected={false}
+        label='Random Room'
+      />
+    )
     return result
   }, [listedRoomIds, selectedRoomId])
 
@@ -69,28 +80,22 @@ function Rooms() {
 function RoomRow({
   roomId,
   isSelected,
+  label=null,
 }) {
-  const { dispatch, UnderdarkActions, chamberId: selectedChamberId } = useUnderdarkContext()
+  const { dispatchSetRoom, chamberId: selectedChamberId } = useUnderdarkContext()
 
   const _setSelectedRoom = () => {
     if (!isSelected) {
-      dispatch({
-        type: UnderdarkActions.SET_ROOM,
-        payload: roomId,
-      })
-      dispatch({
-        type: UnderdarkActions.SET_CHAMBER,
-        payload: makeRoomChamberId(roomId, 1),
-      })
+      dispatchSetRoom(roomId)
     }
   }
 
-  const label = `Room #${roomId.toString()}`
+  const _label = label ?? `Room #${roomId.toString()}`
 
   return (
     <Row>
       <Col width={4}>
-        <ActionButton onClick={() => _setSelectedRoom()} label={label} dimmed={!isSelected} />
+        <ActionButton onClick={() => _setSelectedRoom()} label={_label} dimmed={!isSelected} />
       </Col>
       <Col width={4}>
         {isSelected &&
@@ -117,6 +122,7 @@ function RoomLevels({
     [...chamberIds, makeRoomChamberId(roomId, chamberIds.length + 1)].sort((a, b) => Number(a - b)).forEach(chamberId => {
       result.push(
         <RoomLevel key={`row_${chamberId}`}
+          roomId={roomId}
           chamberId={chamberId}
           isSelected={chamberId == selectedChamberId}
         />
@@ -133,18 +139,16 @@ function RoomLevels({
 }
 
 function RoomLevel({
+  roomId,
   chamberId,
   isSelected,
 }) {
   const { account } = useDojoAccount()
   const { levelIsCompleted: previousLevelIsCompleted } = usePlayerScore(offsetCoord(chamberId, Dir.Over), account)
 
-  const { dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { dispatchSetChamber } = useUnderdarkContext()
   const _selectRoom = (chamberId) => {
-    dispatch({
-      type: UnderdarkActions.SET_CHAMBER,
-      payload: chamberId,
-    })
+    dispatchSetChamber(chamberId)
   }
 
   const compass = useMemo(() => coordToCompass(chamberId), [chamberId])
@@ -156,7 +160,7 @@ function RoomLevel({
   return (
     <ActionButton key={`row_${chamberId}`}
       onClick={() => _selectRoom(chamberId)}
-      label={`Level ${compass.under.toString()}`}
+      label={`Room #${roomId} Level ${compass.under.toString()}`}
       dimmed={!isSelected}
     />
   )

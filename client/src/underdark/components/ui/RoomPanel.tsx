@@ -7,24 +7,18 @@ import { MAX_GAMES } from '@/underdark/components/ui/RoomSelector'
 import { coordToSlug } from '@/underdark/utils/underdark'
 
 function RoomPanel() {
-  const { roomId, chamberId, dispatch, UnderdarkActions } = useUnderdarkContext()
+  const { roomId, chamberId, dispatchSetRoom, dispatchSetChamber } = useUnderdarkContext()
   const { chamberExists, yonder } = useChamber(chamberId)
 
   const { chamberIds } = useRoomChamberIds(roomId)
   useEffect(() => {
     const coord = chamberIds.length > 0 ? chamberIds[chamberIds.length - 1] : 0n
-    dispatch({
-      type: UnderdarkActions.SET_CHAMBER,
-      payload: coord,
-    })
+    dispatchSetChamber(coord)
   }, [chamberIds])
 
   const _randomizeGame = () => {
     const newRoomId = Math.floor(Math.random() * MAX_GAMES) + 1
-    dispatch({
-      type: UnderdarkActions.SET_ROOM,
-      payload: newRoomId,
-    })
+    dispatchSetRoom(newRoomId)
   }
 
   return (
