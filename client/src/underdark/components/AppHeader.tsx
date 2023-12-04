@@ -1,16 +1,17 @@
 import React from 'react'
 import Head from 'next/head'
 
-export default function AppHeader({}) {
+export default function AppHeader({
+  title = null,
+}) {
 	const domain = process.env.SERVER_URL;
 
-	let title = 'Underdark';
 	let desc = 'Fully on-chain game made with Dojo';
 	let imageUrl = domain + '/images/logo.png';
 
 	return (
 		<Head>
-			<title key='title'>{title}</title>
+      <title key='title'>{title ?? 'Underdark'}</title>
       <link rel='icon' href='/favicon.ico' />
 
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />

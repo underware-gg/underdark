@@ -7,9 +7,12 @@ import { useSyncWorld } from '@/underdark/hooks/useSyncWorld'
 import App from '@/underdark/components/App'
 
 
-export default function AppDojo({ children }) {
+export default function AppDojo({
+  title=null,
+  children,
+}) {
   return (
-    <App>
+    <App title={title}>
       <DojoSetup>
         {children}
       </DojoSetup>

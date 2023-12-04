@@ -96,14 +96,14 @@ export { UnderdarkProvider, UnderdarkContext, UnderdarkActions }
 
 export const useUnderdarkContext = () => {
   const { state, dispatch } = useContext(UnderdarkContext)
-  const dispatchSetRoom = (roomId) => {
+  const dispatchSetRoom = (roomId, levelNumber = null) => {
     dispatch({
       type: UnderdarkActions.SET_ROOM,
       payload: roomId,
     })
     dispatch({
       type: UnderdarkActions.SET_CHAMBER,
-      payload: makeRoomChamberId(roomId, 1),
+      payload: makeRoomChamberId(roomId, levelNumber ?? 1),
     })
   }
   const dispatchSetChamber = (chamberId) => {
