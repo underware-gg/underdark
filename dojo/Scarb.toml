@@ -16,7 +16,7 @@ sierra-replace-ids = true
 
 [dependencies]
 # dojo = { git = "https://github.com/dojoengine/dojo.git", rev = "47c0cbcfa4ebd4d4b504ec959fdbcfd3e4271e8a" }
-dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.5" }
+dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.15" }
 
 
 [[target.dojo]]
@@ -25,7 +25,7 @@ dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.5" }
 initializer_class_hash = "0xbeef"
 
 [tool.dojo.env]
-world_address = "0x7006ea4fd2de52944def100605e48ba82b8c4d15a6bd5ef04fbc579d8b00076"
+world_address = "0x2d6bcc12cbb460243b73a4c937faf00ad2d071d899f40dfc9182843712f9c77"
 
 # Development
 rpc_url = "http://localhost:5050/"
