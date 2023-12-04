@@ -42,6 +42,7 @@ export type Chamber = {
 export type ChamberConnection = {
   __typename?: 'ChamberConnection';
   edges?: Maybe<Array<Maybe<ChamberEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -121,6 +122,7 @@ export type Map = {
 export type MapConnection = {
   __typename?: 'MapConnection';
   edges?: Maybe<Array<Maybe<MapEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -137,6 +139,7 @@ export type MapData = {
 export type MapDataConnection = {
   __typename?: 'MapDataConnection';
   edges?: Maybe<Array<Maybe<MapDataEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -322,6 +325,7 @@ export type Score = {
 export type ScoreConnection = {
   __typename?: 'ScoreConnection';
   edges?: Maybe<Array<Maybe<ScoreEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -395,6 +399,7 @@ export type Tile = {
 export type TileConnection = {
   __typename?: 'TileConnection';
   edges?: Maybe<Array<Maybe<TileEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -471,7 +476,6 @@ export type World__Entity = {
   event_id?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
   keys?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  model_names?: Maybe<Scalars['String']['output']>;
   models?: Maybe<Array<Maybe<ModelUnion>>>;
   updated_at?: Maybe<Scalars['DateTime']['output']>;
 };
@@ -479,6 +483,7 @@ export type World__Entity = {
 export type World__EntityConnection = {
   __typename?: 'World__EntityConnection';
   edges?: Maybe<Array<Maybe<World__EntityEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -500,6 +505,7 @@ export type World__Event = {
 export type World__EventConnection = {
   __typename?: 'World__EventConnection';
   edges?: Maybe<Array<Maybe<World__EventEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -523,6 +529,7 @@ export type World__Metadata = {
 export type World__MetadataConnection = {
   __typename?: 'World__MetadataConnection';
   edges?: Maybe<Array<Maybe<World__MetadataEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -544,6 +551,7 @@ export type World__Model = {
 export type World__ModelConnection = {
   __typename?: 'World__ModelConnection';
   edges?: Maybe<Array<Maybe<World__ModelEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
@@ -551,6 +559,14 @@ export type World__ModelEdge = {
   __typename?: 'World__ModelEdge';
   cursor?: Maybe<Scalars['Cursor']['output']>;
   node?: Maybe<World__Model>;
+};
+
+export type World__PageInfo = {
+  __typename?: 'World__PageInfo';
+  end_cursor?: Maybe<Scalars['Cursor']['output']>;
+  has_next_page?: Maybe<Scalars['Boolean']['output']>;
+  has_previous_page?: Maybe<Scalars['Boolean']['output']>;
+  start_cursor?: Maybe<Scalars['Cursor']['output']>;
 };
 
 export type World__Query = {
@@ -706,12 +722,18 @@ export type World__Social = {
 export type World__Subscription = {
   __typename?: 'World__Subscription';
   entityUpdated: World__Entity;
+  eventEmitted: World__Event;
   modelRegistered: World__Model;
 };
 
 
 export type World__SubscriptionEntityUpdatedArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type World__SubscriptionEventEmittedArgs = {
+  keys?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -734,6 +756,7 @@ export type World__Transaction = {
 export type World__TransactionConnection = {
   __typename?: 'World__TransactionConnection';
   edges?: Maybe<Array<Maybe<World__TransactionEdge>>>;
+  page_info: World__PageInfo;
   total_count: Scalars['Int']['output'];
 };
 
