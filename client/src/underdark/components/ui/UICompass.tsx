@@ -27,9 +27,10 @@ function UICompass() {
     const strip = _strip.slice(start, start + _stripSize)
     for (let i = 0; i < strip.length; i++) {
       const a = Math.sin(map(i, 0, strip.length - 1, 0, Math.PI))
-      const aa = `0${Math.floor(a * 255).toString(16)}`.slice(-2)
+      const aa = `0${Math.floor(127 + a * 128).toString(16)}`.slice(-2)
       const size = map(a, 0, 1, 60, 100)
-      result.push(<span key={`d${i}`} style={{ color: `rgba($color-active, 1)`, fontSize: `${Math.ceil(size)}%` }}>{strip[i]}</span>)
+      // $color-active below...
+      result.push(<span key={`d${i}`} style={{ color: `#cedf91${aa}`, fontSize: `${Math.ceil(size)}%` }}>{strip[i]}</span>)
     }
     return result
   }, [start])

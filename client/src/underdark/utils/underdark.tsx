@@ -189,15 +189,19 @@ export const offsetCoord = (coord: bigint, dir: Dir): bigint => {
 // Move to Crawler SDK
 //
 
-export const makeRoomChamberId = (roomId: number, levelId: number): bigint => {
+export const makeRoomChamberId = (roomId: number, levelNumber: number): bigint => {
   let compass = coordToCompass(initialState.manorCoord)
   const entryCoord = {
     ...compass,
     realmId: initialState.realmId,
     roomId,
-    under: levelId,
+    under: levelNumber,
   }
   return compassToCoord(entryCoord)
+}
+
+export const makeRoomName = (roomId: number, levelNumber: number): string => {
+  return `Room #${roomId} Level ${levelNumber}`
 }
 
 export type TilemapGridSize = 18 | 20

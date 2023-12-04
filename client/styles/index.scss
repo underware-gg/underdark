@@ -244,21 +244,28 @@ canvas {
 .UI {
   // outline: $ui-border;
   vertical-align: middle;
+  text-align: center;
   margin: auto;
   padding: 0;
   margin: 0;
 }
 
-.GameUI {
+.GameUITop {
   @extend .UI;
   // display: block;
   width: $game-width;
   height: $ui-height;
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   border: 0;
   // outline: 0.5px solid #444;
+}
+
+.GameUIBottom {
+  @extend .GameUITop;
+  top: unset;
+  bottom: 0;
 }
 
 .MapView {
@@ -284,6 +291,7 @@ canvas {
   height: $ui-row;
   font-size: 2.25em;
   padding: 0.2em 0 0 0;
+  text-align: center;
 }
 
 .RowUI{
@@ -323,8 +331,9 @@ canvas {
   margin: auto;
 }
 .InfoBottom {
+  @extend .AlignMiddle;
+  // height: calc($ui-height - $ui-row);
   width: 80%;
-  height: calc($ui-height);
   margin: auto;
 }
 

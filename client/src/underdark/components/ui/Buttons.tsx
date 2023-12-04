@@ -3,13 +3,16 @@ import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
 import { useChamber, useChamberMap, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
+import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { getLevelParams } from '@/underdark/data/levels'
 import { loadAudioAssets } from '@/underdark/data/assets'
 import { Dir, makeRoomChamberId } from '@/underdark/utils/underdark'
 
 
-export const StartButton = () => {
+export const StartButton = ({
+  fill=false,
+}) => {
   const { chamberId } = useUnderdarkContext()
   const { gameTilemap } = useChamberMap(chamberId)
   const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
@@ -21,14 +24,12 @@ export const StartButton = () => {
 
   const _label = isLoaded ? 'START' : 'RESTART'
   return (
-    <ActionButton onClick={() => _startGame()} label={_label} />
+    <ActionButton fill={fill} onClick={() => _startGame()} label={_label} />
   )
 }
 
 
 export function GenerateButton() {
-  const { account } = useDojoAccount()
-
   // generate first chamber
   const { roomId, chamberId } = useUnderdarkContext()
   const { yonder } = useChamber(chamberId)
@@ -48,6 +49,29 @@ export function GenerateButton() {
   }
   return <></>
 }
+
+
+interface SettingsButtonProps {
+  prefix: string
+  name: string
+  value: boolean
+}
+
+export function SettingsButton({
+  prefix,
+  name,
+  value,
+}: SettingsButtonProps) {
+  const { dispatch } = useSettingsContext()
+  const _switch = () => {
+    dispatch({
+      type: name,
+      payload: !value,
+    })
+  }
+  return <ActionButton fill dimmed={!value} label={`${prefix} ${value ? 'ON' : 'OFF'}`} onClick={() => _switch()} />
+}
+
 
 export function GenerateRoomButton({
   roomId,

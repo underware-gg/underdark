@@ -25,24 +25,24 @@ export function createSystemCalls(
 
       setComponentsFromEvents(contractComponents, getEvents(receipt));
     } catch (e) {
-      console.log(`generate_level exception:`, e)
+      console.warn(`generate_level(${bigintToHex(coord)}) exception:`, e)
     } finally {
     }
     return success
   }
 
-  const generate_map_data = async (coord: bigint): Promise<any> => {
+  const generate_map_data = async (locationId: bigint): Promise<any> => {
     let result = {}
     try {
-      const args = [coord]
+      const args = [locationId]
       const eventData = await call('actions', 'generate_map_data', args)
 
       result = decodeComponent(contractComponents['MapData'], eventData.result)
 
       //@ts-ignore
-      // console.log(`generate_map_data(${bigintToHex(coord)}) >>>`, eventData, result, bigintToHex(result?.location_id ?? 0n), bigintToHex(result?.monsters ?? 0n))
+      console.log(`generate_map_data(${bigintToHex(locationId)}) >>>`, eventData, result, bigintToHex(result?.location_id ?? 0n), bigintToHex(result?.monsters ?? 0n))
     } catch (e) {
-      console.warn(`generate_level(${bigintToHex(coord) }) exception:`, e)
+      console.warn(`generate_map_data(${bigintToHex(locationId)}) exception:`, e)
     } finally {
     }
     return result
@@ -65,7 +65,7 @@ export function createSystemCalls(
 
       setComponentsFromEvents(contractComponents, getEvents(receipt));
     } catch (e) {
-      console.log(`finish_level exception:`, e)
+      console.warn(`finish_level exception:`, e)
     } finally {
     }
     return success

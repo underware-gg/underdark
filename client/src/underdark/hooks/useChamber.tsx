@@ -79,6 +79,9 @@ export const useChamberOffset = (chamberId: bigint, dir: Dir) => {
 export const useChamberMapData = (locationId: bigint) => {
   const { generate_map_data } = useDojoSystemCalls()
   const [mapData, setMapData] = useState(null)
+  
+  // console.warn(`useChamberMapData`, locationId)
+
   useEffect(() => {
     let _mounted = true
     const _fetch = async () => {

@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { Segment, Grid, Container, Divider } from 'semantic-ui-react'
+import { Segment, Grid, Container } from 'semantic-ui-react'
 import { useAllRoomIds, useChamber, useRoomChamberIds, usePlayerScore } from '@/underdark/hooks/useChamber'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
 import { useDojoAccount } from '@/dojo/DojoContext'
-import { Dir, coordToCompass, makeRoomChamberId, offsetCoord } from '@/underdark/utils/underdark'
+import { Dir, coordToCompass, makeRoomChamberId, makeRoomName, offsetCoord } from '@/underdark/utils/underdark'
 import { bigintToHex } from '@/underdark/utils/utils'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
-import { GenerateRoomButton } from '@/underdark/components/Buttons'
+import { GenerateRoomButton } from '@/underdark/components/ui/Buttons'
 import ScoreBoard from '@/underdark/components/ui/ScoreBoard'
 import { MAX_GAMES } from './ui/RoomSelector'
 
@@ -160,7 +160,7 @@ function RoomLevel({
   return (
     <ActionButton key={`row_${chamberId}`}
       onClick={() => _selectRoom(chamberId)}
-      label={`Room #${roomId} Level ${compass.under.toString()}`}
+      label={makeRoomName(roomId, compass.under)}
       dimmed={!isSelected}
     />
   )
@@ -171,15 +171,17 @@ function ChamberInfo({
   roomId,
   chamberId,
 }) {
-  const { chamberExists } = useChamber(chamberId)
-
   const router = useRouter()
+  const { chamberExists } = useChamber(chamberId)
+  const compass = useMemo(() => coordToCompass(chamberId), [chamberId])
 
   const _enterRoom = () => {
-    router.push(`/room/${roomId}`)
+    let url = `/room/${roomId}`
+    if (compass.under > 1) {
+      url += `/${compass.under}`
+    }
+    router.push(url)
   }
-
-  const compass = useMemo(() => coordToCompass(chamberId), [chamberId])
 
   if (!compass) {
     return <></>

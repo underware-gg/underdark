@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import AppDojo from '@/underdark/components/AppDojo'
 import Manor from '@/underdark/components/Manor'
 import Underdark from '@/underdark/components/Underdark'
+import { makeRoomName } from '@/underdark/utils/underdark'
 
 export default function UnderdarkPage() {
   const router = useRouter()
@@ -29,7 +30,7 @@ export default function UnderdarkPage() {
           page = _page
           roomId = parseInt(_slugs[0])
           levelNumber = parseInt(_slugs[1] ?? '1')
-          title = `Underdark - Room #${roomId} Level ${levelNumber}`
+          title = 'Underdark ' + makeRoomName(roomId, levelNumber)
           isPlaying = true
         }
       }
