@@ -3,8 +3,6 @@ import { HealthBar, LightBar } from '@/underdark/components/ui/Bars'
 import MapPanel from '@/underdark/components/ui/MapPanel'
 import RoomPanel from '@/underdark/components/ui/RoomPanel'
 import InfoPanel from '@/underdark/components/ui/InfoPanel'
-import LevelSelector from '@/underdark/components/ui/LevelSelector'
-import RoomSelector from '@/underdark/components/ui/RoomSelector'
 import UICompass from '@/underdark/components/ui/UICompass'
 import SettingsPanel from '@/underdark/components/ui/SettingsPanel'
 import NavigationPanel from '@/underdark/components/ui/NavigationPanel'
@@ -29,8 +27,6 @@ function GameUI() {
         <Row>
           <Col width={4} className='NoPadding'>
             <div className='MapView'></div>
-            {/* <RoomSelector /> */}
-            {/* <LevelSelector /> */}
             <NavigationPanel />
           </Col>
           <Col width={1} className='UI'>
