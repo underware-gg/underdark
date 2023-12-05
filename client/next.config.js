@@ -17,15 +17,27 @@ const nextConfig = {
     })
     return config
   },
-  async redirects() {
+  async rewrites() {
     return [
       {
-        source: '/limbo',
-        destination: '/',
-        permanent: false,
+        source: '/manor',
+        destination: '/underdark/manor',
+      },
+      {
+        source: '/room/:slug*',
+        destination: '/underdark/room/:slug*',
       },
     ]
   },
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/limbo',
+  //       destination: '/',
+  //       permanent: false,
+  //     },
+  //   ]
+  // },
 }
 
 export default nextConfig
