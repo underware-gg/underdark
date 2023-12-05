@@ -1,25 +1,10 @@
 import React, { useEffect, useMemo } from 'react'
-import type { GetStaticPaths } from 'next'
 import { useRouter } from 'next/router'
 import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
 import { makeRoomName } from '@/underdark/utils/underdark'
 import AppDojo from '@/underdark/components/AppDojo'
 import Manor from '@/underdark/components/Manor'
 import Underdark from '@/underdark/components/Underdark'
-
-export async function getStaticProps() {
-  return { props: {} }
-}
-
-export const getStaticPaths = (async () => {
-  return {
-    paths: [
-      { params: { underdark: ['manor'] } },
-      // { params: { underdark: ['room'] } },
-    ],
-    fallback: 'blocking',
-  }
-}) satisfies GetStaticPaths
 
 export default function UnderdarkPage() {
   const router = useRouter()
