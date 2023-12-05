@@ -7,7 +7,9 @@ import { Grid } from 'semantic-ui-react'
 // https://nextjs.org/docs/advanced-features/custom-error-page
 //
 
-function ErrorPage({ statusCode }) {
+function ErrorPage(
+  // {statusCode}
+) {
   return (
     <div className='App'>
 

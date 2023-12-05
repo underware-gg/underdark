@@ -8,7 +8,7 @@ interface Generator {
   description: string
 }
 
-const _generators: Generator[] = [
+export const generators: Generator[] = [
   // debug
   { name: 'seed', value: 0, description: '' },
   { name: 'underseed', value: 0, description: '' },
