@@ -123,6 +123,9 @@ canvas {
 .NoBorder { border: 0!important }
 .Block { display: inline-block; }
 
+.NoMouse { pointer-events: none; }
+.YesMouse { pointer-events: auto; }
+
 .Anchor {
   cursor: pointer;
 }
@@ -199,6 +202,11 @@ canvas {
   padding: 0.1em 0.4em;
 }
 
+.LargeButton {
+  margin: 0 0.1em;
+  padding: 1em 2em;
+}
+
 .Locked {
   background-color: $color-inactive;
 }
@@ -230,7 +238,7 @@ canvas {
 }
 
 .Overlay {
-  background-color: #000d;
+  background: linear-gradient(#0004, #000d);
 }
 
 

@@ -6,7 +6,7 @@ function InfoPanel() {
   const { message } = useGameplayContext()
 
   return (
-    <div className='InfoPanel AlignCenter'>
+    <div className='InfoPanel AlignCenter NoMouse'>
       <div className='CenteredContainer FillParent'>
         <div className='CenteredContent InfoBottom AlignMiddle'>
           <h2>{message}</h2>

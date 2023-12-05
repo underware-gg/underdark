@@ -11,8 +11,8 @@ import NavigationPanel from '@/underdark/components/ui/NavigationPanel'
 
 function GameUI() {
   return (
-    <div className='GameView'>
-      <Grid className='GameUITop'>
+    <div className='GameView NoMouse'>
+      <Grid className='GameUITop YesMouse'>
         <Row>
           <Col width={4} className='NoPadding'>
             <RoomPanel />
@@ -25,7 +25,7 @@ function GameUI() {
         </Row>
       </Grid>
 
-      <Grid className='GameUIBottom'>
+      <Grid className='GameUIBottom YesMouse'>
         <Row>
           <Col width={4} className='NoPadding'>
             <div className='MapView'></div>

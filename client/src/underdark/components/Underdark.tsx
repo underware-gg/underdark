@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
 import { useGameplayContext } from '../hooks/GameplayContext'
 import { loadAudioAssets, isAudioAssetsLoaded } from '@/underdark/data/assets'
+import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import GameView from '@/underdark/components/GameView'
 import GameUI from '@/underdark/components/GameUI'
-import { ActionButton } from './ui/UIButtons'
+import GameOver from '@/underdark/components/GameOver'
 
 function Underdark({
   isPlaying,
@@ -22,6 +23,7 @@ function Underdark({
   return (
     <div className={`GameContainer UIBorder ${isPlaying?'':'Hidden'}`}>
       <GameView />
+      <GameOver />
       <GameUI />
       <GameStartOverlay />
     </div>
@@ -58,7 +60,7 @@ function GameStartOverlay({
 
   return (
     <div className={`GameView Overlay CenteredContainer`}>
-      {audioAssetsLoaded === undefined && <ActionButton label='START GAME' onClick={() => dispatchInteracted()} />}
+      {audioAssetsLoaded === undefined && <ActionButton large label='START GAME' onClick={() => dispatchInteracted()} />}
       {audioAssetsLoaded === false && <h1>loading assets...</h1>}
     </div>
   )

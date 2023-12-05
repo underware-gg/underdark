@@ -3,7 +3,6 @@ import { useChamber } from '@/underdark/hooks/useChamber'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
 import { bigintToHex } from '@/underdark/utils/utils'
 import { coordToSlug, makeRoomName } from '@/underdark/utils/underdark'
-import { GenerateButton } from '@/underdark/components/ui/Buttons'
 
 function RoomPanel() {
   const { roomId, chamberId } = useUnderdarkContext()
@@ -26,8 +25,6 @@ function RoomPanel() {
           explored yet!
         </h4>
       </>}
-
-      <GenerateButton />
 
       {chamberExists && <>
         {/* <br /> */}

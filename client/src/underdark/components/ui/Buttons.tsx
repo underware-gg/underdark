@@ -7,11 +7,12 @@ import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { getLevelParams } from '@/underdark/data/levels'
 import { loadAudioAssets } from '@/underdark/data/assets'
-import { Dir, makeRoomChamberId } from '@/underdark/utils/underdark'
+import { Dir, coordToCompass, makeRoomChamberId } from '@/underdark/utils/underdark'
+import { useRouter } from 'next/navigation'
 
 
 export const StartButton = ({
-  fill=false,
+  fill = false,
 }) => {
   const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
 
@@ -27,25 +28,23 @@ export const StartButton = ({
 }
 
 
-export function GenerateButton() {
-  // generate first chamber
+export function NextLevelButton() {
   const { roomId, chamberId } = useUnderdarkContext()
-  const { yonder } = useChamber(chamberId)
-  const canMintFirst = (yonder == 0)
+  const { chamberExists } = useChamberOffset(chamberId, Dir.Under)
 
-  // for new next chambers
-  const { chamberExists: nextChamberExists } = useChamberOffset(chamberId, Dir.Under)
-  const canMintNext = (yonder > 0 && !nextChamberExists)
+  const compass = coordToCompass(chamberId)
+  const nextLevelNumber = compass.under + 1
 
-  const { isPlaying } = useGameplayContext()
-
-  if (chamberId && (canMintFirst || canMintNext) && !isPlaying) {
-    const _label = (canMintFirst ? 'GENERATE ROOM' : 'GENERATE NEXT LEVEL')
-    return (
-      <GenerateRoomButton roomId={roomId} levelNumber={yonder + 1} label={_label} />
-    )
+  const router = useRouter()
+  const _gotoNextLevel = () => {
+    router.push(`/room/${roomId}/${nextLevelNumber}`)
   }
-  return <></>
+
+  if (!chamberExists) {
+    return <GenerateRoomButton large roomId={roomId} levelNumber={nextLevelNumber} label='GENERATE NEXT LEVEL' />
+  }
+
+  return <ActionButton large label='ENTER NEXT LEVEL' onClick={() => _gotoNextLevel()} />
 }
 
 
@@ -75,6 +74,7 @@ export function GenerateRoomButton({
   roomId,
   levelNumber,
   label,
+  large = false,
 }) {
   const { realmId, manorCoord } = useUnderdarkContext()
   const { generate_level } = useDojoSystemCalls()
@@ -92,7 +92,7 @@ export function GenerateRoomButton({
   }
 
   if (!levelIsCompleted) {
-    return <ActionButton onClick={() => _generate()} label={label} />
+    return <ActionButton large={large} onClick={() => _generate()} label={label} />
   }
   return <></>
 }
