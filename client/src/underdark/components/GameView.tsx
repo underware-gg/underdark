@@ -26,7 +26,9 @@ const GameView = ({
   // Start game!
   
   useEffect(() => {
-    dispatchReset(gameTilemap?.playerStart ?? null, false)
+    if (gameTilemap?.playerStart) {
+      dispatchReset(gameTilemap?.playerStart ?? null, false)
+    }
   }, [gameTilemap, roomId, chamberId])
 
   useEffect(() => {

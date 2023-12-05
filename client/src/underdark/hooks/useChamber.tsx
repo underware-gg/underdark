@@ -86,7 +86,7 @@ export const useChamberMapData = (locationId: bigint) => {
     let _mounted = true
     const _fetch = async () => {
       const map_data = await generate_map_data(locationId);
-      if (_mounted) {
+      if (_mounted && map_data && Object.keys(map_data).length > 0) {
         setMapData(map_data)
       }
     }
@@ -98,6 +98,7 @@ export const useChamberMapData = (locationId: bigint) => {
       _mounted = false
     }
   }, [locationId])
+
   return mapData
 }
 

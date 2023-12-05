@@ -6,12 +6,10 @@ export default function App({
   children
 }) {
   return (
-    <>
+    <div className='App'>
       <AppHeader title={title} />
-      <div className='App'>
-        {children}
-      </div>
-    </>
+      {children}
+    </div>
   );
 }
 

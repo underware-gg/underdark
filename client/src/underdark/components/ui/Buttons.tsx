@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
-import { useChamber, useChamberMap, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
+import { useChamber, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
 import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { getLevelParams } from '@/underdark/data/levels'
@@ -13,13 +13,11 @@ import { Dir, makeRoomChamberId } from '@/underdark/utils/underdark'
 export const StartButton = ({
   fill=false,
 }) => {
-  const { chamberId } = useUnderdarkContext()
-  const { gameTilemap } = useChamberMap(chamberId)
   const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
 
   const _startGame = async () => {
     await loadAudioAssets(gameImpl?.getCameraRig())
-    dispatchReset(gameTilemap.playerStart, true)
+    dispatchReset(null, true)
   }
 
   const _label = isLoaded ? 'START' : 'RESTART'

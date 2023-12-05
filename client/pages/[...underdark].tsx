@@ -1,13 +1,15 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
+import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
+import { makeRoomName } from '@/underdark/utils/underdark'
 import AppDojo from '@/underdark/components/AppDojo'
 import Manor from '@/underdark/components/Manor'
 import Underdark from '@/underdark/components/Underdark'
-import { makeRoomName } from '@/underdark/utils/underdark'
+
 
 export default function UnderdarkPage() {
   const router = useRouter()
-  console.log(`>>> UNDERDARK`, router.query.underdark)
+  console.log(`/[...underdark]`, router.query.underdark)
 
   const { page, title, isPlaying, roomId, levelNumber } = useMemo(() => {
     let page = null
@@ -52,11 +54,12 @@ export default function UnderdarkPage() {
     return <></>
   }
 
+  const _inManor = (page == 'manor')
+
   return (
     <AppDojo title={title}>
-      {page == 'manor' &&
-        <Manor />
-      }
+      <Lobby value={_inManor} />
+      {_inManor && <Manor />}
       <Underdark
         isPlaying={isPlaying}
         roomId={roomId}
@@ -64,4 +67,14 @@ export default function UnderdarkPage() {
       />
     </AppDojo>
   );
+}
+
+function Lobby({
+  value
+}) {
+  const { dispatchLobby } = useGameplayContext()
+  useEffect(() => {
+    dispatchLobby(value)
+  }, [value])
+  return <></>
 }

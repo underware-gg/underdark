@@ -10,6 +10,7 @@ import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { GenerateRoomButton } from '@/underdark/components/ui/Buttons'
 import ScoreBoard from '@/underdark/components/ui/ScoreBoard'
 import { MAX_GAMES } from './ui/RoomSelector'
+import { useGameplayContext } from '../hooks/GameplayContext'
 
 const Row = Grid.Row
 const Col = Grid.Column
@@ -94,10 +95,10 @@ function RoomRow({
 
   return (
     <Row>
-      <Col width={4}>
+      <Col width={3}>
         <ActionButton onClick={() => _setSelectedRoom()} label={_label} dimmed={!isSelected} />
       </Col>
-      <Col width={4}>
+      <Col width={5}>
         {isSelected &&
           <RoomLevels roomId={roomId} />
         }
@@ -174,8 +175,10 @@ function ChamberInfo({
   const router = useRouter()
   const { chamberExists } = useChamber(chamberId)
   const compass = useMemo(() => coordToCompass(chamberId), [chamberId])
+  const { dispatchInteracted } = useGameplayContext()
 
   const _enterRoom = () => {
+    dispatchInteracted()
     let url = `/room/${roomId}`
     if (compass.under > 1) {
       url += `/${compass.under}`

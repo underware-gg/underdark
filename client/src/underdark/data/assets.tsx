@@ -225,21 +225,26 @@ const loadAssets = async () => {
 //
 // Audios need to be loaded after user interaction
 // call this from some button
-let _loadingAudioAssets: boolean
+let _audioAssetsLoaded: boolean
 const loadAudioAssets = async (cameraRig: any) => {
-  if (_loadingAudioAssets === undefined) {
-    _loadingAudioAssets = true
+  if (_audioAssetsLoaded === undefined) {
+    _audioAssetsLoaded = false
     const listener = new THREE.AudioListener()
     cameraRig.add(listener)
     await _loadAudios(listener)
-    _loadingAudioAssets = false
+    _audioAssetsLoaded = true
   }
-  return _loadingAudioAssets
+  return _audioAssetsLoaded
 }
+const isAudioAssetsLoaded = () => {
+  return _audioAssetsLoaded
+}
+
 
 export {
   loadAssets,
   loadAudioAssets,
+  isAudioAssetsLoaded,
   ModelName,
   AudioName,
   MODELS_ASSETS,
