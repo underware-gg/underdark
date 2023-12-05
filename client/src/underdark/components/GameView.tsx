@@ -1,14 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
-import GameCanvas from './GameCanvas'
-import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { useGameplayContext } from '../hooks/GameplayContext'
-import { useChamberMap } from '../hooks/useChamber'
-import { useKeyDown } from '../hooks/useKeyDown'
-import { Dir, FlippedDir, TileType } from '../utils/underdark'
-import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
-import { bigintToHex, map } from '../utils/utils'
-import ReactAudioPlayer from 'react-audio-player'
-import { levels } from '../utils/levels'
+import React, { useEffect } from 'react'
+import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
+import { useGameplayContext, GameState } from '@/underdark/hooks/GameplayContext'
+import { useChamber, useChamberMap } from '@/underdark/hooks/useChamber'
+import { useKeyDown } from '@/underdark/hooks/useKeyDown'
+import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
+import { Dir, FlippedDir, TileType } from '@/underdark/utils/underdark'
+import { bigintToHex, map } from '@/underdark/utils/utils'
+import { getLevelParams } from '@/underdark/data/levels'
+import GameCanvas from '@/underdark/components/GameCanvas'
+import { AudioName } from '@/underdark/data/assets'
+import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 
 
 const GameView = ({
@@ -16,215 +17,243 @@ const GameView = ({
   // height = 350,
 }) => {
 
-  const { chamberId } = useUnderdarkContext()
-  const { gameTilemap } = useChamberMap(chamberId)
-  const { light, gameState, dispatch, GameplayActions, GameState } = useGameplayContext()
-  const [gameParams, setGameParams] = useState({})
+  const { roomId, chamberId } = useUnderdarkContext()
+  const { tilemap, gameTilemap } = useChamberMap(chamberId)
+  const { yonder } = useChamber(chamberId)
+  const { gameImpl, isLoaded, isPlaying, hasLight, light, playerPosition, dispatchReset } = useGameplayContext()
 
   //
   // Start game!
+  
   useEffect(() => {
-    if (gameTilemap) {
-      dispatch({
-        type: GameplayActions.RESET,
-        payload: gameTilemap.playerStart,
-      })
+    if (gameTilemap?.playerStart) {
+      dispatchReset(gameTilemap?.playerStart ?? null, false)
     }
-  }, [gameTilemap])
+  }, [gameTilemap, roomId, chamberId])
 
-  const _setGameParams = (newParams) => {
-    setGameParams({ ...gameParams, ...newParams })
-  }
   useEffect(() => {
-    _setGameParams({
+    gameImpl?.resetGameParams(getLevelParams(yonder).renderParams)
+  }, [gameImpl, chamberId, yonder])
+
+  useEffect(() => {
+    gameImpl?.setGameParams({
       far: map(light, 0.0, 100.0, 1.6, 5.0),
+      gamma: map(light, 0.0, 100.0, 2.0, 1.25),
+      noiseAmount: map(light, 0.0, 100.0, 0.0, 0.02),
     })
-  }, [light])
+  }, [gameImpl, light])
 
   useEffect(() => {
-    setGameParams(levels[Number(chamberId % BigInt(levels.length))].renderParams)
-  }, [chamberId])
+    if (isLoaded) {
+      gameImpl?.setupMap(gameTilemap ?? null, false)
+    }
+  }, [gameImpl, gameTilemap, isLoaded])
+
+  // game Start
+  useEffect(() => {
+    if (isPlaying) {
+      gameImpl?.enableTilesByType(TileType.DarkTar, true)
+    }
+  }, [gameImpl, isPlaying])
+
+  useEffect(() => {
+    if (isPlaying) {
+      if (hasLight) {
+        gameImpl?.enableTilesByType(TileType.Monster, true)
+        gameImpl?.enableTilesByType(TileType.SlenderDuck, false)
+      } else {
+        gameImpl?.enableTilesByType(TileType.Monster, false)
+        gameImpl?.enableTilesByType(TileType.SlenderDuck, true)
+      }
+    }
+  }, [gameImpl, isPlaying, hasLight])
 
   return (
     <div className='Relative GameView'>
-      <GameControls />
-      {gameState == GameState.Playing && <GameCanvas gameTilemap={gameTilemap} gameParams={gameParams} />}
-      {gameState == GameState.Verifying && <GameProof />}
-      {gameState == GameState.NoEnergy && <GameOver reason={'You died!!!'} />}
-      {light > 0
-        ? <ReactAudioPlayer
-          src='/audio/music-ambient.mp3'
-          autoPlay={true}
-          loop={true}
-        // volume={1}
-        />
-        : <ReactAudioPlayer
-          src='/audio/sfx/slenderduck.mp3'
-          autoPlay={true}
-          loop={true}
-        // volume={1}
-        />
-      }
-      <GameTriggers />
+      <MovePlayer />
+      <GameCanvas guiEnabled={false} />
+      <GameTriggers tilemap={tilemap} />
+      <GameControls tilemap={tilemap} />
+      <GameAudios />
     </div>
   )
 }
 
-const _isAround = (tilemap, tile, type) => {
+
+const MovePlayer = () => {
+  const { roomId, chamberId } = useUnderdarkContext()
+  const { gameImpl, isLoaded, isPlaying, playerPosition } = useGameplayContext()
+
+  useEffect(() => {
+    if (isLoaded || isPlaying) {
+      gameImpl?.movePlayer(playerPosition?.tile ?? null)
+    }
+  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.tile])
+
+  useEffect(() => {
+    if (isLoaded || isPlaying) {
+      gameImpl?.rotatePlayer(playerPosition?.facing ?? null)
+    }
+  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.facing])
+
+  return <></>
+}
+
+
+const _isAround = (tilemap, tile, type): number | undefined => {
   const x = tile % 16
   const y = Math.floor(tile / 16)
-  if (x > 0 && tilemap[(x - 1) + (y) * 16] == type) return true
-  if (x < 15 && tilemap[(x + 1) + (y) * 16] == type) return true
-  if (y > 0 && tilemap[(x) + (y - 1) * 16] == type) return true
-  if (y < 15 && tilemap[(x) + (y + 1) * 16] == type) return true
-  return false
+  if (x > 0) {
+    const i = (x - 1) + y * 16
+    if (tilemap[i] == type) return i
+  }
+  if (x < 15) {
+    const i = (x + 1) + y * 16
+    if (tilemap[i] == type) return i
+  }
+  if (y > 0) {
+    const i = x + (y - 1) * 16
+    if (tilemap[i] == type) return i
+  }
+  if (y < 15) {
+    const i = x + (y + 1) * 16
+    if (tilemap[i] == type) return i
+  }
+  return undefined
 }
 
-const GameTriggers = () => {
+const GameTriggers = ({
+  tilemap,
+}) => {
   const { chamberId } = useUnderdarkContext()
-  const { tilemap } = useChamberMap(chamberId)
-  const { light, gameState, playerPosition, stepCount, dispatch, GameplayActions, GameState } = useGameplayContext()
+  const { sfxEnabled } = useSettingsContext()
+  const {
+    gameImpl, gameState, isPlaying, playerPosition, hasLight, health, stepCount, steps,
+    dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar, dispatchSlendered,
+  } = useGameplayContext()
 
   useEffect(() => {
-    if (!playerPosition || gameState != GameState.Playing) return
+    if (!playerPosition || !isPlaying) return
+    const { tile } = playerPosition
+
+    if (tilemap[tile] == TileType.DarkTar) {
+      if (gameImpl?.isTileEnaled(tile)) {
+        gameImpl?.disableTile(tile)
+        gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
+        dispatchDarkTar(100)
+      }
+    } else if (!hasLight) {
+      dispatchMessage('No light! Beware the Slender Duck!')
+    }
+
+    const monsterAround = _isAround(tilemap, tile, TileType.Monster)
+    const slenderAround = _isAround(tilemap, tile, TileType.SlenderDuck)
+    if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
+      gameImpl?.damageFromTile(slenderAround ?? tile)
+      gameImpl?.rotateToPlayer(slenderAround ?? tile)
+      gameImpl?.rotatePlayerTo(slenderAround ?? tile)
+      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
+      dispatchSlendered()
+    } else if (hasLight && tilemap[tile] == TileType.Monster) {
+      gameImpl?.damageFromTile(tile)
+      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
+      dispatchHitDamage()
+    } else if (hasLight && monsterAround != null) {
+      gameImpl?.damageFromTile(monsterAround)
+      gameImpl?.rotateToPlayer(monsterAround)
+      gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
+      dispatchNearDamage()
+    }
+  }, [gameState, playerPosition?.tile])
+
+  useEffect(() => {
+    if (!playerPosition || !isPlaying) return
     const { tile, facing } = playerPosition
-    // console.log(`Player at:`, tile, tilemap[tile])
-    //
-    // Reached door
-    if (tilemap[tile] == TileType.Exit && facing == Dir.East) {
-      dispatch({
-        type: GameplayActions.SET_STATE,
-        payload: GameState.Verifying,
-      })
-    } else {
-      if (tilemap[tile] == TileType.DarkTar) {
-        dispatch({
-          type: GameplayActions.REFILL_LIGHT,
-          payload: 100,
-        })
-      }
-      if (_isAround(tilemap, tile, TileType.Monster)) {
-        dispatch({
-          type: GameplayActions.DAMAGE,
-          payload: 10,
-        })
-      }
+    if (tilemap[tile] == TileType.Exit && facing == Dir.South) {
+      dispatchGameState(GameState.Verifying)
     }
-  }, [playerPosition])
+  }, [gameState, playerPosition])
 
   useEffect(() => {
-    if (gameState == GameState.Playing && light == 0) {
-      dispatch({
-        type: GameplayActions.SET_MESSAGE,
-        payload: 'No light! Beware the Slender Duck!',
-      })
+    if (isPlaying && health == 0) {
+      dispatchGameState(GameState.NoHealth)
     }
-  }, [light])
+  }, [gameState, health])
 
   useEffect(() => {
-    if (gameState == GameState.Playing && stepCount == 0) {
-      dispatch({
-        type: GameplayActions.SET_STATE,
-        payload: GameState.NoEnergy,
-      })
+    if (isPlaying && stepCount == 64) {
+      dispatchGameState(GameState.Slendered)
     }
-  }, [stepCount])
-
-  return (
-    <>
-    </>
-  )
-}
+  }, [gameState, stepCount])
 
 
-
-//--------------------
-// PROOF!!
-//
-
-const GameProof = () => {
-  const { chamberId } = useUnderdarkContext()
+  //----------------------------------
+  // Verify moves on-chain
+  //
   const { finish_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
-  const { gameState, steps, GameState } = useGameplayContext()
-  // const { gameState, steps, dispatch: dispatchGameplay, GameplayActions, GameState } = useGameplayContext()
-
-  // const { locationId, seed } = useChamberOffset(chamberId, dir)
-  // const exists = useMemo(() => (seed > 0n), [seed, locationId])
-  // const _mint = () => {
-  //   start_level(account, gameId, yonder + 1, 0n, dir, generator.name, generator.value)
-  // }
-  // const _open = () => {
-  //   dispatch({
-  //     type: UnderdarkActions.SET_CHAMBER,
-  //     payload: locationId,
-  //   })
-  // }
-
-  const dataFetch = useRef(false)
-
   useEffect(() => {
-    // avoid calling effect twice
-    if (dataFetch.current) return
-    dataFetch.current = true
-
-    if(gameState == GameState.Verifying) {
-      let proof = BigInt(0)
+    // if (gameState == GameState.Verifying) {
+    if (gameState == GameState.Verifying || gameState == GameState.NoHealth || gameState == GameState.Slendered) {
+      let proof = 0n
       steps.map((step, index) => {
         proof |= (BigInt(step.dir) << BigInt(index * 4))
       });
       console.log(`PROOF:`, bigintToHex(proof))
-      finish_level(account, chamberId, proof, steps.length)
+      const success = finish_level(account, chamberId, proof, steps.length)
+      if (success && gameState == GameState.Verifying) {
+        dispatchGameState(success ? GameState.Verified : GameState.NotVerified)
+      }
     }
-  }, [])
+  }, [gameState])
 
-  return (
-    <div className='FillParent'>
-      <br />
-      <h2>You found the exit!</h2>
-      <br />
-      <h2>validating moves on-chain...</h2>
-    </div>
-  )
+  return  <></>
 }
 
 
+const GameAudios = () => {
+  const { musicEnabled, sfxEnabled} = useSettingsContext()
+  const { gameImpl, gameState, isPlaying, isGameOver, hasLight, playerPosition } = useGameplayContext()
 
-const GameOver = ({
-  reason,
-}) => {
-  const { chamberId } = useUnderdarkContext()
-  const { gameTilemap } = useChamberMap(chamberId)
-  const { dispatch, GameplayActions } = useGameplayContext()
+  useEffect(() => {
+    const _play = (isGameOver && musicEnabled)
+    gameImpl?.playAudio(AudioName.AMBIENT, _play)
+  }, [isGameOver, musicEnabled])
 
-  const _restart = () => {
-    dispatch({
-      type: GameplayActions.RESET,
-      payload: gameTilemap.playerStart,
-    })
-  }
+  useEffect(() => {
+    const _play = (isPlaying && sfxEnabled)
+    if (hasLight) {
+      gameImpl?.playAudio(AudioName.TORCH, _play)
+      gameImpl?.stopAudio(AudioName.SLENDER_DUCK)
+    } else {
+      gameImpl?.stopAudio(AudioName.TORCH)
+      gameImpl?.playAudio(AudioName.EXTINGUISH, _play)
+      gameImpl?.playAudio(AudioName.SLENDER_DUCK, _play)
+    }
+  }, [isPlaying, hasLight, sfxEnabled])
 
-  return (
-    <div className='FillParent'>
-      <br />
-      <br />
-      <h2>{reason}</h2>
-      <br />
-      <h2><button onClick={() => _restart()}>RESTART</button></h2>
-    </div>
-  )
+  useEffect(() => {
+    if (isPlaying && sfxEnabled) {
+      gameImpl?.playFootstep()
+    }
+  }, [playerPosition?.tile])
+
+  useEffect(() => {
+    if (gameState == GameState.Verifying) {
+      gameImpl?.playAudio(AudioName.STAIRS, sfxEnabled)
+    }
+  }, [gameState])
+
+  return <></>
 }
-
-
-
 
 //--------------------
 // Keyboard controller
 //
-const GameControls = () => {
-  const { chamberId } = useUnderdarkContext()
-  const { tilemap } = useChamberMap(chamberId)
-  const { gameState, playerPosition, dispatch, GameplayActions, GameState } = useGameplayContext()
+const GameControls = ({
+  tilemap,
+}) => {
+  const { isPlaying, playerPosition, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
 
   const directional = false
   useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight', 'd'])
@@ -233,34 +262,31 @@ const GameControls = () => {
   useKeyDown(() => (directional ? _moveToDirection(Dir.South) : _move(-1)), ['ArrowDown', 's'])
 
   const _moveToDirection = (dir) => {
-    if (gameState != GameState.Playing) return;
-    dispatch({
-      type: GameplayActions.MOVE_TO,
-      payload: { dir, tilemap },
-    })
-    dispatch({
-      type: GameplayActions.TURN_TO,
-      payload: dir,
-    })
+    if (!isPlaying) return;
+    dispatchMoveTo({ dir, tilemap })
+    dispatchTurnTo(dir)
   }
 
   const _move = (signal) => {
-    if (gameState != GameState.Playing) return;
+    if (!isPlaying) return;
     const dir = signal < 0 ? FlippedDir[playerPosition.facing] : playerPosition.facing
-    dispatch({
-      type: GameplayActions.MOVE_TO,
-      payload: { dir, tilemap },
-    })
+    dispatchMoveTo({ dir, tilemap })
   }
 
   const _rotate = (signal) => {
-    if (gameState != GameState.Playing) return;
-    const dir = signal < 0 ? { [Dir.North]: Dir.West, [Dir.West]: Dir.South, [Dir.South]: Dir.East, [Dir.East]: Dir.North }[playerPosition.facing]
-      : { [Dir.North]: Dir.East, [Dir.East]: Dir.South, [Dir.South]: Dir.West, [Dir.West]: Dir.North }[playerPosition.facing]
-    dispatch({
-      type: GameplayActions.TURN_TO,
-      payload: dir,
-    })
+    if (!isPlaying) return;
+    const dir = (signal < 0 ? {
+      [Dir.North]: Dir.West,
+      [Dir.West]: Dir.South,
+      [Dir.South]: Dir.East,
+      [Dir.East]: Dir.North
+    } : {
+      [Dir.North]: Dir.East,
+      [Dir.East]: Dir.South,
+      [Dir.South]: Dir.West,
+      [Dir.West]: Dir.North
+    })[playerPosition.facing]
+    dispatchTurnTo(dir)
   }
 
   return <></>

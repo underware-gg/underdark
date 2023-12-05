@@ -20,25 +20,30 @@ fn generate_doors(world: IWorldDispatcher,
 
     let mut doors = Doors {
         north: 0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::North.into()),
-        east:  create_door(world, location, location_id, ref rnd, Dir::West, permissions, Dir::East.into()),
-        west:  create_door(world, location, location_id, ref rnd, Dir::East, permissions, Dir::West.into()),
+        east:  0,//create_door(world, location, location_id, ref rnd, Dir::West, permissions, Dir::East.into()),
+        west:  0,//create_door(world, location, location_id, ref rnd, Dir::East, permissions, Dir::West.into()),
         south: 0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::South.into()),
-        over:  0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::Over.into()),
-        under: 0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::Under.into()),
+        over:  create_door(world, location, location_id, ref rnd, Dir::Under, permissions, Dir::Over.into()),
+        under: create_door(world, location, location_id, ref rnd, Dir::Over, permissions, Dir::Under.into()),
     };
 
+    // for tests
     if (generator_name == 'empty') {
-        doors = Doors {north: 0,east:95,west:80,south:0,over:0,under:0};
+        create_tile(world, location_id, doors.over, TileType::Path);
+        create_tile(world, location_id, doors.under, TileType::Path);
+        doors = Doors {north: 0,east:0,west:0,south:0,over:8,under:248};
+        create_tile(world, location_id, 8, TileType::Entry);
+        create_tile(world, location_id, 248, TileType::Exit);
     };
 
     // make doors protection bitmap
     let mut protected: u256 = 0;
     // if(doors.north > 0) { protected = Bitmap::set_tile(protected, doors.north.into()); }
-    if(doors.east > 0)  { protected = Bitmap::set_tile(protected, doors.east.into()); }
-    if(doors.west > 0)  { protected = Bitmap::set_tile(protected, doors.west.into()); }
+    // if(doors.east > 0)  { protected = Bitmap::set_tile(protected, doors.east.into()); }
+    // if(doors.west > 0)  { protected = Bitmap::set_tile(protected, doors.west.into()); }
     // if(doors.south > 0) { protected = Bitmap::set_tile(protected, doors.south.into()); }
-    // if(doors.over > 0)  { protected = Bitmap::set_tile(protected, doors.over.into()); }
-    // if(doors.under > 0) { protected = Bitmap::set_tile(protected, doors.under.into()); }
+    if(doors.over > 0)  { protected = Bitmap::set_tile(protected, doors.over.into()); }
+    if(doors.under > 0) { protected = Bitmap::set_tile(protected, doors.under.into()); }
 
     (doors, protected)
 }
@@ -67,21 +72,21 @@ fn create_door(world: IWorldDispatcher,
         Dir::North => {
         },
         Dir::East => {
-            pos = randomize_door_tile(ref rnd, dir);
         },
         Dir::West => {
-            tile_type = TileType::Entry;
-            if(to_map.east > 0) {
-                pos = Dir::East.flip_door_tile(to_map.east);
-            } else {
-                pos = randomize_door_tile(ref rnd, dir);
-            }
         },
         Dir::South => {
         },
         Dir::Over => {
+            tile_type = TileType::Entry;
+            if(to_map.under > 0) {
+                pos = Dir::Under.flip_door_tile(to_map.under);
+            } else {
+                pos = randomize_door_tile(ref rnd, dir);
+            }
         },
         Dir::Under => {
+            pos = randomize_door_tile(ref rnd, dir);
         },
     }
 

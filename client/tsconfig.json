@@ -7,6 +7,7 @@
       "DOM",
       "DOM.Iterable"
     ],
+    "checkJs": true,
     "skipLibCheck": true,
     "types": [],
     "noUnusedLocals": false,
@@ -19,17 +20,37 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
     /* Linting */
     // "strict": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    /* next.js */
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    // import path shortcuts
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "strict": false
   },
   "include": [
-    "src"
+    "./src",
+    "./dist/types/**/*.ts",
+    "./next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
   ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
+  "exclude": [
+    "./node_modules"
   ]
 }

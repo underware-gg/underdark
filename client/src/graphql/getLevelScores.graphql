@@ -1,0 +1,20 @@
+query getLevelScores($locationId: u128!) {
+  entities: scoreModels(where: { location_id: $locationId }, first: 100) {
+    edges {
+      node {
+        entity {
+          keys
+          id
+          models {
+            ... on Score {
+              __typename
+              location_id
+              player
+              moves
+            }
+          }
+        }
+      }
+    }
+  }
+}

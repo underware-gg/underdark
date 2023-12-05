@@ -1,18 +1,22 @@
 use starknet::{ContractAddress, ClassHash};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
+use underdark::models::chamber::{MapData};
 use underdark::types::dir::{Dir, DIR, DirTrait};
 
 // define the interface
 #[starknet::interface]
 trait IActions<TContractState> {
-    fn start_level(self: @TContractState,
-        game_id: u32,
-        level_number: u32,
-        from_coord: u128,
-        from_dir_u128: u128, 
+    fn generate_level(self: @TContractState,
+        realm_id: u16,
+        manor_coord: u128,
+        room_id: u16,
+        level_number: u16,
         generator_name: felt252,
         generator_value_u128: u128,
     );
+    fn generate_map_data(self: @TContractState,
+        location_id: u128,
+    ) -> MapData;
     fn finish_level(self: @TContractState,
         location_id: u128,
         proof_low: u128,
@@ -29,35 +33,50 @@ mod actions {
 
     use underdark::systems::generate_chamber::{generate_chamber};
     use underdark::systems::verify_level_proof::{verify_level_proof};
+    use underdark::core::randomizer::{randomize_monsters};
+    use underdark::models::chamber::{Chamber, Map, MapData};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DIR, DirTrait};
 
     // impl: implement functions specified in trait
     #[external(v0)]
     impl ActionsImpl of IActions<ContractState> {
-        fn start_level(self: @ContractState,
-            game_id: u32,
-            level_number: u32,
-            from_coord: u128,
-            from_dir_u128: u128, 
+        fn generate_level(self: @ContractState,
+            realm_id: u16,
+            manor_coord: u128,
+            room_id: u16,
+            level_number: u16,
             generator_name: felt252,
             generator_value_u128: u128,
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
-
-            // verify its a valid direction
-            // let maybe_from_dir: Option<Dir> = from_dir_u128.try_into();
-            // let from_dir: Dir = maybe_from_dir.unwrap();
-            // assert(from_dir != Dir::Over, 'Invalid from direction (Over)');
-            // let from_location: Location = LocationTrait::from_coord(game_id, from_coord);
-
-            let location: Location = Location{ game_id, over:0, under:1, north: 0, east: level_number.try_into().unwrap(), west:0, south:1 };
-
-            generate_chamber(world, game_id, level_number, location, Dir::West, generator_name, generator_value_u128.try_into().unwrap());
-
+            let location: Location = LocationTrait::from_coord(realm_id, room_id, level_number, manor_coord);
+            generate_chamber(world, room_id, level_number, location, generator_name, generator_value_u128.try_into().unwrap());
             return ();
         }
-        
+
+        fn generate_map_data(self: @ContractState,
+            location_id: u128,
+        ) -> MapData {
+            let world: IWorldDispatcher = self.world_dispatcher.read();
+
+            // assert chamber exists
+            let chamber: Chamber = get!(world, location_id, (Chamber));
+            assert(chamber.yonder > 0, 'Chamber does not exist!');
+
+            let map: Map = get!(world, location_id, (Map));
+            let mut rnd = chamber.seed;
+            let (monsters, slender_duck, dark_tar): (u256, u256, u256) =
+                randomize_monsters(ref rnd, map.bitmap, map.protected, chamber.level_number);
+            MapData {
+                location_id,
+                monsters,
+                slender_duck,
+                dark_tar,
+                chest: 0,
+            }
+        }
+
         fn finish_level(self: @ContractState,
             location_id: u128,
             proof_low: u128,
@@ -65,13 +84,13 @@ mod actions {
             moves_count: usize,
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
-            let caller = starknet::contract_address_const::<0x0>();
+            let caller = starknet::get_caller_address();
 
             let proof = u256 {
                 low: proof_low,
                 high: proof_high,
             };
-            verify_level_proof(world, caller, location_id, proof, moves_count);
+            verify_level_proof(world, location_id, caller, proof, moves_count);
 
             return ();
         }

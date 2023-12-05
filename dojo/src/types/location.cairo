@@ -6,7 +6,8 @@ use underdark::types::dir::{Dir};
 
 #[derive(Copy, Drop, Serde, PartialEq)]
 struct Location {
-    game_id: u32,
+    room_id: u16,
+    realm_id: u16,
     over: u16,
     under: u16,
     north: u16,
@@ -17,7 +18,8 @@ struct Location {
 
 mod CONSTANTS {
     mod OFFSET {
-        const GAME_ID: usize    = 96;
+        const ROOM_ID: usize    = 112;
+        const REALM_ID: usize   = 96;
         const OVER: usize       = 80;
         const UNDER: usize      = 64;
         const NORTH: usize      = 48;
@@ -26,7 +28,8 @@ mod CONSTANTS {
         const SOUTH: usize      = 0;
     }
     mod MASK {
-        const GAME_ID: u128     = 0xffffffff000000000000000000000000;
+        const ROOM_ID: u128     = 0xffff0000000000000000000000000000;
+        const REALM_ID: u128    = 0xffff000000000000000000000000;
         const OVER: u128        = 0xffff00000000000000000000;
         const UNDER: u128       = 0xffff0000000000000000;
         const NORTH: u128       = 0xffff000000000000;
@@ -42,13 +45,14 @@ trait LocationTrait {
     fn offset(self: Location, dir: Dir) -> Location;
     fn to_id(self: Location) -> u128;
     fn from_id(location_id: u128) -> Location;
-    fn from_coord(game_id: u32, coord: u128) -> Location;
+    fn from_coord(realm_id: u16, room_id: u16, level_number: u16, coord: u128) -> Location;
 }
 
 impl LocationTraitImpl of LocationTrait {
     fn validate(self: Location) -> bool {
         (
-            self.game_id > 0
+            self.room_id > 0
+            && self.realm_id > 0
             && !((self.over == 0 && self.under == 0) || (self.over > 0 && self.under > 0))
             && !((self.north == 0 && self.south == 0) || (self.north > 0 && self.south > 0))
             && !((self.east == 0 && self.west == 0) || (self.east > 0 && self.west > 0))
@@ -56,7 +60,8 @@ impl LocationTraitImpl of LocationTrait {
     }
     fn validate_entry(self: Location) -> bool {
         (
-            self.game_id > 0
+            self.room_id > 0
+            && self.realm_id > 0
             && (self.over == 0 && self.under == 0)
             && !((self.north == 0 && self.south == 0) || (self.north > 0 && self.south > 0))
             && !((self.east == 0 && self.west == 0) || (self.east > 0 && self.west > 0))
@@ -117,7 +122,8 @@ impl LocationTraitImpl of LocationTrait {
         result
     }
     fn to_id(self: Location) -> u128 {
-        U128Bitwise::shl(self.game_id.into(), CONSTANTS::OFFSET::GAME_ID) |
+        U128Bitwise::shl(self.room_id.into(), CONSTANTS::OFFSET::ROOM_ID) |
+        U128Bitwise::shl(self.realm_id.into(), CONSTANTS::OFFSET::REALM_ID) |
         U128Bitwise::shl(self.over.into(), CONSTANTS::OFFSET::OVER) |
         U128Bitwise::shl(self.under.into(), CONSTANTS::OFFSET::UNDER) |
         U128Bitwise::shl(self.north.into(), CONSTANTS::OFFSET::NORTH) |
@@ -127,7 +133,8 @@ impl LocationTraitImpl of LocationTrait {
     }
     fn from_id(location_id: u128) -> Location {
         Location {
-            game_id: U128Bitwise::shr(location_id & CONSTANTS::MASK::GAME_ID, CONSTANTS::OFFSET::GAME_ID).try_into().unwrap(),
+            room_id: U128Bitwise::shr(location_id & CONSTANTS::MASK::ROOM_ID, CONSTANTS::OFFSET::ROOM_ID).try_into().unwrap(),
+            realm_id: U128Bitwise::shr(location_id & CONSTANTS::MASK::REALM_ID, CONSTANTS::OFFSET::REALM_ID).try_into().unwrap(),
             over: U128Bitwise::shr(location_id & CONSTANTS::MASK::OVER, CONSTANTS::OFFSET::OVER).try_into().unwrap(),
             under: U128Bitwise::shr(location_id & CONSTANTS::MASK::UNDER, CONSTANTS::OFFSET::UNDER).try_into().unwrap(),
             north: U128Bitwise::shr(location_id & CONSTANTS::MASK::NORTH, CONSTANTS::OFFSET::NORTH).try_into().unwrap(),
@@ -136,17 +143,21 @@ impl LocationTraitImpl of LocationTrait {
             south: U128Bitwise::shr(location_id & CONSTANTS::MASK::SOUTH, CONSTANTS::OFFSET::SOUTH).try_into().unwrap(),
         }
     }
-    fn from_coord(game_id: u32, coord: u128) -> Location {
+    fn from_coord(realm_id: u16, room_id: u16, level_number: u16, coord: u128) -> Location {
         let mut result = LocationTrait::from_id(coord);
-        result.game_id = game_id;
-        result
+        result.realm_id = realm_id;
+        result.room_id = room_id;
+        result.under = level_number;
+        result.over = 0;
+        (result)
 
     }
 }
 
 impl LocationPrintImpl of PrintTrait<Location> {
     fn print(self: Location) {
-        self.game_id.print();
+        self.room_id.print();
+        self.realm_id.print();
         self.over.print();
         self.under.print();
         self.north.print();

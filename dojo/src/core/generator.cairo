@@ -11,7 +11,6 @@ use underdark::types::dir::{Dir};
 fn generate(
     seed: u256,
     protected: u256,
-    entry_dir: Dir,
     generator_name: felt252,
     generator_value: u32,
 ) -> u256 {
@@ -34,13 +33,13 @@ fn generate(
         // bitmap = carve(bitmap, protected, 7);
         bitmap = carve(bitmap, protected, 4);
         bitmap = carve(bitmap, protected, 5);
-    } else if(generator_name == 'connection') {
-        bitmap = connect_doors(protected, entry_dir, generator_value);
+    // } else if(generator_name == 'connection') {
+    //     bitmap = connect_doors(protected, entry_dir, generator_value);
     } else if(generator_name == 'binary_tree_classic') {
-        bitmap = binary_tree_classic(bitmap, entry_dir);
+        bitmap = binary_tree_classic(bitmap);
         bitmap = protect(bitmap, protected);
     } else if(generator_name == 'binary_tree_pro') {
-        bitmap = binary_tree_pro(bitmap, entry_dir);
+        bitmap = binary_tree_pro(bitmap);
         bitmap = protect(bitmap, protected);
     } else if(generator_name == 'binary_tree_fuzz') {
         bitmap = binary_tree_fuzz(bitmap);

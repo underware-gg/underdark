@@ -80,9 +80,9 @@ Install Rust + Cargo + others
 ```
 # Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# open new terminal to update PATH
 rustup override set stable
 rustup update
-cargo test
 
 # Install Cargo
 curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh
@@ -96,15 +96,21 @@ Install the [Cairo 1.0](https://marketplace.visualstudio.com/items?itemName=star
 
 ### Install Dojo [🔗](https://book.dojoengine.org/getting-started/quick-start.html)
 
-Using Dojo 0.3.0!
+Using Dojo 0.3.5!
 
 ```console
 curl -L https://install.dojoengine.org | bash
-dojoup -v 0.3.0
+# open new terminal to update PATH
+dojoup -v 0.3.5
+
+# test dojo
+cd dojo
+sozo build
+sozo test
 
 # install packages
-cd client
-yarn
+cd ../client
+npm install
 ```
 
 
@@ -115,6 +121,10 @@ yarn
 ```console
 cd dojo
 katana --disable-fee --invoke-max-steps 10000000
+
+# or just...
+cd dojo
+./run_katana
 ```
 
 #### Terminal 2: Torii (indexer)
@@ -123,23 +133,33 @@ Uncomment the `world_address` parameter in `dojo/Scarb.toml` then:
 
 ```console
 cd dojo
-torii --world 0x6150655e17345af3d45d23f9b1d04a4c5e485dfed5bf55cbd6f53063aaa42a
+torii --world 0x2d6bcc12cbb460243b73a4c937faf00ad2d071d899f40dfc9182843712f9c77
+
+# or just...
+cd dojo
+./run_torii
 ```
 
 #### Terminal 3: Client
 
 ```console
 cd client
-yarn && yarn dev
+npm install && npm dev
+
+# or just...
+cd dojo
+./run_client
 ```
 
 #### Terminal 4: Sozo commands
 
 ```console
+# build world and systems
 cd dojo
 sozo build
 
 # migrate to local Katana
+cd dojo
 ./migrate
 ```
 

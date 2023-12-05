@@ -1,17 +1,20 @@
 import * as THREE from 'three'
 import TWEEN from '@tweenjs/tween.js'
 
+// event emitter
+// var ee = require('event-emitter');
+import ee from 'event-emitter'
+export var emitter = ee()
+
 //@ts-ignore
 import Stats from 'three/addons/libs/stats.module.js'
 //@ts-ignore
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
-//@ts-ignore
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-//@ts-ignore
-import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 
-import { DepthPostShader } from './DepthPostShader'
-import { Dir, GameTilemap, Position, TileType } from '../utils/underdark'
+import { DepthPostShader } from '@/underdark/three/DepthPostShader'
+import { Dir, GameTilemap, Position, TileType } from '@/underdark/utils/underdark'
+import { loadAssets, ModelName, AudioName, MODELS_ASSETS, AUDIO_ASSETS } from '@/underdark/data/assets'
+import { toRadians } from '@/underdark/utils/utils'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5
@@ -28,6 +31,7 @@ const R_TO_D = (180 / Math.PI)
 const SIZE = 1;
 const CAM_FOV = 70;
 const CAM_FAR = 5; // 1.3 .. 5
+const TILT = 1;
 const GAMMA = 1.25;
 const COLOR_COUNT = 0; //16;
 const DITHER = 0;
@@ -36,13 +40,14 @@ const BAYER = 0;//4;
 const PALETTE = 0;//1;
 
 const PALETTE_PATHS = [
-  '/colors/blues1.png',
-  '/colors/pinks1.png',
-  '/colors/hot.png',
-  '/colors/greeny.png',
-  '/colors/earth.png',
-  '/colors/pinks2.png',
+  '/colors/gameboy.png',
+  '/colors/blue.png',
+  '/colors/pink.png',
   '/colors/purple.png',
+  '/colors/earth.png',
+  '/colors/hot.png',
+  '/colors/spectrum.png',
+  // '/colors/greeny.png',
 ]
 
 let _width: number;
@@ -52,80 +57,63 @@ let _eyeZ: number;
 let _palettes = [];
 let _gameTilemap: GameTilemap | null = null
 let _stepCounter = 0
+let _animSecs = 200;
+let _animSecsDamage = 500;
 
 let _animationRequest = null
 let _renderer: THREE.WebGLRenderer;
 let _camera: THREE.PerspectiveCamera;
 let _cameraRig: THREE.Object3D;
 let _scene: THREE.Scene
+let _material: THREE.Material;
+let _tile_geometry: THREE.BoxGeometry;
+let _tile_floor_geometry: THREE.PlaneGeometry;
+let _damage: THREE.Object3D;
 let _map: THREE.Object3D;
 let _target, _postScene, _postCamera, _postMaterial;
+let _playerPosition = { x: 0, y: 0, z: 0 };
 let _supportsExtension: boolean = true;
-// let _gui
-// let _stats;
+let _gui
+let _stats;
 // let _controls;
 
-let _tile_geometry;
-let _monster_geometry;
-let _slender_geometry;
-let _tar_geometry;
-let _door_geometry;
-let _material: THREE.Material;
+let _defaultPosition: Position = { tile: 8, facing: Dir.South }
 
-let params = {
+const defaultParams = {
   fov: CAM_FOV,
   far: CAM_FAR,
+  tilt: TILT,
   gamma: GAMMA,
   colorCount: COLOR_COUNT,
   dither: DITHER,
   ditherSize: DITHER_SIZE,
   bayer: BAYER,
   palette: PALETTE,
+  lightness: false,
+  noiseAmount: 0.01,
+  noiseSize: 10.0,
+  ceilingHeight: 1.0,
 };
+let params = { ...defaultParams };
+
+
+export function resetGameParams(newParams: any = {}) {
+  // console.log(`resetGameParams() + `, newParams)
+  Object.keys(defaultParams).forEach(key => {
+    params[key] = newParams?.[key] ?? defaultParams[key]
+  })
+  _gui?.controllersRecursive().forEach(c => c.updateDisplay())
+  paramsUpdated()
+}
 
 export function setGameParams(newParams: any) {
-  console.log(`setGameParams()`, newParams)
-  paramsUpdated({
-    ...params,
-    ...newParams,
+  // console.log(`setGameParams()`, newParams)
+  Object.keys(newParams).forEach(key => {
+    params[key] = newParams[key]
   })
-  // paramsUpdated(params)
-  // _gui?.controllersRecursive().forEach(c => c.updateDisplay())
+  _gui?.controllersRecursive().forEach(c => c.updateDisplay())
+  paramsUpdated()
 }
-
-
-
-//-------------------------------------------
-// Models
-//
-
-let MODELS = {
-  // MONSTER: { path: '/models/duck3.fbx', scale: 0.02 },
-  // SLENDER_DUCK: { path: '/models/slendie.fbx', scale: 0.5 },
-  // DARK_TAR: { path: '/models/tar.fbx', scale: 0.5 },
-  // EXIT: { path: '/models/door.fbx', scale: 0.5 },
-} 
-
-function _loadModels() {
-  // load models
-  const loader = new FBXLoader();
-  Object.keys(MODELS).forEach(key => {
-    let model = MODELS[key]
-    if (!model.object) {
-      console.log(`CACHING MODEL...`, model)
-      loader.load(model.path, function (object) {
-        console.log(`FBX OBJECT:`, object, object.scale)
-        if (object) {
-          object.scale.set(model.scale, model.scale, model.scale)
-          model.object = object
-          model.loaded = true
-        }
-      });
-    }
-  });
-}
-
-_loadModels();
 
 
 
@@ -141,7 +129,7 @@ export function dispose() {
   _scene = null
 }
 
-export async function init(canvas, width, height) {
+export async function init(canvas, width, height, guiEnabled) {
 
   if (_scene) return;
 
@@ -198,40 +186,61 @@ export async function init(canvas, width, height) {
   onWindowResize();
   window.addEventListener('resize', onWindowResize);
 
-  // _gui = new GUI({ width: 300 });
-  // _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
-  // _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
-  // _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
-  // _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
-  // _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
-  // _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
-  // _gui.add(params, 'bayer', 0, 6, 1).onChange(guiUpdated);
-  // _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
-  // _gui.open();
+  if (guiEnabled !== null) {
+    _gui = new GUI({ width: 300 });
+    _gui.add(params, 'fov', 30, 90, 1).onChange(guiUpdated);
+    _gui.add(params, 'far', 1, 20, 0.1).onChange(guiUpdated);
+    _gui.add(params, 'tilt', 0, 15, 0.1).onChange(guiUpdated);
+    _gui.add(params, 'gamma', 0, 2, 0.01).onChange(guiUpdated);
+    _gui.add(params, 'colorCount', 0, 16, 1).onChange(guiUpdated);
+    _gui.add(params, 'dither', 0, 0.5, 0.01).onChange(guiUpdated);
+    _gui.add(params, 'ditherSize', 2, 5, 1).onChange(guiUpdated);
+    _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
+    _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
+    _gui.add(params, 'lightness', true).onChange(guiUpdated);
+    _gui.add(params, 'noiseAmount', 0, 1, 0.001).onChange(guiUpdated);
+    _gui.add(params, 'noiseSize', 1, 100, 1).onChange(guiUpdated);
+    // _gui.add(params, 'ceilingHeight', 1, 5, 0.25).onChange(guiUpdated);
+    if (guiEnabled) {
+      _gui.open();
+    } else {
+      _gui.close();
+    }
+    // framerate
+    _stats = new Stats();
+    document.body.appendChild(_stats.dom);
+  }
 
-  // _stats = new Stats();
-  // document.body.appendChild(_stats.dom);
+  await loadAssets();
+}
+
+export function getCameraRig() {
+  return _cameraRig
 }
 
 function guiUpdated() {
-  paramsUpdated(params)
+  paramsUpdated()
 }
 
-function paramsUpdated(newParams: any) {
+function paramsUpdated() {
   // Camera
-  _camera.fov = newParams.fov;
-  _camera.far = newParams.far;
+  _camera.fov = params.fov;
+  _camera.far = params.far;
   _camera.updateProjectionMatrix();
   _postMaterial.uniforms.uCameraNear.value = _camera.near;
   _postMaterial.uniforms.uCameraFar.value = _camera.far;
+  _postMaterial.uniforms.uCameraFov.value = toRadians(_camera.fov);
   // Shader
-  _postMaterial.uniforms.uGamma.value = newParams.gamma;
-  _postMaterial.uniforms.uColorCount.value = newParams.colorCount;
-  _postMaterial.uniforms.uDither.value = newParams.dither;
-  _postMaterial.uniforms.uDitherSize.value = newParams.ditherSize;
-  _postMaterial.uniforms.uBayer.value = newParams.bayer;
-  _postMaterial.uniforms.uPalette.value = newParams.palette;
-  _postMaterial.uniforms.tPalette.value = newParams.palette > 0 ? _palettes[newParams.palette - 1] : null;
+  _postMaterial.uniforms.uGamma.value = params.gamma;
+  _postMaterial.uniforms.uColorCount.value = params.colorCount;
+  _postMaterial.uniforms.uDither.value = params.dither;
+  _postMaterial.uniforms.uDitherSize.value = params.ditherSize;
+  _postMaterial.uniforms.uBayer.value = params.bayer;
+  _postMaterial.uniforms.uPalette.value = params.palette;
+  _postMaterial.uniforms.tPalette.value = params.palette > 0 ? _palettes[params.palette - 1] : null;
+  _postMaterial.uniforms.uLightness.value = params.lightness;
+  _postMaterial.uniforms.uNoiseAmount.value = params.noiseAmount;
+  _postMaterial.uniforms.uNoiseSize.value = params.noiseSize;
 }
 
 // Create a render target with depth texture
@@ -259,12 +268,17 @@ function setupPost() {
     uniforms: {
       uCameraNear: { value: _camera.near },
       uCameraFar: { value: _camera.far },
+      uCameraFov: { value: _camera.fov },
       uGamma: { value: GAMMA },
       uColorCount: { value: COLOR_COUNT },
       uDither: { value: DITHER },
       uDitherSize: { value: DITHER_SIZE },
       uBayer: { value: BAYER },
       uPalette: { value: params.palette },
+      uLightness: { value: params.lightness },
+      uNoiseAmount: { value: params.noiseAmount },
+      uNoiseSize: { value: params.noiseSize },
+      uTime: { value: 0.0 },
       tPalette: { value: null },
       tDiffuse: { value: null },
       tDepth: { value: null }
@@ -275,7 +289,7 @@ function setupPost() {
   const postQuad = new THREE.Mesh(postPlane, _postMaterial);
   _postScene = new THREE.Scene();
   _postScene.add(postQuad);
-  postQuad.scale.set(-1,1,1);
+  postQuad.scale.set(-1, 1, 1);
 }
 
 function onWindowResize() {
@@ -287,35 +301,17 @@ function onWindowResize() {
   // renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// function makeTorus(scene) {
-//   const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 64);
-//   const material = new THREE.MeshBasicMaterial({ color: 'blue' });
-//   const count = 50;
-//   const scale = 5;
-//   for (let i = 0; i < count; i++) {
-//     const r = Math.random() * 2.0 * PI;
-//     const z = (Math.random() * 2.0) - 1.0;
-//     const zScale = Math.sqrt(1.0 - z * z) * scale;
-//     const mesh = new THREE.Mesh(geometry, material);
-//     mesh.position.set(
-//       Math.cos(r) * zScale,
-//       Math.sin(r) * zScale,
-//       z * scale
-//     );
-//     mesh.rotation.set(Math.random(), Math.random(), Math.random());
-//     scene.add(mesh);
-//   }
-// }
-
 
 //-------------------------------------------
 // Game Loop
 //
 
-export function animate() {
+export function animate(time) {
   if (!_supportsExtension || !_scene || !_renderer) return;
 
   _animationRequest = requestAnimationFrame(animate);
+
+  _postMaterial.uniforms.uTime.value = time / 1000.0;
 
   TWEEN.update();
 
@@ -330,9 +326,7 @@ export function animate() {
   _renderer.setRenderTarget(null);
   _renderer.render(_postScene, _postCamera);
 
-  // _controls.update(); // required because damping is enabled
-
-  // _stats.update();
+  if (_stats) _stats.update();
 }
 
 
@@ -345,88 +339,90 @@ function setupScene() {
   _scene = new THREE.Scene();
 
   _material = new THREE.MeshBasicMaterial({ color: 'blue' });
+  _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE * params.ceilingHeight);
+  _tile_floor_geometry = new THREE.PlaneGeometry(SIZE, SIZE);
 
-  _tile_geometry = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
-  // _monster_geometry = new THREE.BoxGeometry(SIZE / 4, SIZE / 4, SIZE / 4);
-  _tar_geometry = new THREE.IcosahedronGeometry(SIZE / 4);
-  _slender_geometry =new THREE.ConeGeometry(SIZE / 4, SIZE * 0.75, 16)
-
-  const shape = new THREE.Shape();
-  const x = -2.5;
-  const y = -5;
-  shape.moveTo(x + 2.5, y + 2.5);
-  shape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
-  shape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
-  shape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
-  shape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 4.5, x + 8, y + 3.5);
-  shape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
-  shape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
-  const extrudeSettings = {
-    steps: 1,
-    depth: 1.0,
-    bevelEnabled: true,
-    bevelThickness: 0.10,
-    bevelSize: 0.10,
-    bevelSegments: 0,
-  };
-  _door_geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-
-
-  const radius = 3.5;
-  const tubeRadius = 1.1;
-  const radialSegments = 7;
-  const tubularSegments = 58;
-  const p = 2;
-  const q = 3;
-  _monster_geometry = new THREE.TorusKnotGeometry(radius, tubeRadius, tubularSegments, radialSegments, p, q);
-
-
-  const floor_geometry = new THREE.PlaneGeometry(40 * SIZE, 40 * SIZE);
+  const floor_geometry = new THREE.PlaneGeometry(16 * SIZE, 16 * SIZE);
+  const ceiling_geometry = new THREE.PlaneGeometry(20 * SIZE, 20 * SIZE);
   const floor_material = new THREE.MeshBasicMaterial({ color: 'cyan' });
   const floor = new THREE.Mesh(floor_geometry, floor_material);
-  const ceiling = new THREE.Mesh(floor_geometry, floor_material);
-  floor.position.set(-SIZE * 2, -SIZE * 2, 0);
-  ceiling.position.set(-SIZE * 2, -SIZE * 2, SIZE);
+  const ceiling = new THREE.Mesh(ceiling_geometry, floor_material);
+  floor.position.set(7.5 * SIZE, 7.5 * SIZE, 0);
+  ceiling.position.set(8 * SIZE, 8 * SIZE, SIZE * params.ceilingHeight);
   ceiling.scale.set(1, 1, -1);
 
-  _scene.add(floor);
-  _scene.add(ceiling);
+  _damage = new THREE.Object3D();
+  _damage.scale.set(0, 0, 0);
+  const damage_geometry = new THREE.TorusKnotGeometry(10, 3, 64, 8)
+  const damage_mesh = new THREE.Mesh(damage_geometry, _material)
+  damage_mesh.scale.set(0.05, 0.05, 0.05)
+  damage_mesh.position.set(0, 0, SIZE * 0.5)
+  _damage.add(damage_mesh)
 
-  // makeTorus(_scene);
+  _scene.add(floor)
+  _scene.add(ceiling)
+  _scene.add(_damage)
 }
 
-export function movePlayer(position: Position) {
-  const x = (position.tile % 16) * SIZE
-  const y = Math.floor(position.tile / 16) * SIZE
-  new TWEEN.Tween(_cameraRig.position).to({ x, y }, 100).start()
+export function movePlayer(tile: number | null) {
+  const _tile = tile ?? _defaultPosition.tile
+  const x = (_tile % 16) * SIZE
+  const y = Math.floor(_tile / 16) * SIZE
+  _playerPosition = { x, y, z: 0 }
+  new TWEEN.Tween(_cameraRig.position)
+    .to({ x, y }, _animSecs)
+    .onUpdate(() => {
+      emitter.emit('movedTo', { x: _cameraRig.position.x, y: _cameraRig.position.y, z: _cameraRig.position.z })
+    })
+    .start()
   // _cameraRig.position.set(x, y, 0);
+}
 
-  // Rotate player
-  let tilt = (++_stepCounter % 2 == 0 ? 1 : -1) / R_TO_D
-  let rotX = (position.facing == Dir.East || position.facing == Dir.West) ? tilt : 0
-  let rotY = (position.facing == Dir.North || position.facing == Dir.South) ? tilt : 0
+export function rotatePlayer(facing: Dir | null) {
+  const _facing = facing ?? _defaultPosition.facing
+  let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
+  let rotX = (_facing == Dir.East || _facing == Dir.West) ? tilt : 0
+  let rotY = (_facing == Dir.North || _facing == Dir.South) ? tilt : 0
   let rotZ =
-    position.facing == Dir.East ? HALF_PI
-      : position.facing == Dir.South ? PI
-        : position.facing == Dir.West ? ONE_HALF_PI
+    _facing == Dir.East ? HALF_PI
+      : _facing == Dir.South ? PI
+        : _facing == Dir.West ? ONE_HALF_PI
           : 0
   if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
   if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
-  new TWEEN.Tween(_cameraRig.rotation).to({ x: rotX, y: rotY, z: rotZ }, 100).start().onComplete(() => {
-    if (_cameraRig.rotation.z < 0) _cameraRig.rotation.z += TWO_PI;
-    if (_cameraRig.rotation.z > TWO_PI) _cameraRig.rotation.z -= TWO_PI;
-  })
+  new TWEEN.Tween(_cameraRig.rotation)
+    .to({ x: rotX, y: rotY, z: rotZ }, _animSecs)
+    .onUpdate(() => {
+      emitter.emit('rotatedTo', { x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: _cameraRig.rotation.z })
+    })
+    .start()
+    .onComplete(() => {
+      if (_cameraRig.rotation.z < 0) _cameraRig.rotation.z += TWO_PI;
+      if (_cameraRig.rotation.z > TWO_PI) _cameraRig.rotation.z -= TWO_PI;
+      emitter.emit('rotatedTo', { x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: _cameraRig.rotation.z })
+    })
   // _cameraRig.rotation.set(0, 0, rot);
 
 }
 
-export function setupMap(gameTilemap: GameTilemap) {
+// export function getPlayerRotation() {
+//   return _cameraRig.rotation.z
+// }
 
-  _gameTilemap = gameTilemap
+export function setupMap(gameTilemap: GameTilemap | null, isPlaying: boolean) {
+
+  _gameTilemap = gameTilemap ?? {
+    gridSize: 20,
+    gridOrigin: { x: 0, y: 0 },
+    playerStart: _defaultPosition,
+    tilemap: [],
+    tiles: [],
+  }
 
   const gridSize = _gameTilemap.gridSize
   const gridOrigin = _gameTilemap.gridOrigin
   const tilemap = _gameTilemap.tilemap
+  const tiles = _gameTilemap.tiles
 
   if (_map) {
     _scene.remove(_map)
@@ -435,48 +431,150 @@ export function setupMap(gameTilemap: GameTilemap) {
   _map = new THREE.Object3D();
   _map.position.set(0, 0, 0);
 
+  const _randomRotate = (mesh) => (mesh.rotation.set(0, 0, [0, 1, 2, 3][Math.floor(Math.random() * 4)] * HALF_PI))
+
+  // console.log(gameTilemap)
   for (let i = 0; i < tilemap.length; ++i) {
     const tileType = tilemap[i]
     const x = ((i % gridSize) + gridOrigin.x) * SIZE
     const y = (Math.floor(i / gridSize) + gridOrigin.y) * SIZE
-    let mesh = null
-    if (tileType == TileType.Entry) {
+    let z = 0
+    let meshes = []
+    if (tileType == TileType.Void) {
+      meshes.push(new THREE.Mesh(_tile_geometry, _material))
+      z = SIZE * params.ceilingHeight * 0.5
+    } else if (tileType == TileType.Entry) {
+      meshes.push(loadModel(ModelName.DOOR))
+      meshes.push(new THREE.Mesh(_tile_floor_geometry, _material))
     } else if (tileType == TileType.Exit) {
-      mesh = new THREE.Mesh(_door_geometry, _material);
-      mesh.rotation.set(-HALF_PI, HALF_PI, 0)
-      mesh.scale.set(0.1, 0.1, 0.1)
-      loadModel('DOOR', _map, x, y)
+      meshes.push(loadModel(ModelName.STAIRS))
     } else if (tileType == TileType.LockedExit) {
     } else if (tileType == TileType.Monster) {
-      mesh = new THREE.Mesh(_monster_geometry, _material);
-      mesh.scale.set(0.06, 0.06, 0.06)
-      loadModel('MONSTER', _map, x, y)
-    // } else if (tileType == TileType.SlenderDuck) {
-    //   mesh = new THREE.Mesh(_slender_geometry, _material);
-    //   mesh.rotateX(HALF_PI)
-    //   loadModel('SLENDER_DUCK', _map, x, y)
+      meshes.push(loadModel(ModelName.MONSTER))
+      _randomRotate(meshes[0])
+      meshes[0].visible = isPlaying
+    } else if (tileType == TileType.SlenderDuck) {
+      meshes.push(loadModel(ModelName.SLENDER_DUCK))
+      _randomRotate(meshes[0])
+      meshes[0].visible = isPlaying
     } else if (tileType == TileType.DarkTar) {
-      mesh = new THREE.Mesh(_tar_geometry, _material);
-      loadModel('DARK_TAR', _map, x, y)
-    } else if (tileType == TileType.Void) {
-      mesh = new THREE.Mesh(_tile_geometry, _material);
+      meshes.push(loadModel(ModelName.DARK_TAR))
+      _randomRotate(meshes[0])
+      meshes[0].scale.set(1, 1, params.ceilingHeight)
+      meshes[0].visible = isPlaying
     }
-    if (mesh) {
-      _map.add(mesh);
-      // console.log(i, x, y, tileType)
-      mesh.position.set(x, y, SIZE * 0.5)
-    }
+    meshes.forEach((mesh) => {
+      mesh.underData = {
+        tile: tiles[i],
+        tileType,
+      }
+      mesh.position.set(x, y, z)
+      _map.add(mesh)
+    })
   }
-  
+
   _scene.add(_map)
 }
 
-function loadModel(modelName, parent, x, y) {
-  const model = MODELS[modelName]
-  // const obj = model?.object?.clone() ?? null
-  console.log(`___MODEL_instance`, modelName, model)//, obj)
-  // if(obj) {
-  //   obj.position.set(x, y, 0)
-  //   parent.add(obj);
-  // }
+function loadModel(name: ModelName) {
+  const asset = MODELS_ASSETS[name]
+  if (!asset?.object) return null
+  // console.log(`___MODEL_instance`, name, model.object)
+  const obj = new THREE.Object3D();
+  obj.add(asset.object.clone())
+  return obj
+}
+
+export function enableTilesByType(tileType: TileType, enabled: boolean) {
+  _map.children.forEach((object) => {
+    //@ts-ignore
+    if (object.underData?.tileType === tileType) {
+      object.visible = enabled
+    }
+  })
+}
+
+function _findTile(tile: number): THREE.Object3D | null {
+  for (let i = 0; i < _map.children.length; ++i) {
+    const object = _map.children[i]
+    //@ts-ignore
+    if (object.underData?.tile === tile) return object
+  }
+  return null
+}
+
+export function disableTile(tile: number) {
+  const object = _findTile(tile)
+  if (object) {
+    object.visible = false
+  }
+}
+
+export function isTileEnaled(tile: number): boolean {
+  const object = _findTile(tile)
+  return object?.visible ?? false
+}
+
+export function damageFromTile(tile: number) {
+  const object = _findTile(tile)
+  if (!object) return
+  _damage.position.set(object.position.x, object.position.y, 0)
+  _damage.rotation.set(0, 0, 0)
+  new TWEEN.Tween(_damage.scale)
+    .to({ x: 1.5, y: 1.5, z: 1.5 }, _animSecsDamage)
+    .start()
+    .onComplete(() => _damage.scale.set(0, 0, 0))
+  new TWEEN.Tween(_damage.rotation)
+    .to({ x: 0, y: 0, z: PI * 4 }, _animSecsDamage)
+    .start()
+}
+
+export function rotateToPlayer(tile: number): boolean {
+  const object = _findTile(tile)
+  if (!object) return
+  const a = -HALF_PI + Math.atan2(object.position.y - _playerPosition.y, object.position.x - _playerPosition.x)
+  new TWEEN.Tween(object.rotation)
+    .to({ x: 0, y: 0, z: a }, _animSecs)
+    .start()
+}
+
+export function rotatePlayerTo(tile: number): boolean {
+  const object = _findTile(tile)
+  if (!object) return
+  if (_playerPosition.y == object.position.y && _playerPosition.x == object.position.x) return
+  const a = -HALF_PI + Math.atan2(_playerPosition.y - object.position.y, _playerPosition.x - object.position.x)
+  new TWEEN.Tween(_cameraRig.rotation)
+    .to({ x: 0, y: 0, z: a }, _animSecs)
+    .start()
+}
+
+
+//-------------------------------
+// Audio
+//
+export function playAudio(name: AudioName, enabled: boolean = true) {
+  const asset = AUDIO_ASSETS[name]
+  if (asset?.object) {
+    if (asset.object.isPlaying) {
+      asset.object.stop()
+    }
+    if (enabled) {
+      asset.object.play()
+    }
+  }
+}
+
+export function pauseAudio(name: AudioName) {
+  const asset = AUDIO_ASSETS[name]
+  asset?.object?.pause()
+}
+
+export function stopAudio(name: AudioName) {
+  const asset = AUDIO_ASSETS[name]
+  asset?.object?.stop()
+}
+
+export function playFootstep() {
+  const assetName = _stepCounter % 2 == 0 ? AudioName.FOOT1 : AudioName.FOOT2
+  playAudio(assetName)
 }
