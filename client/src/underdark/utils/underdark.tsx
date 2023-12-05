@@ -204,6 +204,14 @@ export const makeRoomName = (roomId: number, levelNumber: number): string => {
   return `Room #${roomId} Level ${levelNumber}`
 }
 
+export const makeRoomUrl = (roomId: number, levelNumber: number): string => {
+  let url = `/room/${roomId}`
+  if (levelNumber > 1) {
+    url += `/${levelNumber}`
+  }
+  return url
+}
+
 export type TilemapGridSize = 18 | 20
 
 export type Position = {

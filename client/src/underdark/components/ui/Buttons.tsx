@@ -7,7 +7,7 @@ import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { getLevelParams } from '@/underdark/data/levels'
 import { loadAudioAssets } from '@/underdark/data/assets'
-import { Dir, coordToCompass, makeRoomChamberId } from '@/underdark/utils/underdark'
+import { Dir, coordToCompass, makeRoomChamberId, makeRoomUrl } from '@/underdark/utils/underdark'
 import { useRouter } from 'next/navigation'
 
 
@@ -37,7 +37,8 @@ export function NextLevelButton() {
 
   const router = useRouter()
   const _gotoNextLevel = () => {
-    router.push(`/room/${roomId}/${nextLevelNumber}`)
+    const url = makeRoomUrl(roomId, nextLevelNumber)
+    router.push(url)
   }
 
   if (!chamberExists) {

@@ -4,7 +4,7 @@ import { Segment, Grid, Container } from 'semantic-ui-react'
 import { useAllRoomIds, useChamber, useRoomChamberIds, usePlayerScore } from '@/underdark/hooks/useChamber'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
 import { useDojoAccount } from '@/dojo/DojoContext'
-import { Dir, coordToCompass, makeRoomChamberId, makeRoomName, offsetCoord } from '@/underdark/utils/underdark'
+import { Dir, coordToCompass, makeRoomChamberId, makeRoomName, makeRoomUrl, offsetCoord } from '@/underdark/utils/underdark'
 import { bigintToHex } from '@/underdark/utils/utils'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { GenerateRoomButton } from '@/underdark/components/ui/Buttons'
@@ -179,10 +179,7 @@ function ChamberInfo({
 
   const _enterRoom = () => {
     dispatchInteracted()
-    let url = `/room/${roomId}`
-    if (compass.under > 1) {
-      url += `/${compass.under}`
-    }
+    let url = makeRoomUrl(roomId, compass.under)
     router.push(url)
   }
 
