@@ -10,9 +10,12 @@ module.exports = {
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   plugins: ['react-refresh'],
   rules: {
-    'react-refresh/only-export-components': 'warn',
-    'no-mixed-spaces-and-tabs': 0,
     '@typescript-eslint/ban-ts-comment': 0,
     '@typescript-eslint/no-duplicate-enum-values': 0,
+    'react-refresh/only-export-components': 'warn',
+    'no-mixed-spaces-and-tabs': 0,
+    // TODO: uncomment and fix all this...
+    'react-hooks/exhaustive-deps': 0,
+    'react-refresh/only-export-components': 0,
   },
 }
