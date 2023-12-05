@@ -313,6 +313,8 @@ export const useGameplayContext = () => {
     ...state,
     isLoaded: (state.gameState == GameState.Loaded),
     isPlaying: (state.gameState == GameState.Playing),
+    isVerifying: (state.gameState == GameState.Verifying),
+    isWinner: (state.gameState == GameState.Verified),
     isGameOver: [GameState.Verifying, GameState.Verified, GameState.NotVerified, GameState.NoHealth, GameState.Slendered].includes(state.gameState),
     hasLight: (state.light > 0),
     stepCount: state.steps.length, // 0..64

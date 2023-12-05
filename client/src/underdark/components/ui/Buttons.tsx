@@ -10,9 +10,10 @@ import { loadAudioAssets } from '@/underdark/data/assets'
 import { Dir, coordToCompass, makeRoomChamberId, makeRoomUrl } from '@/underdark/utils/underdark'
 import { useRouter } from 'next/navigation'
 
-
 export const StartButton = ({
   fill = false,
+  large = false,
+  label = null,
 }) => {
   const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
 
@@ -21,16 +22,21 @@ export const StartButton = ({
     dispatchReset(null, true)
   }
 
-  const _label = isLoaded ? 'START' : 'RESTART'
+  const _label = label ?? (isLoaded ? 'START' : 'RESTART')
   return (
-    <ActionButton fill={fill} onClick={() => _startGame()} label={_label} />
+    <ActionButton fill={fill} large={large} onClick={() => _startGame()} label={_label} />
   )
 }
 
 
 export function NextLevelButton() {
+  const { isVerifying, isWinner } = useGameplayContext()
+
   const { roomId, chamberId } = useUnderdarkContext()
   const { chamberExists } = useChamberOffset(chamberId, Dir.Under)
+
+  const { account } = useDojoAccount()
+  const { levelIsCompleted } = usePlayerScore(chamberId, account)
 
   const compass = coordToCompass(chamberId)
   const nextLevelNumber = compass.under + 1
@@ -41,8 +47,16 @@ export function NextLevelButton() {
     router.push(url)
   }
 
+  if (isVerifying) {
+    return <></>
+  }
+
+  if (!isWinner) {
+    return <StartButton large label='RESTART' />
+  }
+
   if (!chamberExists) {
-    return <GenerateRoomButton large roomId={roomId} levelNumber={nextLevelNumber} label='GENERATE NEXT LEVEL' />
+    return <GenerateRoomButton large disabled={!levelIsCompleted} roomId={roomId} levelNumber={nextLevelNumber} label='GENERATE NEXT LEVEL' />
   }
 
   return <ActionButton large label='ENTER NEXT LEVEL' onClick={() => _gotoNextLevel()} />
@@ -76,6 +90,7 @@ export function GenerateRoomButton({
   levelNumber,
   label,
   large = false,
+  disabled = false,
 }) {
   const { realmId, manorCoord } = useUnderdarkContext()
   const { generate_level } = useDojoSystemCalls()
@@ -93,7 +108,7 @@ export function GenerateRoomButton({
   }
 
   if (!levelIsCompleted) {
-    return <ActionButton large={large} onClick={() => _generate()} label={label} />
+    return <ActionButton disabled={disabled} large={large} onClick={() => _generate()} label={label} />
   }
   return <></>
 }
