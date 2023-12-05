@@ -6,7 +6,7 @@ use core::option::OptionTrait;
 use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use underdark::models::chamber::{Map, State, Score};
+use underdark::models::chamber::{Map, MapData, Score};
 use underdark::models::tile::{Tile};
 use underdark::types::dir::{Dir, DirTrait};
 use underdark::utils::bitwise::{U256Bitwise};
@@ -25,15 +25,15 @@ fn verify_level_proof(world: IWorldDispatcher,
     // let location: Location = LocationTrait::from_id(location_id);
 
     let map: Map = get!(world, location_id, (Map));
-    let bitmap: u256 = map.bitmap;
+    let map_data: MapData = get!(world, location_id, (MapData));
     
     let entry: u8 = map.over;
     let exit: u8 = map.under;
 
-    verify_map(map, entry, exit, proof, moves_count);
+    verify_map(map, map_data, entry, exit, proof, moves_count);
 
     //---------------------
-    // Save map state
+    // Save score
     //
 
     let score : Score = get!(world, (location_id, caller), (Score));
@@ -47,15 +47,12 @@ fn verify_level_proof(world: IWorldDispatcher,
         }));
     }
 
-    let mut state : State = get!(world, location_id, (State));
-    state.wins += 1;
-    set!(world, (state) );
-
     (location_id)
 }
 
 fn verify_map(
     map: Map,
+    map_data: MapData,
     entry: u8,
     exit: u8,
     proof: u256,
@@ -69,7 +66,7 @@ fn verify_map(
     let mut pos: usize = entry.into();
     let mut sanity: u8 = SANITY_MAX;
     let mut light: u8 = LIGHT_MAX;
-    let mut dark_tar: u256 = map.dark_tar;
+    let mut dark_tar: u256 = map_data.dark_tar;
     let mut i = 0;
 // 'proofing......'.print();
     loop {
@@ -83,15 +80,15 @@ fn verify_map(
 // pos.print();
         if (light > 0) {
             // when lights are on, monsters take your sanity
-            if(Bitmap::is_set_tile(map.monsters, pos)) {
+            if(Bitmap::is_set_tile(map_data.monsters, pos)) {
                 sanity = sanity - Math8::min(MONSTER_HIT_DAMAGE, sanity);
-            } else if (Bitmap::is_near_or_at_tile(map.monsters, pos)) {
+            } else if (Bitmap::is_near_or_at_tile(map_data.monsters, pos)) {
                 sanity = sanity - Math8::min(MONSTER_NEAR_DAMAGE, sanity);
             }
             assert(sanity > 0, 'Lost sanity!');
         } else {
             // when lights are off, Slenderduck kills instantly
-            assert(Bitmap::is_near_or_at_tile(map.slender_duck, pos) == false, 'Slendered!');
+            assert(Bitmap::is_near_or_at_tile(map_data.slender_duck, pos) == false, 'Slendered!');
         }
 
         // this proof method has a hard limit of 64 moves

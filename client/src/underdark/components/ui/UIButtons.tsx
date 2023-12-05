@@ -16,8 +16,11 @@ const ActionButton = ({
   dimmed = false,
   onClick,
 }: ActionButtonProps) => {
-  const _className = (disabled || dimmed) ? 'Locked' : 'Unlocked'
-  const _button = <button className={`${_className} ${fill ? 'FillParent' : ''}`} disabled={disabled} onClick={() => onClick()}>{label}</button>
+  let classNames = ['FillParent']
+  classNames.push((disabled || dimmed) ? 'Locked' : 'Unlocked')
+  if (large) classNames.push('LargeButton')
+  if (fill) classNames.push('FillParent')
+  const _button = <button className={classNames.join(' ')} disabled={disabled} onClick={() => onClick()}>{label}</button>
   if (large) {
     return <h3>{_button}</h3>
   }

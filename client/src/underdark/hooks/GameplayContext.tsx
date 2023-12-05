@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useReducer, useContext } from 'react'
-import { Dir, Position, TileType } from '../utils/underdark'
-import { MESSAGES } from '../data/messages'
+import { Dir, Position, TileType } from '@/underdark/utils/underdark'
+import { MESSAGES } from '@/underdark/data/messages'
 import { clamp } from 'three/src/math/MathUtils'
 
 
@@ -25,6 +25,7 @@ type Movement = {
 }
 
 export enum GameState {
+  Lobby = 'lobby',
   Loaded = 'loaded',
   Playing = 'playing',
   Verifying = 'verifying',
@@ -41,7 +42,10 @@ type ThreeJsGame = any;
 //
 export const initialState = {
   gameImpl: null,
-  gameState: GameState.Loaded,
+  gameState: GameState.Lobby,
+  inLobby: false,
+  hasInteracted: false,
+  startPosition: null,
   playerPosition: null,
   light: 0,
   health: 0,
@@ -50,8 +54,11 @@ export const initialState = {
 }
 
 type GameplayStateType = {
-  gameImpl: ThreeJsGame,
+  gameImpl: ThreeJsGame
   gameState: GameState
+  inLobby: boolean
+  hasInteracted: boolean
+  startPosition: Position
   playerPosition: Position
   light: number     // 0..100
   health: number    // 0..100
@@ -65,6 +72,8 @@ type GameplayStateType = {
 
 const GameplayActions = {
   SET_GAME_IMPL: 'SET_GAME_IMPL',
+  SET_LOBBY: 'SET_LOBBY',
+  SET_INTERACTED: 'SET_INTERACTED',
   RESET: 'RESET',
   SET_STATE: 'SET_STATE',
   SET_MESSAGE: 'SET_MESSAGE',
@@ -76,6 +85,7 @@ const GameplayActions = {
 
 type ActionType =
   | { type: 'SET_GAME_IMPL', payload: ThreeJsGame }
+  | { type: 'SET_INTERACTED', payload: boolean }
   | { type: 'RESET', payload: Position }
   | { type: 'SET_STATE', payload: GameState }
   | { type: 'SET_MESSAGE', payload: string }
@@ -117,10 +127,25 @@ const GameplayProvider = ({
         newState.gameImpl = action.payload as ThreeJsGame
         break
       }
+      case GameplayActions.SET_LOBBY: {
+        newState.inLobby = action.payload as boolean
+        break
+      }
+      case GameplayActions.SET_INTERACTED: {
+        newState.hasInteracted = action.payload as boolean
+        break
+      }
       case GameplayActions.RESET: {
         const position = action.payload as Position
         newState.gameState = GameState.Loaded
-        newState.playerPosition = position
+        if (position) {
+          // just loaded
+          newState.startPosition = position
+          newState.playerPosition = position
+        } else if (newState.startPosition) {
+          // restart
+          newState.playerPosition = { ...newState.startPosition }
+        }
         newState.light = LIGHT_MAX
         newState.health = SANITY_MAX
         newState.steps = []
@@ -213,6 +238,10 @@ export const useGameplayContext = () => {
     dispatch({ type: GameplayActions.SET_GAME_IMPL, payload: gameImpl })
   }
 
+  const dispatchInteracted = () => {
+    dispatch({ type: GameplayActions.SET_INTERACTED, payload: true })
+  }
+
   const dispatchMessage = (msg: string | null) => {
     if (msg !== null) {
       dispatch({ type: GameplayActions.SET_MESSAGE, payload: msg })
@@ -236,13 +265,20 @@ export const useGameplayContext = () => {
     }
   }
 
+  const dispatchLobby = (value: boolean) => {
+    dispatch({ type: GameplayActions.SET_LOBBY, payload: value })
+    if (value) {
+      dispatchGameState(GameState.Lobby)
+      dispatchMessage('')
+    }
+  }
+
   const dispatchReset = (playerStart: Position | null, startGame: boolean) => {
     dispatch({ type: GameplayActions.RESET, payload: playerStart })
     if (startGame) {
       dispatchGameState(GameState.Playing)
     }
   }
-
   const dispatchMoveTo = (movement: Movement) => {
     dispatch({ type: GameplayActions.MOVE_TO, payload: movement })
     dispatchMessage('')
@@ -277,12 +313,17 @@ export const useGameplayContext = () => {
     ...state,
     isLoaded: (state.gameState == GameState.Loaded),
     isPlaying: (state.gameState == GameState.Playing),
+    isVerifying: (state.gameState == GameState.Verifying),
+    isWinner: (state.gameState == GameState.Verified),
+    isGameOver: [GameState.Verifying, GameState.Verified, GameState.NotVerified, GameState.NoHealth, GameState.Slendered].includes(state.gameState),
     hasLight: (state.light > 0),
     stepCount: state.steps.length, // 0..64
     // GameplayActions,
     // dispatch,
     dispatchGameImpl,
+    dispatchInteracted,
     dispatchMessage,
+    dispatchLobby,
     dispatchReset,
     dispatchGameState,
     dispatchMoveTo,

@@ -1,7 +1,4 @@
 use starknet::ContractAddress;
-use dojo::database::schema::{
-    Enum, Member, Ty, Struct, SchemaIntrospection, serialize_member, serialize_member_type
-};
 
 // A geographic placed Chamber
 // (Immutable)
@@ -22,6 +19,7 @@ struct Map {
     #[key]
     entity_id: u128,
     bitmap: u256, // the actual map: 0=void/walls, 1=path
+    protected: u256,
     generator_name: felt252,
     generator_value: u32,
     // doors positions
@@ -31,25 +29,21 @@ struct Map {
     south: u8,
     over: u8,
     under: u8,
-    // monsters
+}
+
+// on-demand generated data from a Chamber
+// (on-demand)
+#[derive(Model, Copy, Drop, Serde)]
+struct MapData {
+    #[key]
+    location_id: u128,
     monsters: u256,
     slender_duck: u256,
     dark_tar: u256,
+    chest: u256,
 }
 
-// The current conditions of a Chamebr
-// (Mutable)
-#[derive(Model, Copy, Drop, Serde)]
-struct State {
-    #[key]
-    location_id: u128,
-    light: u8,
-    threat: u8,
-    wealth: u8,
-    wins: u8,
-}
-
-// The current conditions of a Chamebr
+// The current conditions of a Chamber
 // (Mutable)
 #[derive(Model, Copy, Drop, Serde)]
 struct Score {

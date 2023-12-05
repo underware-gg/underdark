@@ -4,6 +4,7 @@
 //
 
 import { Point } from "../components/ui/MapView"
+import { initialState } from "../hooks/UnderdarkContext"
 
 export enum Dir {
   North = 0,
@@ -53,6 +54,7 @@ export enum TileType {
 
 export interface Compass {
   roomId?: number,
+  realmId?: number,
   over?: number
   under?: number
   north?: number
@@ -120,7 +122,8 @@ export const compassToSlug = (compass: Compass | null, yonder: number = 0, separ
 export const compassToCoord = (compass: Compass | null): bigint => {
   let result = 0n
   if (compass && validateCompass(compass)) {
-    if (compass.roomId && compass.roomId > 0) result += BigInt(compass.roomId) << 96n
+    if (compass.roomId && compass.roomId > 0) result += BigInt(compass.roomId) << 112n
+    if (compass.realmId && compass.realmId > 0) result += BigInt(compass.realmId) << 96n
     if (compass.over && compass.over > 0) result += BigInt(compass.over) << 80n
     if (compass.under && compass.under > 0) result += BigInt(compass.under) << 64n
     if (compass.north && compass.north > 0) result += BigInt(compass.north) << 48n
@@ -131,15 +134,18 @@ export const compassToCoord = (compass: Compass | null): bigint => {
   return result
 }
 
+const coordMask = BigInt(0xffff)
+
 export const coordToCompass = (coord: bigint): Compass | null => {
   let result: Compass = {
-    roomId: Number((coord >> 96n) & BigInt(0xffffffff)),
-    over: Number((coord >> 80n) & BigInt(0xffff)),
-    under: Number((coord >> 64n) & BigInt(0xffff)),
-    north: Number((coord >> 48n) & BigInt(0xffff)),
-    east: Number((coord >> 32n) & BigInt(0xffff)),
-    west: Number((coord >> 16n) & BigInt(0xffff)),
-    south: Number(coord & BigInt(0xffff)),
+    roomId: Number((coord >> 112n) & coordMask),
+    realmId: Number((coord >> 96n) & coordMask),
+    over: Number((coord >> 80n) & coordMask),
+    under: Number((coord >> 64n) & coordMask),
+    north: Number((coord >> 48n) & coordMask),
+    east: Number((coord >> 32n) & coordMask),
+    west: Number((coord >> 16n) & coordMask),
+    south: Number(coord & coordMask),
   }
   return validatedCompass(result)
 }
@@ -183,14 +189,27 @@ export const offsetCoord = (coord: bigint, dir: Dir): bigint => {
 // Move to Crawler SDK
 //
 
-export const makeEntryChamberId = (): bigint => {
+export const makeRoomChamberId = (roomId: number, levelNumber: number): bigint => {
+  let compass = coordToCompass(initialState.manorCoord)
   const entryCoord = {
-    south: 1,
-    west: 1,
-    over: 0,
-    under: 0,
+    ...compass,
+    realmId: initialState.realmId,
+    roomId,
+    under: levelNumber,
   }
   return compassToCoord(entryCoord)
+}
+
+export const makeRoomName = (roomId: number, levelNumber: number): string => {
+  return `Room #${roomId} Level ${levelNumber}`
+}
+
+export const makeRoomUrl = (roomId: number, levelNumber: number): string => {
+  let url = `/room/${roomId}`
+  if (levelNumber > 1) {
+    url += `/${levelNumber}`
+  }
+  return url
 }
 
 export type TilemapGridSize = 18 | 20

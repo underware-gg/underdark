@@ -9,14 +9,14 @@ socials.x = "https://twitter.com/lootunderworld"
 [package]
 cairo-version = "2.3.0"
 name = "underdark"
-version = "0.2.0"
+version = "0.3.0"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
 # dojo = { git = "https://github.com/dojoengine/dojo.git", rev = "47c0cbcfa4ebd4d4b504ec959fdbcfd3e4271e8a" }
-dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.5" }
+dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.15" }
 
 
 [[target.dojo]]
@@ -25,7 +25,7 @@ dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.5" }
 initializer_class_hash = "0xbeef"
 
 [tool.dojo.env]
-world_address = "0x7006ea4fd2de52944def100605e48ba82b8c4d15a6bd5ef04fbc579d8b00076"
+world_address = "0x2d6bcc12cbb460243b73a4c937faf00ad2d071d899f40dfc9182843712f9c77"
 
 # Development
 # rpc_url = "http://localhost:5050/"
@@ -34,5 +34,5 @@ world_address = "0x7006ea4fd2de52944def100605e48ba82b8c4d15a6bd5ef04fbc579d8b000
 
 # SLOT
 rpc_url = "https://api.cartridge.gg/x/underdark/katana"
-account_address = "0x4e9c35bb113eaf274457edb2473437b02fe636f14c477aa110ba8d3626d3282"
-private_key = "0x45250d2d14c52cd1a7ad81e91d89550630ae90a3398ebf836bed3dcebc0cec3"
+account_address = "0x62dbeffaf8e06b6d92d7f81771db0885e369b3e4f1e8bec2c2d224447f6350d"
+private_key = "0x7cc4b51c84b53cddb21a723ff1ec647881691f185fe34edd92bd4459eb21eea"

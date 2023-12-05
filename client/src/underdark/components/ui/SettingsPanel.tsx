@@ -1,7 +1,6 @@
-import { useMemo } from 'react'
-import { useSettingsContext } from '../../hooks/SettingsContext'
-import { Col, Grid, Row } from '../Grid'
-import { ActionButton } from './UIButtons'
+import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
+import { Col, Grid, Row } from '@/underdark/components/Grid'
+import { SettingsButton } from '@/underdark/components/ui/Buttons'
 
 function SettingsPanel() {
   const { settings, SettingsActions } = useSettingsContext()
@@ -19,32 +18,5 @@ function SettingsPanel() {
     </Grid>
   )
 }
-
-
-//-------------------
-// Buttons
-//
-
-interface SettingsButtonProps {
-  prefix: string
-  name: string
-  value: boolean
-}
-
-function SettingsButton({
-  prefix,
-  name,
-  value,
-}: SettingsButtonProps) {
-  const { dispatch } = useSettingsContext()
-  const _switch = () => {
-    dispatch({
-      type: name,
-      payload: !value,
-    })
-  }
-  return <ActionButton fill dimmed={!value} label={`${prefix} ${value ? 'ON' : 'OFF'}`} onClick={() => _switch()} />
-}
-
 
 export default SettingsPanel

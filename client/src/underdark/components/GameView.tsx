@@ -1,15 +1,15 @@
-import { useEffect } from 'react'
-import { useDojoAccount, useDojoSystemCalls } from '../../DojoContext'
-import { useGameplayContext, GameState } from '../hooks/GameplayContext'
-import { useChamber, useChamberMap } from '../hooks/useChamber'
-import { useKeyDown } from '../hooks/useKeyDown'
-import { useUnderdarkContext } from '../hooks/UnderdarkContext'
-import { Dir, FlippedDir, TileType } from '../utils/underdark'
-import { bigintToHex, map } from '../utils/utils'
-import { getLevelParams } from '../data/levels'
-import GameCanvas from './GameCanvas'
-import { AudioName } from '../data/assets'
-import { useSettingsContext } from '../hooks/SettingsContext'
+import React, { useEffect } from 'react'
+import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
+import { useGameplayContext, GameState } from '@/underdark/hooks/GameplayContext'
+import { useChamber, useChamberMap } from '@/underdark/hooks/useChamber'
+import { useKeyDown } from '@/underdark/hooks/useKeyDown'
+import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
+import { Dir, FlippedDir, TileType } from '@/underdark/utils/underdark'
+import { bigintToHex, map } from '@/underdark/utils/utils'
+import { getLevelParams } from '@/underdark/data/levels'
+import GameCanvas from '@/underdark/components/GameCanvas'
+import { AudioName } from '@/underdark/data/assets'
+import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 
 
 const GameView = ({
@@ -18,7 +18,7 @@ const GameView = ({
 }) => {
 
   const { roomId, chamberId } = useUnderdarkContext()
-  const { gameTilemap } = useChamberMap(chamberId)
+  const { tilemap, gameTilemap } = useChamberMap(chamberId)
   const { yonder } = useChamber(chamberId)
   const { gameImpl, isLoaded, isPlaying, hasLight, light, playerPosition, dispatchReset } = useGameplayContext()
 
@@ -26,7 +26,9 @@ const GameView = ({
   // Start game!
   
   useEffect(() => {
-    dispatchReset(gameTilemap?.playerStart ?? null, false)
+    if (gameTilemap?.playerStart) {
+      dispatchReset(gameTilemap?.playerStart ?? null, false)
+    }
   }, [gameTilemap, roomId, chamberId])
 
   useEffect(() => {
@@ -70,9 +72,9 @@ const GameView = ({
     <div className='Relative GameView'>
       <MovePlayer />
       <GameCanvas guiEnabled={false} />
-      <GameTriggers />
+      <GameTriggers tilemap={tilemap} />
+      <GameControls tilemap={tilemap} />
       <GameAudios />
-      <GameControls />
     </div>
   )
 }
@@ -120,9 +122,10 @@ const _isAround = (tilemap, tile, type): number | undefined => {
   return undefined
 }
 
-const GameTriggers = () => {
+const GameTriggers = ({
+  tilemap,
+}) => {
   const { chamberId } = useUnderdarkContext()
-  const { tilemap } = useChamberMap(chamberId)
   const { sfxEnabled } = useSettingsContext()
   const {
     gameImpl, gameState, isPlaying, playerPosition, hasLight, health, stepCount, steps,
@@ -210,12 +213,12 @@ const GameTriggers = () => {
 
 const GameAudios = () => {
   const { musicEnabled, sfxEnabled} = useSettingsContext()
-  const { gameImpl, gameState, isPlaying, hasLight, playerPosition } = useGameplayContext()
+  const { gameImpl, gameState, isPlaying, isGameOver, hasLight, playerPosition } = useGameplayContext()
 
   useEffect(() => {
-    const _play = (isPlaying && hasLight && musicEnabled)
+    const _play = (isGameOver && musicEnabled)
     gameImpl?.playAudio(AudioName.AMBIENT, _play)
-  }, [isPlaying, hasLight, musicEnabled])
+  }, [isGameOver, musicEnabled])
 
   useEffect(() => {
     const _play = (isPlaying && sfxEnabled)
@@ -247,9 +250,9 @@ const GameAudios = () => {
 //--------------------
 // Keyboard controller
 //
-const GameControls = () => {
-  const { chamberId } = useUnderdarkContext()
-  const { tilemap } = useChamberMap(chamberId)
+const GameControls = ({
+  tilemap,
+}) => {
   const { isPlaying, playerPosition, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
 
   const directional = false

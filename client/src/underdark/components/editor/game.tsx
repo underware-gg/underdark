@@ -8,10 +8,10 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 //@ts-ignore
 // import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
-import { DepthPostShader } from '../../three/DepthPostShader'
-import { Point } from '../ui/MapView'
-import { MODELS_ASSETS, ModelName, loadAssets } from '../../data/assets'
-import { toRadians } from '../../utils/utils'
+import { DepthPostShader } from '@/underdark/three/DepthPostShader'
+import { Point } from '@/underdark/components/ui/MapView'
+import { MODELS_ASSETS, ModelName, loadAssets } from '@/underdark/data/assets'
+import { toRadians } from '@/underdark/utils/utils'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5

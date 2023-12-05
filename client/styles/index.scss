@@ -1,21 +1,27 @@
 
 $font-family: Menlo, monospace, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-$important: #fa0;
+$color-important: #b3ff00;
 // $ui-bg: #000a;
-$ui-color: #ddd;
-// $ui-border: 5px ridge $ui-color;
-$ui-border: 0.5px solid #444;
+$color-ui: #ddd;
+$color-bg: #030303;
+$color-panel: #1b201b80; //RealmsColors.BG
+$color-text: rgba(#faffcb, 0.9);
+$color-active: #cedf91;
+$color-inactive: #417154;
+$ui-border: 6px ridge $color-active;
+$ui-outline: 0.5px solid #444444;
+$text-shadow: 0.05em 0.05em 1px rgba($color-panel, 0.5);
 
 $game-width: 960px;
-$game-height: 480px;
-$ui-height: 240px;
+$game-height: 540px;
+$ui-height: 180px;
 $ui-compass-width: 360px;
 $ui-column: 60px;
 $ui-row: 40px;
 
 html {
-	overflow-y: scroll;
-	scroll-behavior: smooth;
+	overflow: scroll;
+	// scroll-behavior: smooth;
 }
 
 html, body {
@@ -30,8 +36,9 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: $color-bg;
+  color: $color-text;
+  text-shadow: $text-shadow;
 }
 
 body {
@@ -41,7 +48,6 @@ body {
   min-width: 320px;
   min-height: 100vh;
   transition: border-color 0.25s;
-  overflow: hidden;
 }
 
 #root {
@@ -52,21 +58,22 @@ body {
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: $color-important;
   text-decoration: inherit;
 }
 
 a:hover {
-  color: #535bf2;
+  color: $color-important;
 }
 
 h1 {
   font-size: 2.2em;
-  line-height: 0.5em;
 }
 
 h1, h2, h3, h4, h5 {
   font-family: $font-family;
+  line-height: 1.2em;
+  margin: 0.2em 0;
 }
 
 hr {
@@ -75,6 +82,9 @@ hr {
 }
 
 button {
+  background-color: $color-active;
+  color: $color-bg;
+  text-shadow: $text-shadow;
   border-radius: 2px;
   border: 1px solid transparent;
   padding: 0.5em 1.0em;
@@ -113,6 +123,9 @@ canvas {
 .NoBorder { border: 0!important }
 .Block { display: inline-block; }
 
+.NoMouse { pointer-events: none; }
+.YesMouse { pointer-events: auto; }
+
 .Anchor {
   cursor: pointer;
 }
@@ -126,18 +139,22 @@ canvas {
   min-height: 50px;
 }
 
+.Hidden {
+  display: none!important;
+}
 
 .Relative {
   position: relative;
 }
 
-.FillScreen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #0008;
+.App {
+	// font-family: $ec-font-titles;
+	min-width: 100vw;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .FillParent {
@@ -161,6 +178,17 @@ canvas {
 
 /* UNDERDARK  GENERIC */
 
+.Logo {
+  width: 440px;
+  height: 440px;
+}
+
+.ManorImage {
+  width: 256px;
+  height: 256px;
+  display: inline-block !important; // center
+}
+
 .DirectionButton {
   /* margin: 0.25em; */
   font-size: 24px;
@@ -174,19 +202,32 @@ canvas {
   padding: 0.1em 0.4em;
 }
 
+.LargeButton {
+  margin: 0 0.1em;
+  padding: 1em 2em;
+}
+
 .Locked {
-  background-color: #94631f;
+  background-color: $color-inactive;
 }
 .Unlocked {
-  background-color: #fbf6c0;
+  background-color: $color-active;
 }
 
 /* GAME CANVAS */
 
-.GameView {
+.GameContainer {
   width: $game-width;
   height: $game-height;
-  outline: 0.5px solid #444;
+  position: relative;
+}
+
+.GameView {
+  @extend .GameContainer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  // outline: 0.5px solid #444;
 }
 
 .GameCanvas {
@@ -196,30 +237,47 @@ canvas {
   background-color: #0000;
 }
 
+.Overlay {
+  background: linear-gradient(#0104, #010d);
+}
+
 
 /* GAME UI */
 
 .UI {
-  outline: $ui-border;
   vertical-align: middle;
+  text-align: center;
   margin: auto;
   padding: 0;
   margin: 0;
 }
 
-.GameUI {
+.UIBorder {
+  outline: $ui-border;
+}
+
+.GameUITop {
   @extend .UI;
-  display: block;
+  // display: block;
   width: $game-width;
   height: $ui-height;
-  outline: 0.5px solid #444;
+  position: absolute;
+  top: 0;
+  left: 0;
   border: 0;
+  // outline: 0.5px solid #444;
+}
+
+.GameUIBottom {
+  @extend .GameUITop;
+  top: unset;
+  bottom: 0;
 }
 
 .MapView {
-  width: $ui-height;
+  width: 100%;
   height: calc($ui-height - $ui-row);
-  background-color: #1b1b1b; //RealmsColors.BG
+  // background-color: $color-panel;
 }
 
 .RoomPanel {
@@ -230,14 +288,16 @@ canvas {
 .InfoPanel {
   width: $ui-compass-width;
   height: calc($ui-height - $ui-row);
-  background-color: #1b1b1b; //RealmsColors.BG
+  // background-color: $color-panel;
 }
 
 .CompassUI {
+  background-color: $color-inactive;
   width: $ui-compass-width;
   height: $ui-row;
   font-size: 2.25em;
   padding: 0.2em 0 0 0;
+  text-align: center;
 }
 
 .RowUI{
@@ -251,6 +311,19 @@ canvas {
   height: 100%;
   vertical-align: bottom;
   margin: auto;
+  position: relative;
+}
+.ColUIContents {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.ColUISlider {
+  background-color: rgba($color-important, 0.5);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .ButtonUI{
@@ -264,8 +337,9 @@ canvas {
   margin: auto;
 }
 .InfoBottom {
+  @extend .AlignMiddle;
+  // height: calc($ui-height - $ui-row);
   width: 80%;
-  height: calc($ui-height - $ui-row - $ui-row);
   margin: auto;
 }
 
@@ -278,6 +352,6 @@ canvas {
   left: calc(100vh - 100px);
   width: 500px;
   height: 200px;
-  background-color: #242424;
+  background-color: $color-bg;
 }
 

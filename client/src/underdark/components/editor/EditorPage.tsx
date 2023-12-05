@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
-import { MapColors } from '../../data/colors'
-import { bigintToHex } from '../../utils/utils'
+import { MapColors } from '@/underdark/data/colors'
+import { bigintToHex } from '@/underdark/utils/utils'
 
 function EditorPage() {
   return (
@@ -34,7 +34,7 @@ function EditorMap() {
     const x = index % 16
     const y = Math.floor(index / 16)
     const bit = tilemap[index]
-    const fill = bit ? MapColors.LOCKED : ((x + y) % 2 == 0) ? MapColors.BG1 : MapColors.BG2
+    const fill = bit ? MapColors.LOCKED : ((x + y) % 2 == 0) ? MapColors.BG2 : MapColors.BG3
     const stroke = activeTile == index ? '#fff' : MapColors.BG1
     return <rect
       key={`t_${index}`}
@@ -52,7 +52,7 @@ function EditorMap() {
   }
 
   return (
-    <div>
+    <div className='AlignCenter'>
       <svg width='400' height='400' viewBox={`0 0 16 16`}>
         <style>{`svg{background-color:${MapColors.BG1}}`}</style>
         {/* @ts-ignore */}
