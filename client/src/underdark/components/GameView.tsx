@@ -213,12 +213,12 @@ const GameTriggers = ({
 
 const GameAudios = () => {
   const { musicEnabled, sfxEnabled} = useSettingsContext()
-  const { gameImpl, gameState, isPlaying, hasLight, playerPosition } = useGameplayContext()
+  const { gameImpl, gameState, isPlaying, isGameOver, hasLight, playerPosition } = useGameplayContext()
 
   useEffect(() => {
-    const _play = (isPlaying && hasLight && musicEnabled)
+    const _play = (isGameOver && musicEnabled)
     gameImpl?.playAudio(AudioName.AMBIENT, _play)
-  }, [isPlaying, hasLight, musicEnabled])
+  }, [isGameOver, musicEnabled])
 
   useEffect(() => {
     const _play = (isPlaying && sfxEnabled)
