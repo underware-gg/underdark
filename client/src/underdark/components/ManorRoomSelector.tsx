@@ -9,7 +9,6 @@ import { bigintToHex } from '@/underdark/utils/utils'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { GenerateRoomButton } from '@/underdark/components/ui/Buttons'
 import ScoreBoard from '@/underdark/components/ui/ScoreBoard'
-import { MAX_GAMES } from './ui/RoomSelector'
 import { useGameplayContext } from '../hooks/GameplayContext'
 
 const Row = Grid.Row
@@ -29,7 +28,7 @@ function ManorRoomSelector() {
 
 
 function Rooms() {
-  const { roomId: selectedRoomId } = useUnderdarkContext()
+  const { roomId: selectedRoomId, maxRooms } = useUnderdarkContext()
   const { roomIds } = useAllRoomIds()
 
   const listedRoomIds = useMemo(() => {
@@ -63,7 +62,7 @@ function Rooms() {
       }
     })
     // random
-    const newRoomId = Math.floor(Math.random() * MAX_GAMES) + 1
+    const newRoomId = Math.floor(Math.random() * maxRooms) + 1
     result.push(
       <RoomRow key={`row_random`}
         roomId={-1}

@@ -10,12 +10,14 @@ import { makeRoomChamberId } from '../utils/underdark'
 // Constants
 //
 export const initialState = {
+  // constants
   realmId: 5962,                        // Sissisnorsis
   manorCoord: BigInt('0x39400000385'),  // Kurnkunor, S901,E916
+  maxRooms: 10000,
+  logo: '/pubic/logo.png',
+  // game state
   roomId: 1,
   chamberId: 0n,
-  // constants
-  logo: '/pubic/logo.png',
 }
 
 const UnderdarkActions = {
@@ -27,12 +29,14 @@ const UnderdarkActions = {
 // Types
 //
 type UnderdarkStateType = {
+  // constants
   realmId: number
   manorCoord: bigint
+  maxRooms: number
+  logo: string
+  // game state
   roomId: number
   chamberId: bigint
-  // constants
-  logo: string
 }
 
 type ActionType =
