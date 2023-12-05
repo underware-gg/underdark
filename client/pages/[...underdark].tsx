@@ -68,7 +68,7 @@ export default function UnderdarkPage() {
       // invalid route
       router.push('/')
     }
-    return <></>
+    // return <></> // causes hydration error
   }
 
   const _inManor = (page == 'manor')
