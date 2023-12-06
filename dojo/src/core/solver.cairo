@@ -1,10 +1,10 @@
 use debug::PrintTrait;
 use array::ArrayTrait;
-use dict::{ Felt252DictTrait};
+use dict::{Felt252DictTrait};
 use traits::Into;
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::utils::bitmap::{Bitmap};
-use underdark::utils::arrays::{create_array};
+use underdark::utils::arrays::{array_utils};
 use underdark::utils::math::{Math32};
 
 
@@ -78,9 +78,6 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8, ordered: bool) -> Array<u8> {
                 path.append(p.try_into().unwrap());
                 tile = p;
             };
-            if (ordered) {
-                // TODO: invert path
-            }
             break;
         }
 
@@ -117,7 +114,7 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8, ordered: bool) -> Array<u8> {
     };
     // path.len().print();
 
-    (path)
+    if (ordered) { array_utils::reverse(path.span()) } else { (path) }
 }
 
 fn is_map_solvable(bitmap: u256, entry: u8, exit: u8) -> bool {
@@ -268,6 +265,28 @@ mod tests {
         assert(solve_map(MASK::ALL, xy15, y15, false).len() == 16, 'xy15_y15');
         assert(solve_map(MASK::ALL, x15, xy15, false).len() == 16, 'y15_xy15');
         assert(solve_map(MASK::ALL, y15, xy15, false).len() == 16, 'y15_xy15');
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_path() {
+        let path1: Array<u8> = solve_map(MASK::ALL, 55, 55, false);
+        assert(path1.len() == 1, '1_len');
+        assert(*path1[0] == 55, '1_0');
+        let path1_ord: Array<u8> = solve_map(MASK::ALL, 55, 55, true);
+        assert(path1_ord.len() == 1, '1_len_inv');
+        assert(*path1_ord[0] == 55, '1_0_inv');
+        
+        let path2: Array<u8> = solve_map(MASK::ALL, 80, 82, false);
+        assert(path2.len() == 3, '2_len');
+        assert(*path2[0] == 82, '2_0');
+        assert(*path2[1] == 81, '2_0');
+        assert(*path2[2] == 80, '2_0');
+        let path2_ord: Array<u8> = solve_map(MASK::ALL, 80, 82, true);
+        assert(path2_ord.len() == 3, '2_len_inv');
+        assert(*path2_ord[0] == 80, '2_0_inv');
+        assert(*path2_ord[1] == 81, '2_0_inv');
+        assert(*path2_ord[2] == 82, '2_0_inv');
     }
 
     #[test]
