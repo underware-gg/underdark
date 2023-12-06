@@ -15,6 +15,9 @@ use underdark::utils::math::{Math32};
 // https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 //
 
+const STACKED: u8 = 1;
+const BURNED: u8 = 2;
+
 fn solve_map(bitmap: u256, entry: u8, exit: u8) -> Array<u8> {
     let (in_x, in_y): (usize, usize) = Bitmap::tile_to_xy(entry.into());
     let (out_x, out_y): (usize, usize) = Bitmap::tile_to_xy(exit.into());
@@ -23,13 +26,12 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8) -> Array<u8> {
     let mut G: Felt252Dict<usize> = Default::default();
     let mut H: Felt252Dict<usize> = Default::default();
     let mut parent: Felt252Dict<usize> = Default::default();
-    let mut stacked: Felt252Dict<u8> = Default::default();
-    let mut burned: Felt252Dict<u8> = Default::default();
+    let mut status: Felt252Dict<u8> = Default::default();
     
     let mut stack: Array<usize> = ArrayTrait::new();
 
     // first node is entry
-    stacked.insert(entry.into(), 1);
+    status.insert(entry.into(), STACKED);
     stack.append(entry.into());
 
     // result
@@ -39,16 +41,16 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8) -> Array<u8> {
     loop {
         let mut current_tile: usize = 0;
 
-        let stack_span = stack.span();
-
         // pick best score node from stack
+        let stack_span = stack.span();
         let mut current_f: usize = 0xffff; // impossible value
         let mut i: usize = 0;
         loop {
             if (i == stack_span.len()) { break; }
             let tile: usize = *stack_span.at(i);
             let f: usize = F.get(tile.into());
-            if (burned.get(tile.into()) == 0 && (f < current_f || current_f == 0xffff)) {
+            // skip burned, choose best F score
+            if (status.get(tile.into()) != BURNED && (f < current_f || current_f == 0xffff)) {
                 current_tile = tile;
                 current_f = f;
             }
@@ -59,7 +61,7 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8) -> Array<u8> {
         if (current_f == 0xffff) { break; }
 
         // burn found node
-        burned.insert(current_tile.into(), 1);
+        status.insert(current_tile.into(), BURNED);
 
         // found the exit!
         if (current_tile == exit.into()) {
@@ -95,16 +97,16 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8) -> Array<u8> {
             if (i == cross.len()) { break; }
             let (cx, cy) : (usize, usize) = *cross.at(i);
             let tile: usize = Bitmap::xy_to_tile(cx, cy);
-            if (Bitmap::is_set_tile(bitmap, tile) && burned.get(tile.into()) == 0) {
+            if (Bitmap::is_set_tile(bitmap, tile) && status.get(tile.into()) != BURNED) {
                 let g: usize = current_g + 1;
-                if (stacked.get(tile.into()) == 0 || g < G.get(tile.into())) {
+                if (status.get(tile.into()) == 0 || g < G.get(tile.into())) {
                     let h: usize = Math32::squaredDistance(cx, cy, out_x, out_y);
                     let f: usize = g + h;
                     F.insert(tile.into(), f);
                     G.insert(tile.into(), g);
                     H.insert(tile.into(), h);
                     parent.insert(tile.into(), current_tile);
-                    stacked.insert(tile.into(), 0);
+                    status.insert(tile.into(), STACKED);
                     stack.append(tile.into());
                 }
             }
