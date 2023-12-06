@@ -18,7 +18,7 @@ use underdark::utils::math::{Math32};
 const STACKED: u8 = 1;
 const BURNED: u8 = 2;
 
-fn solve_map(bitmap: u256, entry: u8, exit: u8) -> Array<u8> {
+fn solve_map(bitmap: u256, entry: u8, exit: u8, ordered: bool) -> Array<u8> {
     let (in_x, in_y): (usize, usize) = Bitmap::tile_to_xy(entry.into());
     let (out_x, out_y): (usize, usize) = Bitmap::tile_to_xy(exit.into());
 
@@ -78,7 +78,9 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8) -> Array<u8> {
                 path.append(p.try_into().unwrap());
                 tile = p;
             };
-            // TODO: invert path
+            if (ordered) {
+                // TODO: invert path
+            }
             break;
         }
 
@@ -119,11 +121,11 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8) -> Array<u8> {
 }
 
 fn is_map_solvable(bitmap: u256, entry: u8, exit: u8) -> bool {
-    (solve_map(bitmap, entry, exit).len() > 0)
+    (solve_map(bitmap, entry, exit, false).len() > 0)
 }
 
 fn solve_map_as_bitmap(bitmap: u256, entry: u8, exit: u8) -> u256 {
-    let path: Array<u8> = solve_map(bitmap, entry, exit);
+    let path: Array<u8> = solve_map(bitmap, entry, exit, false);
     let mut result = 0;
     let mut i: usize = 0;
     loop {
@@ -144,7 +146,22 @@ fn solve_map_as_bitmap(bitmap: u256, entry: u8, exit: u8) -> u256 {
 #[cfg(test)]
 mod tests {
     use debug::PrintTrait;
+    use dojo::world::{IWorldDispatcherTrait, IWorldDispatcher};
+    use underdark::types::constants::{REALM_ID, MANOR_COORD};
     use underdark::utils::bitmap::{Bitmap, MASK};
+    use underdark::models::chamber::{Chamber, Map, MapData, Score};
+    use underdark::types::location::{Location, LocationTrait};
+    use underdark::types::doors::{Doors};
+    use underdark::tests::utils::utils::{
+        setup_world,
+        generate_level_get_chamber,
+        get_world_Chamber,
+        get_world_Map,
+        get_world_MapData,
+        get_world_Score,
+        get_world_Doors_as_Tiles,
+        get_world_Tile_type,
+    };
     use underdark::core::solver::{
         solve_map,
         is_map_solvable,
@@ -176,35 +193,35 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     fn test_path_count() {
-        assert(solve_map(MASK::ALL, 0, 0).len() == 1, '0_0');
-        assert(solve_map(MASK::ALL, 0, 1).len() == 2, '0_1');
-        assert(solve_map(MASK::ALL, 0, 8).len() == 9, '0_8');
-        assert(solve_map(MASK::ALL, 0, 16).len() == 2, '0_16');
-        assert(solve_map(MASK::ALL, 0, 15).len() == 16, '0_15');
-        assert(solve_map(MASK::ALL, 1, 0).len() == 2, '1_0');
-        assert(solve_map(MASK::ALL, 8, 0).len() == 9, '8_0');
-        assert(solve_map(MASK::ALL, 16, 0).len() == 2, '16_0');
-        assert(solve_map(MASK::ALL, 15, 0).len() == 16, '15_0');
+        assert(solve_map(MASK::ALL, 0, 0, false).len() == 1, '0_0');
+        assert(solve_map(MASK::ALL, 0, 1, false).len() == 2, '0_1');
+        assert(solve_map(MASK::ALL, 0, 8, false).len() == 9, '0_8');
+        assert(solve_map(MASK::ALL, 0, 16, false).len() == 2, '0_16');
+        assert(solve_map(MASK::ALL, 0, 15, false).len() == 16, '0_15');
+        assert(solve_map(MASK::ALL, 1, 0, false).len() == 2, '1_0');
+        assert(solve_map(MASK::ALL, 8, 0, false).len() == 9, '8_0');
+        assert(solve_map(MASK::ALL, 16, 0, false).len() == 2, '16_0');
+        assert(solve_map(MASK::ALL, 15, 0, false).len() == 16, '15_0');
 
-        assert(solve_map(MASK::ALL, 16, 16).len() == 1, '16_16');
-        assert(solve_map(MASK::ALL, 16, 16+1).len() == 2, '16_16+1');
-        assert(solve_map(MASK::ALL, 16, 16+8).len() == 9, '16_16+8');
-        assert(solve_map(MASK::ALL, 16, 16+15).len() == 16, '16_16+15');
-        assert(solve_map(MASK::ALL, 16+1, 16).len() == 2, '16+1_16');
-        assert(solve_map(MASK::ALL, 16+8, 16).len() == 9, '16+8_16');
-        assert(solve_map(MASK::ALL, 16+15, 16).len() == 16, '16+15_16');
+        assert(solve_map(MASK::ALL, 16, 16, false).len() == 1, '16_16');
+        assert(solve_map(MASK::ALL, 16, 16+1, false).len() == 2, '16_16+1');
+        assert(solve_map(MASK::ALL, 16, 16+8, false).len() == 9, '16_16+8');
+        assert(solve_map(MASK::ALL, 16, 16+15, false).len() == 16, '16_16+15');
+        assert(solve_map(MASK::ALL, 16+1, 16, false).len() == 2, '16+1_16');
+        assert(solve_map(MASK::ALL, 16+8, 16, false).len() == 9, '16+8_16');
+        assert(solve_map(MASK::ALL, 16+15, 16, false).len() == 16, '16+15_16');
         
         let x15: u8 = Bitmap::xy_to_tile(15, 0).try_into().unwrap();
         let y15: u8 = Bitmap::xy_to_tile(0, 15).try_into().unwrap();
         let xy15: u8 = Bitmap::xy_to_tile(15, 15).try_into().unwrap();
-        assert(solve_map(MASK::ALL, 0, x15).len() == 16, '0_x15');
-        assert(solve_map(MASK::ALL, 0, y15).len() == 16, '0_y15');
-        assert(solve_map(MASK::ALL, x15, 0).len() == 16, 'x15_0');
-        assert(solve_map(MASK::ALL, y15, 0).len() == 16, 'y15_0');
-        assert(solve_map(MASK::ALL, xy15, x15).len() == 16, 'xy15_y15');
-        assert(solve_map(MASK::ALL, xy15, y15).len() == 16, 'xy15_y15');
-        assert(solve_map(MASK::ALL, x15, xy15).len() == 16, 'y15_xy15');
-        assert(solve_map(MASK::ALL, y15, xy15).len() == 16, 'y15_xy15');
+        assert(solve_map(MASK::ALL, 0, x15, false).len() == 16, '0_x15');
+        assert(solve_map(MASK::ALL, 0, y15, false).len() == 16, '0_y15');
+        assert(solve_map(MASK::ALL, x15, 0, false).len() == 16, 'x15_0');
+        assert(solve_map(MASK::ALL, y15, 0, false).len() == 16, 'y15_0');
+        assert(solve_map(MASK::ALL, xy15, x15, false).len() == 16, 'xy15_y15');
+        assert(solve_map(MASK::ALL, xy15, y15, false).len() == 16, 'xy15_y15');
+        assert(solve_map(MASK::ALL, x15, xy15, false).len() == 16, 'y15_xy15');
+        assert(solve_map(MASK::ALL, y15, xy15, false).len() == 16, 'y15_xy15');
     }
 
     #[test]
@@ -224,4 +241,29 @@ mod tests {
         assert(solve_map_as_bitmap(MASK::ALL, xy15, 15) == MASK::RIGHT_COL, 'RIGHT_COL_i');
         assert(solve_map_as_bitmap(MASK::ALL, xy15, y15) == MASK::BOTTOM_ROW, 'BOTTOM_ROW_i');
     }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_binary_tree() {
+        let (world, system) = setup_world();
+        let room_id: u16 = 1;
+
+        let mut i: u16 = 0;
+        loop {
+            if (i < 6) { break; }
+            // 1st chamber: entry from above, all other locked
+            let level_number: u16 = i + 1;
+            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, level_number, 'binary_tree_classic', 0);
+            let map: Map = get_world_Map(world, chamber1.location_id);
+            let tiles: Doors = get_world_Doors_as_Tiles(world, chamber1.location_id);
+            assert(tiles.over != 0, 'has entry');
+            assert(tiles.under != 0, 'has exit');
+            let path = solve_map(map.bitmap, tiles.over, tiles.under, false);
+            assert(path.len() > 15, 'binary_tree');
+            i += 1;
+        };
+    }
+
+
+
 }
