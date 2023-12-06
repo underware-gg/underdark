@@ -190,8 +190,8 @@ mod tests {
         let player = starknet::get_caller_address();
         let room_id: u16 = 1;
 
-        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 1, 'empty', 0);
-        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 2, 'empty', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, 1, MANOR_COORD, 'empty', 0);
+        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, room_id, 2, MANOR_COORD, 'empty', 0);
         
         // check test if chamber is correct
         let map: Map = get_world_Map(world, chamber2.location_id);

@@ -23,7 +23,7 @@ mod tests {
     #[available_gas(1_000_000_000)]
     fn test_generate_level() {
         let (world, system) = setup_world();
-        execute_generate_level(world, system, REALM_ID, MANOR_COORD, 1, 1, 'entry', 0);
+        execute_generate_level(world, system, REALM_ID, 1, 1, MANOR_COORD, 'entry', 0);
 
         // check Chamber component
         let location: Location = LocationTrait::from_coord(REALM_ID, 1, 1, MANOR_COORD);
@@ -47,7 +47,7 @@ mod tests {
     fn test_mint_realms_invalid_generator() {
         let (world, system) = setup_world();
         // first chamber will always use the 'entry' generator (not on Underdark!)
-        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, 1, 1, 'the_invalid_generator', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'the_invalid_generator', 0);
         // now a bad generator to panic...
         // let chamber2 = generate_level_get_chamber(world, system, 1, 2, 'the_invalid_generator', 0);
     }
@@ -56,9 +56,9 @@ mod tests {
     #[available_gas(10_000_000_000)]
     fn test_yonder() {
         let (world, system) = setup_world();
-        let chamber_y1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, 1, 1, 'entry', 0);
-        let chamber_y2: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, 1, 2, 'seed', 0);
-        let chamber_y3: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, 1, 3, 'seed', 0);
+        let chamber_y1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'entry', 0);
+        let chamber_y2: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 2, MANOR_COORD, 'seed', 0);
+        let chamber_y3: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 3, MANOR_COORD, 'seed', 0);
         assert(chamber_y1.yonder == 1, 'chamber_y1');
         assert(chamber_y2.yonder == 2, 'chamber_y2');
         assert(chamber_y3.yonder == 3, 'chamber_y3');
@@ -69,19 +69,19 @@ mod tests {
     #[available_gas(1_000_000_000)]
     fn test_generate_level_already_exists() {
         let (world, system) = setup_world();
-        execute_generate_level(world, system, REALM_ID, MANOR_COORD, 1, 1, 'entry', 0);
-        execute_generate_level(world, system, REALM_ID, MANOR_COORD, 1, 1, 'entry', 0);
+        execute_generate_level(world, system, REALM_ID, 1, 1, MANOR_COORD, 'entry', 0);
+        execute_generate_level(world, system, REALM_ID, 1, 1, MANOR_COORD, 'entry', 0);
     }
 
     #[test]
     #[available_gas(1_000_000_000)]
     fn test_seed_diversity() {
         let (world, system) = setup_world();
-        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, 1, 1, 'entry', 0);
-        let chamber2: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, 1, 2, 'entry', 0);
-        let chamber3: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, 2, 1, 'entry', 0);
-        let chamber4: Chamber = generate_level_get_chamber(world, system, REALM_ID+1, MANOR_COORD, 1, 1, 'entry', 0);
-        let chamber5: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD+1, 1, 1, 'entry', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'entry', 0);
+        let chamber2: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 2, MANOR_COORD, 'entry', 0);
+        let chamber3: Chamber = generate_level_get_chamber(world, system, REALM_ID, 2, 1, MANOR_COORD, 'entry', 0);
+        let chamber4: Chamber = generate_level_get_chamber(world, system, REALM_ID+1, 1, 1, MANOR_COORD, 'entry', 0);
+        let chamber5: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD+1, 'entry', 0);
         assert(chamber1.seed != chamber2.seed, 'Chamber: bad seed 1 == 2');
         assert(chamber1.seed != chamber3.seed, 'Chamber: bad seed 1 == 3');
         assert(chamber1.seed != chamber4.seed, 'Chamber: bad seed 1 == 4');

@@ -11,10 +11,10 @@ export function createSystemCalls(
   // { Chamber, Map }: ClientComponents,
 ) {
 
-  const generate_level = async (signer: Account, realmId: number, coord: bigint, roomId: number, levelNumber: number, generator_name: string, generator_value: number): Promise<boolean> => {
+  const generate_level = async (signer: Account, realmId: number, roomId: number, levelNumber: number, coord: bigint, generator_name: string, generator_value: number): Promise<boolean> => {
     let success = false
     try {
-      const args = [realmId, coord, roomId, levelNumber, shortString.encodeShortString(generator_name), generator_value]
+      const args = [realmId, roomId, levelNumber, coord, shortString.encodeShortString(generator_name), generator_value]
 
       const tx = await execute(signer, 'actions', 'generate_level', args)
       console.log(`generate_level tx:`, tx)

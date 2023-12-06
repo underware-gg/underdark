@@ -19,16 +19,16 @@ mod tests {
     #[test]
     #[available_gas(1_000_000)]
     fn test_location_constants() {
-        assert(CONSTANTS::OFFSET::ROOM_ID == (16 * 7), 'CONSTANTS::OFFSET::ROOM_ID');
-        assert(CONSTANTS::OFFSET::REALM_ID == (16 * 6), 'CONSTANTS::OFFSET::REALM_ID');
+        assert(CONSTANTS::OFFSET::REALM_ID == (16 * 7), 'CONSTANTS::OFFSET::REALM_ID');
+        assert(CONSTANTS::OFFSET::ROOM_ID == (16 * 6), 'CONSTANTS::OFFSET::ROOM_ID');
         assert(CONSTANTS::OFFSET::OVER == (16 * 5), 'CONSTANTS::OFFSET::OVER');
         assert(CONSTANTS::OFFSET::UNDER == (16 * 4), 'CONSTANTS::OFFSET::UNDER');
         assert(CONSTANTS::OFFSET::NORTH == (16 * 3), 'CONSTANTS::OFFSET::NORTH');
         assert(CONSTANTS::OFFSET::EAST == (16 * 2), 'CONSTANTS::OFFSET::EAST');
         assert(CONSTANTS::OFFSET::WEST == (16 * 1), 'CONSTANTS::OFFSET::WEST');
         assert(CONSTANTS::OFFSET::SOUTH == (16 * 0), 'CONSTANTS::OFFSET::SOUTH');
-        assert(CONSTANTS::MASK::ROOM_ID == U128Bitwise::shl(0xffff, 16 * 7), 'CONSTANTS::MASK::ROOM_ID');
-        assert(CONSTANTS::MASK::REALM_ID == U128Bitwise::shl(0xffff, 16 * 6), 'CONSTANTS::MASK::REALM_ID');
+        assert(CONSTANTS::MASK::REALM_ID == U128Bitwise::shl(0xffff, 16 * 7), 'CONSTANTS::MASK::REALM_ID');
+        assert(CONSTANTS::MASK::ROOM_ID == U128Bitwise::shl(0xffff, 16 * 6), 'CONSTANTS::MASK::ROOM_ID');
         assert(CONSTANTS::MASK::OVER == U128Bitwise::shl(0xffff, 16 * 5), 'CONSTANTS::MASK::OVER');
         assert(CONSTANTS::MASK::UNDER == U128Bitwise::shl(0xffff, 16 * 4), 'CONSTANTS::MASK::UNDER');
         assert(CONSTANTS::MASK::NORTH == U128Bitwise::shl(0xffff, 16 * 3), 'CONSTANTS::MASK::NORTH');

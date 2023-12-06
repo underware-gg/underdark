@@ -8,21 +8,22 @@ use underdark::types::dir::{Dir, DIR, DirTrait};
 trait IActions<TContractState> {
     fn generate_level(self: @TContractState,
         realm_id: u16,
-        manor_coord: u128,
         room_id: u16,
         level_number: u16,
+        manor_coord: u128,
         generator_name: felt252,
         generator_value_u128: u128,
     );
-    fn generate_map_data(self: @TContractState,
-        location_id: u128,
-    ) -> MapData;
     fn finish_level(self: @TContractState,
         location_id: u128,
         proof_low: u128,
         proof_high: u128,
         moves_count: usize,
     );
+    // read-only calls
+    fn generate_map_data(self: @TContractState,
+        location_id: u128,
+    ) -> MapData;
 }
 
 #[dojo::contract]
@@ -43,9 +44,9 @@ mod actions {
     impl ActionsImpl of IActions<ContractState> {
         fn generate_level(self: @ContractState,
             realm_id: u16,
-            manor_coord: u128,
             room_id: u16,
             level_number: u16,
+            manor_coord: u128,
             generator_name: felt252,
             generator_value_u128: u128,
         ) {
@@ -54,6 +55,28 @@ mod actions {
             generate_chamber(world, room_id, level_number, location, generator_name, generator_value_u128.try_into().unwrap());
             return ();
         }
+
+        fn finish_level(self: @ContractState,
+            location_id: u128,
+            proof_low: u128,
+            proof_high: u128,
+            moves_count: usize,
+        ) {
+            let world: IWorldDispatcher = self.world_dispatcher.read();
+            let caller = starknet::get_caller_address();
+
+            let proof = u256 {
+                low: proof_low,
+                high: proof_high,
+            };
+            verify_level_proof(world, location_id, caller, proof, moves_count);
+
+            return ();
+        }
+
+        //
+        // read-only calls
+        //
 
         fn generate_map_data(self: @ContractState,
             location_id: u128,
@@ -77,22 +100,7 @@ mod actions {
             }
         }
 
-        fn finish_level(self: @ContractState,
-            location_id: u128,
-            proof_low: u128,
-            proof_high: u128,
-            moves_count: usize,
-        ) {
-            let world: IWorldDispatcher = self.world_dispatcher.read();
-            let caller = starknet::get_caller_address();
 
-            let proof = u256 {
-                low: proof_low,
-                high: proof_high,
-            };
-            verify_level_proof(world, location_id, caller, proof, moves_count);
 
-            return ();
-        }
     }
 }

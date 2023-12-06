@@ -949,7 +949,7 @@
     {
       "name": "actions",
       "address": "0x3da4bf86342c340fd1dd590cd5505248af77006db7d74912ac50d7e7374496b",
-      "class_hash": "0x5f9f8c6350679e4bb08c246180424fd61562e6068cd89a365f6fbc57cff6f8",
+      "class_hash": "0x53a9ebeb40efece051c229ab7d0bf442a434a293831f8df0cda3d7bf908417d",
       "abi": [
         {
           "type": "impl",
@@ -1041,16 +1041,16 @@
                   "type": "core::integer::u16"
                 },
                 {
-                  "name": "manor_coord",
-                  "type": "core::integer::u128"
-                },
-                {
                   "name": "room_id",
                   "type": "core::integer::u16"
                 },
                 {
                   "name": "level_number",
                   "type": "core::integer::u16"
+                },
+                {
+                  "name": "manor_coord",
+                  "type": "core::integer::u128"
                 },
                 {
                   "name": "generator_name",
@@ -1062,22 +1062,6 @@
                 }
               ],
               "outputs": [],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "generate_map_data",
-              "inputs": [
-                {
-                  "name": "location_id",
-                  "type": "core::integer::u128"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "underdark::models::chamber::MapData"
-                }
-              ],
               "state_mutability": "view"
             },
             {
@@ -1102,6 +1086,22 @@
                 }
               ],
               "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "generate_map_data",
+              "inputs": [
+                {
+                  "name": "location_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "underdark::models::chamber::MapData"
+                }
+              ],
               "state_mutability": "view"
             }
           ]

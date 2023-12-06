@@ -54,20 +54,20 @@ mod tests {
         let room_id: u16 = 1;
 
         // 1st chamber: entry from above, all other locked
-        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 1, 'seed', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, 1, MANOR_COORD, 'seed', 0);
         // assert_doors('entry', world, chamber1.location_id, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::ENTRY, 0);
         assert_doors('entry', world, chamber1.location_id);
 
         // move WEST
-        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 2, 'binary_tree_classic', 0);
+        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, room_id, 2, MANOR_COORD, 'binary_tree_classic', 0);
         assert_doors('level_2', world, chamber2.location_id);
 
         // move NORTH
-        let chamber3 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 3, 'seed', 0);
+        let chamber3 = generate_level_get_chamber(world, system, REALM_ID, room_id, 3, MANOR_COORD, 'seed', 0);
         assert_doors('level_3', world, chamber3.location_id);
 
         // move EAST
-        let chamber4 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 4, 'seed', 0);
+        let chamber4 = generate_level_get_chamber(world, system, REALM_ID, room_id, 4, MANOR_COORD, 'seed', 0);
         assert_doors('level_4', world, chamber4.location_id);
     }
 
@@ -115,7 +115,7 @@ mod tests {
             if (i >= 10) { break; }
             // 1st chamber: entry from above, all other locked
             let level_number: u16 = i + 1;
-            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, level_number, 'binary_tree_classic', 0);
+            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, level_number, MANOR_COORD, 'binary_tree_classic', 0);
             let map: Map = get_world_Map(world, chamber1.location_id);
             let map_data: MapData = get_world_MapData(world, system, chamber1.location_id);
             // no monsters wall overlaps

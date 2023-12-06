@@ -101,7 +101,7 @@ export function GenerateRoomButton({
 
   const _generate = async () => {
     const _level = getLevelParams(levelNumber)
-    const success = await generate_level(account, realmId, manorCoord, roomId, levelNumber, _level.generatorName, _level.generatorValue)
+    const success = await generate_level(account, realmId, roomId, levelNumber, manorCoord, _level.generatorName, _level.generatorValue)
     if (success) {
       console.log(`GENERATED... TODO: START GAME`)
     }

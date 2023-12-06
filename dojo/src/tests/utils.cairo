@@ -23,16 +23,16 @@ mod utils {
         (world, IActionsDispatcher { contract_address })
     }
 
-    fn execute_generate_level(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, manor_coord: u128, room_id: u16, level_number: u16, generator_name: felt252, generator_value: u32) {
-        system.generate_level(realm_id, manor_coord, room_id, level_number, generator_name, generator_value.into());
+    fn execute_generate_level(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, room_id: u16, level_number: u16, manor_coord: u128, generator_name: felt252, generator_value: u32) {
+        system.generate_level(realm_id, room_id, level_number, manor_coord, generator_name, generator_value.into());
     }
 
     fn execute_finish_level(world: IWorldDispatcher, system: IActionsDispatcher, location_id: u128, proof: u256, moves_count: usize) {
         system.finish_level(location_id, proof.low, proof.high, moves_count);
     }
 
-    fn generate_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, manor_coord: u128, room_id: u16, level_number: u16, generator_name: felt252, generator_value: u32) -> Chamber {
-        execute_generate_level(world, system, realm_id, manor_coord, room_id, level_number, generator_name, generator_value);
+    fn generate_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, room_id: u16, level_number: u16, manor_coord: u128, generator_name: felt252, generator_value: u32) -> Chamber {
+        execute_generate_level(world, system, realm_id, room_id, level_number, manor_coord, generator_name, generator_value);
         let location: Location = LocationTrait::from_coord(realm_id, room_id, level_number, manor_coord);
         get_world_Chamber(world, location.to_id())
     }
