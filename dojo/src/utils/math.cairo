@@ -3,6 +3,7 @@ trait MathTrait<T> {
     fn min(v1: T, v2: T) -> T;
     fn max(v1: T, v2: T) -> T;
     fn pow(base: T, exp: T) -> T;
+    fn squaredDistance(x1: T, y1: T, x2: T, y2: T) -> T;
 }
 
 impl Math8 of MathTrait<u8> {
@@ -18,6 +19,12 @@ impl Math8 of MathTrait<u8> {
         else if exp == 1 { base }
         else if exp % 2 == 0 { Math8::pow(base * base, exp / 2) }
         else { base * Math8::pow(base * base, (exp - 1) / 2) }
+    }
+
+    fn squaredDistance(x1: u8, y1: u8, x2: u8, y2: u8) -> u8 {
+        let dx = if (x1 > x2) { (x1 - x2) } else { (x2 - x1) };
+        let dy = if (y1 > y2) { (y1 - y2) } else { (y2 - y1) };
+        (dx * dx + dy * dy)
     }
 }
 
@@ -35,6 +42,12 @@ impl Math16 of MathTrait<u16> {
         else if exp % 2 == 0 { Math16::pow(base * base, exp / 2) }
         else { base * Math16::pow(base * base, (exp - 1) / 2) }
     }
+
+    fn squaredDistance(x1: u16, y1: u16, x2: u16, y2: u16) -> u16 {
+        let dx = if (x1 > x2) { (x1 - x2) } else { (x2 - x1) };
+        let dy = if (y1 > y2) { (y1 - y2) } else { (y2 - y1) };
+        (dx * dx + dy * dy)
+    }
 }
 
 impl Math32 of MathTrait<u32> {
@@ -51,6 +64,12 @@ impl Math32 of MathTrait<u32> {
         else if exp % 2 == 0 { Math32::pow(base * base, exp / 2) }
         else { base * Math32::pow(base * base, (exp - 1) / 2) }
     }
+
+    fn squaredDistance(x1: u32, y1: u32, x2: u32, y2: u32) -> u32 {
+        let dx = if (x1 > x2) { (x1 - x2) } else { (x2 - x1) };
+        let dy = if (y1 > y2) { (y1 - y2) } else { (y2 - y1) };
+        (dx * dx + dy * dy)
+    }
 }
 
 impl Math64 of MathTrait<u64> {
@@ -66,6 +85,12 @@ impl Math64 of MathTrait<u64> {
         else if exp == 1 { base }
         else if exp % 2 == 0 { Math64::pow(base * base, exp / 2) }
         else { base * Math64::pow(base * base, (exp - 1) / 2) }
+    }
+
+    fn squaredDistance(x1: u64, y1: u64, x2: u64, y2: u64) -> u64 {
+        let dx = if (x1 > x2) { (x1 - x2) } else { (x2 - x1) };
+        let dy = if (y1 > y2) { (y1 - y2) } else { (y2 - y1) };
+        (dx * dx + dy * dy)
     }
 }
 
@@ -89,6 +114,12 @@ impl Math128 of MathTrait<u128> {
         else if exp % 2 == 0 { Math128::pow(base * base, exp / 2) }
         else { base * Math128::pow(base * base, (exp - 1) / 2) }
     }
+
+    fn squaredDistance(x1: u128, y1: u128, x2: u128, y2: u128) -> u128 {
+        let dx = if (x1 > x2) { (x1 - x2) } else { (x2 - x1) };
+        let dy = if (y1 > y2) { (y1 - y2) } else { (y2 - y1) };
+        (dx * dx + dy * dy)
+    }
 }
 
 impl Math256 of MathTrait<u256> {
@@ -104,6 +135,12 @@ impl Math256 of MathTrait<u256> {
         else if exp == 1 { base }
         else if exp % 2 == 0 { Math256::pow(base * base, exp / 2) }
         else { base * Math256::pow(base * base, (exp - 1) / 2) }
+    }
+
+    fn squaredDistance(x1: u256, y1: u256, x2: u256, y2: u256) -> u256 {
+        let dx = if (x1 > x2) { (x1 - x2) } else { (x2 - x1) };
+        let dy = if (y1 > y2) { (y1 - y2) } else { (y2 - y1) };
+        (dx * dx + dy * dy)
     }
 }
 
