@@ -5,8 +5,8 @@ use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use underdark::systems::generate_doors::{generate_doors};
-use underdark::models::chamber::{Chamber, Map};
-use underdark::core::randomizer::{randomize_door_permissions};
+use underdark::models::chamber::{Chamber, Map, MapData};
+use underdark::core::randomizer::{randomize_door_permissions, randomize_monsters};
 use underdark::types::location::{Location, LocationTrait};
 use underdark::types::dir::{Dir, DirTrait};
 use underdark::types::doors::{Doors};
@@ -80,4 +80,30 @@ fn generate_chamber(world: IWorldDispatcher,
     ) );
 
     location_id
+}
+
+#[inline(always)]
+fn get_chamber_map_data(world: IWorldDispatcher,
+    location_id: u128,
+) -> (Chamber, Map, MapData) {
+
+    // assert chamber exists
+    let chamber: Chamber = get!(world, location_id, (Chamber));
+    assert(chamber.yonder > 0, 'Chamber does not exist!');
+
+    // Get Map
+    let map: Map = get!(world, location_id, (Map));
+
+    // Generate MapData
+    let mut rnd = chamber.seed;
+    let (monsters, slender_duck, dark_tar): (u256, u256, u256) = randomize_monsters(ref rnd, map, chamber.level_number);
+    let map_data = MapData {
+        location_id,
+        monsters,
+        slender_duck,
+        dark_tar,
+        chest: 0,
+    };
+
+    (chamber, map, map_data)
 }

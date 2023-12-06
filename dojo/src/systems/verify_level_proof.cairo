@@ -6,7 +6,8 @@ use core::option::OptionTrait;
 use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use underdark::models::chamber::{Map, MapData, Score};
+use underdark::systems::generate_chamber::{get_chamber_map_data};
+use underdark::models::chamber::{Chamber, Map, MapData, Score};
 use underdark::models::tile::{Tile};
 use underdark::types::dir::{Dir, DirTrait};
 use underdark::utils::bitwise::{U256Bitwise};
@@ -20,34 +21,35 @@ fn verify_level_proof(world: IWorldDispatcher,
     caller: ContractAddress,
     proof: u256,
     moves_count: usize,
-) -> u128 {
+) -> bool {
 
-    // let location: Location = LocationTrait::from_id(location_id);
-
-    let map: Map = get!(world, location_id, (Map));
-    let map_data: MapData = get!(world, location_id, (MapData));
+    let (chamber, map, map_data) : (Chamber, Map, MapData) = get_chamber_map_data(world, location_id);
     
     let entry: u8 = map.over;
     let exit: u8 = map.under;
 
+    // result is always verified!
+    // panics if not
     verify_map(map, map_data, entry, exit, proof, moves_count);
 
     //---------------------
-    // Save score
+    // Update score
     //
 
     let score : Score = get!(world, (location_id, caller), (Score));
     if(score.moves == 0 || moves_count < score.moves) {
-        set!(world, (Score {
-            key_location_id: location_id,
-            key_player: caller,
-            location_id: location_id,
-            player: caller,
-            moves: moves_count,
-        }));
+        set!(world, (
+            Score {
+                key_location_id: location_id,
+                key_player: caller,
+                location_id: location_id,
+                player: caller,
+                moves: moves_count,
+            }
+        ));
     }
 
-    (location_id)
+    (true)
 }
 
 fn verify_map(

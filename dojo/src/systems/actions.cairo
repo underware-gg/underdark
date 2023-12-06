@@ -32,9 +32,8 @@ mod actions {
     use traits::{Into, TryInto};
     use core::option::OptionTrait;
 
-    use underdark::systems::generate_chamber::{generate_chamber};
+    use underdark::systems::generate_chamber::{generate_chamber, get_chamber_map_data};
     use underdark::systems::verify_level_proof::{verify_level_proof};
-    use underdark::core::randomizer::{randomize_monsters};
     use underdark::models::chamber::{Chamber, Map, MapData};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DIR, DirTrait};
@@ -83,21 +82,10 @@ mod actions {
         ) -> MapData {
             let world: IWorldDispatcher = self.world_dispatcher.read();
 
-            // assert chamber exists
-            let chamber: Chamber = get!(world, location_id, (Chamber));
-            assert(chamber.yonder > 0, 'Chamber does not exist!');
+            // Get and generate all data
+            let (chamber, map, map_data) : (Chamber, Map, MapData) = get_chamber_map_data(world, location_id);
 
-            let map: Map = get!(world, location_id, (Map));
-            let mut rnd = chamber.seed;
-            let (monsters, slender_duck, dark_tar): (u256, u256, u256) =
-                randomize_monsters(ref rnd, map.bitmap, map.protected, chamber.level_number);
-            MapData {
-                location_id,
-                monsters,
-                slender_duck,
-                dark_tar,
-                chest: 0,
-            }
+            (map_data)
         }
 
 

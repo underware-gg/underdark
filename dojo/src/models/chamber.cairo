@@ -32,7 +32,7 @@ struct Map {
 }
 
 // on-demand generated data from a Chamber
-// (on-demand)
+// (on-demand, not stored on any entity)
 #[derive(Model, Copy, Drop, Serde)]
 struct MapData {
     #[key]

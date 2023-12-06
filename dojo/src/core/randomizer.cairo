@@ -1,5 +1,6 @@
 use traits::Into;
 use underdark::core::seeder::{make_seed, make_underseed};
+use underdark::models::chamber::{Chamber, Map};
 use underdark::utils::hash::{hash_u128, hash_u128_to_u256};
 use underdark::utils::bitwise::{U8Bitwise};
 use underdark::utils::bitmap::{Bitmap};
@@ -188,10 +189,12 @@ fn _reduce_monsters(priority1: u256, ref priority2: u256, ref priority3: u256) {
 
 }
 
-fn randomize_monsters(ref rnd: u256, bitmap: u256, protected: u256, level_number: u16) -> (u256, u256, u256) {
-    let mut result: u256 = 0;
+fn randomize_monsters(ref rnd: u256, map: Map, level_number: u16) -> (u256, u256, u256) {
+    if (map.generator_name == 'empty') {
+        return (0, 0, 0); // for tests
+    }
 
-    let allowed_area = bitmap & ~protected;
+    let allowed_area = map.bitmap & ~map.protected;
     let mut monsters: u256 = _randomize_monsters(ref rnd, allowed_area, 2);
     let mut slender_duck: u256 = _randomize_monsters(ref rnd, allowed_area, 2);
     let mut dark_tar: u256 = _randomize_monsters(ref rnd, allowed_area, 2);

@@ -223,6 +223,9 @@ mod tests {
             DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
         ];
         let proof_low_packed: u256 = pack_proof_moves(proof_low.clone());
+        let proof_best_packed: u256 = pack_proof_moves(proof_best.clone());
+        let proof_mid_packed: u256 = pack_proof_moves(proof_mid.clone());
+
         let mut win: bool = verify_map(map, map_data, map.over, map.under, proof_low_packed, proof_low.len());
         assert(win == true, 'proof_low');
         // execute
@@ -232,7 +235,6 @@ mod tests {
         assert(score.player == player, 'moves=player');
         assert(score.moves == proof_low.len(), 'moves=proof_low');
 
-        let proof_best_packed: u256 = pack_proof_moves(proof_best.clone());
         win = verify_map(map, map_data, map.over, map.under, proof_best_packed, proof_best.len());
         assert(win == true, 'proof_best');
         // execute
@@ -240,7 +242,6 @@ mod tests {
         score = get_world_Score(world, chamber2.location_id, player);
         assert(score.moves == proof_best.len(), 'moves=proof_best');
 
-        let proof_mid_packed: u256 = pack_proof_moves(proof_mid.clone());
         win = verify_map(map, map_data, map.over, map.under, proof_mid_packed, proof_mid.len());
         assert(win == true, 'proof_mid');
         // execute

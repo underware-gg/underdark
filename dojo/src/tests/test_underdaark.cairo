@@ -27,6 +27,7 @@ mod tests {
         get_world_Score,
         get_world_Doors_as_Tiles,
         get_world_Tile_type,
+        make_map,
     };
 
     fn assert_doors(prefix: felt252, world: IWorldDispatcher, location_id: u128) {
@@ -81,13 +82,14 @@ mod tests {
     fn test_monsters_seed() {
         let mut rnd = make_seed(1234);
         let bitmap: u256 = binary_tree_pro(rnd);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0);
 
         // randomize_monsters,randomize_slender_duck,randomize_dark_tar
         let mut i: u16 = 0;
         loop {
             if (i >= 10) { break; }
             let level_number: u16 = i + 1;
-            let (monsters, slender_duck, dark_tar): (u256, u256, u256) = randomize_monsters(ref rnd, bitmap, 0x0, level_number);
+            let (monsters, slender_duck, dark_tar): (u256, u256, u256) = randomize_monsters(ref rnd, map, level_number);
             let monster_count: usize = U256Bitwise::count_bits(monsters);
             assert(monster_count != 0, 'monster_count');
             // monster_count.print();
