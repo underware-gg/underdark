@@ -139,6 +139,56 @@ fn solve_map_as_bitmap(bitmap: u256, entry: u8, exit: u8) -> u256 {
 
 
 
+//----------------------
+// Flood fill
+//
+fn flood_fill(bitmap: u256, entry: u8) -> u256 {
+    let mut result: u256 = 0;
+
+    let mut status: Felt252Dict<u8> = Default::default();
+    let mut stack: Array<usize> = ArrayTrait::new();
+
+    // first node is entry
+    stack.append(entry.into());
+
+    // loop until empty stack
+    loop {
+        if (stack.len() == 0) { break; }
+
+        // pop next
+        let current_tile: usize = stack.pop_front().unwrap();
+        
+        // burn it
+        status.insert(current_tile.into(), BURNED);
+
+        // update bitmap
+        result = Bitmap::set_tile(result, current_tile);
+
+        // Find neighbours
+        let mut cross: Array<usize> = ArrayTrait::new();
+        let (x, y): (usize, usize) = Bitmap::tile_to_xy(current_tile);
+        if (x > 0)  { cross.append(Bitmap::xy_to_tile(x - 1, y)); }
+        if (x < 15) { cross.append(Bitmap::xy_to_tile(x + 1, y)); }
+        if (y > 0)  { cross.append(Bitmap::xy_to_tile(x, y - 1)); }
+        if (y < 15) { cross.append(Bitmap::xy_to_tile(x, y + 1)); }
+
+        let mut i: usize = 0;
+        loop {
+            if (i == cross.len()) { break; }
+            let tile: usize = *cross.at(i);
+            if (Bitmap::is_set_tile(bitmap, tile) && status.get(tile.into()) == 0) {
+                status.insert(tile.into(), STACKED);
+                stack.append(tile.into());
+            }
+            i += 1;
+        };
+    };
+
+    (result)
+}
+
+
+
 //----------------------------------------
 // Unit  tests
 //
@@ -155,17 +205,13 @@ mod tests {
     use underdark::tests::utils::utils::{
         setup_world,
         generate_level_get_chamber,
-        get_world_Chamber,
         get_world_Map,
-        get_world_MapData,
-        get_world_Score,
-        get_world_Doors_as_Tiles,
-        get_world_Tile_type,
     };
     use underdark::core::solver::{
         solve_map,
         is_map_solvable,
         solve_map_as_bitmap,
+        flood_fill,
     };
 
 
@@ -242,28 +288,63 @@ mod tests {
         assert(solve_map_as_bitmap(MASK::ALL, xy15, y15) == MASK::BOTTOM_ROW, 'BOTTOM_ROW_i');
     }
 
+    const TREE_COUNT: u16 = 6;
+
     #[test]
-    #[available_gas(1_000_000_000)]
+    #[available_gas(10_000_000_000)]
     fn test_binary_tree() {
         let (world, system) = setup_world();
         let room_id: u16 = 1;
 
         let mut i: u16 = 0;
         loop {
-            if (i < 6) { break; }
-            // 1st chamber: entry from above, all other locked
+            if (i >= TREE_COUNT) { break; }
+            //------
             let level_number: u16 = i + 1;
             let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, level_number, 'binary_tree_classic', 0);
             let map: Map = get_world_Map(world, chamber1.location_id);
-            let tiles: Doors = get_world_Doors_as_Tiles(world, chamber1.location_id);
-            assert(tiles.over != 0, 'has entry');
-            assert(tiles.under != 0, 'has exit');
-            let path = solve_map(map.bitmap, tiles.over, tiles.under, false);
+            assert(map.over != 0, 'has entry');
+            assert(map.under != 0, 'has exit');
+            let path = solve_map(map.bitmap, map.over, map.under, false);
             assert(path.len() > 15, 'binary_tree');
+            //------
             i += 1;
         };
+        assert(i == TREE_COUNT, 'i > TREE_COUNT');
     }
 
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_flood_fill() {
+        assert(flood_fill(MASK::ALL, 0) == MASK::ALL, 'MASK::ALL');
+        // made-up map
+        let bitmap: u256 = 0xc7c0cff41ff71ff75ffbeffdeffef7ff07feeffdaffe8ffffbfc03f9ff5fe902;
+        let expected_fill: u256 = 0x7c00ff01ff01ff01ff80ffc0ffe07ff07feeffcaffe8ffffbfc03f9ff5fe902;
+        let entry: u8 = 88;
+        let fill = flood_fill(bitmap, entry);
+        assert(fill == expected_fill, 'expected');
+    }
 
+    #[test]
+    #[available_gas(10_000_000_000)]
+    fn test_flood_fill_binary_tree() {
+        let (world, system) = setup_world();
+        let room_id: u16 = 1;
+
+        let mut i: u16 = 0;
+        loop {
+            if (i >= TREE_COUNT) { break; }
+            //------
+            let level_number: u16 = i + 1;
+            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, 1, level_number, 'binary_tree_classic', 0);
+            let map: Map = get_world_Map(world, chamber1.location_id);
+            assert(map.over != 0, 'has entry');
+            let fill = flood_fill(map.bitmap, map.over);
+            assert(fill == map.bitmap, 'binary_tree');
+            //------
+            i += 1;
+        };
+        assert(i == TREE_COUNT, 'i > TREE_COUNT');
+    }
 
 }
