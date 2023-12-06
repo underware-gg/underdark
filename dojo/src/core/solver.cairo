@@ -319,8 +319,8 @@ mod tests {
         loop {
             if (i >= TREE_COUNT) { break; }
             //------
-            let level_number: u16 = i + 1;
-            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, level_number,  MANOR_COORD, 'binary_tree_classic', 0);
+            let level_number: u16 = 1; // + i;
+            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id + i, level_number,  MANOR_COORD, 'binary_tree_classic', 0);
             let map: Map = get_world_Map(world, chamber1.location_id);
             assert(map.over != 0, 'has entry');
             assert(map.under != 0, 'has exit');
@@ -354,8 +354,8 @@ mod tests {
         loop {
             if (i >= TREE_COUNT) { break; }
             //------
-            let level_number: u16 = i + 1;
-            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, level_number, MANOR_COORD, 'binary_tree_classic', 0);
+            let level_number: u16 = 1; // + i;
+            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id + i, level_number, MANOR_COORD, 'binary_tree_classic', 0);
             let map: Map = get_world_Map(world, chamber1.location_id);
             assert(map.over != 0, 'has entry');
             let fill = flood_fill(map.bitmap, map.over);

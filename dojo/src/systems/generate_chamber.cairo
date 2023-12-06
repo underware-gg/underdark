@@ -5,13 +5,37 @@ use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use underdark::systems::generate_doors::{generate_doors};
-use underdark::models::chamber::{Chamber, Map, MapData};
+use underdark::models::chamber::{Chamber, Map, MapData, Score};
 use underdark::core::randomizer::{randomize_door_permissions, randomize_monsters};
 use underdark::types::location::{Location, LocationTrait};
 use underdark::types::dir::{Dir, DirTrait};
 use underdark::types::doors::{Doors};
 use underdark::core::seeder::{make_seed};
 use underdark::core::generator::{generate};
+
+#[inline(always)]
+fn can_generate_chamber(world: IWorldDispatcher,
+    caller: ContractAddress,
+    location_id: u128,
+) -> bool {
+    // location must be valid
+    let location: Location = LocationTrait::from_id(location_id);
+    assert(location.validate(), 'Invalid location');
+
+    if (location.under > 1) {
+        // Over level must exist
+        let over_location: Location = location.offset(Dir::Over);
+        let over_location_id: u128 = over_location.to_id();
+        let chamber: Chamber = get!(world, over_location_id, (Chamber));
+        assert(chamber.yonder > 0, 'Over level is closed');
+
+        // caller must have completed Over level
+        let score : Score = get!(world, (over_location_id, caller), (Score));
+        assert(score.moves > 0, 'Complete over level first');
+    }
+
+    (true)
+}
 
 #[inline(always)]
 fn generate_chamber(world: IWorldDispatcher,
@@ -28,6 +52,9 @@ fn generate_chamber(world: IWorldDispatcher,
     let chamber: Chamber = get!(world, location_id, (Chamber));
     assert(chamber.yonder == 0, 'Chamber already exists');
 
+    // panic if player cannot generate/play this level
+    let caller: ContractAddress = starknet::get_caller_address();
+    can_generate_chamber(world, caller, location_id);
 
     //---------------------
     // Chamber

@@ -1,4 +1,3 @@
-use starknet::{ContractAddress, ClassHash};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use underdark::models::chamber::{MapData};
 use underdark::types::dir::{Dir, DIR, DirTrait};
@@ -21,6 +20,9 @@ trait IActions<TContractState> {
         moves_count: usize,
     );
     // read-only calls
+    fn can_play_level(self: @TContractState,
+        location_id: u128,
+    ) -> bool;
     fn generate_map_data(self: @TContractState,
         location_id: u128,
     ) -> MapData;
@@ -31,8 +33,9 @@ mod actions {
     use super::IActions;
     use traits::{Into, TryInto};
     use core::option::OptionTrait;
+    use starknet::{ContractAddress, ClassHash};
 
-    use underdark::systems::generate_chamber::{generate_chamber, get_chamber_map_data};
+    use underdark::systems::generate_chamber::{generate_chamber, can_generate_chamber, get_chamber_map_data};
     use underdark::systems::verify_level_proof::{verify_level_proof};
     use underdark::models::chamber::{Chamber, Map, MapData};
     use underdark::types::location::{Location, LocationTrait};
@@ -62,14 +65,11 @@ mod actions {
             moves_count: usize,
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
-            let caller = starknet::get_caller_address();
-
-            let proof = u256 {
+            let proof: u256 = u256 {
                 low: proof_low,
                 high: proof_high,
             };
-            verify_level_proof(world, location_id, caller, proof, moves_count);
-
+            verify_level_proof(world, location_id, proof, moves_count);
             return ();
         }
 
@@ -77,17 +77,21 @@ mod actions {
         // read-only calls
         //
 
+        fn can_play_level(self: @ContractState,
+            location_id: u128,
+        ) -> bool {
+            let world: IWorldDispatcher = self.world_dispatcher.read();
+            let caller: ContractAddress = starknet::get_caller_address();
+            (can_generate_chamber(world, caller, location_id))
+        }
+
         fn generate_map_data(self: @ContractState,
             location_id: u128,
         ) -> MapData {
             let world: IWorldDispatcher = self.world_dispatcher.read();
-
-            // Get and generate all data
             let (chamber, map, map_data) : (Chamber, Map, MapData) = get_chamber_map_data(world, location_id);
-
             (map_data)
         }
-
 
 
     }

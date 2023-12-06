@@ -112,7 +112,7 @@ fn randomize_door_tile(ref rnd: u256, dir: Dir) -> u8 {
 // usage example: U8Bitwise::is_set(permissions, DIR::UNDER.into())
 fn randomize_door_permissions(ref rnd: u256, chamber_location: Location, entry_dir: Dir, yonder: u16, generator_name: felt252) -> u8 {
     // seed generator is used for #[test]
-    if (generator_name == 'seed') {
+    if (generator_name == 'seed' || generator_name == 'empty') {
         return 0xff;
     }
 

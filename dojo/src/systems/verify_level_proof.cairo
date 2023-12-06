@@ -6,7 +6,7 @@ use core::option::OptionTrait;
 use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
-use underdark::systems::generate_chamber::{get_chamber_map_data};
+use underdark::systems::generate_chamber::{can_generate_chamber, get_chamber_map_data};
 use underdark::models::chamber::{Chamber, Map, MapData, Score};
 use underdark::models::tile::{Tile};
 use underdark::types::dir::{Dir, DirTrait};
@@ -18,10 +18,13 @@ use underdark::types::constants::{LIGHT_MAX, LIGHT_STEP_DROP, SANITY_MAX, MONSTE
 
 fn verify_level_proof(world: IWorldDispatcher,
     location_id: u128,
-    caller: ContractAddress,
     proof: u256,
     moves_count: usize,
 ) -> bool {
+
+    // panic if player cannot generate/play this level
+    let caller: ContractAddress = starknet::get_caller_address();
+    can_generate_chamber(world, caller, location_id);
 
     let (chamber, map, map_data) : (Chamber, Map, MapData) = get_chamber_map_data(world, location_id);
     
@@ -60,6 +63,9 @@ fn verify_map(
     proof: u256,
     moves_count: usize,
 ) -> bool {
+    if (map.generator_name == 'seed' || map.generator_name == 'empty') {
+        return true; // for tests
+    }
 
     // get all the moves from the proof big number
     let moves: Array<u8> = unpack_proof_moves(proof, moves_count);

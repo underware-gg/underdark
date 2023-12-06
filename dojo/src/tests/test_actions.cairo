@@ -17,6 +17,7 @@ mod tests {
         generate_level_get_chamber,
         get_world_Chamber,
         get_world_Map,
+        force_verify_level,
     };
 
     #[test]
@@ -56,8 +57,10 @@ mod tests {
     #[available_gas(10_000_000_000)]
     fn test_yonder() {
         let (world, system) = setup_world();
-        let chamber_y1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'entry', 0);
+        let chamber_y1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'seed', 0);
+        force_verify_level(world, chamber_y1.location_id);
         let chamber_y2: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 2, MANOR_COORD, 'seed', 0);
+        force_verify_level(world, chamber_y2.location_id);
         let chamber_y3: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 3, MANOR_COORD, 'seed', 0);
         assert(chamber_y1.yonder == 1, 'chamber_y1');
         assert(chamber_y2.yonder == 2, 'chamber_y2');
@@ -74,10 +77,45 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected:('Invalid location','ENTRYPOINT_FAILED'))]
+    #[available_gas(1_000_000_000)]
+    fn test_generate_level_invalid() {
+        let (world, system) = setup_world();
+        execute_generate_level(world, system, REALM_ID, 1, 0, MANOR_COORD, 'entry', 0);
+    }
+
+    #[test]
+    #[should_panic(expected:('Over level is closed','ENTRYPOINT_FAILED'))]
+    #[available_gas(1_000_000_000)]
+    fn test_generate_level_not_over_closed() {
+        let (world, system) = setup_world();
+        execute_generate_level(world, system, REALM_ID, 1, 2, MANOR_COORD, 'entry', 0);
+    }
+
+    #[test]
+    #[should_panic(expected:('Complete over level first','ENTRYPOINT_FAILED'))]
+    #[available_gas(1_000_000_000)]
+    fn test_generate_level_over_not_cleared() {
+        let (world, system) = setup_world();
+        execute_generate_level(world, system, REALM_ID, 1, 1, MANOR_COORD, 'entry', 0);
+        execute_generate_level(world, system, REALM_ID, 1, 2, MANOR_COORD, 'entry', 0);
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_generate_level_over_is_cleared_ok() {
+        let (world, system) = setup_world();
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'seed', 0);
+        force_verify_level(world, chamber1.location_id);
+        execute_generate_level(world, system, REALM_ID, 1, 2, MANOR_COORD, 'entry', 0);
+    }
+
+    #[test]
     #[available_gas(1_000_000_000)]
     fn test_seed_diversity() {
         let (world, system) = setup_world();
-        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'entry', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'seed', 0);
+        force_verify_level(world, chamber1.location_id);
         let chamber2: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 2, MANOR_COORD, 'entry', 0);
         let chamber3: Chamber = generate_level_get_chamber(world, system, REALM_ID, 2, 1, MANOR_COORD, 'entry', 0);
         let chamber4: Chamber = generate_level_get_chamber(world, system, REALM_ID+1, 1, 1, MANOR_COORD, 'entry', 0);

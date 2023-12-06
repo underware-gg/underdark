@@ -28,6 +28,7 @@ mod tests {
         get_world_Doors_as_Tiles,
         get_world_Tile_type,
         make_map,
+        force_verify_level,
     };
 
     fn assert_doors(prefix: felt252, world: IWorldDispatcher, location_id: u128) {
@@ -60,14 +61,17 @@ mod tests {
         assert_doors('entry', world, chamber1.location_id);
 
         // move WEST
-        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, room_id, 2, MANOR_COORD, 'binary_tree_classic', 0);
+        force_verify_level(world, chamber1.location_id);
+        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, room_id, 2, MANOR_COORD, 'seed', 0);
         assert_doors('level_2', world, chamber2.location_id);
 
         // move NORTH
+        force_verify_level(world, chamber2.location_id);
         let chamber3 = generate_level_get_chamber(world, system, REALM_ID, room_id, 3, MANOR_COORD, 'seed', 0);
         assert_doors('level_3', world, chamber3.location_id);
 
         // move EAST
+        force_verify_level(world, chamber3.location_id);
         let chamber4 = generate_level_get_chamber(world, system, REALM_ID, room_id, 4, MANOR_COORD, 'seed', 0);
         assert_doors('level_4', world, chamber4.location_id);
     }
@@ -117,7 +121,7 @@ mod tests {
             if (i >= 10) { break; }
             // 1st chamber: entry from above, all other locked
             let level_number: u16 = i + 1;
-            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, level_number, MANOR_COORD, 'binary_tree_classic', 0);
+            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, level_number, MANOR_COORD, 'seed', 0);
             let map: Map = get_world_Map(world, chamber1.location_id);
             let map_data: MapData = get_world_MapData(world, system, chamber1.location_id);
             // no monsters wall overlaps
@@ -128,6 +132,8 @@ mod tests {
             assert((map_data.monsters & map_data.slender_duck) == 0, 'monsters & slender_duck');
             assert((map_data.monsters & map_data.dark_tar) == 0, 'monsters & dark_tar');
             assert((map_data.dark_tar & map_data.slender_duck) == 0, 'dark_tar & slender_duck');
+            // verify to allow minting more chambers
+            force_verify_level(world, chamber1.location_id);
             i += 1;
         };
     }

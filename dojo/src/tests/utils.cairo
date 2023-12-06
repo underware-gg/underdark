@@ -9,6 +9,7 @@ mod utils {
     use dojo::test_utils::{spawn_test_world, deploy_contract};
 
     use underdark::systems::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
+    use underdark::systems::verify_level_proof::{verify_level_proof};
     use underdark::models::chamber::{Chamber, chamber, Map, map, MapData, map_data, Score, score};
     use underdark::models::tile::{Tile, tile};
     use underdark::types::location::{Location, LocationTrait};
@@ -75,13 +76,18 @@ mod utils {
         }
     }
 
+    // generator need sto be 'seed' or 'empty'
+    fn force_verify_level(world: IWorldDispatcher, location_id: u128) {
+        verify_level_proof(world, location_id, 0xffff, 100);
+    }
+
     fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> (Map, MapData) {
         let location_id: u128 = 1;
         (Map {
             entity_id: location_id,
             bitmap,
             protected: 0,
-            generator_name: 0,
+            generator_name: 'whatever',
             generator_value: 0,
             north: 0,
             east: 0,

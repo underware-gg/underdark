@@ -19,12 +19,12 @@ fn generate_doors(world: IWorldDispatcher,
 ) -> (Doors, u256) {
 
     let mut doors = Doors {
-        north: 0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::North.into()),
-        east:  0,//create_door(world, location, location_id, ref rnd, Dir::West, permissions, Dir::East.into()),
-        west:  0,//create_door(world, location, location_id, ref rnd, Dir::East, permissions, Dir::West.into()),
-        south: 0,//create_door(world, location, location_id, ref rnd, entry_dir, permissions, Dir::South.into()),
-        over:  create_door(world, location, location_id, ref rnd, Dir::Under, permissions, Dir::Over.into()),
-        under: create_door(world, location, location_id, ref rnd, Dir::Over, permissions, Dir::Under.into()),
+        north: 0,//create_door(world, location_id, ref rnd, entry_dir, permissions, Dir::North.into()),
+        east:  0,//create_door(world, location_id, ref rnd, Dir::West, permissions, Dir::East.into()),
+        west:  0,//create_door(world, location_id, ref rnd, Dir::East, permissions, Dir::West.into()),
+        south: 0,//create_door(world, location_id, ref rnd, entry_dir, permissions, Dir::South.into()),
+        over:  create_door(world, location_id, location.offset(Dir::Over).to_id(), ref rnd, Dir::Under, permissions, Dir::Over.into()),
+        under: create_door(world, location_id, location.offset(Dir::Under).to_id(), ref rnd, Dir::Over, permissions, Dir::Under.into()),
     };
 
     // for tests
@@ -49,8 +49,8 @@ fn generate_doors(world: IWorldDispatcher,
 }
 
 fn create_door(world: IWorldDispatcher,
-    location: Location,
     location_id: u128,
+    to_location_id: u128,
     ref rnd: u256,
     entry_dir: Dir,
     permissions: u8,
@@ -58,8 +58,6 @@ fn create_door(world: IWorldDispatcher,
 ) -> u8 {
 
     // which chamber is this door leading to?
-    let to_location: Location = location.offset(dir);
-    let to_location_id: u128 = to_location.to_id();
     let to_map: Map = get!(world, to_location_id, (Map));
     let to_map_exist: bool = (to_map.bitmap != 0);
 

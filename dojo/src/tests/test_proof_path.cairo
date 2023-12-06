@@ -25,6 +25,7 @@ mod tests {
         get_world_MapData,
         get_world_Score,
         get_world_Tile_type,
+        force_verify_level,
     };
 
 
@@ -191,6 +192,7 @@ mod tests {
         let room_id: u16 = 1;
 
         let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, 1, MANOR_COORD, 'empty', 0);
+        force_verify_level(world, chamber1.location_id);
         let chamber2 = generate_level_get_chamber(world, system, REALM_ID, room_id, 2, MANOR_COORD, 'empty', 0);
         
         // check test if chamber is correct
