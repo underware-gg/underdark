@@ -44,51 +44,52 @@ mod tests {
         assert(Location{ realm_id:REALM_ID, room_id:1, over:0, under:0, north:0, east:0, west:0, south:0 }.validate() == false, 'zeros');
         // oks
         let mut oks = ArrayTrait::new();
+        let mut noks = ArrayTrait::new();
         oks.append(Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:1, east:1, west:0, south:0 });
         oks.append(Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:1, east:0, west:1, south:0 });
         oks.append(Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:0, east:1, west:0, south:1 });
         oks.append(Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:0, east:0, west:1, south:1 });
-        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:1, east:1, west:0, south:0 });
-        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:1, east:0, west:1, south:0 });
-        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:0, east:1, west:0, south:1 });
-        oks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:0, east:0, west:1, south:1 });        
+        noks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:1, east:1, west:0, south:0 });
+        noks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:1, east:0, west:1, south:0 });
+        noks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:0, east:1, west:0, south:1 });
+        noks.append(Location{ realm_id:REALM_ID, room_id:1, over:1, under:0, north:0, east:0, west:1, south:1 });
         let mut i: usize = 0;
         loop {
             if(i == oks.len()) { break; }
             let ok = *oks[i];
             let mut loc = ok;
             assert(loc.validate() == true, 'ok');
-            assert(loc.validate_entry() == false, '!entry');
             if(ok.over > 0) {
                 loc = ok; loc.over = 0;
                 assert(loc.validate() == false, '!over');
-                assert(loc.validate_entry() == true, '!entry_over');
             }
             if(ok.under > 0) {
                 loc = ok; loc.under = 0;
                 assert(loc.validate() == false, '!under');
-                assert(loc.validate_entry() == true, '!entry_under');
             }
             if(ok.north > 0) {
                 loc = ok; loc.north = 0;
                 assert(loc.validate() == false, '!north');
-                assert(loc.validate_entry() == false, '!entry_north');
             }
             if(ok.east > 0) {
                 loc = ok; loc.east = 0;
                 assert(loc.validate() == false, '!east');
-                assert(loc.validate_entry() == false, '!entry_east');
             }
             if(ok.west > 0) {
                 loc = ok; loc.west = 0;
                 assert(loc.validate() == false, '!west');
-                assert(loc.validate_entry() == false, '!entry_west');
             }
             if(ok.south > 0) {
                 loc = ok; loc.south = 0;
                 assert(loc.validate() == false, '!south');
-                assert(loc.validate_entry() == false, '!entry_south');
             }
+            i += 1;
+        };
+        let mut i: usize = 0;
+        loop {
+            if(i == noks.len()) { break; }
+            let nok = *noks[i];
+            assert(nok.validate() == false, 'ok');
             i += 1;
         };
     }
@@ -156,8 +157,8 @@ mod tests {
     #[test]
     #[available_gas(10_000_000)]
     fn test_location_offset() {
-        let ok1 = Location{ realm_id:REALM_ID, room_id:1, over:3, under:0, north:3, east:3, west:0, south:0 };
-        let ok2 = Location{ realm_id:REALM_ID, room_id:1, over:0, under:3, north:0, east:0, west:3, south:3 };
+        let ok1 = Location{ realm_id:REALM_ID, room_id:1, over:0, under:1, north:3, east:3, west:0, south:0 };
+        let ok2 = Location{ realm_id:REALM_ID, room_id:1, over:0, under:6, north:0, east:0, west:3, south:3 };
         assert(ok1.validate() == true, 'ok1 is ok');
         assert(ok2.validate() == true, 'ok2 is ok');
         // up to ok2
@@ -175,10 +176,10 @@ mod tests {
                 // 0 > 2
                 // 1 > 1
                 let value: u16 = 2 - i;
-                assert(loc.over == value, 'loc.over+');
+                // assert(loc.over == value, 'loc.over+');
                 assert(loc.north == value, 'loc.north+');
                 assert(loc.east == value, 'loc.east+');
-                assert(loc.under == 0, 'loc.under-');
+                // assert(loc.under == 0, 'loc.under-');
                 assert(loc.south == 0, 'loc.south-');
                 assert(loc.west == 0, 'loc.west-');
             } else {
@@ -186,13 +187,15 @@ mod tests {
                 // 3 > 2
                 // 4 > 3
                 let value: u16 = i - 1;
-                assert(loc.over == 0, 'loc.over-');
+                // assert(loc.over == 0, 'loc.over-');
                 assert(loc.north == 0, 'loc.north-');
                 assert(loc.east == 0, 'loc.east-');
-                assert(loc.under == value, 'loc.under+');
+                // assert(loc.under == value, 'loc.under+');
                 assert(loc.south == value, 'loc.south+');
                 assert(loc.west == value, 'loc.west+');
             }
+            assert(loc.over == 0, 'loc.over-');
+            assert(loc.under == 1 + i + 1, 'loc.under+');
             i += 1;
         };
         assert(loc == ok2, 'loc == ok2');
@@ -210,10 +213,10 @@ mod tests {
                 // 0 > 2
                 // 1 > 1
                 let value: u16 = 2 - i;
-                assert(loc.over == 0, '_loc.over-');
+                // assert(loc.over == 0, '_loc.over-');
                 assert(loc.north == 0, '_loc.north-');
                 assert(loc.east == 0, '_loc.east-');
-                assert(loc.under == value, '_loc.under+');
+                // assert(loc.under == value, '_loc.under+');
                 assert(loc.south == value, '_loc.south+');
                 assert(loc.west == value, '_loc.west+');
             } else {
@@ -221,13 +224,15 @@ mod tests {
                 // 3 > 2
                 // 4 > 3
                 let value: u16 = i - 1;
-                assert(loc.over == value, '_loc.over+');
+                // assert(loc.over == value, '_loc.over+');
                 assert(loc.north == value, '_loc.north+');
                 assert(loc.east == value, '_loc.east+');
-                assert(loc.under == 0, '_loc.under-');
+                // assert(loc.under == 0, '_loc.under-');
                 assert(loc.south == 0, '_loc.south-');
                 assert(loc.west == 0, '_loc.west-');
             }
+            assert(loc.over == 0, '_loc.over-');
+            assert(loc.under == 6 - i - 1, '_loc.under+');
             i += 1;
         };
         assert(loc == ok1, 'loc == ok1');

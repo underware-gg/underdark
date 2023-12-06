@@ -41,7 +41,6 @@ mod CONSTANTS {
 
 trait LocationTrait {
     fn validate(self: Location) -> bool;
-    fn validate_entry(self: Location) -> bool;
     fn offset(self: Location, dir: Dir) -> Location;
     fn to_id(self: Location) -> u128;
     fn from_id(location_id: u128) -> Location;
@@ -53,16 +52,7 @@ impl LocationTraitImpl of LocationTrait {
         (
             self.realm_id > 0
             && self.room_id > 0
-            && !((self.over == 0 && self.under == 0) || (self.over > 0 && self.under > 0))
-            && !((self.north == 0 && self.south == 0) || (self.north > 0 && self.south > 0))
-            && !((self.east == 0 && self.west == 0) || (self.east > 0 && self.west > 0))
-        )
-    }
-    fn validate_entry(self: Location) -> bool {
-        (
-            self.realm_id > 0
-            && self.room_id > 0
-            && (self.over == 0 && self.under == 0)
+            && (self.over == 0 && self.under > 0)
             && !((self.north == 0 && self.south == 0) || (self.north > 0 && self.south > 0))
             && !((self.east == 0 && self.west == 0) || (self.east > 0 && self.west > 0))
         )
