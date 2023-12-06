@@ -6,3 +6,4 @@ mod generator;
 mod protector;
 mod randomizer;
 mod seeder;
+mod solver;

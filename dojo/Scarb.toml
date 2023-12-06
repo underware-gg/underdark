@@ -7,7 +7,7 @@ website = "https://underdark-splash.vercel.app"
 socials.x = "https://twitter.com/lootunderworld"
 
 [package]
-cairo-version = "2.3.0"
+cairo-version = "2.3.1"
 name = "underdark"
 version = "0.3.0"
 
