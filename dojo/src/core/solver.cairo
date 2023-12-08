@@ -122,16 +122,7 @@ fn is_map_solvable(bitmap: u256, entry: u8, exit: u8) -> bool {
 }
 
 fn solve_map_as_bitmap(bitmap: u256, entry: u8, exit: u8) -> u256 {
-    let path: Array<u8> = solve_map(bitmap, entry, exit, false);
-    let mut result = 0;
-    let mut i: usize = 0;
-    loop {
-        if (i == path.len()) { break; }
-        let tile: usize = (*path.at(i)).into();
-        result = Bitmap::set_tile(result, tile);
-        i += 1;
-    };
-    (result)
+    Bitmap::from_tile_array(solve_map(bitmap, entry, exit, false).span())
 }
 
 
