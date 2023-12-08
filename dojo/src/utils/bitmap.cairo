@@ -297,7 +297,7 @@ impl Bitmap of BitmapTrait {
     }
     fn is_near_or_at_xy(bitmap: u256, x: usize, y: usize) -> bool {
         let mask: u256 =
-            if (x > 15 || y > 15) { 0 }  // invalid
+            if (x > 0 && y > 0 && x < 15 && y < 15) { Bitmap::shift_right(Bitmap::shift_down(0x4000e00040000000000000000000000000000000000000000000000000000000, y-1), x-1) } // middle
             else if (x == 0 && y == 0) { 0xc000800000000000000000000000000000000000000000000000000000000000 }   // top-left
             else if (x == 15 && y == 0) { 0x3000100000000000000000000000000000000000000000000000000000000 }     // top-right
             else if (x == 0 && y == 15) { 0x8000c000 }  // bottom-left
@@ -306,7 +306,7 @@ impl Bitmap of BitmapTrait {
             else if (x == 15) { Bitmap::shift_down(0x1000300010000000000000000000000000000000000000000000000000000, y-1) }      // right column
             else if (y == 0) { Bitmap::shift_right(0xe000400000000000000000000000000000000000000000000000000000000000, x-1) }   // top row
             else if (y == 15) { Bitmap::shift_right(0x4000e000, x-1) }  // bottom row
-            else { Bitmap::shift_right(Bitmap::shift_down(0x4000e00040000000000000000000000000000000000000000000000000000000, y-1), x-1) } // middle
+            else { 0 }  // invalid (x > 15 || y > 15)
             ;
         (bitmap & mask > 0)
     }
