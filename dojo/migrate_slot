@@ -12,4 +12,4 @@ scripts/default_auth.sh
 # npm run codegen
 # npm run create-components
 
-echo "--- DONE!"
+echo "--- DONE! 👍"

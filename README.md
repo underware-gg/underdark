@@ -73,6 +73,40 @@ Most of all, beware the terrible gibbering of Slenderin Duckeris.
   * [CC Attribution 4.0](https://creativecommons.org/licenses/by/4.0/)
     * in footsteps.mp3 `Footsteps, Muddy, E.wav` by `InspectorJ` [on freesound.org](https://freesound.org/people/InspectorJ/sounds/339325/)
 
+## Game Loop
+
+```mermaid
+flowchart TD
+    MANOR["🏰 Enter the Manor 🏰"] --> |connect wallet + deposit fee| ROOM_SELECT
+
+    ROOM_SELECT["Select Room"] --> ROOM_VIEW
+    ROOM_VIEW["View Room data + levels"] --> START_LEVEL
+
+    START_LEVEL["Start Level #1"] --> LEVEL_EXISTS
+    START_LEVEL --> LEVEL_NEW
+
+    LEVEL_EXISTS["Level exists, minted"] --> PLAY_GAME
+    LEVEL_NEW(("Generate Level<br>⛓️")) --> |mint level + pay gas| PLAY_GAME
+
+    PLAY_GAME["🔥 Play Game 🔥"] --> DIED
+    PLAY_GAME --> FOUND_EXIT
+
+    DIED["🦆 DIED 🦆"] --> PLAY_GAME
+
+    FOUND_EXIT["🚪 Found the Exit 🚪"] --> |gameplay proof| VERIFY_PROOF
+
+    VERIFY_PROOF(("Verify Gameplay<br>⛓️")) --> VERIFIED
+    VERIFY_PROOF --> |bug or cheater| VERIFIED_NOT
+
+    VERIFIED_NOT["🚫 Not Verified 🚫"] --> PLAY_GAME
+    VERIFIED["👍 Verified 👍"] --> |update scores + pay gas| NEXT_NEW
+    VERIFIED --> NEXT_EXISTS
+
+    NEXT_EXISTS["Next Level exists"] --> PLAY_GAME
+    NEXT_NEW(("Generate Next<br>⛓️")) --> |mint level + pay gas| PLAY_GAME
+```
+
+
 ## Environment Setup [🔗](https://book.dojoengine.org/getting-started/setup.html)
 
 Install Rust + Cargo + others
