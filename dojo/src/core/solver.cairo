@@ -121,8 +121,8 @@ fn is_map_solvable(bitmap: u256, entry: u8, exit: u8) -> bool {
     (solve_map(bitmap, entry, exit, false).len() > 0)
 }
 
-fn solve_map_as_bitmap(bitmap: u256, entry: u8, exit: u8) -> u256 {
-    Bitmap::from_tile_array(solve_map(bitmap, entry, exit, false).span())
+fn solve_map_bitmap(bitmap: u256, entry: u8, exit: u8) -> u256 {
+    ( Bitmap::from_tile_array(solve_map(bitmap, entry, exit, false).span()) )
 }
 
 
@@ -130,11 +130,16 @@ fn solve_map_as_bitmap(bitmap: u256, entry: u8, exit: u8) -> u256 {
 //----------------------
 // Flood fill
 //
-fn flood_fill(bitmap: u256, entry: u8) -> u256 {
-    let mut result: u256 = 0;
+fn _flood_fill(bitmap: u256, entry: u8, as_tiles: bool, as_bitmap: bool) -> (Array<u8>, u256) {
+    let mut result_tiles: Array<u8> = ArrayTrait::new();
+    let mut result_bitmap: u256 = 0;
+
+    if ((!as_tiles && !as_bitmap) || !Bitmap::is_set_tile(bitmap, entry.into())) {
+        return (result_tiles, result_bitmap);
+    }
 
     let mut status: Felt252Dict<u8> = Default::default();
-    let mut stack: Array<usize> = ArrayTrait::new();
+    let mut stack: Array<u8> = ArrayTrait::new();
 
     // first node is entry
     stack.append(entry.into());
@@ -144,17 +149,22 @@ fn flood_fill(bitmap: u256, entry: u8) -> u256 {
         if (stack.len() == 0) { break; }
 
         // pop next
-        let current_tile: usize = stack.pop_front().unwrap();
+        let current_tile: u8 = stack.pop_front().unwrap();
         
         // burn it
         status.insert(current_tile.into(), BURNED);
 
         // update bitmap
-        result = Bitmap::set_tile(result, current_tile);
+        if (as_tiles) {
+            result_tiles.append(current_tile);
+        }
+        if (as_bitmap) {
+            result_bitmap = Bitmap::set_tile(result_bitmap, current_tile.into());
+        }
 
         // Find neighbours
         let mut cross: Array<usize> = ArrayTrait::new();
-        let (x, y): (usize, usize) = Bitmap::tile_to_xy(current_tile);
+        let (x, y): (usize, usize) = Bitmap::tile_to_xy(current_tile.into());
         if (x > 0)  { cross.append(Bitmap::xy_to_tile(x - 1, y)); }
         if (x < 15) { cross.append(Bitmap::xy_to_tile(x + 1, y)); }
         if (y > 0)  { cross.append(Bitmap::xy_to_tile(x, y - 1)); }
@@ -166,13 +176,23 @@ fn flood_fill(bitmap: u256, entry: u8) -> u256 {
             let tile: usize = *cross.at(i);
             if (Bitmap::is_set_tile(bitmap, tile) && status.get(tile.into()) == 0) {
                 status.insert(tile.into(), STACKED);
-                stack.append(tile.into());
+                stack.append(tile.try_into().unwrap());
             }
             i += 1;
         };
     };
 
-    (result)
+    (result_tiles, result_bitmap)
+}
+
+fn flood_fill_tiles(bitmap: u256, entry: u8) -> Array<u8> {
+    let (result_tiles, result_bitmap) = _flood_fill(bitmap, entry, true, false);
+    (result_tiles)
+}
+
+fn flood_fill_bitmap(bitmap: u256, entry: u8) -> u256 {
+    let (result_tiles, result_bitmap) = _flood_fill(bitmap, entry, false, true);
+    (result_bitmap)
 }
 
 
@@ -198,8 +218,9 @@ mod tests {
     use underdark::core::solver::{
         solve_map,
         is_map_solvable,
-        solve_map_as_bitmap,
-        flood_fill,
+        solve_map_bitmap,
+        flood_fill_tiles,
+        flood_fill_bitmap,
     };
 
 
@@ -283,19 +304,19 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     fn test_path_bitmap() {
-        assert(solve_map_as_bitmap(MASK::ALL, 0, 0) == Bitmap::set_xy(0, 0, 0), '0_0');
-        assert(solve_map_as_bitmap(MASK::ALL, 15, 15) == Bitmap::set_xy(0, 15, 0), '15_15');
-        assert(solve_map_as_bitmap(MASK::ALL, 255, 255) == 1, '255_255');
+        assert(solve_map_bitmap(MASK::ALL, 0, 0) == Bitmap::set_xy(0, 0, 0), '0_0');
+        assert(solve_map_bitmap(MASK::ALL, 15, 15) == Bitmap::set_xy(0, 15, 0), '15_15');
+        assert(solve_map_bitmap(MASK::ALL, 255, 255) == 1, '255_255');
         let y15: u8 = Bitmap::xy_to_tile(0, 15).try_into().unwrap();
         let xy15: u8 = Bitmap::xy_to_tile(15, 15).try_into().unwrap();
-        assert(solve_map_as_bitmap(MASK::ALL, 0, 15) == MASK::TOP_ROW, 'TOP_ROW');
-        assert(solve_map_as_bitmap(MASK::ALL, 0, y15) == MASK::LEFT_COL, 'LEFT_COL');
-        assert(solve_map_as_bitmap(MASK::ALL, 15, xy15) == MASK::RIGHT_COL, 'RIGHT_COL');
-        assert(solve_map_as_bitmap(MASK::ALL, y15, xy15) == MASK::BOTTOM_ROW, 'BOTTOM_ROW');
-        assert(solve_map_as_bitmap(MASK::ALL, 15, 0) == MASK::TOP_ROW, 'TOP_ROW_i');
-        assert(solve_map_as_bitmap(MASK::ALL, y15, 0) == MASK::LEFT_COL, 'LEFT_COL_i');
-        assert(solve_map_as_bitmap(MASK::ALL, xy15, 15) == MASK::RIGHT_COL, 'RIGHT_COL_i');
-        assert(solve_map_as_bitmap(MASK::ALL, xy15, y15) == MASK::BOTTOM_ROW, 'BOTTOM_ROW_i');
+        assert(solve_map_bitmap(MASK::ALL, 0, 15) == MASK::TOP_ROW, 'TOP_ROW');
+        assert(solve_map_bitmap(MASK::ALL, 0, y15) == MASK::LEFT_COL, 'LEFT_COL');
+        assert(solve_map_bitmap(MASK::ALL, 15, xy15) == MASK::RIGHT_COL, 'RIGHT_COL');
+        assert(solve_map_bitmap(MASK::ALL, y15, xy15) == MASK::BOTTOM_ROW, 'BOTTOM_ROW');
+        assert(solve_map_bitmap(MASK::ALL, 15, 0) == MASK::TOP_ROW, 'TOP_ROW_i');
+        assert(solve_map_bitmap(MASK::ALL, y15, 0) == MASK::LEFT_COL, 'LEFT_COL_i');
+        assert(solve_map_bitmap(MASK::ALL, xy15, 15) == MASK::RIGHT_COL, 'RIGHT_COL_i');
+        assert(solve_map_bitmap(MASK::ALL, xy15, y15) == MASK::BOTTOM_ROW, 'BOTTOM_ROW_i');
     }
 
     const TREE_COUNT: u16 = 6;
@@ -326,13 +347,16 @@ mod tests {
     #[test]
     #[available_gas(1_000_000_000)]
     fn test_flood_fill() {
-        assert(flood_fill(MASK::ALL, 0) == MASK::ALL, 'MASK::ALL');
+        assert(flood_fill_bitmap(MASK::ALL, 0) == MASK::ALL, 'MASK::ALL');
         // made-up map
         let bitmap: u256 = 0xc7c0cff41ff71ff75ffbeffdeffef7ff07feeffdaffe8ffffbfc03f9ff5fe902;
         let expected_fill: u256 = 0x7c00ff01ff01ff01ff80ffc0ffe07ff07feeffcaffe8ffffbfc03f9ff5fe902;
         let entry: u8 = 88;
-        let fill = flood_fill(bitmap, entry);
-        assert(fill == expected_fill, 'expected');
+        let fill = flood_fill_bitmap(bitmap, entry);
+        assert(fill == expected_fill, 'expected_bitmap');
+        // as tiles should be the same
+        let tiles = flood_fill_tiles(bitmap, entry);
+        assert(Bitmap::from_tile_array(tiles.span()) == expected_fill, 'expected_tiles');
     }
 
     #[test]
@@ -349,7 +373,7 @@ mod tests {
             let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id + i, level_number, MANOR_COORD, 'binary_tree_classic', 0);
             let map: Map = get_world_Map(world, chamber1.location_id);
             assert(map.over != 0, 'has entry');
-            let fill = flood_fill(map.bitmap, map.over);
+            let fill = flood_fill_bitmap(map.bitmap, map.over);
             assert(fill == map.bitmap, 'binary_tree');
             //------
             i += 1;
