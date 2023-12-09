@@ -51,6 +51,8 @@ function EditorMap() {
     />
   }
 
+  const _clip = async () => BigInt(await navigator?.clipboard?.readText() ?? bitmap)
+
   return (
     <div className='AlignCenter'>
       <svg width='400' height='400' viewBox={`0 0 16 16`}>
@@ -77,7 +79,11 @@ function EditorMap() {
         &nbsp;
         <button onClick={() => { navigator?.clipboard?.writeText(bigintToHex(bitmap)) }}>copy</button>
         &nbsp;
-        <button onClick={async () => { setBitmap(BigInt(await navigator?.clipboard?.readText() ?? bitmap)) }}>paste</button>
+        <button onClick={async () => { setBitmap(BigInt(await _clip())) }}>paste</button>
+        &nbsp;
+        <button onClick={async () => { setBitmap((bitmap & (BigInt('0xffffffffffffffffffffffffffffffff') << 128n)) | (await _clip())) }}>p_low</button>
+        &nbsp;
+        <button onClick={async () => { setBitmap((bitmap & BigInt('0xffffffffffffffffffffffffffffffff')) | ((await _clip()) << 128n)) }}>p_high</button>
         &nbsp;
         /
         &nbsp;
