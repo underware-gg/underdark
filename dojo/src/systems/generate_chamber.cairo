@@ -6,12 +6,13 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 use underdark::systems::generate_doors::{generate_doors};
 use underdark::models::chamber::{Chamber, Map, MapData, Score};
-use underdark::core::randomizer::{randomize_door_permissions, randomize_monsters};
+use underdark::core::randomizer::{randomize_door_permissions, randomize_monsters, randomize_chest};
+use underdark::core::seeder::{make_seed};
+use underdark::core::generator::{generate};
+use underdark::core::solver::{is_map_solvable};
 use underdark::types::location::{Location, LocationTrait};
 use underdark::types::dir::{Dir, DirTrait};
 use underdark::types::doors::{Doors};
-use underdark::core::seeder::{make_seed};
-use underdark::core::generator::{generate};
 
 #[inline(always)]
 fn can_generate_chamber(world: IWorldDispatcher,
@@ -118,18 +119,26 @@ fn get_chamber_map_data(world: IWorldDispatcher,
     let chamber: Chamber = get!(world, location_id, (Chamber));
     assert(chamber.yonder > 0, 'Chamber does not exist!');
 
+    // get seed
+    let mut rnd = chamber.seed;
+
     // Get Map
     let map: Map = get!(world, location_id, (Map));
 
+    // solvable?
+    let mut chest: u256 = 0;
+    if (!is_map_solvable(map.bitmap, map.over, map.under)) {
+        chest = randomize_chest(ref rnd, map);
+    }
+
     // Generate MapData
-    let mut rnd = chamber.seed;
     let (monsters, slender_duck, dark_tar): (u256, u256, u256) = randomize_monsters(ref rnd, map, chamber.level_number);
     let map_data = MapData {
         location_id,
         monsters,
         slender_duck,
         dark_tar,
-        chest: 0,
+        chest,
     };
 
     (chamber, map, map_data)

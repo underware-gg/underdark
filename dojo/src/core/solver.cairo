@@ -12,6 +12,7 @@ use underdark::utils::math::{Math32};
 // A* maze solver
 //
 // inspired by:
+// https://www.youtube.com/watch?v=GC-nBgi9r0U
 // https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 //
 
@@ -40,10 +41,10 @@ fn solve_map(bitmap: u256, entry: u8, exit: u8, ordered: bool) -> Array<u8> {
     // loop until exit found or empty stack
     loop {
         let mut current_tile: usize = 0;
+        let mut current_f: usize = 0xffff; // impossible value
 
         // pick best score node from stack
         let stack_span = stack.span();
-        let mut current_f: usize = 0xffff; // impossible value
         let mut i: usize = 0;
         loop {
             if (i == stack_span.len()) { break; }

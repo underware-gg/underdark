@@ -20,6 +20,7 @@ fn generate(
 
     if(generator_name == 'seed') {
         bitmap = seed;
+        bitmap = protect(bitmap, protected);
     } else if(generator_name == 'underseed') {
         bitmap = make_underseed(seed);
     } else if(generator_name == 'overseed') {

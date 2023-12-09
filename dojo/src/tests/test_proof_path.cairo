@@ -7,6 +7,7 @@ mod tests {
     use dojo::world::{IWorldDispatcherTrait, IWorldDispatcher};
 
     use underdark::systems::verify_level_proof::{verify_map, pack_proof_moves, unpack_proof_moves};
+    use underdark::core::solver::{is_map_solvable, flood_fill_bitmap};
     use underdark::models::chamber::{Chamber, Map, MapData, Score};
     use underdark::types::location::{Location, LocationTrait};
     use underdark::types::dir::{Dir, DirTrait, DIR};
@@ -180,6 +181,31 @@ mod tests {
         verify_map(map, map_data, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
 
+    #[test]
+    #[available_gas(1_000_000_000_000)]
+    fn test_no_chest_when_solvable() {
+        let (world, system) = setup_world();
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'empty', 0);
+        let map_data1: MapData = get_world_MapData(world, system, chamber1.location_id);
+        assert(map_data1.chest == 0, 'no_chest_1');
+        force_verify_level(world, chamber1.location_id);
+        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, 1, 2, MANOR_COORD, 'binary_tree_classic', 0);
+        let map_data2: MapData = get_world_MapData(world, system, chamber2.location_id);
+        assert(map_data2.chest == 0, 'no_chest_2');
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000_000)]
+    fn test_chest_on_tight_map() {
+        let (world, system) = setup_world();
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'carve', 6);
+        let map1: Map = get_world_Map(world, chamber1.location_id);
+        let map_data1: MapData = get_world_MapData(world, system, chamber1.location_id);
+        assert(map_data1.chest != 0, 'chest_on_seed');
+        assert(U256Bitwise::count_bits(map_data1.chest) == 1, 'one_chest');
+        let flooded: u256 = flood_fill_bitmap(map1.bitmap, map1.over);
+        assert((flooded & map_data1.chest) == map_data1.chest, 'Chest inside flooded area');
+    }
 
     //
     // Score
@@ -189,15 +215,15 @@ mod tests {
     fn test_score() {
         let (world, system) = setup_world();
         let player = starknet::get_caller_address();
-        let room_id: u16 = 1;
 
-        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, 1, MANOR_COORD, 'empty', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, 1, 1, MANOR_COORD, 'empty', 0);
         force_verify_level(world, chamber1.location_id);
-        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, room_id, 2, MANOR_COORD, 'empty', 0);
+        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, 1, 2, MANOR_COORD, 'empty', 0);
         
         // check test if chamber is correct
         let map: Map = get_world_Map(world, chamber2.location_id);
         let mut map_data: MapData = get_world_MapData(world, system, chamber2.location_id);
+        assert(map_data.chest == 0, 'no_chest');
         map_data.slender_duck = 0;
         assert(map.over == 8, 'bad_over');
         assert(map.under == 248, 'bad_under');

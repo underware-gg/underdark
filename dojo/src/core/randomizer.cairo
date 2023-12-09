@@ -1,5 +1,7 @@
+// use debug::PrintTrait;
 use traits::Into;
 use underdark::core::seeder::{make_seed, make_underseed};
+use underdark::core::solver::{flood_fill_tiles};
 use underdark::models::chamber::{Chamber, Map};
 use underdark::utils::hash::{hash_u128, hash_u128_to_u256};
 use underdark::utils::bitwise::{U8Bitwise};
@@ -213,6 +215,18 @@ fn randomize_monsters(ref rnd: u256, map: Map, level_number: u16) -> (u256, u256
     (monsters, slender_duck, dark_tar)
 }
 
+fn randomize_chest(ref rnd: u256, map: Map) -> u256 {
+    let tiles: Array<u8> = flood_fill_tiles(map.bitmap, map.over);
+    assert(tiles.len() > 0, 'Map not flooded'); // entry is blocked
+    let mut chest_tile: u8 = 0;
+    loop {
+        let i: usize = randomize_value(ref rnd, tiles.len().into()).try_into().unwrap();
+        chest_tile = *tiles.at(i);
+        // if entry, keep trying
+        if (chest_tile != map.over) { break; }
+    };
+    (Bitmap::set_tile(0, chest_tile.into()))
+}
 
 
 //----------------------------------------
