@@ -268,6 +268,39 @@ mod tests {
 
     #[test]
     #[available_gas(1_000_000_000)]
+    // #[should_panic(expected:('Slendered!',))]
+    fn test_turn_lights_off_no_slender() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
+        let proof = array![
+            DIR::LIGHT_SWITCH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+        ]; //based on _proof_best()
+        let win = verify_map(map, map_data, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+        assert(win == true, 'Win!')
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    #[should_panic(expected:('Slendered!',))]
+    fn test_turn_lights_off_slendered() {
+        let (world, system) = setup_world();
+        let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
+        let (map, map_data) = make_map(bitmap, 0, MASK::ALL, MASK::ALL, 0);
+        let proof = array![
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::LIGHT_SWITCH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+            DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
+        ]; //based on _proof_best()
+        verify_map(map, map_data, entry, exit, pack_proof_moves(proof.clone()), proof.len());
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
     #[should_panic(expected:('Slendered!',))]
     fn test_dark_tar_down_almost() {
         let (world, system) = setup_world();

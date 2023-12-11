@@ -9,7 +9,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 use underdark::systems::generate_chamber::{can_generate_chamber, get_chamber_map_data};
 use underdark::models::chamber::{Chamber, Map, MapData, Score};
 use underdark::models::tile::{Tile};
-use underdark::types::dir::{Dir, DirTrait};
+use underdark::types::dir::{Dir, DirTrait, DIR};
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::utils::bitmap::{Bitmap};
 use underdark::utils::math::{Math8};
@@ -72,8 +72,9 @@ fn verify_map(
 
     // reproduce moves step by step
     let mut pos: usize = entry.into();
-    let mut sanity: u8 = SANITY_MAX;
+    let mut light_is_on: bool = true;
     let mut light: u8 = LIGHT_MAX;
+    let mut sanity: u8 = SANITY_MAX;
     let mut dark_tar: u256 = map_data.dark_tar;
     let mut i = 0;
 // 'proofing......'.print();
@@ -91,7 +92,7 @@ fn verify_map(
         }
 
 // pos.print();
-        if (light > 0) {
+        if (light_is_on && light > 0) {
             // when lights are on, monsters take your sanity
             if(Bitmap::is_set_tile(map_data.monsters, pos)) {
                 sanity = sanity - Math8::min(MONSTER_HIT_DAMAGE, sanity);
@@ -114,16 +115,21 @@ fn verify_map(
         let move: u8 = *moves[i];
 
         // Moves in four directions, mapping Dir::North .. Dir::South
-        if (move < 4) {
-            let dir: Option<Dir> = move.try_into();
-            pos = Bitmap::move_tile(pos, dir.unwrap());
+        if (move <= DIR::LIGHT_SWITCH) {
+            if (move == DIR::LIGHT_SWITCH) {
+                light_is_on = !light_is_on;
+            } else {
+                pos = Bitmap::move_tile(pos, move.try_into().unwrap());
+            }
             // no chest, looking for the exit
             if (map_data.chest == 0 && pos == exit.into()) {
                 break; // win!!
             }
             assert(Bitmap::is_set_tile(map.bitmap, pos) == true, 'Hit a wall!');
             // drop light at every step
-            light = light - Math8::min(LIGHT_STEP_DROP, light);
+            if (light_is_on) {
+                light = light - Math8::min(LIGHT_STEP_DROP, light);
+            }
         }
 
         // ok, go on
