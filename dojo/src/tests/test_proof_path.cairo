@@ -68,7 +68,7 @@ mod tests {
     fn test_verify_map_wins() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let (map, map_data) = make_map(bitmap, 0, 0, 0);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
 
         // good proof
         {
@@ -116,7 +116,7 @@ mod tests {
     fn test_verify_map_no_proof() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let (map, map_data) = make_map(bitmap, 0, 0, 0);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
         let proof = array![];
         verify_map(map, map_data, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
@@ -127,7 +127,7 @@ mod tests {
     fn test_verify_map_short_proof() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let (map, map_data) = make_map(bitmap, 0, 0, 0);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
         let proof = array![DIR::EAST, DIR::EAST];
         verify_map(map, map_data, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
@@ -138,7 +138,7 @@ mod tests {
     fn test_verify_map_no_more_moves() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (MASK::ALL, 0, 240);
-        let (map, map_data) = make_map(bitmap, 0, 0, 0);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
         let proof = array![
             DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
             DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST, DIR::WEST,
@@ -158,7 +158,7 @@ mod tests {
     fn test_verify_map_wall() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let (map, map_data) = make_map(bitmap, 0, 0, 0);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
         let proof = array![DIR::NORTH];
         verify_map(map, map_data, entry, exit, pack_proof_moves(proof.clone()), proof.len());
     }
@@ -169,7 +169,7 @@ mod tests {
     fn test_verify_map_hit_a_wall() {
         let (world, system) = setup_world();
         let (bitmap, entry, exit): (u256, u8, u8) = (VERIFY_BITMAP, VERIFY_ENTRY, VERIFY_EXIT);
-        let (map, map_data) = make_map(bitmap, 0, 0, 0);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
         let proof = array![
             DIR::EAST, DIR::EAST, DIR::EAST, DIR::EAST,
             DIR::SOUTH, DIR::SOUTH,

@@ -79,7 +79,7 @@ fn verify_map(
 // 'proofing......'.print();
     loop {
         // looking for a chest
-        if (map_data.chest > 0 && Bitmap::is_set_tile(map_data.chest, pos)) {
+        if (map_data.chest > 0 && Bitmap::is_near_or_at_tile(map_data.chest, pos)) {
             break; // win!!
         }
 
@@ -115,13 +115,11 @@ fn verify_map(
 
         // Moves in four directions, mapping Dir::North .. Dir::South
         if (move < 4) {
+            let dir: Option<Dir> = move.try_into();
+            pos = Bitmap::move_tile(pos, dir.unwrap());
             // no chest, looking for the exit
-            if (map_data.chest == 0) {
-                let dir: Option<Dir> = move.try_into();
-                pos = Bitmap::move_tile(pos, dir.unwrap());
-                if (pos == exit.into()) {
-                    break; // win!!
-                }
+            if (map_data.chest == 0 && pos == exit.into()) {
+                break; // win!!
             }
             assert(Bitmap::is_set_tile(map.bitmap, pos) == true, 'Hit a wall!');
             // drop light at every step

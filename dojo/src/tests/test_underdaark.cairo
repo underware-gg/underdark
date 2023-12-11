@@ -86,7 +86,7 @@ mod tests {
     fn test_monsters_seed() {
         let mut rnd = make_seed(1234);
         let bitmap: u256 = binary_tree_pro(rnd);
-        let (map, map_data) = make_map(bitmap, 0, 0, 0);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
 
         // randomize_monsters,randomize_slender_duck,randomize_dark_tar
         let mut i: u16 = 0;

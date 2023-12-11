@@ -81,7 +81,7 @@ mod utils {
         verify_level_proof(world, location_id, 0xffff, 100);
     }
 
-    fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> (Map, MapData) {
+    fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256, chest: u256) -> (Map, MapData) {
         let location_id: u128 = 1;
         (Map {
             entity_id: location_id,
@@ -100,7 +100,7 @@ mod utils {
             monsters,
             slender_duck,
             dark_tar,
-            chest: 0,
+            chest,
         })
     }
 
