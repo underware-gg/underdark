@@ -949,7 +949,7 @@
     {
       "name": "actions",
       "address": "0x3da4bf86342c340fd1dd590cd5505248af77006db7d74912ac50d7e7374496b",
-      "class_hash": "0x53a9ebeb40efece051c229ab7d0bf442a434a293831f8df0cda3d7bf908417d",
+      "class_hash": "0x6b8657d47bd3dddbfba6b2f8accb261cea5e753d0881ac06a934a67dc72e7b6",
       "abi": [
         {
           "type": "impl",
@@ -987,6 +987,20 @@
           "type": "impl",
           "name": "ActionsImpl",
           "interface_name": "underdark::systems::actions::IActions"
+        },
+        {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
         },
         {
           "type": "struct",
@@ -1090,6 +1104,22 @@
             },
             {
               "type": "function",
+              "name": "can_play_level",
+              "inputs": [
+                {
+                  "name": "location_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
               "name": "generate_map_data",
               "inputs": [
                 {
@@ -1177,10 +1207,7 @@
           ]
         }
       ],
-      "reads": [
-        "Chamber",
-        "Map"
-      ],
+      "reads": [],
       "writes": [],
       "computed": []
     }

@@ -288,6 +288,15 @@ export const useGameplayContext = () => {
     dispatch({ type: GameplayActions.TURN_TO, payload: dir })
   }
 
+  const dispatchTurnToTile = (tile: number) => {
+    if (tile == state.playerPosition.tile) return
+    const dir = (tile == state.playerPosition.tile - 1) ? Dir.West
+      : (tile == state.playerPosition.tile + 1) ? Dir.East
+        : (tile < state.playerPosition.tile) ? Dir.North
+          : Dir.South
+    dispatch({ type: GameplayActions.TURN_TO, payload: dir })
+  }
+
   const dispatchDarkTar = (value: number = LIGHT_MAX) => {
     dispatch({ type: GameplayActions.REFILL_LIGHT, payload: value })
     dispatchMessage(MESSAGES.DARK_TAR)
@@ -328,6 +337,7 @@ export const useGameplayContext = () => {
     dispatchGameState,
     dispatchMoveTo,
     dispatchTurnTo,
+    dispatchTurnToTile,
     dispatchDarkTar,
     dispatchNearDamage,
     dispatchHitDamage,

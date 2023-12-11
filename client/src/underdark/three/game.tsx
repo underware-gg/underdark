@@ -529,7 +529,7 @@ export function damageFromTile(tile: number) {
     .start()
 }
 
-export function rotateToPlayer(tile: number): boolean {
+export function rotateToPlayer(tile: number) {
   const object = _findTile(tile)
   if (!object) return
   const a = -HALF_PI + Math.atan2(object.position.y - _playerPosition.y, object.position.x - _playerPosition.x)
@@ -538,7 +538,7 @@ export function rotateToPlayer(tile: number): boolean {
     .start()
 }
 
-export function rotatePlayerTo(tile: number): boolean {
+export function rotatePlayerTo(tile: number) {
   const object = _findTile(tile)
   if (!object) return
   if (_playerPosition.y == object.position.y && _playerPosition.x == object.position.x) return

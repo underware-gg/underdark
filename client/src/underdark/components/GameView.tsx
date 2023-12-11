@@ -72,7 +72,7 @@ const GameView = ({
     <div className='Relative GameView'>
       <MovePlayer />
       <GameCanvas guiEnabled={false} />
-      <GameTriggers tilemap={tilemap} />
+      <GameLoop tilemap={tilemap} />
       <GameControls tilemap={tilemap} />
       <GameAudios />
     </div>
@@ -122,70 +122,76 @@ const _isAround = (tilemap, tile, type): number | undefined => {
   return undefined
 }
 
-const GameTriggers = ({
+const GameLoop = ({
   tilemap,
 }) => {
   const { chamberId } = useUnderdarkContext()
   const { sfxEnabled } = useSettingsContext()
   const {
-    gameImpl, gameState, isPlaying, playerPosition, hasLight, health, stepCount, steps,
-    dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar, dispatchSlendered,
+    gameImpl, gameState, isPlaying, playerPosition, light, hasLight, health, stepCount, steps,
+    dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar, dispatchSlendered, dispatchTurnTo, dispatchTurnToTile,
   } = useGameplayContext()
 
+  // Main game loop
   useEffect(() => {
-    if (!playerPosition || !isPlaying) return
-    const { tile } = playerPosition
+    if (!isPlaying || !playerPosition) return
+    const { tile, facing } = playerPosition
 
+    //
+    // Dark tar recharge has preference (to Slenderduck)
+    // come back to process the move
+    //
     if (tilemap[tile] == TileType.DarkTar) {
       if (gameImpl?.isTileEnaled(tile)) {
         gameImpl?.disableTile(tile)
         gameImpl?.playAudio(AudioName.DARK_TAR, sfxEnabled)
         dispatchDarkTar(100)
+        return;
       }
-    } else if (!hasLight) {
+    }
+    
+    //
+    // Messages
+    //
+    if (!hasLight) {
       dispatchMessage('No light! Beware the Slender Duck!')
     }
 
-    const monsterAround = _isAround(tilemap, tile, TileType.Monster)
-    const slenderAround = _isAround(tilemap, tile, TileType.SlenderDuck)
-    if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
-      gameImpl?.damageFromTile(slenderAround ?? tile)
-      gameImpl?.rotateToPlayer(slenderAround ?? tile)
-      gameImpl?.rotatePlayerTo(slenderAround ?? tile)
-      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
-      dispatchSlendered()
-    } else if (hasLight && tilemap[tile] == TileType.Monster) {
-      gameImpl?.damageFromTile(tile)
-      gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
-      dispatchHitDamage()
-    } else if (hasLight && monsterAround != null) {
-      gameImpl?.damageFromTile(monsterAround)
-      gameImpl?.rotateToPlayer(monsterAround)
-      gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
-      dispatchNearDamage()
-    }
-  }, [gameState, playerPosition?.tile])
-
-  useEffect(() => {
-    if (!playerPosition || !isPlaying) return
-    const { tile, facing } = playerPosition
-    if (tilemap[tile] == TileType.Exit && facing == Dir.South) {
+    //
+    // End-game situations
+    //
+    if (tilemap[tile] == TileType.Exit) {
       dispatchGameState(GameState.Verifying)
-    }
-  }, [gameState, playerPosition])
-
-  useEffect(() => {
-    if (isPlaying && health == 0) {
+      dispatchTurnTo(Dir.South)
+    } else if (health == 0) {
       dispatchGameState(GameState.NoHealth)
+    } else if (isPlaying && stepCount == 64) {
+      dispatchSlendered()
+    } else {
+      //
+      // Process movement
+      //
+      const monsterAround = _isAround(tilemap, tile, TileType.Monster)
+      const slenderAround = _isAround(tilemap, tile, TileType.SlenderDuck)
+      if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
+        gameImpl?.damageFromTile(slenderAround ?? tile)
+        gameImpl?.rotateToPlayer(slenderAround ?? tile)
+        // gameImpl?.rotatePlayerTo(slenderAround ?? tile)
+        dispatchTurnToTile(tile)
+        gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
+        dispatchSlendered()
+      } else if (hasLight && tilemap[tile] == TileType.Monster) {
+        gameImpl?.damageFromTile(tile)
+        gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
+        dispatchHitDamage()
+      } else if (hasLight && monsterAround != null) {
+        gameImpl?.damageFromTile(monsterAround)
+        gameImpl?.rotateToPlayer(monsterAround)
+        gameImpl?.playAudio(AudioName.MONSTER_TOUCH, sfxEnabled)
+        dispatchNearDamage()
+      }
     }
-  }, [gameState, health])
-
-  useEffect(() => {
-    if (isPlaying && stepCount == 64) {
-      dispatchGameState(GameState.Slendered)
-    }
-  }, [gameState, stepCount])
-
+  }, [gameState, playerPosition, stepCount, light])
 
   //----------------------------------
   // Verify moves on-chain
