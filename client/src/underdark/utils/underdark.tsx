@@ -47,6 +47,7 @@ export enum TileType {
   Monster = 0x10,
   SlenderDuck = 0x11,
   DarkTar = 0x12,
+  Chest = 0x13,
   // Crawler
   Empty = 0xfe,
   Path = 0xff,

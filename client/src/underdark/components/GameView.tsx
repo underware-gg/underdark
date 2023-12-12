@@ -53,6 +53,7 @@ const GameView = ({
   useEffect(() => {
     if (isPlaying) {
       gameImpl?.enableTilesByType(TileType.DarkTar, true)
+      gameImpl?.enableTilesByType(TileType.Chest, true)
     }
   }, [gameImpl, isPlaying])
 
@@ -86,7 +87,7 @@ const MovePlayer = () => {
 
   useEffect(() => {
     if (isLoaded || isPlaying) {
-      gameImpl?.movePlayer(playerPosition?.tile ?? null)
+      gameImpl?.movePlayer(playerPosition?.tile ?? null, playerPosition?.facing ?? null)
     }
   }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.tile])
 
@@ -171,9 +172,15 @@ const GameLoop = ({
       //
       // Process movement
       //
+      const chestAround = _isAround(tilemap, tile, TileType.Chest)
       const monsterAround = _isAround(tilemap, tile, TileType.Monster)
       const slenderAround = _isAround(tilemap, tile, TileType.SlenderDuck)
-      if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
+      if (chestAround != null) {
+        gameImpl?.rotatePlayerTo(chestAround)
+        dispatchTurnToTile(tile)
+        // gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
+        dispatchGameState(GameState.Verifying)
+      } else if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
         gameImpl?.damageFromTile(slenderAround ?? tile)
         gameImpl?.rotateToPlayer(slenderAround ?? tile)
         // gameImpl?.rotatePlayerTo(slenderAround ?? tile)

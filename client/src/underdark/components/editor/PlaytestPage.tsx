@@ -89,7 +89,7 @@ const GameView = ({
   }, [gameImpl, gameTilemap])
 
   useEffect(() => {
-    gameImpl?.movePlayer(playerPosition.tile)
+    gameImpl?.movePlayer(playerPosition.tile, playerPosition.facing)
     gameImpl?.rotatePlayer(playerPosition.facing)
   }, [gameImpl, playerPosition])
 

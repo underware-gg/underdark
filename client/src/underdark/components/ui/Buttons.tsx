@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
-import { useChamber, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
+import { useChamber, useChamberMapData, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
 import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { getLevelParams } from '@/underdark/data/levels'
@@ -31,8 +31,10 @@ export const StartButton = ({
 
 export function NextLevelButton() {
   const { isVerifying, isWinner } = useGameplayContext()
-
   const { roomId, chamberId } = useUnderdarkContext()
+
+  const map_data = useChamberMapData(chamberId)
+
   const { chamberExists } = useChamberOffset(chamberId, Dir.Under)
 
   const { account } = useDojoAccount()
@@ -47,8 +49,12 @@ export function NextLevelButton() {
     router.push(url)
   }
 
-  if (isVerifying) {
-    return <></>
+  if (isVerifying || map_data == null) {
+    return <ActionButton large disabled={true} label='VALIDATING...' onClick={() => {}} />
+  }
+
+  if (map_data.chest > 0n) {
+    return <ActionButton large label='FINISHED LEVEL' onClick={() => router.push('/manor')} />
   }
 
   if (!isWinner) {

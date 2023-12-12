@@ -14,6 +14,7 @@ enum ModelName {
   DARK_TAR = 'DARK_TAR',
   DOOR = 'DOOR',
   STAIRS = 'STAIRS',
+  CHEST = 'CHEST',
 }
 
 interface ModelAsset {
@@ -52,11 +53,11 @@ let MODELS_ASSETS: ModelAssets = {
     scale: 0.005,
     rotation: [HALF_PI, HALF_PI, 0],
   },
-  // CHEST: {
-  //   path: '/models/chest.ok.fbx',
-  //   scale: 0.005,
-  //   rotation: [HALF_PI, 0, 0],
-  // },
+  CHEST: {
+    path: '/models/chest.ok.fbx',
+    scale: 0.005,
+    rotation: [HALF_PI, 0, 0],
+  },
 }
 
 
@@ -192,7 +193,7 @@ const _loadAudios = async (listener) => {
       loader.load(asset.path, function (buffer) {
         // load asset...
         let audio = null
-        console.log(`CACHED AUDIO [${name}]:`, buffer)
+        // console.log(`CACHED AUDIO [${name}]:`, buffer)
         if (buffer) {
           audio = new THREE.Audio(listener).setBuffer(buffer)
           audio.setLoop(asset.loop ?? false)
@@ -218,6 +219,7 @@ const loadAssets = async () => {
   if (_loadingAssets === undefined) {
     _loadingAssets = true
     await _loadModels()
+    console.log(`--- CACHED MODELS! 👍`)
     _loadingAssets = false
   }
   return _loadingAssets
@@ -232,6 +234,7 @@ const loadAudioAssets = async (cameraRig: any) => {
     const listener = new THREE.AudioListener()
     cameraRig.add(listener)
     await _loadAudios(listener)
+    console.log(`--- CACHED AUDIOS! 👍`)
     _audioAssetsLoaded = true
   }
   return _audioAssetsLoaded

@@ -126,6 +126,7 @@ export const useChamberMap = (locationId: bigint) => {
         const isMonster = (map_data.monsters & (1n << bit)) != 0n
         const isSlenderDuck = (map_data.slender_duck & (1n << bit)) != 0n
         const isDarkTar = (map_data.dark_tar & (1n << bit)) != 0n
+        const isChest = (map_data.chest & (1n << bit)) != 0n
         // console.log(`GAMETILEMAP`, i, isPath, isMonster, isSlenderDuck, isDarkTar)
         if (isDarkTar) {
           result.push(TileType.DarkTar)
@@ -136,6 +137,9 @@ export const useChamberMap = (locationId: bigint) => {
         } else if (isMonster) {
           result.push(TileType.Monster)
           // console.log(`++++++TileType.Monster`, bit)
+        } else if (isChest) {
+          result.push(TileType.Chest)
+          // console.log(`++++++TileType.Chest`, bit)
         } else if (!isPath) {
           result.push(TileType.Void)
         } else {

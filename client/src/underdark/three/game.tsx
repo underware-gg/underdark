@@ -364,7 +364,7 @@ function setupScene() {
   _scene.add(_damage)
 }
 
-export function movePlayer(tile: number | null) {
+export function movePlayer(tile: number | null, facing: Dir | null) {
   const _tile = tile ?? _defaultPosition.tile
   const x = (_tile % 16) * SIZE
   const y = Math.floor(_tile / 16) * SIZE
@@ -375,14 +375,21 @@ export function movePlayer(tile: number | null) {
       emitter.emit('movedTo', { x: _cameraRig.position.x, y: _cameraRig.position.y, z: _cameraRig.position.z })
     })
     .start()
-  // _cameraRig.position.set(x, y, 0);
+  tiltPlayer(facing)
 }
 
-export function rotatePlayer(facing: Dir | null) {
+export function tiltPlayer(facing: Dir | null) {
   const _facing = facing ?? _defaultPosition.facing
   let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
   let rotX = (_facing == Dir.East || _facing == Dir.West) ? tilt : 0
   let rotY = (_facing == Dir.North || _facing == Dir.South) ? tilt : 0
+  new TWEEN.Tween(_cameraRig.rotation)
+    .to({ x: rotX, y: rotY, z: _cameraRig.rotation.z }, _animSecs)
+    .start()
+}
+
+export function rotatePlayer(facing: Dir | null) {
+  const _facing = facing ?? _defaultPosition.facing
   let rotZ =
     _facing == Dir.East ? HALF_PI
       : _facing == Dir.South ? PI
@@ -391,7 +398,7 @@ export function rotatePlayer(facing: Dir | null) {
   if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
   if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
   new TWEEN.Tween(_cameraRig.rotation)
-    .to({ x: rotX, y: rotY, z: rotZ }, _animSecs)
+    .to({ x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: rotZ }, _animSecs)
     .onUpdate(() => {
       emitter.emit('rotatedTo', { x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: _cameraRig.rotation.z })
     })
@@ -449,6 +456,9 @@ export function setupMap(gameTilemap: GameTilemap | null, isPlaying: boolean) {
     } else if (tileType == TileType.Exit) {
       meshes.push(loadModel(ModelName.STAIRS))
     } else if (tileType == TileType.LockedExit) {
+    } else if (tileType == TileType.Chest) {
+      meshes.push(loadModel(ModelName.CHEST))
+      meshes[0].visible = isPlaying
     } else if (tileType == TileType.Monster) {
       meshes.push(loadModel(ModelName.MONSTER))
       _randomRotate(meshes[0])

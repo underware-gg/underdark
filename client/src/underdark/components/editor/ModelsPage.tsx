@@ -29,7 +29,7 @@ const ModelsView = () => {
 
   useEffect(() => {
     //@ts-ignore
-    gameImpl?.movePlayer(playerPosition)
+    gameImpl?.movePlayer(playerPosition, null)
   }, [gameImpl, playerPosition])
 
   return <ThreeJsCanvas width={960} height={540} guiEnabled={true} gameImpl={game} />
