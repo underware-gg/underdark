@@ -14,7 +14,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js'
 import { DepthPostShader } from '@/underdark/three/DepthPostShader'
 import { Dir, GameTilemap, Position, TileType } from '@/underdark/utils/underdark'
 import { loadAssets, ModelName, AudioName, MODELS_ASSETS, AUDIO_ASSETS } from '@/underdark/data/assets'
-import { toRadians } from '@/underdark/utils/utils'
+import { lerp, toRadians } from '@/underdark/utils/utils'
 
 const PI = Math.PI
 const HALF_PI = Math.PI * 0.5
@@ -57,8 +57,9 @@ let _eyeZ: number;
 let _palettes = [];
 let _gameTilemap: GameTilemap | null = null
 let _stepCounter = 0
-let _animSecs = 300;
-let _animSecsDamage = 500;
+let _animMillis = 300;
+let _animMillisFadeLight = 1000;
+let _animMillisDamage = 500;
 
 let _animationRequest = null
 let _renderer: THREE.WebGLRenderer;
@@ -78,6 +79,11 @@ let _stats;
 // let _controls;
 
 let _fakePosition: Position = { tile: 8, facing: Dir.South }
+
+const animParams = {
+  lightLevel: 1.0,
+  lightMultiplier: 1.0,
+}
 
 const defaultParams = {
   fov: CAM_FOV,
@@ -115,7 +121,31 @@ export function setGameParams(newParams: any) {
   paramsUpdated()
 }
 
+export function fadeInLight() {
+  animParams.lightMultiplier = 0.0
+  new TWEEN.Tween(animParams)
+    .easing(TWEEN.Easing.Cubic.Out)
+    .to({ lightMultiplier: 1 }, _animMillisFadeLight)
+    .onUpdate(() => updateLights())
+    .start()
+}
 
+export function setLightLevel(newLevel) {
+  new TWEEN.Tween(animParams)
+    .easing(TWEEN.Easing.Cubic.In)
+    .to({ lightLevel: newLevel }, _animMillis)
+    .onUpdate(() => updateLights())
+    .start()
+}
+
+function updateLights() {
+  const l = animParams.lightLevel * animParams.lightMultiplier
+  setGameParams({
+    far: lerp(1.6, 5.0, l),
+    gamma: lerp(2.0, 1.25, l),
+    noiseAmount: lerp(0.0, 0.02, l),
+  })
+}
 
 //-------------------------------------------
 // Setup
@@ -370,26 +400,19 @@ export function movePlayer(tile: number | null, facing: Dir | null) {
   const y = Math.floor(_tile / 16) * SIZE
   _playerPosition = { x, y, z: 0 }
   new TWEEN.Tween(_cameraRig.position)
-    .to({ x, y }, _animSecs)
+    .to({ x, y }, _animMillis)
     .onUpdate(() => {
       emitter.emit('movedTo', { x: _cameraRig.position.x, y: _cameraRig.position.y, z: _cameraRig.position.z })
     })
     .start()
-  tiltPlayer(facing)
-}
-
-export function tiltPlayer(facing: Dir | null) {
-  const _facing = facing ?? _gameTilemap?.playerStart?.facing ?? _fakePosition.facing
-  let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
-  let rotX = (_facing == Dir.East || _facing == Dir.West) ? tilt : 0
-  let rotY = (_facing == Dir.North || _facing == Dir.South) ? tilt : 0
-  new TWEEN.Tween(_cameraRig.rotation)
-    .to({ x: rotX, y: rotY, z: _cameraRig.rotation.z }, _animSecs)
-    .start()
+  rotatePlayer(facing)
 }
 
 export function rotatePlayer(facing: Dir | null) {
   const _facing = facing ?? _gameTilemap?.playerStart?.facing ?? _fakePosition.facing
+  let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
+  let rotX = (_facing == Dir.East || _facing == Dir.West) ? tilt : 0
+  let rotY = (_facing == Dir.North || _facing == Dir.South) ? tilt : 0
   let rotZ =
     _facing == Dir.East ? HALF_PI
       : _facing == Dir.South ? PI
@@ -398,7 +421,7 @@ export function rotatePlayer(facing: Dir | null) {
   if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
   if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
   new TWEEN.Tween(_cameraRig.rotation)
-    .to({ x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: rotZ }, _animSecs)
+    .to({ x: rotX, y: rotY, z: rotZ }, _animMillis)
     .onUpdate(() => {
       emitter.emit('rotatedTo', { x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: _cameraRig.rotation.z })
     })
@@ -531,11 +554,11 @@ export function damageFromTile(tile: number) {
   _damage.position.set(object.position.x, object.position.y, 0)
   _damage.rotation.set(0, 0, 0)
   new TWEEN.Tween(_damage.scale)
-    .to({ x: 1.5, y: 1.5, z: 1.5 }, _animSecsDamage)
+    .to({ x: 1.5, y: 1.5, z: 1.5 }, _animMillisDamage)
     .start()
     .onComplete(() => _damage.scale.set(0, 0, 0))
   new TWEEN.Tween(_damage.rotation)
-    .to({ x: 0, y: 0, z: PI * 4 }, _animSecsDamage)
+    .to({ x: 0, y: 0, z: PI * 4 }, _animMillisDamage)
     .start()
 }
 
@@ -544,7 +567,7 @@ export function rotateToPlayer(tile: number) {
   if (!object) return
   const a = -HALF_PI + Math.atan2(object.position.y - _playerPosition.y, object.position.x - _playerPosition.x)
   new TWEEN.Tween(object.rotation)
-    .to({ x: 0, y: 0, z: a }, _animSecs)
+    .to({ x: 0, y: 0, z: a }, _animMillis)
     .start()
 }
 
@@ -554,7 +577,7 @@ export function rotatePlayerTo(tile: number) {
   if (_playerPosition.y == object.position.y && _playerPosition.x == object.position.x) return
   const a = -HALF_PI + Math.atan2(_playerPosition.y - object.position.y, _playerPosition.x - object.position.x)
   new TWEEN.Tween(_cameraRig.rotation)
-    .to({ x: 0, y: 0, z: a }, _animSecs)
+    .to({ x: 0, y: 0, z: a }, _animMillis)
     .start()
 }
 

@@ -34,11 +34,7 @@ const GameView = ({
   }, [gameImpl, chamberId, yonder])
 
   useEffect(() => {
-    gameImpl?.setGameParams({
-      far: map(light, 0.0, 100.0, 1.6, 5.0),
-      gamma: map(light, 0.0, 100.0, 2.0, 1.25),
-      noiseAmount: map(light, 0.0, 100.0, 0.0, 0.02),
-    })
+    gameImpl?.setLightLevel(light / 100.0);
   }, [gameImpl, light])
 
   useEffect(() => {
@@ -255,8 +251,8 @@ const GameAudios = () => {
 
   useEffect(() => {
     gameImpl?.playAudio(AudioName.STAIRS, sfxEnabled)
-    gameImpl?.tiltPlayer()
-    // TODO: Fade-in lights
+    gameImpl?.fadeInLight()
+    gameImpl?.rotatePlayer()
   }, [playCount])
 
   return <></>
