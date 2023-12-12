@@ -222,7 +222,7 @@ const GameLoop = ({
 
 const GameAudios = () => {
   const { musicEnabled, sfxEnabled} = useSettingsContext()
-  const { gameImpl, gameState, isPlaying, isGameOver, hasLight, playerPosition } = useGameplayContext()
+  const { gameImpl, gameState, playCount, isPlaying, isGameOver, hasLight, playerPosition } = useGameplayContext()
 
   useEffect(() => {
     const _play = (isGameOver && musicEnabled)
@@ -252,6 +252,12 @@ const GameAudios = () => {
       gameImpl?.playAudio(AudioName.STAIRS, sfxEnabled)
     }
   }, [gameState])
+
+  useEffect(() => {
+    gameImpl?.playAudio(AudioName.STAIRS, sfxEnabled)
+    gameImpl?.tiltPlayer()
+    // TODO: Fade-in lights
+  }, [playCount])
 
   return <></>
 }

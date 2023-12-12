@@ -47,6 +47,7 @@ export const initialState = {
   hasInteracted: false,
   startPosition: null,
   playerPosition: null,
+  playCount: 0,
   light: 0,
   health: 0,
   message: null,
@@ -60,6 +61,7 @@ type GameplayStateType = {
   hasInteracted: boolean
   startPosition: Position
   playerPosition: Position
+  playCount: number
   light: number     // 0..100
   health: number    // 0..100
   message: string
@@ -146,6 +148,7 @@ const GameplayProvider = ({
           // restart
           newState.playerPosition = { ...newState.startPosition }
         }
+        newState.playCount = newState.playCount + 1
         newState.light = LIGHT_MAX
         newState.health = SANITY_MAX
         newState.steps = []
