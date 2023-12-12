@@ -8,7 +8,7 @@ import Underdark from '@/underdark/components/Underdark'
 
 export default function UnderdarkPage() {
   const router = useRouter()
-  console.log(`/[...underdark]`, router.query.underdark)
+  // console.log(`/[...underdark]`, router.query.underdark)
 
   const { page, title, isPlaying, roomId, levelNumber } = useMemo(() => {
     let page = null

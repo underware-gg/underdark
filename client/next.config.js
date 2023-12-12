@@ -5,6 +5,7 @@
 const nextConfig = {
   env: {
     SERVER_URL: process.env.SERVER_URL ?? '',
+    PROOF_LOST_GAMES: parseInt(process.env.NEXT_PUBLIC_PROOF_LOST_GAMES ?? 0) == 1,
   },
   reactStrictMode: true,
   transpilePackages: [

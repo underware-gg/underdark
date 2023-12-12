@@ -202,8 +202,8 @@ const GameLoop = ({
   const { finish_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
   useEffect(() => {
-    // if (gameState == GameState.Verifying) {
-    if (gameState == GameState.Verifying || gameState == GameState.NoHealth || gameState == GameState.Slendered) {
+    const proofLostGames = (process.env.PROOF_LOST_GAMES && (gameState == GameState.NoHealth || gameState == GameState.Slendered))
+    if (gameState == GameState.Verifying || proofLostGames) {
       let proof = 0n
       steps.map((step, index) => {
         proof |= (BigInt(step.dir) << BigInt(index * 4))
