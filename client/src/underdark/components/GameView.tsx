@@ -21,10 +21,8 @@ const GameView = ({
   const { tilemap, gameTilemap } = useChamberMap(chamberId)
   const { yonder } = useChamber(chamberId)
   const { gameImpl, isLoaded, isPlaying, hasLight, light, playerPosition, dispatchReset } = useGameplayContext()
-
-  //
-  // Start game!
   
+  // Load map, set player start
   useEffect(() => {
     if (gameTilemap?.playerStart) {
       dispatchReset(gameTilemap?.playerStart ?? null, false)

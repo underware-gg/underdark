@@ -77,7 +77,7 @@ let _gui
 let _stats;
 // let _controls;
 
-let _defaultPosition: Position = { tile: 8, facing: Dir.South }
+let _fakePosition: Position = { tile: 8, facing: Dir.South }
 
 const defaultParams = {
   fov: CAM_FOV,
@@ -365,7 +365,7 @@ function setupScene() {
 }
 
 export function movePlayer(tile: number | null, facing: Dir | null) {
-  const _tile = tile ?? _defaultPosition.tile
+  const _tile = tile ?? _gameTilemap?.playerStart?.tile ?? _fakePosition.tile
   const x = (_tile % 16) * SIZE
   const y = Math.floor(_tile / 16) * SIZE
   _playerPosition = { x, y, z: 0 }
@@ -379,7 +379,7 @@ export function movePlayer(tile: number | null, facing: Dir | null) {
 }
 
 export function tiltPlayer(facing: Dir | null) {
-  const _facing = facing ?? _defaultPosition.facing
+  const _facing = facing ?? _gameTilemap?.playerStart?.facing ?? _fakePosition.facing
   let tilt = (++_stepCounter % 2 == 0 ? params.tilt : -params.tilt) / R_TO_D
   let rotX = (_facing == Dir.East || _facing == Dir.West) ? tilt : 0
   let rotY = (_facing == Dir.North || _facing == Dir.South) ? tilt : 0
@@ -389,7 +389,7 @@ export function tiltPlayer(facing: Dir | null) {
 }
 
 export function rotatePlayer(facing: Dir | null) {
-  const _facing = facing ?? _defaultPosition.facing
+  const _facing = facing ?? _gameTilemap?.playerStart?.facing ?? _fakePosition.facing
   let rotZ =
     _facing == Dir.East ? HALF_PI
       : _facing == Dir.South ? PI
@@ -421,7 +421,7 @@ export function setupMap(gameTilemap: GameTilemap | null, isPlaying: boolean) {
   _gameTilemap = gameTilemap ?? {
     gridSize: 20,
     gridOrigin: { x: 0, y: 0 },
-    playerStart: _defaultPosition,
+    playerStart: _fakePosition,
     tilemap: [],
     tiles: [],
   }
