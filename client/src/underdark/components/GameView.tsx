@@ -20,7 +20,7 @@ const GameView = ({
   const { roomId, chamberId } = useUnderdarkContext()
   const { tilemap, gameTilemap } = useChamberMap(chamberId)
   const { yonder } = useChamber(chamberId)
-  const { gameImpl, isLoaded, isPlaying, hasLight, light, playerPosition, dispatchReset } = useGameplayContext()
+  const { gameImpl, isLoaded, isPlaying, playCount, hasLight, light, playerPosition, dispatchReset } = useGameplayContext()
   
   // Load map, set player start
   useEffect(() => {
@@ -49,7 +49,7 @@ const GameView = ({
       gameImpl?.enableTilesByType(TileType.DarkTar, true)
       gameImpl?.enableTilesByType(TileType.Chest, true)
     }
-  }, [gameImpl, isPlaying])
+  }, [gameImpl, isPlaying, playCount])
 
   useEffect(() => {
     if (isPlaying) {
@@ -61,7 +61,7 @@ const GameView = ({
         gameImpl?.enableTilesByType(TileType.SlenderDuck, true)
       }
     }
-  }, [gameImpl, isPlaying, hasLight])
+  }, [gameImpl, isPlaying, hasLight, playCount])
 
   return (
     <div className='Relative GameView'>
