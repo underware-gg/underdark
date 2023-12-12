@@ -32,7 +32,7 @@ fn can_generate_chamber(world: IWorldDispatcher,
 
         // caller must have completed Over level
         let score : Score = get!(world, (over_location_id, caller), (Score));
-        assert(score.moves > 0, 'Complete over level first');
+        assert(score.score > 0, 'Complete over level first');
     }
 
     (true)

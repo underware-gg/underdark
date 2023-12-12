@@ -190,7 +190,8 @@ export const useScoreByKey = (scoreKey: Entity) => {
     location_id: score?.location_id ?? 0n,
     player: score?.player ?? 0n,
     moves: score?.moves ?? 0,
-    levelIsCompleted: (score?.moves > 0),
+    score: score?.score ?? 0,
+    levelIsCompleted: (score?.score > 0),
     scoreKey,
   }
 }

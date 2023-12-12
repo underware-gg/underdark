@@ -55,4 +55,5 @@ struct Score {
     location_id: u128,
     player: ContractAddress,
     moves: usize,
+    score: usize,
 }

@@ -7,10 +7,10 @@ function Score({
   scoreKey,
 }) {
   const score = useScoreByKey(scoreKey)
-  if (score.moves == 0) return <></>
+  if (score.score == 0) return <></>
   return (
     <div className=''>
-      <li>{score.moves}</li>
+      <li>{score.score} points, {score.moves} moves</li>
     </div>
   )
 }

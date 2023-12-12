@@ -12,7 +12,7 @@ use underdark::models::tile::{Tile};
 use underdark::types::dir::{Dir, DirTrait, DIR};
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::utils::bitmap::{Bitmap};
-use underdark::utils::math::{Math8};
+use underdark::utils::math::{Math8, Math32};
 use underdark::types::constants::{LIGHT_MAX, LIGHT_STEP_DROP, SANITY_MAX, MONSTER_NEAR_DAMAGE, MONSTER_HIT_DAMAGE};
 
 
@@ -38,9 +38,10 @@ fn verify_level_proof(world: IWorldDispatcher,
     //---------------------
     // Update score
     //
+    let level_score = 10_000 / Math32::max(moves_count, 1);
 
     let score : Score = get!(world, (location_id, caller), (Score));
-    if(score.moves == 0 || moves_count < score.moves) {
+    if(score.score == 0 || moves_count < score.moves) {
         set!(world, (
             Score {
                 key_location_id: location_id,
@@ -48,6 +49,7 @@ fn verify_level_proof(world: IWorldDispatcher,
                 location_id: location_id,
                 player: caller,
                 moves: moves_count,
+                score: level_score,
             }
         ));
     }

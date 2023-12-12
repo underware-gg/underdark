@@ -320,6 +320,7 @@ export type Score = {
   location_id?: Maybe<Scalars['u128']['output']>;
   moves?: Maybe<Scalars['usize']['output']>;
   player?: Maybe<Scalars['ContractAddress']['output']>;
+  score?: Maybe<Scalars['usize']['output']>;
 };
 
 export type ScoreConnection = {
@@ -345,7 +346,8 @@ export enum ScoreOrderField {
   KeyPlayer = 'KEY_PLAYER',
   LocationId = 'LOCATION_ID',
   Moves = 'MOVES',
-  Player = 'PLAYER'
+  Player = 'PLAYER',
+  Score = 'SCORE'
 }
 
 export type ScoreWhereInput = {
@@ -384,6 +386,13 @@ export type ScoreWhereInput = {
   playerLT?: InputMaybe<Scalars['ContractAddress']['input']>;
   playerLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
   playerNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  score?: InputMaybe<Scalars['usize']['input']>;
+  scoreEQ?: InputMaybe<Scalars['usize']['input']>;
+  scoreGT?: InputMaybe<Scalars['usize']['input']>;
+  scoreGTE?: InputMaybe<Scalars['usize']['input']>;
+  scoreLT?: InputMaybe<Scalars['usize']['input']>;
+  scoreLTE?: InputMaybe<Scalars['usize']['input']>;
+  scoreNEQ?: InputMaybe<Scalars['usize']['input']>;
 };
 
 export type Tile = {

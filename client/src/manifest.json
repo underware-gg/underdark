@@ -949,7 +949,7 @@
     {
       "name": "actions",
       "address": "0x3da4bf86342c340fd1dd590cd5505248af77006db7d74912ac50d7e7374496b",
-      "class_hash": "0x6b8657d47bd3dddbfba6b2f8accb261cea5e753d0881ac06a934a67dc72e7b6",
+      "class_hash": "0x58322ac5efdd79c7d35eb32cb685bf346ff75de0ed7dd56a7851cbdbcc15893",
       "abi": [
         {
           "type": "impl",
@@ -1846,9 +1846,14 @@
           "name": "moves",
           "type": "usize",
           "key": false
+        },
+        {
+          "name": "score",
+          "type": "usize",
+          "key": false
         }
       ],
-      "class_hash": "0x6cadc51400c08c7ab9815b6031505209dcd6d2ec6924347488eee9a59c76aed",
+      "class_hash": "0x4a9bd7d7f733f68816513d5f26d3644893cb8b338775ee82e7b94a6319987d",
       "abi": [
         {
           "type": "function",

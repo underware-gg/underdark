@@ -232,6 +232,7 @@ mod tests {
         
         let mut score: Score = get_world_Score(world, chamber2.location_id, player);
         assert(score.moves == 0, 'moves=0');
+        assert(score.score == 0, 'score=0');
 
         let proof_best = array![
             DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH, DIR::SOUTH,
@@ -262,6 +263,7 @@ mod tests {
         assert(score.location_id == chamber2.location_id, 'moves=player');
         assert(score.player == player, 'moves=player');
         assert(score.moves == proof_low.len(), 'moves=proof_low');
+        assert(score.score > 0, 'proof_low_score>0');
 
         win = verify_map(map, map_data, map.over, map.under, proof_best_packed, proof_best.len());
         assert(win == true, 'proof_best');
@@ -269,6 +271,7 @@ mod tests {
         execute_finish_level(world, system, chamber2.location_id, proof_best_packed, proof_best.len());
         score = get_world_Score(world, chamber2.location_id, player);
         assert(score.moves == proof_best.len(), 'moves=proof_best');
+        assert(score.score > 0, 'proof_best_score>0');
 
         win = verify_map(map, map_data, map.over, map.under, proof_mid_packed, proof_mid.len());
         assert(win == true, 'proof_mid');
@@ -276,6 +279,7 @@ mod tests {
         execute_finish_level(world, system, chamber2.location_id, proof_mid_packed, proof_mid.len());
         score = get_world_Score(world, chamber2.location_id, player);
         assert(score.moves == proof_best.len(), 'moves=proof_best'); // dir not overrite!
+        assert(score.score > 0, 'proof_best__score>0');
     }
 
 }
