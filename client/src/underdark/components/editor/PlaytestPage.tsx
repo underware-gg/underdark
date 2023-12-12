@@ -38,7 +38,7 @@ const GameView = ({
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
   useEffect(() => console.log(`gameTilemap:`, bigintToHex(bitmap), gameTilemap), [gameTilemap])
 
-  const { gameImpl, playerPosition, dispatchReset, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
+  const { gameImpl, playerPosition, dispatchReset, dispatchMoveTo, dispatchTurnToDir } = useGameplayContext()
 
   useEffect(() => {
     console.log(` >>>>>>> gameTilemap`, gameTilemap)
@@ -55,7 +55,7 @@ const GameView = ({
 
   const _moveToDirection = (dir) => {
     dispatchMoveTo({ dir, tilemap })
-    dispatchTurnTo(dir)
+    dispatchTurnToDir(dir)
   }
 
   const _move = (signal) => {
@@ -75,7 +75,7 @@ const GameView = ({
       [Dir.South]: Dir.West,
       [Dir.West]: Dir.North
     })[playerPosition.facing]
-    dispatchTurnTo(dir)
+    dispatchTurnToDir(dir)
   }
 
   // level selector

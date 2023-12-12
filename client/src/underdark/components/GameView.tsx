@@ -92,9 +92,7 @@ const MovePlayer = () => {
   }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.tile])
 
   useEffect(() => {
-    if (isLoaded || isPlaying) {
-      gameImpl?.rotatePlayer(playerPosition?.facing ?? null)
-    }
+    gameImpl?.rotatePlayer(playerPosition?.facing ?? null)
   }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.facing])
 
   return <></>
@@ -130,7 +128,7 @@ const GameLoop = ({
   const { sfxEnabled } = useSettingsContext()
   const {
     gameImpl, gameState, isPlaying, playerPosition, light, hasLight, health, stepCount, steps,
-    dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar, dispatchSlendered, dispatchTurnTo, dispatchTurnToTile,
+    dispatchGameState, dispatchMessage, dispatchHitDamage, dispatchNearDamage, dispatchDarkTar, dispatchSlendered, dispatchTurnToDir, dispatchTurnToTile,
   } = useGameplayContext()
 
   // Main game loop
@@ -163,7 +161,7 @@ const GameLoop = ({
     //
     if (tilemap[tile] == TileType.Exit) {
       dispatchGameState(GameState.Verifying)
-      dispatchTurnTo(Dir.South)
+      dispatchTurnToDir(Dir.South)
     } else if (health == 0) {
       dispatchGameState(GameState.NoHealth)
     } else if (isPlaying && stepCount == 64) {
@@ -183,7 +181,7 @@ const GameLoop = ({
       } else if (!hasLight && (tilemap[tile] == TileType.SlenderDuck || slenderAround != null)) {
         gameImpl?.damageFromTile(slenderAround ?? tile)
         gameImpl?.rotateToPlayer(slenderAround ?? tile)
-        // gameImpl?.rotatePlayerTo(slenderAround ?? tile)
+        gameImpl?.rotatePlayerTo(slenderAround ?? tile)
         dispatchTurnToTile(tile)
         gameImpl?.playAudio(AudioName.MONSTER_HIT, sfxEnabled)
         dispatchSlendered()
@@ -198,7 +196,7 @@ const GameLoop = ({
         dispatchNearDamage()
       }
     }
-  }, [gameState, playerPosition, stepCount, light])
+  }, [gameState, playerPosition?.tile, stepCount, light])
 
   //----------------------------------
   // Verify moves on-chain
@@ -266,7 +264,7 @@ const GameAudios = () => {
 const GameControls = ({
   tilemap,
 }) => {
-  const { isPlaying, playerPosition, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
+  const { isPlaying, playerPosition, dispatchMoveTo, dispatchTurnToDir } = useGameplayContext()
 
   const directional = false
   useKeyDown(() => (directional ? _moveToDirection(Dir.East) : _rotate(1)), ['ArrowRight', 'd'])
@@ -277,7 +275,7 @@ const GameControls = ({
   const _moveToDirection = (dir) => {
     if (!isPlaying) return;
     dispatchMoveTo({ dir, tilemap })
-    dispatchTurnTo(dir)
+    dispatchTurnToDir(dir)
   }
 
   const _move = (signal) => {
@@ -299,7 +297,7 @@ const GameControls = ({
       [Dir.South]: Dir.West,
       [Dir.West]: Dir.North
     })[playerPosition.facing]
-    dispatchTurnTo(dir)
+    dispatchTurnToDir(dir)
   }
 
   return <></>

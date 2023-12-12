@@ -284,7 +284,7 @@ export const useGameplayContext = () => {
     dispatchMessage('')
   }
 
-  const dispatchTurnTo = (dir: Dir) => {
+  const dispatchTurnToDir = (dir: Dir) => {
     dispatch({ type: GameplayActions.TURN_TO, payload: dir })
   }
 
@@ -336,7 +336,7 @@ export const useGameplayContext = () => {
     dispatchReset,
     dispatchGameState,
     dispatchMoveTo,
-    dispatchTurnTo,
+    dispatchTurnToDir,
     dispatchTurnToTile,
     dispatchDarkTar,
     dispatchNearDamage,

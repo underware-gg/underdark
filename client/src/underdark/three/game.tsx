@@ -57,7 +57,7 @@ let _eyeZ: number;
 let _palettes = [];
 let _gameTilemap: GameTilemap | null = null
 let _stepCounter = 0
-let _animSecs = 200;
+let _animSecs = 300;
 let _animSecsDamage = 500;
 
 let _animationRequest = null
