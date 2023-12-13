@@ -40,7 +40,7 @@ export function createSystemCalls(
       result = decodeComponent(contractComponents['MapData'], eventData.result)
 
       //@ts-ignore
-      console.log(`generate_map_data(${bigintToHex(locationId)}) >>>`, eventData, result, bigintToHex(result?.location_id ?? 0n), bigintToHex(result?.monsters ?? 0n))
+      // console.log(`generate_map_data(${bigintToHex(locationId)}) >>>`, eventData, result, bigintToHex(result?.location_id ?? 0n), bigintToHex(result?.monsters ?? 0n))
     } catch (e) {
       console.warn(`generate_map_data(${bigintToHex(locationId)}) exception:`, e)
     } finally {

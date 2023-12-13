@@ -76,7 +76,7 @@ export const useChamberOffset = (chamberId: bigint, dir: Dir) => {
   }
 }
 
-export const useChamberMapData = (locationId: bigint) => {
+export const useChamberMapData = (locationId: bigint, bitmap: bigint = undefined) => {
   const { generate_map_data } = useDojoSystemCalls()
   const [mapData, setMapData] = useState(null)
   
@@ -91,23 +91,23 @@ export const useChamberMapData = (locationId: bigint) => {
       }
     }
     setMapData(null)
-    if (locationId) {
+    if (locationId && (bitmap === undefined || bitmap > 0n)) {
       _fetch()
     }
     return () => {
       _mounted = false
     }
-  }, [locationId])
+  }, [locationId, bitmap])
 
   return mapData
 }
 
-export const useChamberMap = (locationId: bigint) => {
+export const useChamberMap = (locationId: bigint, id: number = 0) => {
   const { Map, Tile } = useDojoComponents()
   const map: any = useComponentValue(Map, bigintToEntity(locationId))
   const bitmap = useMemo<bigint>(() => BigInt(map?.bitmap ?? 0n), [map])
-  const map_data = useChamberMapData(locationId)
-  // useEffect(() => console.log(`map:`, map, typeof map?.bitmap, bitmap), [bitmap])
+  const map_data = useChamberMapData(locationId, bitmap)
+  // useEffect(() => console.log(`useChamberMap:`, id, map, typeof map?.bitmap, bitmap), [bitmap])
 
   //
   // Parse tiles
@@ -154,8 +154,8 @@ export const useChamberMap = (locationId: bigint) => {
   }, [bitmap, tiles, map_data])
   // useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
-  const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
-  // useEffect(() => console.log(`gameTilemap:`, gameTilemap), [gameTilemap])
+  const gameTilemap = useMemo(() => { return tilemapToGameTilemap(tilemap, 20) }, [tilemap])
+  // useEffect(() => console.log(`gameTilemap:`, id, locationId, gameTilemap), [gameTilemap])
 
   return {
     bitmap,

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
-import { useChamber, useChamberMapData, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
+import { useChamberMapData, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
 import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { getLevelParams } from '@/underdark/data/levels'
@@ -15,14 +15,14 @@ export const StartButton = ({
   large = false,
   label = null,
 }) => {
-  const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
+  const { gameImpl, isReady, dispatchReset } = useGameplayContext()
 
   const _startGame = async () => {
     await loadAudioAssets(gameImpl?.getCameraRig())
     dispatchReset(null, true)
   }
 
-  const _label = label ?? (isLoaded ? 'START' : 'RESTART')
+  const _label = label ?? (isReady ? 'START' : 'RESTART')
   return (
     <ActionButton fill={fill} large={large} onClick={() => _startGame()} label={_label} />
   )
@@ -109,7 +109,7 @@ export function GenerateRoomButton({
     const _level = getLevelParams(levelNumber)
     const success = await generate_level(account, realmId, roomId, levelNumber, manorCoord, _level.generatorName, _level.generatorValue)
     if (success) {
-      console.log(`GENERATED... TODO: START GAME`)
+      // not sure if this is working
     }
   }
 

@@ -5,24 +5,30 @@ import { useChamber, useChamberMap } from '@/underdark/hooks/useChamber'
 import { useKeyDown } from '@/underdark/hooks/useKeyDown'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
 import { Dir, FlippedDir, TileType } from '@/underdark/utils/underdark'
-import { bigintToHex, map } from '@/underdark/utils/utils'
+import { bigintToHex } from '@/underdark/utils/utils'
 import { getLevelParams } from '@/underdark/data/levels'
 import GameCanvas from '@/underdark/components/GameCanvas'
 import { AudioName } from '@/underdark/data/assets'
 import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 
 
-const GameView = ({
-  // width = 620,
-  // height = 350,
-}) => {
+const GameView = () => {
 
   const { roomId, chamberId } = useUnderdarkContext()
-  const { tilemap, gameTilemap } = useChamberMap(chamberId)
-  const { yonder } = useChamber(chamberId)
-  const { gameImpl, isLoaded, isPlaying, playCount, hasLight, light, playerPosition, dispatchReset } = useGameplayContext()
+  const { gameImpl, isPlaying, playCount, hasLight, light, dispatchReset } = useGameplayContext()
+  const { chamberExists, yonder } = useChamber(chamberId)
+  const { tilemap, gameTilemap } = useChamberMap(chamberId, 777)
   
+  // console.log(`GameView`, chamberId, chamberExists, gameTilemap)
+
   // Load map, set player start
+  useEffect(() => {
+    if (chamberExists) {
+      gameImpl?.setupMap(gameTilemap ?? null, false)
+    }
+  }, [gameImpl, chamberExists, gameTilemap])
+
+  // set player start, ready to start
   useEffect(() => {
     if (gameTilemap?.playerStart) {
       dispatchReset(gameTilemap?.playerStart ?? null, false)
@@ -36,12 +42,6 @@ const GameView = ({
   useEffect(() => {
     gameImpl?.setLightLevel(light / 100.0);
   }, [gameImpl, light])
-
-  useEffect(() => {
-    if (isLoaded) {
-      gameImpl?.setupMap(gameTilemap ?? null, false)
-    }
-  }, [gameImpl, gameTilemap, isLoaded])
 
   // game Start
   useEffect(() => {
@@ -77,17 +77,17 @@ const GameView = ({
 
 const MovePlayer = () => {
   const { roomId, chamberId } = useUnderdarkContext()
-  const { gameImpl, isLoaded, isPlaying, playerPosition } = useGameplayContext()
+  const { gameImpl, isReady, isPlaying, playerPosition } = useGameplayContext()
 
   useEffect(() => {
-    if (isLoaded || isPlaying) {
+    if (isReady || isPlaying) {
       gameImpl?.movePlayer(playerPosition?.tile ?? null, playerPosition?.facing ?? null)
     }
-  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.tile])
+  }, [gameImpl, roomId, chamberId, isReady, isPlaying, playerPosition?.tile])
 
   useEffect(() => {
     gameImpl?.rotatePlayer(playerPosition?.facing ?? null)
-  }, [gameImpl, roomId, chamberId, isLoaded, isPlaying, playerPosition?.facing])
+  }, [gameImpl, roomId, chamberId, isReady, isPlaying, playerPosition?.facing])
 
   return <></>
 }

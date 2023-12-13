@@ -26,7 +26,7 @@ type Movement = {
 
 export enum GameState {
   Lobby = 'lobby',
-  Loaded = 'loaded',
+  Ready = 'ready',
   Playing = 'playing',
   Verifying = 'verifying',
   Verified = 'verified',
@@ -139,7 +139,7 @@ const GameplayProvider = ({
       }
       case GameplayActions.RESET: {
         const position = action.payload as Position
-        newState.gameState = GameState.Loaded
+        newState.gameState = GameState.Ready
         if (position) {
           // just loaded
           newState.startPosition = position
@@ -323,7 +323,7 @@ export const useGameplayContext = () => {
   return {
     state,
     ...state,
-    isLoaded: (state.gameState == GameState.Loaded),
+    isReady: (state.gameState == GameState.Ready),
     isPlaying: (state.gameState == GameState.Playing),
     isVerifying: (state.gameState == GameState.Verifying),
     isWinner: (state.gameState == GameState.Verified),
