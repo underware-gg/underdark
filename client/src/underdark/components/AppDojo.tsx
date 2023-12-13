@@ -9,10 +9,11 @@ import App from '@/underdark/components/App'
 
 export default function AppDojo({
   title=null,
+  backgroundImage = null,
   children,
 }) {
   return (
-    <App title={title}>
+    <App title={title} backgroundImage={backgroundImage}>
       <DojoSetup>
         {children}
       </DojoSetup>
