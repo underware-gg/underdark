@@ -76,7 +76,8 @@ let _playerPosition = { x: 0, y: 0, z: 0 };
 let _supportsExtension: boolean = true;
 let _gui
 let _stats;
-// let _controls;
+let _tweenPlayerRot = null
+let _tweenPlayerPos = null
 
 let _fakePosition: Position = { tile: 8, facing: Dir.South }
 
@@ -199,9 +200,6 @@ export async function init(canvas, width, height, guiEnabled) {
   _camera.up.set(0, 0, 1);
   _camera.position.set(0, 0, _eyeZ)
   _camera.lookAt(0, -SIZE, _eyeZ);
-
-  // _controls = new OrbitControls(camera, renderer.domElement);
-  // _controls.enableDamping = true;
 
   PALETTE_PATHS.forEach(path => {
     const tex = new THREE.TextureLoader().load(path);
@@ -399,7 +397,8 @@ export function movePlayer(tile: number | null, facing: Dir | null) {
   const x = (_tile % 16) * SIZE
   const y = Math.floor(_tile / 16) * SIZE
   _playerPosition = { x, y, z: 0 }
-  new TWEEN.Tween(_cameraRig.position)
+  if (_tweenPlayerPos) TWEEN.remove(_tweenPlayerPos)
+  _tweenPlayerPos = new TWEEN.Tween(_cameraRig.position)
     .to({ x, y }, _animMillis)
     .onUpdate(() => {
       emitter.emit('movedTo', { x: _cameraRig.position.x, y: _cameraRig.position.y, z: _cameraRig.position.z })
@@ -420,7 +419,8 @@ export function rotatePlayer(facing: Dir | null) {
           : 0
   if (_cameraRig.rotation.z - rotZ > PI) rotZ += TWO_PI
   if (rotZ - _cameraRig.rotation.z > PI) rotZ -= TWO_PI
-  new TWEEN.Tween(_cameraRig.rotation)
+  if (_tweenPlayerRot) TWEEN.remove(_tweenPlayerRot)
+  _tweenPlayerRot = new TWEEN.Tween(_cameraRig.rotation)
     .to({ x: rotX, y: rotY, z: rotZ }, _animMillis)
     .onUpdate(() => {
       emitter.emit('rotatedTo', { x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: _cameraRig.rotation.z })
@@ -432,12 +432,19 @@ export function rotatePlayer(facing: Dir | null) {
       emitter.emit('rotatedTo', { x: _cameraRig.rotation.x, y: _cameraRig.rotation.y, z: _cameraRig.rotation.z })
     })
   // _cameraRig.rotation.set(0, 0, rot);
-
 }
 
-// export function getPlayerRotation() {
-//   return _cameraRig.rotation.z
-// }
+export function rotatePlayerTo(tile: number) {
+  const object = _findTile(tile)
+  if (!object) return
+  if (_playerPosition.y == object.position.y && _playerPosition.x == object.position.x) return
+  const a = -HALF_PI + Math.atan2(_playerPosition.y - object.position.y, _playerPosition.x - object.position.x)
+  if (_tweenPlayerRot) TWEEN.remove(_tweenPlayerRot)
+  _tweenPlayerRot = new TWEEN.Tween(_cameraRig.rotation)
+    .to({ x: 0, y: 0, z: a }, _animMillis)
+    .start()
+}
+
 
 export function setupMap(gameTilemap: GameTilemap | null, isPlaying: boolean) {
 
@@ -567,16 +574,6 @@ export function rotateToPlayer(tile: number) {
   if (!object) return
   const a = -HALF_PI + Math.atan2(object.position.y - _playerPosition.y, object.position.x - _playerPosition.x)
   new TWEEN.Tween(object.rotation)
-    .to({ x: 0, y: 0, z: a }, _animMillis)
-    .start()
-}
-
-export function rotatePlayerTo(tile: number) {
-  const object = _findTile(tile)
-  if (!object) return
-  if (_playerPosition.y == object.position.y && _playerPosition.x == object.position.x) return
-  const a = -HALF_PI + Math.atan2(_playerPosition.y - object.position.y, _playerPosition.x - object.position.x)
-  new TWEEN.Tween(_cameraRig.rotation)
     .to({ x: 0, y: 0, z: a }, _animMillis)
     .start()
 }

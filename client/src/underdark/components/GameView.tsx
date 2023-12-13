@@ -86,7 +86,9 @@ const MovePlayer = () => {
   }, [gameImpl, roomId, chamberId, isReady, isPlaying, playerPosition?.tile])
 
   useEffect(() => {
-    gameImpl?.rotatePlayer(playerPosition?.facing ?? null)
+    if (isPlaying) {
+      gameImpl?.rotatePlayer(playerPosition?.facing ?? null)
+    }
   }, [gameImpl, roomId, chamberId, isReady, isPlaying, playerPosition?.facing])
 
   return <></>
@@ -252,7 +254,6 @@ const GameAudios = () => {
   useEffect(() => {
     gameImpl?.playAudio(AudioName.STAIRS, sfxEnabled)
     gameImpl?.fadeInLight()
-    gameImpl?.rotatePlayer()
   }, [playCount])
 
   return <></>
