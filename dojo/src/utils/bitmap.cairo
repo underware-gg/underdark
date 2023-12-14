@@ -1,4 +1,5 @@
 use debug::PrintTrait;
+use array::ArrayTrait;
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::types::dir::{Dir, DirTrait};
 
@@ -7,11 +8,6 @@ use underdark::types::dir::{Dir, DirTrait};
 mod MASK {
     const NONE: u256 = 0x0;
     const ALL: u256  = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
-    // 11111
-    // 10001
-    // 11111
-    const OUTER: u256 = 0xffff80018001800180018001800180018001800180018001800180018001ffff;
-    const INNER: u256 = 0x00007ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000;
 
     // 10001
     // 10001
@@ -28,6 +24,12 @@ mod MASK {
     const BOTTOM_ROW: u256 = 0x000000000000000000000000000000000000000000000000000000000000ffff;
     const OUTER_ROWS: u256 = 0xffff00000000000000000000000000000000000000000000000000000000ffff;
     const INNER_ROWS: u256 = 0x0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000;
+
+    // 11111
+    // 10001
+    // 11111
+    const OUTER: u256 = 0xffff80018001800180018001800180018001800180018001800180018001ffff;
+    const INNER: u256 = 0x00007ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000;
 }
 
 trait BitmapTrait {
@@ -41,10 +43,10 @@ trait BitmapTrait {
     fn xy_to_tile(x: usize, y: usize) -> usize;
 
     // returns the u256 bit number (0-255) of a tile position (e.g. doors)
-    fn bit_tile(i: usize) -> usize;
+    fn bit_to_tile(i: usize) -> usize;
 
     // returns the u256 bit number (0-255) of a [x, y] position
-    fn bit_xy(x: usize, y: usize) -> usize;
+    fn bit_to_xy(x: usize, y: usize) -> usize;
     
     fn move_tile(i: usize, dir: Dir) -> usize;
 
@@ -80,6 +82,9 @@ trait BitmapTrait {
 
     fn is_near_or_at_tile(bitmap: u256, i: usize) -> bool;
     fn is_near_or_at_xy(bitmap: u256, x: usize, y: usize) -> bool;
+
+    fn from_tile_array(array: Span<u8>) -> u256;
+    fn to_tile_array(bitmap: u256) -> Array<u8>;
 }
 
 impl Bitmap of BitmapTrait {
@@ -94,11 +99,11 @@ impl Bitmap of BitmapTrait {
     }
 
     #[inline(always)]
-    fn bit_tile(i: usize) -> usize {
+    fn bit_to_tile(i: usize) -> usize {
        (255 - i)
     }
     #[inline(always)]
-    fn bit_xy(x: usize, y: usize) -> usize {
+    fn bit_to_xy(x: usize, y: usize) -> usize {
        (255 - (y * 16 + x))
     }
 
@@ -116,29 +121,29 @@ impl Bitmap of BitmapTrait {
 
     #[inline(always)]
     fn is_set_tile(bitmap: u256, i: usize) -> bool {
-        U256Bitwise::is_set(bitmap, Bitmap::bit_tile(i))
+        U256Bitwise::is_set(bitmap, Bitmap::bit_to_tile(i))
     }
     #[inline(always)]
     fn is_set_xy(bitmap: u256, x: usize, y: usize) -> bool {
-        U256Bitwise::is_set(bitmap, Bitmap::bit_xy(x, y))
+        U256Bitwise::is_set(bitmap, Bitmap::bit_to_xy(x, y))
     }
 
     #[inline(always)]
     fn set_tile(bitmap: u256, i: usize) -> u256 {
-        U256Bitwise::set(bitmap, Bitmap::bit_tile(i))
+        U256Bitwise::set(bitmap, Bitmap::bit_to_tile(i))
     }
     #[inline(always)]
     fn set_xy(bitmap: u256, x: usize, y: usize) -> u256 {
-        U256Bitwise::set(bitmap, Bitmap::bit_xy(x, y))
+        U256Bitwise::set(bitmap, Bitmap::bit_to_xy(x, y))
     }
 
     #[inline(always)]
     fn unset_tile(bitmap: u256, i: usize) -> u256 {
-        U256Bitwise::unset(bitmap, Bitmap::bit_tile(i))
+        U256Bitwise::unset(bitmap, Bitmap::bit_to_tile(i))
     }
     #[inline(always)]
     fn unset_xy(bitmap: u256, x: usize, y: usize) -> u256 {
-        U256Bitwise::unset(bitmap, Bitmap::bit_xy(x, y))
+        U256Bitwise::unset(bitmap, Bitmap::bit_to_xy(x, y))
     }
 
     #[inline(always)]
@@ -292,7 +297,7 @@ impl Bitmap of BitmapTrait {
     }
     fn is_near_or_at_xy(bitmap: u256, x: usize, y: usize) -> bool {
         let mask: u256 =
-            if (x > 15 || y > 15) { 0 }  // invalid
+            if (x > 0 && y > 0 && x < 15 && y < 15) { Bitmap::shift_right(Bitmap::shift_down(0x4000e00040000000000000000000000000000000000000000000000000000000, y-1), x-1) } // middle
             else if (x == 0 && y == 0) { 0xc000800000000000000000000000000000000000000000000000000000000000 }   // top-left
             else if (x == 15 && y == 0) { 0x3000100000000000000000000000000000000000000000000000000000000 }     // top-right
             else if (x == 0 && y == 15) { 0x8000c000 }  // bottom-left
@@ -301,9 +306,39 @@ impl Bitmap of BitmapTrait {
             else if (x == 15) { Bitmap::shift_down(0x1000300010000000000000000000000000000000000000000000000000000, y-1) }      // right column
             else if (y == 0) { Bitmap::shift_right(0xe000400000000000000000000000000000000000000000000000000000000000, x-1) }   // top row
             else if (y == 15) { Bitmap::shift_right(0x4000e000, x-1) }  // bottom row
-            else { Bitmap::shift_right(Bitmap::shift_down(0x4000e00040000000000000000000000000000000000000000000000000000000, y-1), x-1) } // middle
+            else { 0 }  // invalid (x > 15 || y > 15)
             ;
         (bitmap & mask > 0)
+    }
+
+    fn from_tile_array(array: Span<u8>) -> u256 {
+        let mut result: u256 = 0;
+        let mut i: usize = 0;
+        loop {
+            if (i == array.len()) { break; }
+            let tile: usize = (*array.at(i)).into();
+            result = Bitmap::set_tile(result, tile);
+            i += 1;
+        };
+        (result)
+    }
+    fn to_tile_array(mut bitmap: u256) -> Array<u8> {
+        let mut result: Array<u8> = ArrayTrait::new();
+        let mut bit: usize = 0;
+        loop {
+            if (bitmap == 0 || bit == 256) {
+                break;
+            }
+            if (bitmap & 1 != 0) {
+                let tile: usize = Bitmap::bit_to_tile(bit);
+                result.append(tile.try_into().unwrap());
+            }
+            bit += 1;
+            bitmap /= 0b10;
+        };
+        // the result tiles are in reversed order
+        // reverse with: array_utils::reverse(array.span())
+        (result)
     }
 }
 
@@ -314,6 +349,7 @@ impl Bitmap of BitmapTrait {
 #[cfg(test)]
 mod tests {
     use debug::PrintTrait;
+    use underdark::utils::arrays::{array_utils};
     use underdark::utils::bitmap::{Bitmap, MASK};
     use underdark::types::dir::{Dir, DirTrait};
     use underdark::utils::string::{String};
@@ -321,8 +357,8 @@ mod tests {
     #[test]
     #[available_gas(100_000_000)]
     fn test_bitmap_inline() {
-        let bit1: usize = Bitmap::bit_xy(8, 8);
-        let bit2: usize = Bitmap::bit_xy(4 + 4, 4 + 4);
+        let bit1: usize = Bitmap::bit_to_xy(8, 8);
+        let bit2: usize = Bitmap::bit_to_xy(4 + 4, 4 + 4);
         assert(bit1 != 0, 'test_bitmap_inline_bit_zero');
         assert(bit1 == bit2, 'test_bitmap_inline_bit_equals');
         let bmp1: u256 = Bitmap::set_xy(0, 8, 8);
@@ -563,5 +599,38 @@ mod tests {
             array![(11,10), (10,11), (11,11), (12,11), (11,12)],
             array![(10,10), (12,10), (10,12), (12,12), (11,13), (13,11), (9,11), (11,9), (15,15)],
         );
+    }
+
+    fn _test_from_to_array(bitmap: u256, expected_len: usize) -> Array<u8> {
+        let array = Bitmap::to_tile_array(bitmap);
+        assert(array.len() == expected_len,  String::join('len', (expected_len+48).into()));
+        assert(Bitmap::from_tile_array(array.span()) == bitmap, String::join('bmp', (expected_len+48).into()));
+        (array)
+    }
+
+    #[test]
+    #[available_gas(1_000_000_000)]
+    fn test_from_to_array() {
+        _test_from_to_array(0b0, 0);
+        _test_from_to_array(0b10, 1);
+        _test_from_to_array(0b100, 1);
+        _test_from_to_array(0b1000, 1);
+        _test_from_to_array(0b1, 1);
+        _test_from_to_array(0b11, 2);
+        _test_from_to_array(0b111, 3);
+        _test_from_to_array(0b10, 1);
+        _test_from_to_array(0b1100, 2);
+        _test_from_to_array(0b111000, 3);
+        _test_from_to_array(MASK::ALL, 256);
+        _test_from_to_array(MASK::TOP_ROW, 16);
+        _test_from_to_array(MASK::BOTTOM_ROW, 16);
+        _test_from_to_array(MASK::LEFT_COL, 16);
+        _test_from_to_array(MASK::RIGHT_COL, 16);
+        _test_from_to_array(MASK::OUTER_COLS, 32);
+        _test_from_to_array(MASK::INNER_COLS, 256-32);
+        _test_from_to_array(MASK::OUTER_ROWS, 32);
+        _test_from_to_array(MASK::INNER_ROWS, 256-32);
+        _test_from_to_array(MASK::OUTER, 60);
+        _test_from_to_array(MASK::INNER, 256-60);
     }
 }

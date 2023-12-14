@@ -2,14 +2,14 @@ use array::ArrayTrait;
 use traits::Into;
 use underdark::utils::bitwise::{U256Bitwise};
 use underdark::utils::bitmap::{Bitmap};
-use underdark::utils::arrays::{create_array};
+use underdark::utils::arrays::{array_utils};
 use underdark::core::seeder::{make_seed};
 
 const CELL_VALUE_WALL: u8 = 0x01;
 const CELL_VALUE_PROTECTED: u8 = 0x04;
 
 fn calc_cell_values(bitmap: u256, protected: u256) -> Array::<u8> {
-    // let mut result: Array::<u8> = create_array(256, 0_u8);
+    // let mut result: Array::<u8> = array_utils::create_array(256, 0_u8);
     let mut result: Array::<u8> = ArrayTrait::new();
     let mut i: usize = 0;
     loop {

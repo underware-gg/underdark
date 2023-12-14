@@ -6,6 +6,7 @@ use underdark::core::connector::{connect_doors};
 use underdark::core::protector::{protect};
 use underdark::core::binary_tree::{binary_tree_classic, binary_tree_pro, binary_tree_fuzz};
 use underdark::core::seeder::{make_underseed, make_overseed};
+use underdark::utils::bitmap::{MASK};
 use underdark::types::dir::{Dir};
 
 fn generate(
@@ -19,6 +20,7 @@ fn generate(
 
     if(generator_name == 'seed') {
         bitmap = seed;
+        bitmap = protect(bitmap, protected);
     } else if(generator_name == 'underseed') {
         bitmap = make_underseed(seed);
     } else if(generator_name == 'overseed') {
@@ -26,7 +28,7 @@ fn generate(
     } else if(generator_name == 'protected') {
         bitmap = protected;
     } else if(generator_name == 'empty') {
-        bitmap = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+        bitmap = MASK::ALL;
     } else if(generator_name == 'entry') {
         // the entry is always a wide chamber
         // bitmap = carve(bitmap, protected, 3);

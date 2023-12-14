@@ -24,7 +24,7 @@ export const ThreeJsCanvas = ({
       setIsRunning(true)
       dispatchGameImpl(gameImpl)
       //@ts-ignore
-      canvasRef.current.focus()
+      canvasRef.current?.focus()
     }
 
     if (canvasRef.current && !isLoading && !isRunning) {

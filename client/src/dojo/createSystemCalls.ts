@@ -1,8 +1,8 @@
-import { getEvents, setComponentsFromEvents, decodeComponent } from "@dojoengine/utils";
-import { Account } from 'starknet';
-import { SetupNetworkResult } from './setupNetwork';
-import { bigintToHex } from '@/underdark/utils/utils';
-import { shortString } from "starknet";
+import { getEvents, setComponentsFromEvents, decodeComponent } from '@dojoengine/utils'
+import { Account } from 'starknet'
+import { SetupNetworkResult } from './setupNetwork'
+import { bigintToHex } from '@/underdark/utils/utils'
+import { shortString } from 'starknet'
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
@@ -11,10 +11,10 @@ export function createSystemCalls(
   // { Chamber, Map }: ClientComponents,
 ) {
 
-  const generate_level = async (signer: Account, realmId: number, coord: bigint, roomId: number, levelNumber: number, generator_name: string, generator_value: number): Promise<boolean> => {
+  const generate_level = async (signer: Account, realmId: number, roomId: number, levelNumber: number, coord: bigint, generator_name: string, generator_value: number): Promise<boolean> => {
     let success = false
     try {
-      const args = [realmId, coord, roomId, levelNumber, shortString.encodeShortString(generator_name), generator_value]
+      const args = [realmId, roomId, levelNumber, coord, shortString.encodeShortString(generator_name), generator_value]
 
       const tx = await execute(signer, 'actions', 'generate_level', args)
       console.log(`generate_level tx:`, tx)
@@ -40,7 +40,7 @@ export function createSystemCalls(
       result = decodeComponent(contractComponents['MapData'], eventData.result)
 
       //@ts-ignore
-      console.log(`generate_map_data(${bigintToHex(locationId)}) >>>`, eventData, result, bigintToHex(result?.location_id ?? 0n), bigintToHex(result?.monsters ?? 0n))
+      // console.log(`generate_map_data(${bigintToHex(locationId)}) >>>`, eventData, result, bigintToHex(result?.location_id ?? 0n), bigintToHex(result?.monsters ?? 0n))
     } catch (e) {
       console.warn(`generate_map_data(${bigintToHex(locationId)}) exception:`, e)
     } finally {
@@ -48,13 +48,13 @@ export function createSystemCalls(
     return result
   }
 
-  const finish_level = async (signer: Account, locationId: bigint, proof: bigint, movesCount: number): Promise<boolean> => {
+  const finish_level = async (signer: Account, locationId: bigint, proof: bigint, movesCount: number, playerName: string): Promise<boolean> => {
     let success = false
     try {
       const proof_low = proof & BigInt('0xffffffffffffffffffffffffffffffff')
       const proof_high = proof >> 128n
-      const args = [locationId, proof_low, proof_high, movesCount]
-      // console.log(args)
+      const args = [locationId, proof_low, proof_high, movesCount, shortString.encodeShortString(playerName)]
+      console.log(args)
 
       const tx = await execute(signer, 'actions', 'finish_level', args)
       console.log(`finish_level tx:`, tx)

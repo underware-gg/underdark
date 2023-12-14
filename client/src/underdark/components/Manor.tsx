@@ -1,6 +1,8 @@
 import React from 'react'
 import { Container, Grid, Image } from 'semantic-ui-react'
+import { useCookies } from 'react-cookie'
 import ManorRoomSelector from '@/underdark/components/ManorRoomSelector'
+import AccountCurrent from './AccountCurrent'
 
 const Row = Grid.Row
 const Col = Grid.Column
@@ -9,13 +11,13 @@ function Manor() {
   return (
     <Container>
       <div className='AlignCenter'>
-        <Image className='ManorImage' src='/images/manor.jpg' />
+        {/* <Image className='ManorImage' src='/images/manor.jpg' /> */}
         <h1>The Manor at Kurnkunor</h1>
         <h2>The Lair of the Slender Duck!</h2>
       </div>
+      <br />
 
-      <hr />
-      <Container text>
+      <Container text className='Faded'>
         <p>(concepts we need to pass)</p>
 
         <p>The Manor has <b>ten thousand</b> rooms, containign many perils and rewards.</p>
@@ -34,12 +36,15 @@ function Manor() {
         <p>May the light be with you...</p>
 
       </Container>
+      <br />
 
-      <hr />
+      <Container text className='Faded Padded'>
+        <AccountCurrent />
+      </Container>
+      <br />
 
       <ManorRoomSelector />
-
-      <hr />
+      <br />
 
     </Container>
   )

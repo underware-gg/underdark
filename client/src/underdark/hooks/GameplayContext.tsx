@@ -26,7 +26,7 @@ type Movement = {
 
 export enum GameState {
   Lobby = 'lobby',
-  Loaded = 'loaded',
+  Ready = 'ready',
   Playing = 'playing',
   Verifying = 'verifying',
   Verified = 'verified',
@@ -47,6 +47,7 @@ export const initialState = {
   hasInteracted: false,
   startPosition: null,
   playerPosition: null,
+  playCount: 0,
   light: 0,
   health: 0,
   message: null,
@@ -60,6 +61,7 @@ type GameplayStateType = {
   hasInteracted: boolean
   startPosition: Position
   playerPosition: Position
+  playCount: number
   light: number     // 0..100
   health: number    // 0..100
   message: string
@@ -137,7 +139,7 @@ const GameplayProvider = ({
       }
       case GameplayActions.RESET: {
         const position = action.payload as Position
-        newState.gameState = GameState.Loaded
+        newState.gameState = GameState.Ready
         if (position) {
           // just loaded
           newState.startPosition = position
@@ -146,6 +148,7 @@ const GameplayProvider = ({
           // restart
           newState.playerPosition = { ...newState.startPosition }
         }
+        newState.playCount = newState.playCount + 1
         newState.light = LIGHT_MAX
         newState.health = SANITY_MAX
         newState.steps = []
@@ -284,7 +287,16 @@ export const useGameplayContext = () => {
     dispatchMessage('')
   }
 
-  const dispatchTurnTo = (dir: Dir) => {
+  const dispatchTurnToDir = (dir: Dir) => {
+    dispatch({ type: GameplayActions.TURN_TO, payload: dir })
+  }
+
+  const dispatchTurnToTile = (tile: number) => {
+    if (tile == state.playerPosition.tile) return
+    const dir = (tile == state.playerPosition.tile - 1) ? Dir.West
+      : (tile == state.playerPosition.tile + 1) ? Dir.East
+        : (tile < state.playerPosition.tile) ? Dir.North
+          : Dir.South
     dispatch({ type: GameplayActions.TURN_TO, payload: dir })
   }
 
@@ -311,7 +323,7 @@ export const useGameplayContext = () => {
   return {
     state,
     ...state,
-    isLoaded: (state.gameState == GameState.Loaded),
+    isReady: (state.gameState == GameState.Ready),
     isPlaying: (state.gameState == GameState.Playing),
     isVerifying: (state.gameState == GameState.Verifying),
     isWinner: (state.gameState == GameState.Verified),
@@ -327,7 +339,8 @@ export const useGameplayContext = () => {
     dispatchReset,
     dispatchGameState,
     dispatchMoveTo,
-    dispatchTurnTo,
+    dispatchTurnToDir,
+    dispatchTurnToTile,
     dispatchDarkTar,
     dispatchNearDamage,
     dispatchHitDamage,

@@ -949,7 +949,7 @@
     {
       "name": "actions",
       "address": "0x3da4bf86342c340fd1dd590cd5505248af77006db7d74912ac50d7e7374496b",
-      "class_hash": "0x5f9f8c6350679e4bb08c246180424fd61562e6068cd89a365f6fbc57cff6f8",
+      "class_hash": "0x406be1745459636b652cd6ecbcd133c63d0cb7ffc3b4bf75f983511cec8337b",
       "abi": [
         {
           "type": "impl",
@@ -987,6 +987,20 @@
           "type": "impl",
           "name": "ActionsImpl",
           "interface_name": "underdark::systems::actions::IActions"
+        },
+        {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
         },
         {
           "type": "struct",
@@ -1041,16 +1055,16 @@
                   "type": "core::integer::u16"
                 },
                 {
-                  "name": "manor_coord",
-                  "type": "core::integer::u128"
-                },
-                {
                   "name": "room_id",
                   "type": "core::integer::u16"
                 },
                 {
                   "name": "level_number",
                   "type": "core::integer::u16"
+                },
+                {
+                  "name": "manor_coord",
+                  "type": "core::integer::u128"
                 },
                 {
                   "name": "generator_name",
@@ -1062,22 +1076,6 @@
                 }
               ],
               "outputs": [],
-              "state_mutability": "view"
-            },
-            {
-              "type": "function",
-              "name": "generate_map_data",
-              "inputs": [
-                {
-                  "name": "location_id",
-                  "type": "core::integer::u128"
-                }
-              ],
-              "outputs": [
-                {
-                  "type": "underdark::models::chamber::MapData"
-                }
-              ],
               "state_mutability": "view"
             },
             {
@@ -1099,9 +1097,45 @@
                 {
                   "name": "moves_count",
                   "type": "core::integer::u32"
+                },
+                {
+                  "name": "player_name",
+                  "type": "core::felt252"
                 }
               ],
               "outputs": [],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "can_play_level",
+              "inputs": [
+                {
+                  "name": "location_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "generate_map_data",
+              "inputs": [
+                {
+                  "name": "location_id",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "underdark::models::chamber::MapData"
+                }
+              ],
               "state_mutability": "view"
             }
           ]
@@ -1177,10 +1211,7 @@
           ]
         }
       ],
-      "reads": [
-        "Chamber",
-        "Map"
-      ],
+      "reads": [],
       "writes": [],
       "computed": []
     }
@@ -1816,12 +1847,22 @@
           "key": false
         },
         {
+          "name": "player_name",
+          "type": "felt252",
+          "key": false
+        },
+        {
           "name": "moves",
+          "type": "usize",
+          "key": false
+        },
+        {
+          "name": "score",
           "type": "usize",
           "key": false
         }
       ],
-      "class_hash": "0x6cadc51400c08c7ab9815b6031505209dcd6d2ec6924347488eee9a59c76aed",
+      "class_hash": "0x17422865e41cc77f648d56a549eb255fc0d0c73eea2765ce7bdd039b24f712b",
       "abi": [
         {
           "type": "function",

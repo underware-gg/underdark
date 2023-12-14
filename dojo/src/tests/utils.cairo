@@ -9,6 +9,7 @@ mod utils {
     use dojo::test_utils::{spawn_test_world, deploy_contract};
 
     use underdark::systems::actions::{actions, IActionsDispatcher, IActionsDispatcherTrait};
+    use underdark::systems::verify_level_proof::{verify_level_proof};
     use underdark::models::chamber::{Chamber, chamber, Map, map, MapData, map_data, Score, score};
     use underdark::models::tile::{Tile, tile};
     use underdark::types::location::{Location, LocationTrait};
@@ -23,16 +24,16 @@ mod utils {
         (world, IActionsDispatcher { contract_address })
     }
 
-    fn execute_generate_level(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, manor_coord: u128, room_id: u16, level_number: u16, generator_name: felt252, generator_value: u32) {
-        system.generate_level(realm_id, manor_coord, room_id, level_number, generator_name, generator_value.into());
+    fn execute_generate_level(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, room_id: u16, level_number: u16, manor_coord: u128, generator_name: felt252, generator_value: u32) {
+        system.generate_level(realm_id, room_id, level_number, manor_coord, generator_name, generator_value.into());
     }
 
     fn execute_finish_level(world: IWorldDispatcher, system: IActionsDispatcher, location_id: u128, proof: u256, moves_count: usize) {
-        system.finish_level(location_id, proof.low, proof.high, moves_count);
+        system.finish_level(location_id, proof.low, proof.high, moves_count, 'PlayerName');
     }
 
-    fn generate_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, manor_coord: u128, room_id: u16, level_number: u16, generator_name: felt252, generator_value: u32) -> Chamber {
-        execute_generate_level(world, system, realm_id, manor_coord, room_id, level_number, generator_name, generator_value);
+    fn generate_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, room_id: u16, level_number: u16, manor_coord: u128, generator_name: felt252, generator_value: u32) -> Chamber {
+        execute_generate_level(world, system, realm_id, room_id, level_number, manor_coord, generator_name, generator_value);
         let location: Location = LocationTrait::from_coord(realm_id, room_id, level_number, manor_coord);
         get_world_Chamber(world, location.to_id())
     }
@@ -75,13 +76,18 @@ mod utils {
         }
     }
 
-    fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256) -> (Map, MapData) {
+    // generator need sto be 'seed' or 'empty'
+    fn force_verify_level(world: IWorldDispatcher, location_id: u128) {
+        verify_level_proof(world, location_id, 0xffff, 100, 'PlayerName');
+    }
+
+    fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256, chest: u256) -> (Map, MapData) {
         let location_id: u128 = 1;
         (Map {
             entity_id: location_id,
             bitmap,
             protected: 0,
-            generator_name: 0,
+            generator_name: 'whatever',
             generator_value: 0,
             north: 0,
             east: 0,
@@ -94,7 +100,7 @@ mod utils {
             monsters,
             slender_duck,
             dark_tar,
-            chest: 0,
+            chest,
         })
     }
 

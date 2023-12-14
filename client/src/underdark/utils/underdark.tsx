@@ -47,14 +47,15 @@ export enum TileType {
   Monster = 0x10,
   SlenderDuck = 0x11,
   DarkTar = 0x12,
+  Chest = 0x13,
   // Crawler
   Empty = 0xfe,
   Path = 0xff,
 }
 
 export interface Compass {
-  roomId?: number,
   realmId?: number,
+  roomId?: number,
   over?: number
   under?: number
   north?: number
@@ -122,8 +123,8 @@ export const compassToSlug = (compass: Compass | null, yonder: number = 0, separ
 export const compassToCoord = (compass: Compass | null): bigint => {
   let result = 0n
   if (compass && validateCompass(compass)) {
-    if (compass.roomId && compass.roomId > 0) result += BigInt(compass.roomId) << 112n
-    if (compass.realmId && compass.realmId > 0) result += BigInt(compass.realmId) << 96n
+    if (compass.realmId && compass.realmId > 0) result += BigInt(compass.realmId) << 112n
+    if (compass.roomId && compass.roomId > 0) result += BigInt(compass.roomId) << 96n
     if (compass.over && compass.over > 0) result += BigInt(compass.over) << 80n
     if (compass.under && compass.under > 0) result += BigInt(compass.under) << 64n
     if (compass.north && compass.north > 0) result += BigInt(compass.north) << 48n
@@ -138,8 +139,8 @@ const coordMask = BigInt(0xffff)
 
 export const coordToCompass = (coord: bigint): Compass | null => {
   let result: Compass = {
-    roomId: Number((coord >> 112n) & coordMask),
-    realmId: Number((coord >> 96n) & coordMask),
+    realmId: Number((coord >> 112n) & coordMask),
+    roomId: Number((coord >> 96n) & coordMask),
     over: Number((coord >> 80n) & coordMask),
     under: Number((coord >> 64n) & coordMask),
     north: Number((coord >> 48n) & coordMask),

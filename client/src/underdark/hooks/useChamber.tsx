@@ -5,7 +5,7 @@ import { getEntityIdFromKeys } from "@dojoengine/utils"
 import { useDojoComponents, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToCompass } from "../utils/underdark"
 import { bigintToEntity } from "../utils/utils"
-import { Account } from "starknet"
+import { Account, shortString } from 'starknet'
 
 
 //------------------
@@ -76,7 +76,7 @@ export const useChamberOffset = (chamberId: bigint, dir: Dir) => {
   }
 }
 
-export const useChamberMapData = (locationId: bigint) => {
+export const useChamberMapData = (locationId: bigint, bitmap: bigint = undefined) => {
   const { generate_map_data } = useDojoSystemCalls()
   const [mapData, setMapData] = useState(null)
   
@@ -91,23 +91,23 @@ export const useChamberMapData = (locationId: bigint) => {
       }
     }
     setMapData(null)
-    if (locationId) {
+    if (locationId && (bitmap === undefined || bitmap > 0n)) {
       _fetch()
     }
     return () => {
       _mounted = false
     }
-  }, [locationId])
+  }, [locationId, bitmap])
 
   return mapData
 }
 
-export const useChamberMap = (locationId: bigint) => {
+export const useChamberMap = (locationId: bigint, id: number = 0) => {
   const { Map, Tile } = useDojoComponents()
   const map: any = useComponentValue(Map, bigintToEntity(locationId))
   const bitmap = useMemo<bigint>(() => BigInt(map?.bitmap ?? 0n), [map])
-  const map_data = useChamberMapData(locationId)
-  // useEffect(() => console.log(`map:`, map, typeof map?.bitmap, bitmap), [bitmap])
+  const map_data = useChamberMapData(locationId, bitmap)
+  // useEffect(() => console.log(`useChamberMap:`, id, map, typeof map?.bitmap, bitmap), [bitmap])
 
   //
   // Parse tiles
@@ -126,8 +126,12 @@ export const useChamberMap = (locationId: bigint) => {
         const isMonster = (map_data.monsters & (1n << bit)) != 0n
         const isSlenderDuck = (map_data.slender_duck & (1n << bit)) != 0n
         const isDarkTar = (map_data.dark_tar & (1n << bit)) != 0n
+        const isChest = (map_data.chest & (1n << bit)) != 0n
         // console.log(`GAMETILEMAP`, i, isPath, isMonster, isSlenderDuck, isDarkTar)
-        if (isDarkTar) {
+        if (isChest) {
+          result.push(TileType.Chest)
+          // console.log(`++++++TileType.Chest`, bit)
+        } else if (isDarkTar) {
           result.push(TileType.DarkTar)
           // console.log(`++++++TileType.DarkTar`, bit)
         } else if (isSlenderDuck) {
@@ -150,8 +154,8 @@ export const useChamberMap = (locationId: bigint) => {
   }, [bitmap, tiles, map_data])
   // useEffect(() => console.log(`tilemap:`, bigintToHex(bitmap), tilemap), [tilemap])
 
-  const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
-  // useEffect(() => console.log(`gameTilemap:`, gameTilemap), [gameTilemap])
+  const gameTilemap = useMemo(() => { return tilemapToGameTilemap(tilemap, 20) }, [tilemap])
+  // useEffect(() => console.log(`gameTilemap:`, id, locationId, gameTilemap), [gameTilemap])
 
   return {
     bitmap,
@@ -189,8 +193,10 @@ export const useScoreByKey = (scoreKey: Entity) => {
   return {
     location_id: score?.location_id ?? 0n,
     player: score?.player ?? 0n,
+    playerName: score?.player_name ? shortString.decodeShortString(score.player_name) : '?',
     moves: score?.moves ?? 0,
-    levelIsCompleted: (score?.moves > 0),
+    score: score?.score ?? 0,
+    levelIsCompleted: (score?.score > 0),
     scoreKey,
   }
 }

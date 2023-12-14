@@ -9,7 +9,7 @@ export default function IndexPage() {
   return (
     <App>
 
-      <Link href='/manor'>
+      <Link href='/gate'>
         <Image className='Logo' src='/images/logo.png' />
       </Link>
 

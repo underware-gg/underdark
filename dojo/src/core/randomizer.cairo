@@ -1,5 +1,8 @@
+// use debug::PrintTrait;
 use traits::Into;
 use underdark::core::seeder::{make_seed, make_underseed};
+use underdark::core::solver::{flood_fill_tiles};
+use underdark::models::chamber::{Chamber, Map};
 use underdark::utils::hash::{hash_u128, hash_u128_to_u256};
 use underdark::utils::bitwise::{U8Bitwise};
 use underdark::utils::bitmap::{Bitmap};
@@ -111,7 +114,7 @@ fn randomize_door_tile(ref rnd: u256, dir: Dir) -> u8 {
 // usage example: U8Bitwise::is_set(permissions, DIR::UNDER.into())
 fn randomize_door_permissions(ref rnd: u256, chamber_location: Location, entry_dir: Dir, yonder: u16, generator_name: felt252) -> u8 {
     // seed generator is used for #[test]
-    if (generator_name == 'seed') {
+    if (generator_name == 'seed' || generator_name == 'empty') {
         return 0xff;
     }
 
@@ -188,10 +191,12 @@ fn _reduce_monsters(priority1: u256, ref priority2: u256, ref priority3: u256) {
 
 }
 
-fn randomize_monsters(ref rnd: u256, bitmap: u256, protected: u256, level_number: u16) -> (u256, u256, u256) {
-    let mut result: u256 = 0;
+fn randomize_monsters(ref rnd: u256, map: Map, level_number: u16) -> (u256, u256, u256) {
+    if (map.generator_name == 'empty') {
+        return (0, 0, 0); // for tests
+    }
 
-    let allowed_area = bitmap & ~protected;
+    let allowed_area = map.bitmap & ~map.protected;
     let mut monsters: u256 = _randomize_monsters(ref rnd, allowed_area, 2);
     let mut slender_duck: u256 = _randomize_monsters(ref rnd, allowed_area, 2);
     let mut dark_tar: u256 = _randomize_monsters(ref rnd, allowed_area, 2);
@@ -210,6 +215,18 @@ fn randomize_monsters(ref rnd: u256, bitmap: u256, protected: u256, level_number
     (monsters, slender_duck, dark_tar)
 }
 
+fn randomize_chest(ref rnd: u256, map: Map) -> u256 {
+    let tiles: Array<u8> = flood_fill_tiles(map.bitmap, map.over);
+    assert(tiles.len() > 0, 'Map not flooded'); // entry is blocked
+    let mut chest_tile: u8 = 0;
+    loop {
+        let i: usize = randomize_value(ref rnd, tiles.len().into()).try_into().unwrap();
+        chest_tile = *tiles.at(i);
+        // if entry, keep trying
+        if (chest_tile != map.over) { break; }
+    };
+    (Bitmap::set_tile(0, chest_tile.into()))
+}
 
 
 //----------------------------------------

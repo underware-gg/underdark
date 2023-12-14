@@ -80,6 +80,8 @@ export const useDojo = () => {
       select,
       clear,
       account: account ?? contextValue.masterAccount,
+      masterAccount: contextValue.masterAccount,
+      isMasterAccount: (!account),
       isDeploying,
       copyToClipboard,
       applyFromClipboard,

@@ -16,4 +16,4 @@ cd ../client
 npm run codegen
 npm run create-components $RPC_URL $WORLD_ADDRESS
 
-echo "--- DONE!"
+echo "--- DONE! 👍"

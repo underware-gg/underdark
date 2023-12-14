@@ -27,6 +27,8 @@ mod tests {
         get_world_Score,
         get_world_Doors_as_Tiles,
         get_world_Tile_type,
+        make_map,
+        force_verify_level,
     };
 
     fn assert_doors(prefix: felt252, world: IWorldDispatcher, location_id: u128) {
@@ -54,20 +56,23 @@ mod tests {
         let room_id: u16 = 1;
 
         // 1st chamber: entry from above, all other locked
-        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 1, 'seed', 0);
+        let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, 1, MANOR_COORD, 'seed', 0);
         // assert_doors('entry', world, chamber1.location_id, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::LOCKED_EXIT, TILE::ENTRY, 0);
         assert_doors('entry', world, chamber1.location_id);
 
         // move WEST
-        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 2, 'binary_tree_classic', 0);
+        force_verify_level(world, chamber1.location_id);
+        let chamber2 = generate_level_get_chamber(world, system, REALM_ID, room_id, 2, MANOR_COORD, 'seed', 0);
         assert_doors('level_2', world, chamber2.location_id);
 
         // move NORTH
-        let chamber3 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 3, 'seed', 0);
+        force_verify_level(world, chamber2.location_id);
+        let chamber3 = generate_level_get_chamber(world, system, REALM_ID, room_id, 3, MANOR_COORD, 'seed', 0);
         assert_doors('level_3', world, chamber3.location_id);
 
         // move EAST
-        let chamber4 = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, 4, 'seed', 0);
+        force_verify_level(world, chamber3.location_id);
+        let chamber4 = generate_level_get_chamber(world, system, REALM_ID, room_id, 4, MANOR_COORD, 'seed', 0);
         assert_doors('level_4', world, chamber4.location_id);
     }
 
@@ -81,13 +86,14 @@ mod tests {
     fn test_monsters_seed() {
         let mut rnd = make_seed(1234);
         let bitmap: u256 = binary_tree_pro(rnd);
+        let (map, map_data) = make_map(bitmap, 0, 0, 0, 0);
 
         // randomize_monsters,randomize_slender_duck,randomize_dark_tar
         let mut i: u16 = 0;
         loop {
             if (i >= 10) { break; }
             let level_number: u16 = i + 1;
-            let (monsters, slender_duck, dark_tar): (u256, u256, u256) = randomize_monsters(ref rnd, bitmap, 0x0, level_number);
+            let (monsters, slender_duck, dark_tar): (u256, u256, u256) = randomize_monsters(ref rnd, map, level_number);
             let monster_count: usize = U256Bitwise::count_bits(monsters);
             assert(monster_count != 0, 'monster_count');
             // monster_count.print();
@@ -115,7 +121,7 @@ mod tests {
             if (i >= 10) { break; }
             // 1st chamber: entry from above, all other locked
             let level_number: u16 = i + 1;
-            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, MANOR_COORD, room_id, level_number, 'binary_tree_classic', 0);
+            let chamber1: Chamber = generate_level_get_chamber(world, system, REALM_ID, room_id, level_number, MANOR_COORD, 'seed', 0);
             let map: Map = get_world_Map(world, chamber1.location_id);
             let map_data: MapData = get_world_MapData(world, system, chamber1.location_id);
             // no monsters wall overlaps
@@ -126,6 +132,8 @@ mod tests {
             assert((map_data.monsters & map_data.slender_duck) == 0, 'monsters & slender_duck');
             assert((map_data.monsters & map_data.dark_tar) == 0, 'monsters & dark_tar');
             assert((map_data.dark_tar & map_data.slender_duck) == 0, 'dark_tar & slender_duck');
+            // verify to allow minting more chambers
+            force_verify_level(world, chamber1.location_id);
             i += 1;
         };
     }

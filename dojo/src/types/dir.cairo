@@ -21,6 +21,8 @@ mod DIR {
     const UNDER: u8 = 5;
     // dirs count
     const COUNT: u8 = 6;
+    // proof commands
+    const LIGHT_SWITCH: u8 = 4; // equal to DIR::OVER
 }
 
 trait DirTrait {

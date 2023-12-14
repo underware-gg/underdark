@@ -37,7 +37,7 @@ function Underdark({
 //
 function GameStartOverlay({
 }) {
-  const { gameImpl, hasInteracted, isLoaded, inLobby, dispatchInteracted, dispatchReset } = useGameplayContext()
+  const { gameImpl, hasInteracted, isReady, inLobby, dispatchInteracted, dispatchReset } = useGameplayContext()
   const [audioAssetsLoaded, setAudioAssetsLoaded] = useState(undefined)
 
   const _startGame = async () => {
@@ -49,10 +49,10 @@ function GameStartOverlay({
 
   useEffect(() => {
     setAudioAssetsLoaded(isAudioAssetsLoaded())
-    if (isLoaded && hasInteracted && !inLobby) {
+    if (isReady && hasInteracted && !inLobby) {
       _startGame()
     }
-  }, [isLoaded, hasInteracted, inLobby])
+  }, [isReady, hasInteracted, inLobby])
 
   if (audioAssetsLoaded === true) {
     return <></>

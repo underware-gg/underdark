@@ -72,6 +72,7 @@ h1 {
 
 h1, h2, h3, h4, h5 {
   font-family: $font-family;
+  text-shadow: $text-shadow;
   line-height: 1.2em;
   margin: 0.2em 0;
 }
@@ -125,6 +126,18 @@ canvas {
 
 .NoMouse { pointer-events: none; }
 .YesMouse { pointer-events: auto; }
+
+.Code {
+  font-family: monospace;
+}
+
+.Smaller {
+  font-size: 10px;
+}
+
+.Faded {
+  background-color: #000b;
+}
 
 .Anchor {
   cursor: pointer;
@@ -355,3 +368,11 @@ canvas {
   background-color: $color-bg;
 }
 
+
+//-----------------------------
+// semantic-ui
+//
+.ui.input>input {
+  background: #aff2;
+  color: $color-text;
+}

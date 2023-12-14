@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Dir, FlippedDir, TileType, tilemapToGameTilemap } from '@/underdark/utils/underdark'
 import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
@@ -38,7 +38,7 @@ const GameView = ({
   const gameTilemap = useMemo(() => tilemapToGameTilemap(tilemap, 20), [tilemap])
   useEffect(() => console.log(`gameTilemap:`, bigintToHex(bitmap), gameTilemap), [gameTilemap])
 
-  const { gameImpl, playerPosition, dispatchReset, dispatchMoveTo, dispatchTurnTo } = useGameplayContext()
+  const { gameImpl, playerPosition, dispatchReset, dispatchMoveTo, dispatchTurnToDir } = useGameplayContext()
 
   useEffect(() => {
     console.log(` >>>>>>> gameTilemap`, gameTilemap)
@@ -55,7 +55,7 @@ const GameView = ({
 
   const _moveToDirection = (dir) => {
     dispatchMoveTo({ dir, tilemap })
-    dispatchTurnTo(dir)
+    dispatchTurnToDir(dir)
   }
 
   const _move = (signal) => {
@@ -75,7 +75,7 @@ const GameView = ({
       [Dir.South]: Dir.West,
       [Dir.West]: Dir.North
     })[playerPosition.facing]
-    dispatchTurnTo(dir)
+    dispatchTurnToDir(dir)
   }
 
   // level selector
@@ -89,7 +89,7 @@ const GameView = ({
   }, [gameImpl, gameTilemap])
 
   useEffect(() => {
-    gameImpl?.movePlayer(playerPosition.tile)
+    gameImpl?.movePlayer(playerPosition.tile, playerPosition.facing)
     gameImpl?.rotatePlayer(playerPosition.facing)
   }, [gameImpl, playerPosition])
 

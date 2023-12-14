@@ -19,14 +19,14 @@ trait Bitwise<T> {
 
 impl U8Bitwise of Bitwise<u8> {
     fn bit(n: usize) -> u8 {
-        if n == 0 { return 0x1; }
-        if n == 1 { return 0x2; }
-        if n == 2 { return 0x4; }
-        if n == 3 { return 0x8; }
-        if n == 4 { return 0x10; }
-        if n == 5 { return 0x20; }
-        if n == 6 { return 0x40; }
-        if n == 7 { return 0x80; }
+        if n == 0 { return 0b00000001; }
+        if n == 1 { return 0b00000010; }
+        if n == 2 { return 0b00000100; }
+        if n == 3 { return 0b00001000; }
+        if n == 4 { return 0b00010000; }
+        if n == 5 { return 0b00100000; }
+        if n == 6 { return 0b01000000; }
+        if n == 7 { return 0b10000000; }
         0
     }
     #[inline(always)]

@@ -79,7 +79,9 @@ const defaultParams = {
   bayer: BAYER,
   palette: PALETTE,
   lightness: false,
-  noise: 0.0,
+  noiseAmount: 0.01,
+  noiseSize: 10.0,
+  ceilingHeight: 1.0,
 };
 let params = { ...defaultParams };
 
@@ -139,6 +141,8 @@ export async function init(canvas, width, height, guiEnabled) {
   _renderer.setPixelRatio(window.devicePixelRatio);
   _renderer.setSize(_width, _height);
 
+  await loadAssets();
+
   setupScene();
 
   _cameraRig = new THREE.Object3D();
@@ -155,8 +159,6 @@ export async function init(canvas, width, height, guiEnabled) {
   _camera.up.set(0, 0, 1);
   _camera.position.set(0, 0, _eyeZ)
   _camera.lookAt(0, SIZE, _eyeZ);
-
-  await loadAssets();
 
   // _controls = new OrbitControls(camera, renderer.domElement);
   // _controls.enableDamping = true;
@@ -183,6 +185,8 @@ export async function init(canvas, width, height, guiEnabled) {
     _gui.add(params, 'bayer', 0, 4, 1).onChange(guiUpdated);
     _gui.add(params, 'palette', 0, _palettes.length, 1).onChange(guiUpdated);
     _gui.add(params, 'lightness', true).onChange(guiUpdated);
+    _gui.add(params, 'noiseAmount', 0, 1, 0.001).onChange(guiUpdated);
+    _gui.add(params, 'noiseSize', 1, 100, 1).onChange(guiUpdated);
     _gui.open();
     // framerate
     _stats = new Stats();
@@ -238,6 +242,7 @@ function setupPost() {
     uniforms: {
       uCameraNear: { value: _camera.near },
       uCameraFar: { value: _camera.far },
+      uCameraFov: { value: _camera.fov },
       uGamma: { value: GAMMA },
       uColorCount: { value: COLOR_COUNT },
       uDither: { value: DITHER },
@@ -245,7 +250,8 @@ function setupPost() {
       uBayer: { value: BAYER },
       uPalette: { value: params.palette },
       uLightness: { value: params.lightness },
-      uNoise: { value: params.noise },
+      uNoiseAmount: { value: params.noiseAmount },
+      uNoiseSize: { value: params.noiseSize },
       uTime: { value: 0.0 },
       tPalette: { value: null },
       tDiffuse: { value: null },
@@ -326,9 +332,9 @@ function setupScene() {
   // loadModel(ModelName.MONSTER, _scene, 0, 0)
   // loadModel(ModelName.SLENDER_DUCK, _scene, 0, 0)
   // loadModel(ModelName.DARK_TAR, _scene, 0, 0)
-  loadModel(ModelName.DOOR, _scene, 0, 0)
+  // loadModel(ModelName.DOOR, _scene, 0, 0)
   // loadModel(ModelName.STAIRS, _scene, 0, 0)
-  // loadModel(ModelName.CHEST, _scene, 0, 0)
+  loadModel(ModelName.CHEST, _scene, 0, 0)
 
 }
 
@@ -342,9 +348,9 @@ function addTile(x, y) {
 function loadModel(modelName, parent, x, y) {
   const model = MODELS_ASSETS[modelName]
   const obj = model?.object?.clone() ?? null
-  console.log(`___MODEL_instance`, modelName, model)//, obj)
-    if(obj) {
-      obj.position.set(x, y, 0)
-      parent.add(obj);
-    }
+  console.log(`___MODEL_instance`, modelName, model, obj)
+  if (obj) {
+    obj.position.set(x, y, 0)
+    parent.add(obj);
+  }
 }

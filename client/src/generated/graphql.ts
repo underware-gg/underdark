@@ -320,6 +320,8 @@ export type Score = {
   location_id?: Maybe<Scalars['u128']['output']>;
   moves?: Maybe<Scalars['usize']['output']>;
   player?: Maybe<Scalars['ContractAddress']['output']>;
+  player_name?: Maybe<Scalars['felt252']['output']>;
+  score?: Maybe<Scalars['usize']['output']>;
 };
 
 export type ScoreConnection = {
@@ -345,7 +347,9 @@ export enum ScoreOrderField {
   KeyPlayer = 'KEY_PLAYER',
   LocationId = 'LOCATION_ID',
   Moves = 'MOVES',
-  Player = 'PLAYER'
+  Player = 'PLAYER',
+  PlayerName = 'PLAYER_NAME',
+  Score = 'SCORE'
 }
 
 export type ScoreWhereInput = {
@@ -384,6 +388,20 @@ export type ScoreWhereInput = {
   playerLT?: InputMaybe<Scalars['ContractAddress']['input']>;
   playerLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
   playerNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  player_name?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameEQ?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameGT?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameGTE?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameLT?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameLTE?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameNEQ?: InputMaybe<Scalars['felt252']['input']>;
+  score?: InputMaybe<Scalars['usize']['input']>;
+  scoreEQ?: InputMaybe<Scalars['usize']['input']>;
+  scoreGT?: InputMaybe<Scalars['usize']['input']>;
+  scoreGTE?: InputMaybe<Scalars['usize']['input']>;
+  scoreLT?: InputMaybe<Scalars['usize']['input']>;
+  scoreLTE?: InputMaybe<Scalars['usize']['input']>;
+  scoreNEQ?: InputMaybe<Scalars['usize']['input']>;
 };
 
 export type Tile = {

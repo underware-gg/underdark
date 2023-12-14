@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { useGameplayContext } from '@/underdark/hooks/GameplayContext'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
-import { useChamber, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
+import { useChamberMapData, useChamberOffset, usePlayerScore } from '@/underdark/hooks/useChamber'
 import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { getLevelParams } from '@/underdark/data/levels'
@@ -15,14 +15,14 @@ export const StartButton = ({
   large = false,
   label = null,
 }) => {
-  const { gameImpl, isLoaded, dispatchReset } = useGameplayContext()
+  const { gameImpl, isReady, dispatchReset } = useGameplayContext()
 
   const _startGame = async () => {
     await loadAudioAssets(gameImpl?.getCameraRig())
     dispatchReset(null, true)
   }
 
-  const _label = label ?? (isLoaded ? 'START' : 'RESTART')
+  const _label = label ?? (isReady ? 'START' : 'RESTART')
   return (
     <ActionButton fill={fill} large={large} onClick={() => _startGame()} label={_label} />
   )
@@ -31,8 +31,10 @@ export const StartButton = ({
 
 export function NextLevelButton() {
   const { isVerifying, isWinner } = useGameplayContext()
-
   const { roomId, chamberId } = useUnderdarkContext()
+
+  const map_data = useChamberMapData(chamberId)
+
   const { chamberExists } = useChamberOffset(chamberId, Dir.Under)
 
   const { account } = useDojoAccount()
@@ -47,8 +49,12 @@ export function NextLevelButton() {
     router.push(url)
   }
 
-  if (isVerifying) {
-    return <></>
+  if (isVerifying || map_data == null) {
+    return <ActionButton large disabled={true} label='VALIDATING...' onClick={() => {}} />
+  }
+
+  if (map_data.chest > 0n) {
+    return <ActionButton large label='FINISHED LEVEL' onClick={() => router.push('/manor')} />
   }
 
   if (!isWinner) {
@@ -101,9 +107,9 @@ export function GenerateRoomButton({
 
   const _generate = async () => {
     const _level = getLevelParams(levelNumber)
-    const success = await generate_level(account, realmId, manorCoord, roomId, levelNumber, _level.generatorName, _level.generatorValue)
+    const success = await generate_level(account, realmId, roomId, levelNumber, manorCoord, _level.generatorName, _level.generatorValue)
     if (success) {
-      console.log(`GENERATED... TODO: START GAME`)
+      // not sure if this is working
     }
   }
 
