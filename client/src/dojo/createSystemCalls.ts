@@ -54,7 +54,7 @@ export function createSystemCalls(
       const proof_low = proof & BigInt('0xffffffffffffffffffffffffffffffff')
       const proof_high = proof >> 128n
       const args = [locationId, proof_low, proof_high, movesCount, shortString.encodeShortString(playerName)]
-      // console.log(args)
+      console.log(args)
 
       const tx = await execute(signer, 'actions', 'finish_level', args)
       console.log(`finish_level tx:`, tx)
