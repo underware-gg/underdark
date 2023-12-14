@@ -132,7 +132,7 @@ canvas {
 }
 
 .Faded {
-  background-color: #000a;
+  background-color: #000b;
 }
 
 .Anchor {
@@ -364,3 +364,11 @@ canvas {
   background-color: $color-bg;
 }
 
+
+//-----------------------------
+// semantic-ui
+//
+.ui.input>input {
+  background: #aff2;
+  color: $color-text;
+}
