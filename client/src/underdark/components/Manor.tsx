@@ -9,13 +9,13 @@ function Manor() {
   return (
     <Container>
       <div className='AlignCenter'>
-        <Image className='ManorImage' src='/images/manor.jpg' />
+        {/* <Image className='ManorImage' src='/images/manor.jpg' /> */}
         <h1>The Manor at Kurnkunor</h1>
         <h2>The Lair of the Slender Duck!</h2>
       </div>
 
-      <hr />
-      <Container text>
+      <br />
+      <Container text className='Faded'>
         <p>(concepts we need to pass)</p>
 
         <p>The Manor has <b>ten thousand</b> rooms, containign many perils and rewards.</p>
@@ -35,11 +35,11 @@ function Manor() {
 
       </Container>
 
-      <hr />
+      <br />
 
       <ManorRoomSelector />
 
-      <hr />
+      <br />
 
     </Container>
   )

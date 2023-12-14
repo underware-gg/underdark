@@ -59,7 +59,7 @@ export default function UnderdarkPage() {
   const _inManor = (page == 'manor')
 
   return (
-    <AppDojo title={title}>
+    <AppDojo title={title} backgroundImage={_inManor ? '/images/manor_bg.png' : null}>
       <Lobby value={_inManor} />
       {_inManor && <Manor />}
       <Underdark
