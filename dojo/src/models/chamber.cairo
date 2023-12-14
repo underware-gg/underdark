@@ -54,6 +54,7 @@ struct Score {
     // fields
     location_id: u128,
     player: ContractAddress,
+    player_name: felt252,
     moves: usize,
     score: usize,
 }

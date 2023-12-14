@@ -1,8 +1,8 @@
-import { getEvents, setComponentsFromEvents, decodeComponent } from "@dojoengine/utils";
-import { Account } from 'starknet';
-import { SetupNetworkResult } from './setupNetwork';
-import { bigintToHex } from '@/underdark/utils/utils';
-import { shortString } from "starknet";
+import { getEvents, setComponentsFromEvents, decodeComponent } from '@dojoengine/utils'
+import { Account } from 'starknet'
+import { SetupNetworkResult } from './setupNetwork'
+import { bigintToHex } from '@/underdark/utils/utils'
+import { shortString } from 'starknet'
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
@@ -48,12 +48,12 @@ export function createSystemCalls(
     return result
   }
 
-  const finish_level = async (signer: Account, locationId: bigint, proof: bigint, movesCount: number): Promise<boolean> => {
+  const finish_level = async (signer: Account, locationId: bigint, proof: bigint, movesCount: number, playerName: string): Promise<boolean> => {
     let success = false
     try {
       const proof_low = proof & BigInt('0xffffffffffffffffffffffffffffffff')
       const proof_high = proof >> 128n
-      const args = [locationId, proof_low, proof_high, movesCount]
+      const args = [locationId, proof_low, proof_high, movesCount, shortString.encodeShortString(playerName)]
       // console.log(args)
 
       const tx = await execute(signer, 'actions', 'finish_level', args)

@@ -18,6 +18,7 @@ trait IActions<TContractState> {
         proof_low: u128,
         proof_high: u128,
         moves_count: usize,
+        player_name: felt252,
     );
     // read-only calls
     fn can_play_level(self: @TContractState,
@@ -63,13 +64,14 @@ mod actions {
             proof_low: u128,
             proof_high: u128,
             moves_count: usize,
+            player_name: felt252,
         ) {
             let world: IWorldDispatcher = self.world_dispatcher.read();
             let proof: u256 = u256 {
                 low: proof_low,
                 high: proof_high,
             };
-            verify_level_proof(world, location_id, proof, moves_count);
+            verify_level_proof(world, location_id, proof, moves_count, player_name);
             return ();
         }
 

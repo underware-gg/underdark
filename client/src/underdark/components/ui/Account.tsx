@@ -1,15 +1,16 @@
 import { useMemo } from 'react'
 
-const shortAddress = (address) => (!address ? '?' : `${address.slice(0, 6)}...${address.slice(-4)}`)
+const shortAddress = (address) => (!address ? '?' : `${address.slice(0, 6)}…${address.slice(-4)}`)
 
 function AccountShort({
   address
 }) {
-  const display = useMemo(() => shortAddress(address), [address])
+  const _address = useMemo(() => (typeof address == 'bigint' ? `0x${address.toString(16)}` : address), [address])
+  const display = useMemo(() => (_address ? shortAddress(_address) : '0x?'), [_address])
   return (
-    <div className='Code'>
+    <span className='Code'>
       {display}
-    </div>
+    </span>
   )
 }
 

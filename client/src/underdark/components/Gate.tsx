@@ -5,7 +5,7 @@ import { Container, Grid, Radio, Input } from 'semantic-ui-react'
 import { useDojo } from '@/dojo/DojoContext'
 import { AccountShort } from '@/underdark/components/ui/Account'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
-import { accountNameCookieName } from '@/underdark/components/AccountCurrent'
+import { accountNameCookieName } from '@/underdark/hooks/useAccountName'
 
 const Row = Grid.Row
 const Col = Grid.Column
@@ -130,7 +130,6 @@ function AccountName({
   }, [cookies[cookieName]])
 
   useEffect(() => {
-    console.log(`ACCUT_EDIT:`, inputValue, cookies[cookieName])
     if (inputValue && cookies[cookieName] != inputValue) {
       setCookie(cookieName, inputValue)
     }

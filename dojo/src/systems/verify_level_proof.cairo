@@ -20,6 +20,7 @@ fn verify_level_proof(world: IWorldDispatcher,
     location_id: u128,
     proof: u256,
     moves_count: usize,
+    player_name: felt252,
 ) -> bool {
 
     // panic if player cannot generate/play this level
@@ -41,13 +42,14 @@ fn verify_level_proof(world: IWorldDispatcher,
     let level_score = 10_000 / Math32::max(moves_count, 1);
 
     let score : Score = get!(world, (location_id, caller), (Score));
-    if(score.score == 0 || moves_count < score.moves) {
+    if(level_score >= score.score) {
         set!(world, (
             Score {
                 key_location_id: location_id,
                 key_player: caller,
                 location_id: location_id,
                 player: caller,
+                player_name,
                 moves: moves_count,
                 score: level_score,
             }

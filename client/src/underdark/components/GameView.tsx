@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useDojoAccount, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { useGameplayContext, GameState } from '@/underdark/hooks/GameplayContext'
 import { useChamber, useChamberMap } from '@/underdark/hooks/useChamber'
@@ -10,6 +10,7 @@ import { getLevelParams } from '@/underdark/data/levels'
 import GameCanvas from '@/underdark/components/GameCanvas'
 import { AudioName } from '@/underdark/data/assets'
 import { useSettingsContext } from '@/underdark/hooks/SettingsContext'
+import { useAccountName } from '../hooks/useAccountName'
 
 
 const GameView = () => {
@@ -199,6 +200,7 @@ const GameLoop = ({
   //
   const { finish_level } = useDojoSystemCalls()
   const { account } = useDojoAccount()
+  const { accountName } = useAccountName(account?.address)
   useEffect(() => {
     const proofLostGames = (process.env.PROOF_LOST_GAMES && (gameState == GameState.NoHealth || gameState == GameState.Slendered))
     if (gameState == GameState.Verifying || proofLostGames) {
@@ -207,7 +209,7 @@ const GameLoop = ({
         proof |= (BigInt(step.dir) << BigInt(index * 4))
       });
       console.log(`PROOF:`, bigintToHex(proof))
-      const success = finish_level(account, chamberId, proof, steps.length)
+      const success = finish_level(account, chamberId, proof, steps.length, accountName)
       if (success && gameState == GameState.Verifying) {
         dispatchGameState(success ? GameState.Verified : GameState.NotVerified)
       }

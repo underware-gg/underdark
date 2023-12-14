@@ -264,6 +264,7 @@ mod tests {
         assert(score.player == player, 'moves=player');
         assert(score.moves == proof_low.len(), 'moves=proof_low');
         assert(score.score > 0, 'proof_low_score>0');
+        assert(score.player_name == 'PlayerName', 'PlayerName');
 
         win = verify_map(map, map_data, map.over, map.under, proof_best_packed, proof_best.len());
         assert(win == true, 'proof_best');
@@ -272,6 +273,7 @@ mod tests {
         score = get_world_Score(world, chamber2.location_id, player);
         assert(score.moves == proof_best.len(), 'moves=proof_best');
         assert(score.score > 0, 'proof_best_score>0');
+        assert(score.player_name == 'PlayerName', 'PlayerName2');
 
         win = verify_map(map, map_data, map.over, map.under, proof_mid_packed, proof_mid.len());
         assert(win == true, 'proof_mid');
@@ -280,6 +282,7 @@ mod tests {
         score = get_world_Score(world, chamber2.location_id, player);
         assert(score.moves == proof_best.len(), 'moves=proof_best'); // dir not overrite!
         assert(score.score > 0, 'proof_best__score>0');
+        assert(score.player_name == 'PlayerName', 'PlayerName3');
     }
 
 }

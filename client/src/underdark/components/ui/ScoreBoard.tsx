@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useLevelScores, usePlayerScore, useScoreByKey } from '@/underdark/hooks/useChamber'
 import { useUnderdarkContext } from '@/underdark/hooks/UnderdarkContext'
 import { useDojoAccount } from '@/dojo/DojoContext'
+import { AccountShort } from './Account'
 
 function Score({
   scoreKey,
@@ -10,7 +11,7 @@ function Score({
   if (score.score == 0) return <></>
   return (
     <div className=''>
-      <li>{score.score} points, {score.moves} moves</li>
+      <li> {score.playerName}: {score.score} ({score.moves} moves) <span className='Smaller'><AccountShort address={score.player} /></span></li>
     </div>
   )
 }

@@ -29,7 +29,7 @@ mod utils {
     }
 
     fn execute_finish_level(world: IWorldDispatcher, system: IActionsDispatcher, location_id: u128, proof: u256, moves_count: usize) {
-        system.finish_level(location_id, proof.low, proof.high, moves_count);
+        system.finish_level(location_id, proof.low, proof.high, moves_count, 'PlayerName');
     }
 
     fn generate_level_get_chamber(world: IWorldDispatcher, system: IActionsDispatcher, realm_id: u16, room_id: u16, level_number: u16, manor_coord: u128, generator_name: felt252, generator_value: u32) -> Chamber {
@@ -78,7 +78,7 @@ mod utils {
 
     // generator need sto be 'seed' or 'empty'
     fn force_verify_level(world: IWorldDispatcher, location_id: u128) {
-        verify_level_proof(world, location_id, 0xffff, 100);
+        verify_level_proof(world, location_id, 0xffff, 100, 'PlayerName');
     }
 
     fn make_map(bitmap: u256, monsters: u256, slender_duck: u256, dark_tar: u256, chest: u256) -> (Map, MapData) {

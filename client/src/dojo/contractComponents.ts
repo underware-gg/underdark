@@ -46,11 +46,11 @@ export function defineContractComponents(world: World) {
 	  Score: (() => {
 	    return defineComponent(
 	      world,
-	      { key_location_id: RecsType.BigInt, key_player: RecsType.BigInt, location_id: RecsType.BigInt, player: RecsType.BigInt, moves: RecsType.Number, score: RecsType.Number },
+	      { key_location_id: RecsType.BigInt, key_player: RecsType.BigInt, location_id: RecsType.BigInt, player: RecsType.BigInt, player_name: RecsType.BigInt, moves: RecsType.Number, score: RecsType.Number },
 	      {
 	        metadata: {
 	          name: "Score",
-	          types: ["u128","contractaddress","u128","contractaddress","usize","usize"],
+	          types: ["u128","contractaddress","u128","contractaddress","felt252","usize","usize"],
 	          customTypes: [],
 	        },
 	      }

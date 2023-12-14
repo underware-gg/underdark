@@ -5,7 +5,7 @@ import { getEntityIdFromKeys } from "@dojoengine/utils"
 import { useDojoComponents, useDojoSystemCalls } from '@/dojo/DojoContext'
 import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToCompass } from "../utils/underdark"
 import { bigintToEntity } from "../utils/utils"
-import { Account } from "starknet"
+import { Account, shortString } from 'starknet'
 
 
 //------------------
@@ -193,6 +193,7 @@ export const useScoreByKey = (scoreKey: Entity) => {
   return {
     location_id: score?.location_id ?? 0n,
     player: score?.player ?? 0n,
+    playerName: score?.player_name ? shortString.decodeShortString(score.player_name) : '?',
     moves: score?.moves ?? 0,
     score: score?.score ?? 0,
     levelIsCompleted: (score?.score > 0),

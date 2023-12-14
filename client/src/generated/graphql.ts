@@ -320,6 +320,7 @@ export type Score = {
   location_id?: Maybe<Scalars['u128']['output']>;
   moves?: Maybe<Scalars['usize']['output']>;
   player?: Maybe<Scalars['ContractAddress']['output']>;
+  player_name?: Maybe<Scalars['felt252']['output']>;
   score?: Maybe<Scalars['usize']['output']>;
 };
 
@@ -347,6 +348,7 @@ export enum ScoreOrderField {
   LocationId = 'LOCATION_ID',
   Moves = 'MOVES',
   Player = 'PLAYER',
+  PlayerName = 'PLAYER_NAME',
   Score = 'SCORE'
 }
 
@@ -386,6 +388,13 @@ export type ScoreWhereInput = {
   playerLT?: InputMaybe<Scalars['ContractAddress']['input']>;
   playerLTE?: InputMaybe<Scalars['ContractAddress']['input']>;
   playerNEQ?: InputMaybe<Scalars['ContractAddress']['input']>;
+  player_name?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameEQ?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameGT?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameGTE?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameLT?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameLTE?: InputMaybe<Scalars['felt252']['input']>;
+  player_nameNEQ?: InputMaybe<Scalars['felt252']['input']>;
   score?: InputMaybe<Scalars['usize']['input']>;
   scoreEQ?: InputMaybe<Scalars['usize']['input']>;
   scoreGT?: InputMaybe<Scalars['usize']['input']>;

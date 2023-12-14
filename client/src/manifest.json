@@ -949,7 +949,7 @@
     {
       "name": "actions",
       "address": "0x3da4bf86342c340fd1dd590cd5505248af77006db7d74912ac50d7e7374496b",
-      "class_hash": "0x58322ac5efdd79c7d35eb32cb685bf346ff75de0ed7dd56a7851cbdbcc15893",
+      "class_hash": "0x406be1745459636b652cd6ecbcd133c63d0cb7ffc3b4bf75f983511cec8337b",
       "abi": [
         {
           "type": "impl",
@@ -1097,6 +1097,10 @@
                 {
                   "name": "moves_count",
                   "type": "core::integer::u32"
+                },
+                {
+                  "name": "player_name",
+                  "type": "core::felt252"
                 }
               ],
               "outputs": [],
@@ -1843,6 +1847,11 @@
           "key": false
         },
         {
+          "name": "player_name",
+          "type": "felt252",
+          "key": false
+        },
+        {
           "name": "moves",
           "type": "usize",
           "key": false
@@ -1853,7 +1862,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x4a9bd7d7f733f68816513d5f26d3644893cb8b338775ee82e7b94a6319987d",
+      "class_hash": "0x17422865e41cc77f648d56a549eb255fc0d0c73eea2765ce7bdd039b24f712b",
       "abi": [
         {
           "type": "function",
