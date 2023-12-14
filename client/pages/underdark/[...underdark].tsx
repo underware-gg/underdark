@@ -5,25 +5,32 @@ import { makeRoomName } from '@/underdark/utils/underdark'
 import AppDojo from '@/underdark/components/AppDojo'
 import Manor from '@/underdark/components/Manor'
 import Underdark from '@/underdark/components/Underdark'
+import Gate from '@/underdark/components/Gate'
 
 export default function UnderdarkPage() {
   const router = useRouter()
   // console.log(`/[...underdark]`, router.query.underdark)
 
-  const { page, title, isPlaying, roomId, levelNumber } = useMemo(() => {
+  const { page, title, isPlaying, roomId, levelNumber, backgroundImage } = useMemo(() => {
     let page = null
     let title = null
     let isPlaying = false
     let roomId = null
     let levelNumber = null
+    let backgroundImage = null
+
     // parse page
     if (router.isReady && router.query.underdark) {
       const _page = router.query.underdark[0]
       const _slugs = router.query.underdark.slice(1)
-      if (_page == 'manor') {
-        // '/manor'
+      if (_page == 'gate') {
+        page = _page
+        title = 'Underdark - The Gate'
+        backgroundImage = '/images/gate_bg.png'
+      } else if (_page == 'manor') {
         page = _page
         title = 'Underdark - The Manor'
+        backgroundImage = '/images/manor_bg.png'
       } else if (_page == 'room') {
         // '/room/[roomId]'
         // '/room/[roomId]/[levelNumber]'
@@ -34,8 +41,8 @@ export default function UnderdarkPage() {
           title = 'Underdark ' + makeRoomName(roomId, levelNumber)
           isPlaying = true
         } else {
-          page = 'manor'
-          router.push('/manor')
+          page = 'gate'
+          router.push('/gate')
         }
       }
     }
@@ -45,6 +52,7 @@ export default function UnderdarkPage() {
       isPlaying,
       roomId,
       levelNumber,
+      backgroundImage,
     }
   }, [router.isReady, router.query])
 
@@ -56,12 +64,14 @@ export default function UnderdarkPage() {
     // return <></> // causes hydration error
   }
 
-  const _inManor = (page == 'manor')
+  const _atGate = (page == 'gate')
+  const _atManor = (page == 'manor')
 
   return (
-    <AppDojo title={title} backgroundImage={_inManor ? '/images/manor_bg.png' : null}>
-      <Lobby value={_inManor} />
-      {_inManor && <Manor />}
+    <AppDojo title={title} backgroundImage={backgroundImage}>
+      <Lobby value={_atManor} />
+      {_atManor && <Manor />}
+      {_atGate && <Gate />}
       <Underdark
         isPlaying={isPlaying}
         roomId={roomId}

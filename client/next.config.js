@@ -21,6 +21,10 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/gate',
+        destination: '/underdark/gate',
+      },
+      {
         source: '/manor',
         destination: '/underdark/manor',
       },
