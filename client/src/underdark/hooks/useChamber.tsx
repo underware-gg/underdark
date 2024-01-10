@@ -3,6 +3,7 @@ import { Entity, HasValue, Has, getComponentValue } from '@dojoengine/recs'
 import { useComponentValue, useEntityQuery } from "@dojoengine/react"
 import { getEntityIdFromKeys } from "@dojoengine/utils"
 import { useDojoComponents, useDojoSystemCalls } from '@/dojo/DojoContext'
+import { useEntityKeys, useEntityKeysQuery } from "@/underdark/hooks/useEntityKeysQuery"
 import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToCompass } from "../utils/underdark"
 import { bigintToEntity } from "../utils/utils"
 import { Account, shortString } from 'starknet'
@@ -14,8 +15,7 @@ import { Account, shortString } from 'starknet'
 
 export const useAllChamberIds = () => {
   const { Chamber } = useDojoComponents()
-  const entityIds: Entity[] = useEntityQuery([Has(Chamber)])
-  const chamberIds: bigint[] = useMemo(() => (entityIds ?? []).map((entityId) => BigInt(entityId)), [entityIds])
+  const chamberIds: bigint[] = useEntityKeys(Chamber, 'location_id')
   return {
     chamberIds,
   }
@@ -38,8 +38,7 @@ export const useAllRoomIds = () => {
 
 export const useRoomChamberIds = (roomId: number) => {
   const { Chamber } = useDojoComponents()
-  const entityIds = useEntityQuery([HasValue(Chamber, { room_id: roomId })])
-  const chamberIds: bigint[] = useMemo(() => (entityIds ?? []).map((entityId) => BigInt(entityId)), [entityIds])
+  const chamberIds: bigint[] = useEntityKeysQuery(Chamber, 'location_id', [HasValue(Chamber, { room_id: roomId })])
   return {
     chamberIds,
   }
@@ -111,9 +110,9 @@ export const useChamberMap = (locationId: bigint, id: number = 0) => {
 
   //
   // Parse tiles
-  const tileIds: Entity[] = useEntityQuery([HasValue(Tile, { location_id: locationId ?? 0n })])
-  const tiles: any[] = useMemo(() => tileIds.map((tileId) => getComponentValue(Tile, tileId)), [tileIds])
-  // useEffect(() => console.log(`/tiles:`, coordToSlug(locationId), tileIds, tiles), [tileIds, tiles])
+  const entityIds: Entity[] = useEntityQuery([HasValue(Tile, { location_id: locationId ?? 0n })])
+  const tiles: any[] = useMemo(() => entityIds.map((entityId) => getComponentValue(Tile, entityId)), [entityIds])
+  // useEffect(() => console.log(`/tiles:`, coordToSlug(locationId), entityIds, tiles), [entityIds, tiles])
 
   //
   // Parse tilemap
