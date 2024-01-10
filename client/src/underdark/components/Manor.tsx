@@ -20,13 +20,13 @@ function Manor() {
       <Container text className='Faded'>
         <p>(concepts we need to pass)</p>
 
-        <p>The Manor has <b>ten thousand</b> rooms, containign many perils and rewards.</p>
+        <p>The Manor has <b>ten thousand</b> rooms, containing many perils and rewards.</p>
 
         <p>Each room is a passage to the Underdark, and can be composed of many levels. Find the exit to go deeper and deeper into the Underdark.</p>
 
         <p>
           Light and Sanity are your most precious resources. Keep your sanity by avoiding Underducks. Refill your light with Dark Tar.
-          If your lights runs out... may the gods be mercyful on your soul, as the Slender Duck will find you and slay you!
+          If your lights runs out... may the gods be merciful on your soul, as the Slender Duck will find you and slay you!
         </p>
 
         <p>A treasure awaits at the bottom of each Underdark room. Only one player can collect each treasure.</p>
