@@ -1,8 +1,8 @@
 {
   "world": {
-    "name": "world",
-    "address": "0x2d6bcc12cbb460243b73a4c937faf00ad2d071d899f40dfc9182843712f9c77",
-    "class_hash": "0x99b08b2ff33750916e36b5e241b5d4a63e8d48862bf90a68fec2ff58a8de6",
+    "name": "dojo::world::world",
+    "address": "0x6400412d8083e10058277920b8a4a81338727912bc3435e5413f168221e73c7",
+    "class_hash": "0x5ac623f0c96059936bd2d0904bdd31799e430fe08a0caff7a5f497260b16497",
     "abi": [
       {
         "type": "impl",
@@ -783,9 +783,9 @@
     "computed": []
   },
   "executor": {
-    "name": "executor",
+    "name": "dojo::executor::executor",
     "address": null,
-    "class_hash": "0x54ee9d99457d82d53e21030920f7e6f43509b98ea62282b5c2520050264a28c",
+    "class_hash": "0x585507fa2818fe78e66da6ea4c5915376739f4abf509d41153f60a16cb1f68d",
     "abi": [
       {
         "type": "impl",
@@ -844,8 +844,8 @@
     "computed": []
   },
   "base": {
-    "name": "base",
-    "class_hash": "0x77638e9a645209ac1e32e143bfdbfe9caf723c4f7645fcf465c38967545ea2f",
+    "name": "dojo::base::base",
+    "class_hash": "0x6c458453d35753703ad25632deec20a29faf8531942ec109e6eb0650316a2bc",
     "abi": [
       {
         "type": "impl",
@@ -947,9 +947,9 @@
   },
   "contracts": [
     {
-      "name": "actions",
-      "address": "0x3da4bf86342c340fd1dd590cd5505248af77006db7d74912ac50d7e7374496b",
-      "class_hash": "0x406be1745459636b652cd6ecbcd133c63d0cb7ffc3b4bf75f983511cec8337b",
+      "name": "underdark::systems::actions::actions",
+      "address": "0x34234facac8d8349b66a92a367950c7e8d32ed6ce96ae5f7a920364a6daf2df",
+      "class_hash": "0x8b03d4c0888557cadb0f94bfd99a44b487d29a3b2ada25a7d26d598d7ddfba",
       "abi": [
         {
           "type": "impl",
@@ -1218,7 +1218,7 @@
   ],
   "models": [
     {
-      "name": "Chamber",
+      "name": "underdark::models::chamber::chamber",
       "members": [
         {
           "name": "location_id",
@@ -1246,7 +1246,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x166eacfeeb10327ff53bfca2a514fb36caeebe3cbebe377fa0b907a33a68692",
+      "class_hash": "0x21b667274a07f9c6b9c31e0bcc33989c65adf3696deca876c215c8fb5d42033",
       "abi": [
         {
           "type": "function",
@@ -1410,7 +1410,7 @@
       ]
     },
     {
-      "name": "Map",
+      "name": "underdark::models::chamber::map",
       "members": [
         {
           "name": "entity_id",
@@ -1468,7 +1468,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x91afb451147fbecad9dcdf287ed45108abca0f321b45d7f9726050a8d443e0",
+      "class_hash": "0x388d1bba071386f81e9bd94014ba1dbe23b541b3208bedb723e2322c8d6fe1b",
       "abi": [
         {
           "type": "function",
@@ -1632,7 +1632,7 @@
       ]
     },
     {
-      "name": "MapData",
+      "name": "underdark::models::chamber::map_data",
       "members": [
         {
           "name": "location_id",
@@ -1660,7 +1660,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x2847eb7632291c0b38a91b044afe31b960413cd9ef8fa4c63ab124abad5595c",
+      "class_hash": "0x395a6e3bc082f4118c02449f0be621ad849a99cd80bfa5e84308570f6378a56",
       "abi": [
         {
           "type": "function",
@@ -1824,7 +1824,7 @@
       ]
     },
     {
-      "name": "Score",
+      "name": "underdark::models::chamber::score",
       "members": [
         {
           "name": "key_location_id",
@@ -1862,7 +1862,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x17422865e41cc77f648d56a549eb255fc0d0c73eea2765ce7bdd039b24f712b",
+      "class_hash": "0x75c6e6a7c5f4865a03c07e1bf448022d26c72b7086e9fd21c2221755e0d6c40",
       "abi": [
         {
           "type": "function",
@@ -2026,7 +2026,7 @@
       ]
     },
     {
-      "name": "Tile",
+      "name": "underdark::models::tile::tile",
       "members": [
         {
           "name": "key_location_id",
@@ -2054,7 +2054,7 @@
           "key": false
         }
       ],
-      "class_hash": "0x5976ab92b2caa3186a26993f9eb9f4366f868f1d624e504fc931f772b052a59",
+      "class_hash": "0x4ac904ff9331b88c23eb46dcecfa5bd478fe64a7bb5890d0ffe3c322d7913d",
       "abi": [
         {
           "type": "function",

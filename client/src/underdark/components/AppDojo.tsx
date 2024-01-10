@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { useEffectOnce } from '@/underdark/hooks/useEffectOnce'
 import { DojoProvider } from '@/dojo/DojoContext'
-import { setup } from '@/dojo/setup.ts'
+import { setup } from '@/dojo/setup'
 import { GameplayProvider } from '@/underdark/hooks/GameplayContext'
-import { useSyncWorld } from '@/underdark/hooks/useSyncWorld'
 import App from '@/underdark/components/App'
 
-
 export default function AppDojo({
-  title=null,
+  title = null,
   backgroundImage = null,
   children,
 }) {
@@ -28,6 +26,7 @@ function DojoSetup({ children }) {
     let _mounted = true
     const _setup = async () => {
       const result = await setup()
+      console.log(`SETUP result:`, result)
       if (_mounted) {
         setSetupResult(result)
       }
@@ -44,24 +43,9 @@ function DojoSetup({ children }) {
 
   return (
     <DojoProvider value={setupResult}>
-      <DojoSync>
+      <GameplayProvider>
         {children}
-      </DojoSync>
+      </GameplayProvider>
     </DojoProvider>
   );
-}
-
-
-function DojoSync({ children }) {
-  const { loading } = useSyncWorld()
-
-  if (loading) {
-    return <h1>syncing...</h1>
-  }
-
-  return (
-    <GameplayProvider>
-      {children}
-    </GameplayProvider>
-  )
 }

@@ -122,6 +122,7 @@ rustup update
 curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh
 
 # other stuff you might need
+cargo install toml-cli
 brew install protobuf
 ```
 
@@ -130,12 +131,12 @@ Install the [Cairo 1.0](https://marketplace.visualstudio.com/items?itemName=star
 
 ### Install Dojo [🔗](https://book.dojoengine.org/getting-started/quick-start.html)
 
-Using Dojo 0.3.5!
+Using Dojo 0.4.3!
 
 ```console
 curl -L https://install.dojoengine.org | bash
 # open new terminal to update PATH
-dojoup -v 0.3.5
+dojoup -v 0.4.3
 
 # test dojo
 cd dojo
@@ -167,7 +168,7 @@ Uncomment the `world_address` parameter in `dojo/Scarb.toml` then:
 
 ```console
 cd dojo
-torii --world 0x2d6bcc12cbb460243b73a4c937faf00ad2d071d899f40dfc9182843712f9c77
+torii --world 0x6400412d8083e10058277920b8a4a81338727912bc3435e5413f168221e73c7
 
 # or just...
 cd dojo
