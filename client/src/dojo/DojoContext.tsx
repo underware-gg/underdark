@@ -92,7 +92,7 @@ export const useDojo = () => {
 
 
 //
-// Underdark
+// NEW
 //
 
 export const useDojoAccount = () => {

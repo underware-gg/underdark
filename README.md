@@ -179,7 +179,7 @@ cd dojo
 
 ```console
 cd client
-npm install && npm dev
+npm install && npm run dev
 
 # or just...
 cd dojo

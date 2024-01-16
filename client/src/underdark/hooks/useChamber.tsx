@@ -3,7 +3,7 @@ import { Entity, HasValue, Has, getComponentValue } from '@dojoengine/recs'
 import { useComponentValue, useEntityQuery } from "@dojoengine/react"
 import { getEntityIdFromKeys } from "@dojoengine/utils"
 import { useDojoComponents, useDojoSystemCalls } from '@/dojo/DojoContext'
-import { useEntityKeys, useEntityKeysQuery } from "@/underdark/hooks/useEntityKeysQuery"
+import { useEntityKeys, useEntityKeysQuery } from "@/underdark/hooks/useEntityKeys"
 import { Dir, TileType, tilemapToGameTilemap, offsetCoord, coordToCompass } from "../utils/underdark"
 import { bigintToEntity } from "../utils/utils"
 import { Account, shortString } from 'starknet'
