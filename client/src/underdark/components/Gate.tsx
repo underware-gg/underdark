@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCookies } from 'react-cookie'
 import { Container, Grid, Radio, Input } from 'semantic-ui-react'
-import { useDojo } from '@/dojo/DojoContext'
+import { useDojoAccount } from '@/dojo/DojoContext'
 import { AccountShort } from '@/underdark/components/ui/Account'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { accountNameCookieName } from '@/underdark/hooks/useAccountName'
@@ -39,9 +39,7 @@ export default function Gate() {
 
 function AccountsList() {
   const router = useRouter()
-  const {
-    account: { create, list, get, select, clear, account, isMasterAccount, isDeploying }
-  } = useDojo()
+  const { create, list, get, select, clear, account, isMasterAccount, isDeploying } = useDojoAccount()
   // console.log(`LIST`, account.address)
 
   const rows = useMemo(() => {
@@ -66,6 +64,11 @@ function AccountsList() {
 
   const canEnter = useMemo(() => (!isMasterAccount && !isDeploying), [isMasterAccount, isDeploying])
 
+  const _clear = () => {
+    clear()
+    location.reload()
+  }
+
   return (
     <>
     <Grid className='Faded'>
@@ -75,7 +78,7 @@ function AccountsList() {
           <ActionButton disabled={isDeploying} onClick={() => create()} label='CREATE ACCOUNT' />
         </Col>
         <Col>
-          <ActionButton disabled={isDeploying} onClick={() => clear()} label='CLEAR ALL ACCOUNTS' />
+          <ActionButton disabled={isDeploying} onClick={() => _clear()} label='DELETE ALL ACCOUNTS' />
         </Col>
       </Row>
     </Grid>

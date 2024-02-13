@@ -1,19 +1,28 @@
 #!/bin/bash
 set -e
 
-export WORLD_ADDRESS="0x2d6bcc12cbb460243b73a4c937faf00ad2d071d899f40dfc9182843712f9c77"
-export RPC_URL="http://localhost:5050/"
+#-----------------
+# env setup
+#
+export WORLD_ADDRESS=$(toml get Scarb.toml --raw tool.dojo.env.world_address)
+export RPC_URL=$(toml get Scarb.toml --raw tool.dojo.env.rpc_url)
 
+#-----------------
+# migrate
+#
+sozo migrate --world $WORLD_ADDRESS
 
-#sozo --offline build
-sozo migrate
-
+#-----------------
+# auth write
+#
 scripts/default_auth.sh
 
+#-----------------
+# client update
+#
 cp target/dev/manifest.json ../client/src/
-
 cd ../client
-npm run codegen
 npm run create-components $RPC_URL $WORLD_ADDRESS
 
+#-----------------
 echo "--- DONE! 👍"

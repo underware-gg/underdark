@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { Grid } from 'semantic-ui-react'
-import { useDojo } from '@/dojo/DojoContext'
+import { useDojoAccount } from '@/dojo/DojoContext'
 import { useAccountName } from '@/underdark/hooks/useAccountName'
 import { ActionButton } from '@/underdark/components/ui/UIButtons'
 import { AccountShort } from '@/underdark/components/ui/Account'
@@ -13,7 +13,7 @@ const Col = Grid.Column
 export default function AccountCurrent({
 }) {
   const router = useRouter()
-  const { account: { account, isMasterAccount } } = useDojo()
+  const { account, isMasterAccount } = useDojoAccount()
 
   const { accountName } = useAccountName(account?.address)
 

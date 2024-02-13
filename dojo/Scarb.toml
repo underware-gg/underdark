@@ -1,22 +1,27 @@
 [tool.dojo.world]
 name = "Underdark"
 description = "A generative, on-chain 3D skin-crawler. Something ill under Kurnkornor stirs, down those crumbling old manor stairs. Beware the fading light, and your fraying sanity. Most of all, beware the gibbering of the Slender Duck!"
-icon_uri = "https://underdark.vercel.app/images/logo.jpg"
-cover_uri = "https://underdark.vercel.app/images/splash.jpg"
-website = "https://underdark-splash.vercel.app"
-socials.x = "https://twitter.com/lootunderworld"
+icon_uri = "https://underdark.lootunder.world/images/logo.png"
+cover_uri = "https://underdark.lootunder.world/images/splash.jpg"
+website = "https://underdark.lootunder.world"
+
+[tool.dojo.world.socials]
+x = "https://x.com/lootunderworld"
+github = "https://github.com/funDAOmental/underdark"
+# discord = "https://discord.gg/FB2wR6uF"
+# telegram = "https://t.me/dojoengine"
 
 [package]
-cairo-version = "2.3.1"
 name = "underdark"
-version = "0.4.0"
+version = "0.5.0"
+cairo-version = "2.4.0"
 
 [cairo]
 sierra-replace-ids = true
 
 [dependencies]
 # dojo = { git = "https://github.com/dojoengine/dojo.git", rev = "47c0cbcfa4ebd4d4b504ec959fdbcfd3e4271e8a" }
-dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.15" }
+dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.5.1" }
 
 
 [[target.dojo]]
@@ -25,14 +30,14 @@ dojo = { git = "https://github.com/dojoengine/dojo.git", tag = "v0.3.15" }
 initializer_class_hash = "0xbeef"
 
 [tool.dojo.env]
-world_address = "0x2d6bcc12cbb460243b73a4c937faf00ad2d071d899f40dfc9182843712f9c77"
+world_address = "0x6400412d8083e10058277920b8a4a81338727912bc3435e5413f168221e73c7"
 
 # Development
-# rpc_url = "http://localhost:5050/"
-# account_address = "0x517ececd29116499f4a1b64b094da79ba08dfd54a3edaa316134c41f8160973"
-# private_key = "0x1800000000300000180000000000030000000000003006001800006600"
+rpc_url = "http://localhost:5050/"
+account_address = "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca"
+private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
 
 # SLOT
-rpc_url = "https://api.cartridge.gg/x/underdark/katana"
-account_address = "0x35d0cdaf12e6816f4a1a5c074befbddd08abf61bbea87765342289b48b4bc16"
-private_key = "0x3cfcc4c504dcb4f1bf790ba53d95aaa167ff4297ce63b4891473314905375e6"
+# rpc_url = "https://api.cartridge.gg/x/underdark/katana"
+# account_address = "0x35d0cdaf12e6816f4a1a5c074befbddd08abf61bbea87765342289b48b4bc16"
+# private_key = "0x3cfcc4c504dcb4f1bf790ba53d95aaa167ff4297ce63b4891473314905375e6"

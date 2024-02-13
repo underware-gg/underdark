@@ -2,25 +2,30 @@
 set -euo pipefail
 pushd $(dirname "$0")/..
 
-export RPC_URL="http://localhost:5050"
+if ! [ -x "$(command -v toml)" ]; then
+  echo 'Error: toml not instlaled! Instal with: cargo install toml-cli'
+  exit 1
+fi
 
-export WORLD_ADDRESS=$(cat ./target/dev/manifest.json | jq -r '.world.address')
-export ACTIONS_ADDRESS=$(cat ./target/dev/manifest.json | jq -r '.contracts[] | select(.name == "actions" ).address')
+export RPC_URL=$(toml get Scarb.toml --raw tool.dojo.env.rpc_url)
+export ACCOUNT_ADDRESS=$(toml get Scarb.toml --raw tool.dojo.env.account_address)
+export ACTIONS_ADDRESS=$(cat ./target/dev/manifest.json | jq -r '.contracts[] | select(.name == "underdark::systems::actions::actions" ).address')
+export WORLD_ADDRESS=$(toml get Scarb.toml --raw tool.dojo.env.world_address)
+
+export COMPONENTS=("Chamber" "Map" "State" "Tile" "Score")
 
 echo "---------------------------------------------------------------------------"
-echo "auth writer"
-echo "world   : $WORLD_ADDRESS"
-echo "actions : $ACTIONS_ADDRESS"
-echo "RPC     : $RPC_URL"
+echo "sozo auth writer"
+echo "RPC        : $RPC_URL"
+echo "world      : $WORLD_ADDRESS"
+echo "account    : $ACCOUNT_ADDRESS"
+echo "actions    : $ACTIONS_ADDRESS"
+echo "components : ${COMPONENTS[*]}"
 echo "---------------------------------------------------------------------------"
-
-# enable system -> component authorizations
-COMPONENTS=("Chamber" "Map" "State" "Tile" "Score")
 
 for component in ${COMPONENTS[@]}; do
-    sozo auth writer $component $ACTIONS_ADDRESS --world $WORLD_ADDRESS --rpc-url $RPC_URL
-    # SLOT
-    # sozo auth writer $component 0x3da4bf86342c340fd1dd590cd5505248af77006db7d74912ac50d7e7374496b --world $WORLD_ADDRESS --rpc-url https://api.cartridge.gg/x/underdark/katana --account-address 0x35d0cdaf12e6816f4a1a5c074befbddd08abf61bbea87765342289b48b4bc16
+  sozo auth writer --world $WORLD_ADDRESS --rpc-url $RPC_URL $component $ACTIONS_ADDRESS --account-address $ACCOUNT_ADDRESS
+  sleep 0.2
 done
 
-echo "Default authorizations have been successfully set."
+echo "Default authorizations have been successfully set! 👍"
