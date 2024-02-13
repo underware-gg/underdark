@@ -2,9 +2,15 @@
 set -e
 
 #-----------------
+# env setup
+#
+export WORLD_ADDRESS=$(toml get Scarb.toml --raw tool.dojo.env.world_address)
+export RPC_URL=$(toml get Scarb.toml --raw tool.dojo.env.rpc_url)
+
+#-----------------
 # migrate
 #
-sozo migrate
+sozo migrate --world $WORLD_ADDRESS
 
 #-----------------
 # auth write
@@ -12,11 +18,8 @@ sozo migrate
 scripts/default_auth.sh
 
 #-----------------
-# client setup
+# client update
 #
-export WORLD_ADDRESS="0x6400412d8083e10058277920b8a4a81338727912bc3435e5413f168221e73c7"
-export RPC_URL="http://localhost:5050/"
-
 cp target/dev/manifest.json ../client/src/
 cd ../client
 npm run create-components $RPC_URL $WORLD_ADDRESS

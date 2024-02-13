@@ -1,3 +1,7 @@
-export WORLD=0x6400412d8083e10058277920b8a4a81338727912bc3435e5413f168221e73c7
-echo "@WORLD: $WORLD"
-torii -w $WORLD
+#!/bin/bash
+set -e
+
+export WORLD_ADDRESS=$(toml get Scarb.toml --raw tool.dojo.env.world_address)
+echo "@WORLD: $WORLD_ADDRESS"
+
+torii -w $WORLD_ADDRESS $*

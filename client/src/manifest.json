@@ -949,8 +949,30 @@
     {
       "name": "underdark::systems::actions::actions",
       "address": "0x34234facac8d8349b66a92a367950c7e8d32ed6ce96ae5f7a920364a6daf2df",
-      "class_hash": "0x8b03d4c0888557cadb0f94bfd99a44b487d29a3b2ada25a7d26d598d7ddfba",
+      "class_hash": "0x34ba29e36d2db9195624e2299d3deefd3ce517689a0df4bba5585d71c246549",
       "abi": [
+        {
+          "type": "impl",
+          "name": "DojoResourceProviderImpl",
+          "interface_name": "dojo::world::IDojoResourceProvider"
+        },
+        {
+          "type": "interface",
+          "name": "dojo::world::IDojoResourceProvider",
+          "items": [
+            {
+              "type": "function",
+              "name": "dojo_resource",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::felt252"
+                }
+              ],
+              "state_mutability": "view"
+            }
+          ]
+        },
         {
           "type": "impl",
           "name": "WorldProviderImpl",
@@ -1164,17 +1186,6 @@
           ]
         },
         {
-          "type": "function",
-          "name": "dojo_resource",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::felt252"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
           "type": "event",
           "name": "dojo::components::upgradeable::upgradeable::Upgraded",
           "kind": "struct",
@@ -1246,40 +1257,12 @@
           "key": false
         }
       ],
-      "class_hash": "0x21b667274a07f9c6b9c31e0bcc33989c65adf3696deca876c215c8fb5d42033",
+      "class_hash": "0xb6301e38701ee19bcfb20d0221a6dac870443d298c999726b780f0567f04dd",
       "abi": [
         {
-          "type": "function",
-          "name": "name",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::felt252"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "unpacked_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "packed_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
+          "type": "impl",
+          "name": "DojoModelImpl",
+          "interface_name": "dojo::model::IDojoModel"
         },
         {
           "type": "struct",
@@ -1290,17 +1273,6 @@
               "type": "@core::array::Array::<core::integer::u8>"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "layout",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::array::Span::<core::integer::u8>"
-            }
-          ],
-          "state_mutability": "view"
         },
         {
           "type": "struct",
@@ -1391,15 +1363,128 @@
           ]
         },
         {
-          "type": "function",
-          "name": "schema",
-          "inputs": [],
-          "outputs": [
+          "type": "interface",
+          "name": "dojo::model::IDojoModel",
+          "items": [
             {
-              "type": "dojo::database::introspect::Ty"
+              "type": "function",
+              "name": "name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::felt252"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "unpacked_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "packed_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "layout",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::array::Span::<core::integer::u8>"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "schema",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::database::introspect::Ty"
+                }
+              ],
+              "state_mutability": "view"
             }
-          ],
-          "state_mutability": "view"
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "chamberImpl",
+          "interface_name": "underdark::models::chamber::Ichamber"
+        },
+        {
+          "type": "struct",
+          "name": "core::integer::u256",
+          "members": [
+            {
+              "name": "low",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "high",
+              "type": "core::integer::u128"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "underdark::models::chamber::Chamber",
+          "members": [
+            {
+              "name": "location_id",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "room_id",
+              "type": "core::integer::u16"
+            },
+            {
+              "name": "level_number",
+              "type": "core::integer::u16"
+            },
+            {
+              "name": "seed",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "yonder",
+              "type": "core::integer::u16"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "underdark::models::chamber::Ichamber",
+          "items": [
+            {
+              "type": "function",
+              "name": "ensure_abi",
+              "inputs": [
+                {
+                  "name": "model",
+                  "type": "underdark::models::chamber::Chamber"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            }
+          ]
         },
         {
           "type": "event",
@@ -1468,40 +1553,12 @@
           "key": false
         }
       ],
-      "class_hash": "0x388d1bba071386f81e9bd94014ba1dbe23b541b3208bedb723e2322c8d6fe1b",
+      "class_hash": "0x61f208d5b3f61b4495c30cf21023d920ae5fc82e84ed27a1a91736110a986b",
       "abi": [
         {
-          "type": "function",
-          "name": "name",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::felt252"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "unpacked_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "packed_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
+          "type": "impl",
+          "name": "DojoModelImpl",
+          "interface_name": "dojo::model::IDojoModel"
         },
         {
           "type": "struct",
@@ -1512,17 +1569,6 @@
               "type": "@core::array::Array::<core::integer::u8>"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "layout",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::array::Span::<core::integer::u8>"
-            }
-          ],
-          "state_mutability": "view"
         },
         {
           "type": "struct",
@@ -1613,15 +1659,152 @@
           ]
         },
         {
-          "type": "function",
-          "name": "schema",
-          "inputs": [],
-          "outputs": [
+          "type": "interface",
+          "name": "dojo::model::IDojoModel",
+          "items": [
             {
-              "type": "dojo::database::introspect::Ty"
+              "type": "function",
+              "name": "name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::felt252"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "unpacked_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "packed_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "layout",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::array::Span::<core::integer::u8>"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "schema",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::database::introspect::Ty"
+                }
+              ],
+              "state_mutability": "view"
             }
-          ],
-          "state_mutability": "view"
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "mapImpl",
+          "interface_name": "underdark::models::chamber::Imap"
+        },
+        {
+          "type": "struct",
+          "name": "core::integer::u256",
+          "members": [
+            {
+              "name": "low",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "high",
+              "type": "core::integer::u128"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "underdark::models::chamber::Map",
+          "members": [
+            {
+              "name": "entity_id",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "bitmap",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "protected",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "generator_name",
+              "type": "core::felt252"
+            },
+            {
+              "name": "generator_value",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "north",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "east",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "west",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "south",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "over",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "under",
+              "type": "core::integer::u8"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "underdark::models::chamber::Imap",
+          "items": [
+            {
+              "type": "function",
+              "name": "ensure_abi",
+              "inputs": [
+                {
+                  "name": "model",
+                  "type": "underdark::models::chamber::Map"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            }
+          ]
         },
         {
           "type": "event",
@@ -1660,40 +1843,12 @@
           "key": false
         }
       ],
-      "class_hash": "0x395a6e3bc082f4118c02449f0be621ad849a99cd80bfa5e84308570f6378a56",
+      "class_hash": "0xcf6fd3603f7f6f63d8a24f337b42722adc3283183e029b846e422184319664",
       "abi": [
         {
-          "type": "function",
-          "name": "name",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::felt252"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "unpacked_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "packed_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
+          "type": "impl",
+          "name": "DojoModelImpl",
+          "interface_name": "dojo::model::IDojoModel"
         },
         {
           "type": "struct",
@@ -1704,17 +1859,6 @@
               "type": "@core::array::Array::<core::integer::u8>"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "layout",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::array::Span::<core::integer::u8>"
-            }
-          ],
-          "state_mutability": "view"
         },
         {
           "type": "struct",
@@ -1805,15 +1949,128 @@
           ]
         },
         {
-          "type": "function",
-          "name": "schema",
-          "inputs": [],
-          "outputs": [
+          "type": "interface",
+          "name": "dojo::model::IDojoModel",
+          "items": [
             {
-              "type": "dojo::database::introspect::Ty"
+              "type": "function",
+              "name": "name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::felt252"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "unpacked_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "packed_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "layout",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::array::Span::<core::integer::u8>"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "schema",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::database::introspect::Ty"
+                }
+              ],
+              "state_mutability": "view"
             }
-          ],
-          "state_mutability": "view"
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "map_dataImpl",
+          "interface_name": "underdark::models::chamber::Imap_data"
+        },
+        {
+          "type": "struct",
+          "name": "core::integer::u256",
+          "members": [
+            {
+              "name": "low",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "high",
+              "type": "core::integer::u128"
+            }
+          ]
+        },
+        {
+          "type": "struct",
+          "name": "underdark::models::chamber::MapData",
+          "members": [
+            {
+              "name": "location_id",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "monsters",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "slender_duck",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "dark_tar",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "chest",
+              "type": "core::integer::u256"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "underdark::models::chamber::Imap_data",
+          "items": [
+            {
+              "type": "function",
+              "name": "ensure_abi",
+              "inputs": [
+                {
+                  "name": "model",
+                  "type": "underdark::models::chamber::MapData"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            }
+          ]
         },
         {
           "type": "event",
@@ -1862,40 +2119,12 @@
           "key": false
         }
       ],
-      "class_hash": "0x75c6e6a7c5f4865a03c07e1bf448022d26c72b7086e9fd21c2221755e0d6c40",
+      "class_hash": "0x316ce7bd54f59d44b95646b770ad90dee229a0d740dd16b7f1dd1d24b767901",
       "abi": [
         {
-          "type": "function",
-          "name": "name",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::felt252"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "unpacked_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "packed_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
+          "type": "impl",
+          "name": "DojoModelImpl",
+          "interface_name": "dojo::model::IDojoModel"
         },
         {
           "type": "struct",
@@ -1906,17 +2135,6 @@
               "type": "@core::array::Array::<core::integer::u8>"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "layout",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::array::Span::<core::integer::u8>"
-            }
-          ],
-          "state_mutability": "view"
         },
         {
           "type": "struct",
@@ -2007,15 +2225,122 @@
           ]
         },
         {
-          "type": "function",
-          "name": "schema",
-          "inputs": [],
-          "outputs": [
+          "type": "interface",
+          "name": "dojo::model::IDojoModel",
+          "items": [
             {
-              "type": "dojo::database::introspect::Ty"
+              "type": "function",
+              "name": "name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::felt252"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "unpacked_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "packed_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "layout",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::array::Span::<core::integer::u8>"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "schema",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::database::introspect::Ty"
+                }
+              ],
+              "state_mutability": "view"
             }
-          ],
-          "state_mutability": "view"
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "scoreImpl",
+          "interface_name": "underdark::models::chamber::Iscore"
+        },
+        {
+          "type": "struct",
+          "name": "underdark::models::chamber::Score",
+          "members": [
+            {
+              "name": "key_location_id",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "key_player",
+              "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "location_id",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "player",
+              "type": "core::starknet::contract_address::ContractAddress"
+            },
+            {
+              "name": "player_name",
+              "type": "core::felt252"
+            },
+            {
+              "name": "moves",
+              "type": "core::integer::u32"
+            },
+            {
+              "name": "score",
+              "type": "core::integer::u32"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "underdark::models::chamber::Iscore",
+          "items": [
+            {
+              "type": "function",
+              "name": "ensure_abi",
+              "inputs": [
+                {
+                  "name": "model",
+                  "type": "underdark::models::chamber::Score"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            }
+          ]
         },
         {
           "type": "event",
@@ -2054,40 +2379,12 @@
           "key": false
         }
       ],
-      "class_hash": "0x4ac904ff9331b88c23eb46dcecfa5bd478fe64a7bb5890d0ffe3c322d7913d",
+      "class_hash": "0x4c9dbe7de0ba8218a876212f4e75c622f9d696e5a0bca8e2f1628318431b85c",
       "abi": [
         {
-          "type": "function",
-          "name": "name",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::felt252"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "unpacked_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "packed_size",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
+          "type": "impl",
+          "name": "DojoModelImpl",
+          "interface_name": "dojo::model::IDojoModel"
         },
         {
           "type": "struct",
@@ -2098,17 +2395,6 @@
               "type": "@core::array::Array::<core::integer::u8>"
             }
           ]
-        },
-        {
-          "type": "function",
-          "name": "layout",
-          "inputs": [],
-          "outputs": [
-            {
-              "type": "core::array::Span::<core::integer::u8>"
-            }
-          ],
-          "state_mutability": "view"
         },
         {
           "type": "struct",
@@ -2199,15 +2485,114 @@
           ]
         },
         {
-          "type": "function",
-          "name": "schema",
-          "inputs": [],
-          "outputs": [
+          "type": "interface",
+          "name": "dojo::model::IDojoModel",
+          "items": [
             {
-              "type": "dojo::database::introspect::Ty"
+              "type": "function",
+              "name": "name",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::felt252"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "unpacked_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "packed_size",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "layout",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "core::array::Span::<core::integer::u8>"
+                }
+              ],
+              "state_mutability": "view"
+            },
+            {
+              "type": "function",
+              "name": "schema",
+              "inputs": [],
+              "outputs": [
+                {
+                  "type": "dojo::database::introspect::Ty"
+                }
+              ],
+              "state_mutability": "view"
             }
-          ],
-          "state_mutability": "view"
+          ]
+        },
+        {
+          "type": "impl",
+          "name": "tileImpl",
+          "interface_name": "underdark::models::tile::Itile"
+        },
+        {
+          "type": "struct",
+          "name": "underdark::models::tile::Tile",
+          "members": [
+            {
+              "name": "key_location_id",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "key_pos",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "location_id",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "pos",
+              "type": "core::integer::u8"
+            },
+            {
+              "name": "tile_type",
+              "type": "core::integer::u8"
+            }
+          ]
+        },
+        {
+          "type": "interface",
+          "name": "underdark::models::tile::Itile",
+          "items": [
+            {
+              "type": "function",
+              "name": "ensure_abi",
+              "inputs": [
+                {
+                  "name": "model",
+                  "type": "underdark::models::tile::Tile"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "view"
+            }
+          ]
         },
         {
           "type": "event",

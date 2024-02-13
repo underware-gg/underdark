@@ -7,7 +7,7 @@ import { shortString } from 'starknet'
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
 export function createSystemCalls(
-  { execute, call, provider, contractComponents }: SetupNetworkResult,
+  { execute, call, contractComponents }: SetupNetworkResult,
   // { Chamber, Map }: ClientComponents,
 ) {
 
