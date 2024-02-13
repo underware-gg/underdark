@@ -33,11 +33,11 @@ initializer_class_hash = "0xbeef"
 world_address = "0x6400412d8083e10058277920b8a4a81338727912bc3435e5413f168221e73c7"
 
 # Development
-rpc_url = "http://localhost:5050/"
-account_address = "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca"
-private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
+# rpc_url = "http://localhost:5050/"
+# account_address = "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca"
+# private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
 
 # SLOT
-# rpc_url = "https://api.cartridge.gg/x/underdark/katana"
-# account_address = "0x35d0cdaf12e6816f4a1a5c074befbddd08abf61bbea87765342289b48b4bc16"
-# private_key = "0x3cfcc4c504dcb4f1bf790ba53d95aaa167ff4297ce63b4891473314905375e6"
+rpc_url = "https://api.cartridge.gg/x/underdark/katana"
+account_address = "0x1d91f2038d56636886a81f675efa0fdd254ad02736c7d362ec5648e6294512"
+private_key = "0x624a17413cdbaef70a79aa3d0da57d7fe14020a60a9683c79503f3321a998b0"
